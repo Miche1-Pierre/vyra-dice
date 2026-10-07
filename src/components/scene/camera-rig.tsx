@@ -122,10 +122,17 @@ export function CameraRig({
     let ox = 0
     let oy = 0
     if (v !== "seat" && panel !== null) {
-      // the phone sheet covers ~64 % of the screen: centre the subject in the strip above it
-      // camera-controls measures the focal offset in screen space (y down): positive lifts the subject
-      if (size.width < 1024) oy = dist * halfV * 0.64
-      else ox = dist * halfV * aspect * 0.3
+      const sideCard = size.width >= 1024 || (size.height < 500 && size.width > size.height)
+      if (sideCard) {
+        // card on the right (400 px + margin, 340 px on phones held sideways): centre the
+        // subject in what is left of the screen
+        const cardPx = size.width >= 1024 ? 416 : 348
+        ox = dist * halfV * aspect * (cardPx / size.width)
+      } else {
+        // the bottom sheet covers ~64 % of the screen: centre the subject in the strip above it;
+        // camera-controls measures the focal offset in screen space (y down), positive lifts it
+        oy = dist * halfV * 0.64
+      }
     }
     void c.setFocalOffset(ox, oy, 0, true)
   }
@@ -218,7 +225,7 @@ export function CameraRig({
   useEffect(() => {
     if (view === "overview") apply(overviewPose(layout, aspect), true)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [aspect < 0.8, aspect < 1.3])
+  }, [aspect < 0.8, aspect < 1.3, aspect >= 1.95])
 
   useFrame((_, delta) => {
     const c = controls.current

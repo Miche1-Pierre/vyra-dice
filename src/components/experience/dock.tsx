@@ -46,10 +46,13 @@ export function Dock({
   entries,
   hidden,
   isDesktop,
+  dense = false,
 }: {
   entries: DockEntry[]
   hidden?: boolean
   isDesktop: boolean
+  /** Phones held sideways: icons only, to keep the club visible. */
+  dense?: boolean
 }) {
   const mouseX = useMotionValue(Number.POSITIVE_INFINITY)
   return (
@@ -89,9 +92,12 @@ export function Dock({
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 120, opacity: 0 }}
             transition={SOFT_SPRING}
-            className="glass glass-rim absolute inset-x-2.5 bottom-[max(0.625rem,env(safe-area-inset-bottom))] z-40 flex items-start rounded-[28px] px-1.5 pt-2 pb-1.5"
+            className={cn(
+              "glass glass-rim absolute inset-x-2.5 bottom-[max(0.625rem,env(safe-area-inset-bottom))] z-40 flex items-start rounded-[28px] px-1.5 sm:inset-x-0 sm:mx-auto sm:w-fit sm:max-w-[calc(100%-1.25rem)]",
+              dense ? "py-1.5" : "pt-2 pb-1.5",
+            )}
           >
-            <MobileShelf entries={entries} />
+            <MobileShelf entries={entries} dense={dense} />
           </motion.nav>
         )
       ) : null}
@@ -183,13 +189,15 @@ function DockIcon({
   )
 }
 
-function MobileShelf({ entries }: { entries: DockEntry[] }) {
+function MobileShelf({ entries, dense }: { entries: DockEntry[]; dense: boolean }) {
   // the club icon stays pinned left, actions pinned right, spaces scroll in between
   const firstSep = entries.findIndex((e) => e.kind === "separator")
   const lastSep = entries.findLastIndex((e) => e.kind === "separator")
   const head = entries.slice(0, firstSep)
   const middle = entries.slice(firstSep + 1, lastSep)
   const tail = entries.slice(lastSep + 1)
+  const renderMobile = (entry: DockEntry) =>
+    entry.kind === "separator" ? null : <MobileIcon key={entry.id} entry={entry} dense={dense} />
   return (
     <>
       <div className="flex shrink-0">{head.map(renderMobile)}</div>
@@ -203,12 +211,13 @@ function MobileShelf({ entries }: { entries: DockEntry[] }) {
   )
 }
 
-function renderMobile(entry: DockEntry) {
-  if (entry.kind === "separator") return null
-  return <MobileIcon key={entry.id} entry={entry} />
-}
-
-function MobileIcon({ entry }: { entry: Extract<DockEntry, { kind: "item" }> }) {
+function MobileIcon({
+  entry,
+  dense,
+}: {
+  entry: Extract<DockEntry, { kind: "item" }>
+  dense: boolean
+}) {
   const [scope, animate] = useAnimate()
   const body = (
     <>
@@ -216,14 +225,16 @@ function MobileIcon({ entry }: { entry: Extract<DockEntry, { kind: "item" }> }) 
         <span className="block size-full [&>*]:size-full">{entry.tile}</span>
         {entry.badge ? <Badge count={entry.badge} /> : null}
       </span>
-      <span
-        className={cn(
-          "mt-1 max-w-[56px] truncate text-[10px] leading-3 font-medium",
-          entry.active ? "text-label" : "text-label-2",
-        )}
-      >
-        {entry.short ?? entry.label}
-      </span>
+      {!dense ? (
+        <span
+          className={cn(
+            "mt-1 max-w-[56px] truncate text-[10px] leading-3 font-medium",
+            entry.active ? "text-label" : "text-label-2",
+          )}
+        >
+          {entry.short ?? entry.label}
+        </span>
+      ) : null}
       <span
         aria-hidden
         className={cn(

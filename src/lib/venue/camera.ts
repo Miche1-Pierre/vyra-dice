@@ -59,6 +59,10 @@ export function overviewPose(layout: VenueLayout, aspect: number): CameraPose {
     return { target: center, position: orbit(center, 60, 28, 46), fov: 46 }
   }
   const target = add(center, [0, 0, 1.5])
+  if (aspect >= 1.95) {
+    // very wide (phones held sideways, ultrawide): height is the limit, step back
+    return { target, position: orbit(target, 66, 36, 50), fov: 38 }
+  }
   return { target, position: orbit(target, 55, 36, 50), fov: 40 }
 }
 
