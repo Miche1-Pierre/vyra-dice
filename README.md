@@ -1,36 +1,36 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# VYRA-dice
 
-## Getting Started
+**Faites voir l'expérience avant de vendre la table.** Mini-app mobile qui présente un club en 3D — espaces,
+tables, vues, capacité, prix/minimum, prestations — et transmet la demande du client à l'équipe du club, qui
+confirme et encaisse dans ses propres outils.
 
-First, run the development server:
+Pilote gratuit, mesuré (H1 compréhension · H2 conversion · H3 valeur · H4 opérations · H5 adoption).
+
+## Démarrer
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
+cp .env.example .env.local
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Next.js 16 · TypeScript · Tailwind v4 · shadcn/ui · three.js / React Three Fiber / drei · Blender → glTF ·
+PostHog · (Supabase + Resend au jalon G1) · Vercel.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Documentation
 
-## Learn More
+| Doc                                          | Contenu                                                 |
+| -------------------------------------------- | ------------------------------------------------------- |
+| [docs/linear.md](docs/linear.md)             | Cadrage, jalons G0–G6, responsabilités, workflow Linear |
+| [docs/github.md](docs/github.md)             | Branches, commits atomiques, PR, CI                     |
+| [docs/architecture.md](docs/architecture.md) | Architecture, modèle de données, flux d'une demande     |
+| [docs/3d-pipeline.md](docs/3d-pipeline.md)   | Production des lieux en 3D (Blender → web)              |
+| [docs/analytics.md](docs/analytics.md)       | Événements et lecture H1–H5                             |
 
-To learn more about Next.js, take a look at the following resources:
+## Équipe
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Pierre** — dev, data/analytics
+- **Jonathan** — vente, audit
+- Ensemble — produit/design, implémentation/adoption, opérations/support
