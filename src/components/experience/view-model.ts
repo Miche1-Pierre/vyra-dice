@@ -1,6 +1,6 @@
 import type { TableMarkerData, ZoneMarkerData } from "@/components/scene/markers"
 import { formatEuro } from "@/lib/format"
-import type { VenueContent } from "@/lib/schema"
+import type { VenueContent, ZoneIcon } from "@/lib/schema"
 import { tableLevel, type Level, type TableKind, type VenueLayout } from "@/lib/venue/layout"
 import { pricePerPerson } from "@/lib/venue/offers"
 import { TIERS, type TableStatus } from "@/lib/venue/tiers"
@@ -26,6 +26,8 @@ export interface ZoneView {
   shortName: string
   description: string
   tier: TableKind
+  /** Dock / tag glyph; tiers have a default. */
+  icon: ZoneIcon
   level: Level
   perks: string[]
   fromMinimum: number | null
@@ -42,6 +44,12 @@ export interface ViewModel {
   tables: Record<string, TableView>
   zoneMarkers: ZoneMarkerData[]
   tableMarkers: TableMarkerData[]
+}
+
+const DEFAULT_ICON: Record<TableKind, ZoneIcon> = {
+  lounge: "sofa",
+  vip: "sunrise",
+  prestige: "crown",
 }
 
 const minOf = (values: (number | null)[]) => {
@@ -99,6 +107,7 @@ export function buildViewModel(content: VenueContent, layout: VenueLayout): View
         shortName: zc?.shortName ?? lz.id,
         description: zc?.description ?? "",
         tier: lz.tier,
+        icon: zc?.icon ?? DEFAULT_ICON[lz.tier],
         level: lz.level,
         perks: zc?.perks ?? [],
         fromMinimum: minOf(open.map((t) => t.minimumSpend)),
@@ -118,6 +127,7 @@ export function buildViewModel(content: VenueContent, layout: VenueLayout): View
       id: z.id,
       name: z.name,
       tier: z.tier,
+      icon: z.icon,
       level: z.level,
       fromLabel: z.fromMinimum !== null ? formatEuro(z.fromMinimum) : null,
       available: z.available,

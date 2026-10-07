@@ -1,21 +1,12 @@
 import type { Metadata, Viewport } from "next"
-import { Geist, Geist_Mono, Unbounded } from "next/font/google"
+import { Jost } from "next/font/google"
 import "./globals.css"
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+/** Geometric, airy, Futura-like: the voice of Naho's « C L U B » lettering, legible down to 11 px. */
+const jost = Jost({
+  variable: "--font-jost",
   subsets: ["latin"],
-})
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-})
-
-const display = Unbounded({
-  variable: "--font-display",
-  subsets: ["latin"],
-  weight: ["500", "700", "800"],
+  display: "swap",
 })
 
 export const metadata: Metadata = {
@@ -25,7 +16,7 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: "#0b0810",
+  themeColor: "#060408",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
@@ -33,10 +24,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html
-      lang="fr"
-      className={`dark ${geistSans.variable} ${geistMono.variable} ${display.variable} h-full antialiased`}
-    >
+    <html lang="fr" className={`dark ${jost.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col">{children}</body>
     </html>
   )

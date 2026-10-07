@@ -5,131 +5,284 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --font-sans: var(--font-jost);
+  --font-heading: var(--font-jost);
+  --font-mono: var(--font-jost);
+
+  /* shadcn primitives (consent banner, ui/*) */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-display);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Night Glass: label levels, hairlines, fills, the Naho gold and the tier hues */
+  --color-ink: var(--ink);
+  --color-label: var(--label);
+  --color-label-2: var(--label-2);
+  --color-label-3: var(--label-3);
+  --color-hairline: var(--hairline);
+  --color-hairline-strong: var(--hairline-strong);
+  --color-fill: var(--fill);
+  --color-fill-2: var(--fill-2);
+  --color-gold: var(--gold);
+  --color-gold-deep: var(--gold-deep);
+  --color-lounge: var(--lounge);
+  --color-vip: var(--vip);
+  --color-prestige: var(--prestige);
+  --color-ok: var(--ok);
+  --color-wait: var(--wait);
+  --color-off: var(--off);
+
+  --radius-sm: calc(var(--radius) * 0.5);
+  --radius-md: calc(var(--radius) * 0.75);
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
+  --radius-xl: calc(var(--radius) * 1.5);
+  --radius-2xl: calc(var(--radius) * 2);
+  --radius-3xl: calc(var(--radius) * 2.75);
+  --radius-4xl: calc(var(--radius) * 3.5);
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --radius: 0.75rem;
 }
 
-/* Club night palette: violet-black surfaces, champagne-gold primary (Naho patina). */
+/*
+ * Night Glass — the product UI floats over the club in Apple-style liquid glass:
+ * translucent dark panes with a specular rim, label/secondary/tertiary text levels,
+ * and one precious accent: Naho's gold. Tier hues follow the club sketch
+ * (green = ground-floor lounges, violet = VIP mezzanine, blue = prestige).
+ */
 .dark {
-  --background: oklch(0.12 0.01 300);
-  --foreground: oklch(0.97 0.005 300);
-  --card: oklch(0.16 0.012 300);
-  --card-foreground: oklch(0.97 0.005 300);
-  --popover: oklch(0.17 0.012 300);
-  --popover-foreground: oklch(0.97 0.005 300);
-  --primary: oklch(0.83 0.1 84);
-  --primary-foreground: oklch(0.2 0.03 84);
-  --secondary: oklch(0.23 0.012 300);
-  --secondary-foreground: oklch(0.97 0.005 300);
-  --muted: oklch(0.22 0.012 300);
-  --muted-foreground: oklch(0.7 0.015 300);
-  --accent: oklch(0.25 0.015 300);
-  --accent-foreground: oklch(0.97 0.005 300);
-  --destructive: oklch(0.7 0.19 22);
-  --border: oklch(1 0 0 / 9%);
-  --input: oklch(1 0 0 / 14%);
-  --ring: oklch(0.83 0.1 84 / 70%);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.14 0.012 300);
-  --sidebar-foreground: oklch(0.97 0.005 300);
-  --sidebar-primary: oklch(0.83 0.1 84);
-  --sidebar-primary-foreground: oklch(0.2 0.03 84);
-  --sidebar-accent: oklch(0.23 0.012 300);
-  --sidebar-accent-foreground: oklch(0.97 0.005 300);
-  --sidebar-border: oklch(1 0 0 / 9%);
-  --sidebar-ring: oklch(0.83 0.1 84 / 70%);
+  --ink: #060408;
+  --label: #f5f4f7;
+  --label-2: rgb(235 233 245 / 0.64);
+  --label-3: rgb(235 233 245 / 0.38);
+  --hairline: rgb(255 255 255 / 0.09);
+  --hairline-strong: rgb(255 255 255 / 0.16);
+  --fill: rgb(130 126 145 / 0.2);
+  --fill-2: rgb(130 126 145 / 0.12);
+  --glass: rgb(22 19 27 / 0.56);
+  --glass-thick: rgb(17 15 21 / 0.82);
+  --gold: #e8c27a;
+  --gold-deep: #b98a3e;
+  --lounge: #32d074;
+  --vip: #bf5af2;
+  --prestige: #3a9bff;
+  --ok: #30d158;
+  --wait: #ffd60a;
+  --off: #8e8e93;
+
+  --background: #060408;
+  --foreground: #f5f4f7;
+  --card: #121016;
+  --card-foreground: #f5f4f7;
+  --popover: #16131b;
+  --popover-foreground: #f5f4f7;
+  --primary: #e8c27a;
+  --primary-foreground: #1a1206;
+  --secondary: rgb(130 126 145 / 0.2);
+  --secondary-foreground: #f5f4f7;
+  --muted: rgb(130 126 145 / 0.14);
+  --muted-foreground: rgb(235 233 245 / 0.6);
+  --accent: rgb(130 126 145 / 0.2);
+  --accent-foreground: #f5f4f7;
+  --destructive: #ff453a;
+  --border: rgb(255 255 255 / 0.09);
+  --input: rgb(255 255 255 / 0.12);
+  --ring: rgb(232 194 122 / 0.6);
+  --chart-1: #e8c27a;
+  --chart-2: #32d074;
+  --chart-3: #bf5af2;
+  --chart-4: #3a9bff;
+  --chart-5: #8e8e93;
+  --sidebar: #0d0b10;
+  --sidebar-foreground: #f5f4f7;
+  --sidebar-primary: #e8c27a;
+  --sidebar-primary-foreground: #1a1206;
+  --sidebar-accent: rgb(130 126 145 / 0.2);
+  --sidebar-accent-foreground: #f5f4f7;
+  --sidebar-border: rgb(255 255 255 / 0.09);
+  --sidebar-ring: rgb(232 194 122 / 0.6);
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+  html {
+    @apply bg-ink font-sans;
+  }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-ink text-label;
+  }
+  ::selection {
+    background: rgb(232 194 122 / 0.3);
   }
   button:not(:disabled),
   [role="button"]:not(:disabled) {
     cursor: pointer;
   }
-  html {
-    @apply font-sans;
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(255 255 255 / 0.14) transparent;
   }
+}
+
+/* ── Materials ─────────────────────────────────────────────────────────────────────────── */
+
+/** Liquid glass: translucent pane, blurred and saturated backdrop, top highlight, deep shadow. */
+@utility glass {
+  background-color: var(--glass);
+  background-image: linear-gradient(
+    180deg,
+    rgb(255 255 255 / 0.075),
+    rgb(255 255 255 / 0.012) 46%,
+    rgb(255 255 255 / 0)
+  );
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  backdrop-filter: blur(28px) saturate(190%);
+  box-shadow:
+    inset 0 1px 0 0 rgb(255 255 255 / 0.14),
+    inset 0 0 0 1px rgb(255 255 255 / 0.06),
+    0 26px 60px -18px rgb(0 0 0 / 0.75),
+    0 6px 16px -4px rgb(0 0 0 / 0.4);
+}
+
+/** Denser glass for reading surfaces (panels, sheets, dialogs). */
+@utility glass-thick {
+  background-color: var(--glass-thick);
+  background-image: linear-gradient(180deg, rgb(255 255 255 / 0.06), rgb(255 255 255 / 0) 34%);
+  -webkit-backdrop-filter: blur(40px) saturate(170%);
+  backdrop-filter: blur(40px) saturate(170%);
+  box-shadow:
+    inset 0 1px 0 0 rgb(255 255 255 / 0.12),
+    inset 0 0 0 1px rgb(255 255 255 / 0.055),
+    0 40px 90px -24px rgb(0 0 0 / 0.85),
+    0 8px 24px -6px rgb(0 0 0 / 0.45);
+}
+
+/** Specular rim of liquid glass (needs a positioned element with a border radius). */
+@utility glass-rim {
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      155deg,
+      rgb(255 255 255 / 0.42),
+      rgb(255 255 255 / 0.07) 26%,
+      rgb(255 255 255 / 0.02) 58%,
+      rgb(255 255 255 / 0.14)
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+}
+
+/** Naho gold, poured: the single primary action. */
+@utility gold-pill {
+  color: #1d1406;
+  background-image: linear-gradient(180deg, #f6dfa6 0%, #e8c27a 46%, #c9984a 100%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.55),
+    inset 0 -1px 0 rgb(120 80 20 / 0.35),
+    0 10px 28px -10px rgb(232 194 122 / 0.55),
+    0 2px 6px rgb(0 0 0 / 0.35);
+}
+
+/** Text in gold leaf. */
+@utility text-gold-leaf {
+  background-image: linear-gradient(180deg, #f8e3b0, #e1b768 55%, #b88a40);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ── Type scale (Jost) ─────────────────────────────────────────────────────────────────── */
+
+@utility text-micro {
+  font-size: 11px;
+  line-height: 14px;
+  letter-spacing: 0.01em;
+}
+@utility text-caption {
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0.005em;
+}
+@utility text-footnote {
+  font-size: 13px;
+  line-height: 18px;
+}
+@utility text-ui {
+  font-size: 14px;
+  line-height: 20px;
+}
+@utility text-callout {
+  font-size: 15px;
+  line-height: 22px;
+}
+@utility text-headline {
+  font-size: 17px;
+  line-height: 22px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}
+@utility text-title {
+  font-size: 24px;
+  line-height: 28px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+@utility text-display {
+  font-size: 34px;
+  line-height: 38px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+/** Small capitals spaced like the « C L U B » under Naho's logo. */
+@utility eyebrow {
+  font-size: 11px;
+  line-height: 14px;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+@utility num {
+  font-variant-numeric: tabular-nums;
 }
