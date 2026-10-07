@@ -583,6 +583,14 @@ def build_signs(c: Ctx) -> None:
 # --------------------------------------------------------------------------- furniture
 
 
+def bottle(mb: MeshBuilder, x: float, y: float, z: float, mat, M: dict, m: Matrix, body: float = 0.26) -> None:
+    """Bottle with shoulder, neck and gold foil (local booth frame)."""
+    mb.cylinder(x, y, z, z + body, 0.04, mat, sides=12, cap_top=False, matrix=m)
+    mb.cylinder(x, y, z + body, z + body + 0.07, 0.04, mat, sides=12, cap_top=False, matrix=m, radius_top=0.016)
+    mb.cylinder(x, y, z + body + 0.07, z + body + 0.12, 0.016, mat, sides=10, cap_top=False, matrix=m)
+    mb.cylinder(x, y, z + body + 0.1, z + body + 0.155, 0.018, M["gold"], sides=10, matrix=m)
+
+
 def booth(mb: MeshBuilder, c: Ctx, t: dict, f: dict, z: float, glass: MeshBuilder) -> None:
     """U-shaped booth around a low table, guests facing local +X (``facing``)."""
     M, kind = c.M, t["kind"]
@@ -635,9 +643,11 @@ def booth(mb: MeshBuilder, c: Ctx, t: dict, f: dict, z: float, glass: MeshBuilde
         mb.cylinder(lx, ly, 0.41, 0.53, 0.045, M["lamp"], sides=10, matrix=m)
         c.lamp_points.append(m @ Vector((lx, ly, 0.75)))
         if kind != "lounge":
-            mb.cylinder(tx - 0.05, ty, 0.41, 0.63, 0.12, M["gold"], sides=16, matrix=m)
-            mb.cylinder(tx - 0.09, ty + 0.03, 0.55, 0.9, 0.035, M["black"], sides=8, matrix=m)
-            mb.cylinder(tx - 0.01, ty - 0.04, 0.55, 0.86, 0.035, M["bottle_green"], sides=8, matrix=m)
+            # champagne bucket with two bottles, and a bottle served on the table
+            mb.cylinder(tx - 0.08, ty, 0.41, 0.6, 0.11, M["gold"], sides=18, matrix=m)
+            bottle(mb, tx - 0.11, ty + 0.035, 0.47, M["black"], M, m)
+            bottle(mb, tx - 0.05, ty - 0.04, 0.45, M["bottle_green"], M, m)
+            bottle(mb, tx + 0.16, ty - w / 4, 0.41, M["bottle_clear"], M, m, body=0.24)
     if kind == "prestige":
         for s in (-1, 1):
             mb.cylinder(xf + 0.4, s * 0.85, 0.0, 0.42, 0.27, velvet, sides=20, matrix=m)
