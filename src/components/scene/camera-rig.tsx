@@ -122,7 +122,8 @@ export function CameraRig({
     let ox = 0
     let oy = 0
     if (v !== "seat" && panel !== null) {
-      if (size.width < 1024) oy = -dist * halfV * 0.55
+      // the phone sheet covers ~64 % of the screen: centre the subject in the strip above it
+      if (size.width < 1024) oy = -dist * halfV * 0.64
       else ox = dist * halfV * aspect * 0.3
     }
     void c.setFocalOffset(ox, oy, 0, true)
