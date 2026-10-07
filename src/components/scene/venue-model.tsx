@@ -191,6 +191,8 @@ export function VenueModel({ club, quality }: { club: string; quality: Quality }
   const setSceneReady = useExperience((s) => s.setSceneReady)
   useEffect(() => {
     // one frame later the textures are uploaded: reveal the scene
+    if (process.env.NODE_ENV !== "production")
+      (window as unknown as { __venue?: PreparedVenue }).__venue = prepared
     const id = requestAnimationFrame(() => setSceneReady())
     return () => cancelAnimationFrame(id)
   }, [prepared, setSceneReady])
