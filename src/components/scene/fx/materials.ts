@@ -1,5 +1,7 @@
 import * as THREE from "three"
 
+import { SHOW_GLSL } from "@/components/scene/fx/show"
+
 /**
  * Animated materials for the venue FX meshes exported from Blender.
  *
@@ -65,48 +67,100 @@ export function createLedRainMaterial(): TimedMaterial {
   }) as TimedMaterial
 }
 
-/** Hanging globes: slow breathing, colour per slot (white / pink / blue). */
+/**
+ * Hanging globes: opal shades lit from inside, coloured by the shared light show.
+ * `aData.x` is each globe's phase. HDR output so the bloom wraps them in light.
+ */
 export function createSphereMaterial(): TimedMaterial {
   return new THREE.ShaderMaterial({
     uniforms: {
       uTime: { value: 0 },
-      uWhite: { value: new THREE.Color("#fff1e2") },
-      uPink: { value: new THREE.Color("#ff74bd") },
-      uBlue: { value: new THREE.Color("#6fb4ff") },
-      uIntensity: { value: 1.7 },
+      uIntensity: { value: 2.1 },
     },
     vertexShader: /* glsl */ `
       attribute vec2 aData;
-      varying vec2 vData;
+      varying float vPhase;
       varying vec3 vNormalV;
       varying vec3 vView;
+      varying vec3 vWorld;
       void main() {
-        vData = vec2(aData.x, 1.0 - aData.y);      // (phase, slot / 2)
-        vec4 mv = modelViewMatrix * vec4(position, 1.0);
+        vPhase = aData.x;
+        vec4 world = modelMatrix * vec4(position, 1.0);
+        vWorld = world.xyz;
+        vec4 mv = viewMatrix * world;
         vNormalV = normalize(normalMatrix * normal);
         vView = -mv.xyz;
         gl_Position = projectionMatrix * mv;
       }
     `,
     fragmentShader: /* glsl */ `
-      uniform float uTime;
-      uniform vec3 uWhite;
-      uniform vec3 uPink;
-      uniform vec3 uBlue;
+      ${SHOW_GLSL}
       uniform float uIntensity;
-      varying vec2 vData;
+      varying float vPhase;
       varying vec3 vNormalV;
       varying vec3 vView;
+      varying vec3 vWorld;
       void main() {
-        float slot = floor(vData.y * 2.0 + 0.5);
-        vec3 col = slot < 0.5 ? uWhite : (slot < 1.5 ? uPink : uBlue);
+        vec3 col = showColor(vPhase, vWorld);
         float facing = clamp(dot(normalize(vNormalV), normalize(vView)), 0.0, 1.0);
-        float breathe = 0.78 + 0.22 * sin(uTime * 1.1 + vData.x * 6.2831);
-        gl_FragColor = vec4(col * (0.45 + 0.9 * facing) * breathe * uIntensity, 1.0);
+        // hot core seen through the shade, softer limb
+        float core = 0.42 + 0.9 * pow(facing, 1.6);
+        col = mix(col, vec3(dot(col, vec3(0.333))) + 0.3, 0.12 * pow(facing, 6.0));
+        gl_FragColor = vec4(col * core * uIntensity, 1.0);
         ${OUTPUT}
       }
     `,
   }) as TimedMaterial
+}
+
+export type GlowMaterial = ShaderWith<{ uTime: number; uIntensity: number; uScale: number }>
+
+/**
+ * Soft halo around each globe: camera-facing quads (instanced), additive, depth-tested so the
+ * globe itself hides the centre and only the glow around its silhouette remains.
+ */
+export function createSphereGlowMaterial(): GlowMaterial {
+  return new THREE.ShaderMaterial({
+    uniforms: {
+      uTime: { value: 0 },
+      uIntensity: { value: 0.85 },
+      uScale: { value: 3.4 },
+    },
+    vertexShader: /* glsl */ `
+      attribute vec3 aCenter;
+      attribute float aRadius;
+      attribute float aPhase;
+      uniform float uScale;
+      varying vec2 vUv;
+      varying float vPhase;
+      varying vec3 vWorld;
+      void main() {
+        vUv = uv;
+        vPhase = aPhase;
+        vWorld = aCenter;
+        vec4 mv = viewMatrix * vec4(aCenter, 1.0);
+        mv.xy += position.xy * aRadius * uScale * 2.0;
+        gl_Position = projectionMatrix * mv;
+      }
+    `,
+    fragmentShader: /* glsl */ `
+      ${SHOW_GLSL}
+      uniform float uIntensity;
+      varying vec2 vUv;
+      varying float vPhase;
+      varying vec3 vWorld;
+      void main() {
+        float d = length(vUv - 0.5) * 2.0;
+        float glow = exp(-d * d * 5.5) * (1.0 - smoothstep(0.82, 1.0, d));
+        vec3 col = showColor(vPhase, vWorld);
+        gl_FragColor = vec4(col * glow * uIntensity, 1.0);
+        ${OUTPUT}
+      }
+    `,
+    transparent: true,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+  }) as GlowMaterial
 }
 
 /** LED wall behind the DJ: equaliser bars over a warm gradient. */

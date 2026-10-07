@@ -5,6 +5,7 @@ import { useFrame, useLoader } from "@react-three/fiber"
 import { useEffect, useMemo, useRef } from "react"
 import * as THREE from "three"
 
+import { extractGlobes, GlobeGlow, type Globe } from "@/components/scene/fx/globes"
 import {
   createLedRainMaterial,
   createScreenMaterial,
@@ -37,6 +38,8 @@ interface PreparedVenue {
   timed: TimedMaterial[]
   /** Mezzanine materials, faded out when only the ground floor is shown. */
   upper: THREE.Material[]
+  /** Hanging globes, for their halos. */
+  globes: Globe[]
 }
 
 const FX_NAMES = new Set(["fx_ledrain", "fx_spheres", "fx_screen"])
@@ -70,6 +73,7 @@ function prepareVenue(
 ): PreparedVenue {
   const timed: TimedMaterial[] = []
   const upper: THREE.Material[] = []
+  const sphereMeshes: THREE.Mesh[] = []
 
   scene.updateMatrixWorld(true)
   scene.traverse((obj) => {
@@ -85,6 +89,7 @@ function prepareVenue(
       const data = mesh.geometry.getAttribute("uv1")
       if (data) mesh.geometry.setAttribute("aData", data)
       const m = owner === "fx_ledrain" ? createLedRainMaterial() : createSphereMaterial()
+      if (owner === "fx_spheres") sphereMeshes.push(mesh)
       timed.push(m)
       mat = m
     } else if (owner === "fx_screen") {
@@ -121,7 +126,7 @@ function prepareVenue(
     mesh.material = mat
     if (owner.startsWith("lvl1_")) upper.push(mat)
   })
-  return { root: scene, timed, upper }
+  return { root: scene, timed, upper, globes: extractGlobes(sphereMeshes) }
 }
 
 function applyUpperOpacity(materials: THREE.Material[], k: number) {
@@ -186,5 +191,10 @@ export function VenueModel({ club }: { club: string }) {
     }
   })
 
-  return <primitive object={prepared.root} dispose={null} />
+  return (
+    <>
+      <primitive object={prepared.root} dispose={null} />
+      <GlobeGlow globes={prepared.globes} />
+    </>
+  )
 }

@@ -12,10 +12,10 @@ export function Effects({ quality }: { quality: Quality }) {
     <Bloom
       key="bloom"
       mipmapBlur
-      intensity={high ? 0.95 : 0.8}
-      luminanceThreshold={0.9}
-      luminanceSmoothing={0.3}
-      radius={0.74}
+      intensity={high ? 1.15 : 0.95}
+      luminanceThreshold={0.82}
+      luminanceSmoothing={0.28}
+      radius={0.78}
       resolutionScale={high ? 1 : 0.5}
     />,
     <ToneMapping key="tone" mode={ToneMappingMode.AGX} />,
