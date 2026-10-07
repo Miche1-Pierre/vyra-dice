@@ -101,6 +101,10 @@ export function createSphereMaterial(): TimedMaterial {
       varying vec3 vView;
       varying vec3 vWorld;
       void main() {
+        // dissolve globes that brush past the camera (screen-door, no sorting needed)
+        float near = smoothstep(1.4, 3.4, length(vView));
+        float noise = fract(52.9829189 * fract(dot(gl_FragCoord.xy, vec2(0.06711056, 0.00583715))));
+        if (near < noise) discard;
         vec3 col = showColor(vPhase, vWorld);
         float facing = clamp(dot(normalize(vNormalV), normalize(vView)), 0.0, 1.0);
         // hot core seen through the shade, softer limb
@@ -134,11 +138,13 @@ export function createSphereGlowMaterial(): GlowMaterial {
       varying vec2 vUv;
       varying float vPhase;
       varying vec3 vWorld;
+      varying float vNear;
       void main() {
         vUv = uv;
         vPhase = aPhase;
         vWorld = aCenter;
         vec4 mv = viewMatrix * vec4(aCenter, 1.0);
+        vNear = smoothstep(1.6, 4.0, -mv.z);
         mv.xy += position.xy * aRadius * uScale * 2.0;
         gl_Position = projectionMatrix * mv;
       }
@@ -149,11 +155,12 @@ export function createSphereGlowMaterial(): GlowMaterial {
       varying vec2 vUv;
       varying float vPhase;
       varying vec3 vWorld;
+      varying float vNear;
       void main() {
         float d = length(vUv - 0.5) * 2.0;
         float glow = exp(-d * d * 5.5) * (1.0 - smoothstep(0.82, 1.0, d));
         vec3 col = showColor(vPhase, vWorld);
-        gl_FragColor = vec4(col * glow * uIntensity, 1.0);
+        gl_FragColor = vec4(col * glow * uIntensity * vNear, 1.0);
         ${OUTPUT}
       }
     `,
