@@ -1,0 +1,82 @@
+{
+  "version": 1,
+  "club": "naho",
+  "encoding": "srgb",
+  "lightmaps": {
+    "ground_floor": {
+      "file": "lm/ground_floor.webp",
+      "scale": 3.80261,
+      "size": 2048
+    },
+    "wall_west": {
+      "file": "lm/wall_west.webp",
+      "scale": 3.98085,
+      "size": 2048
+    },
+    "wall_east": {
+      "file": "lm/wall_east.webp",
+      "scale": 19.94368,
+      "size": 2048
+    },
+    "walls_upper": {
+      "file": "lm/walls_upper.webp",
+      "scale": 4.85703,
+      "size": 1024
+    },
+    "walls_ground": {
+      "file": "lm/walls_ground.webp",
+      "scale": 13.85727,
+      "size": 1024
+    },
+    "ceiling": {
+      "file": "lm/ceiling.webp",
+      "scale": 10.29361,
+      "size": 1024
+    },
+    "columns": {
+      "file": "lm/columns.webp",
+      "scale": 3.92239,
+      "size": 512
+    },
+    "stairs": {
+      "file": "lm/stairs.webp",
+      "scale": 18.84475,
+      "size": 1024
+    },
+    "bar": {
+      "file": "lm/bar.webp",
+      "scale": 17.3553,
+      "size": 1024
+    },
+    "stage": {
+      "file": "lm/stage.webp",
+      "scale": 12.4156,
+      "size": 1024
+    },
+    "slats": {
+      "file": "lm/slats.webp",
+      "scale": 1.88066,
+      "size": 1024
+    },
+    "lvl1_slabs": {
+      "file": "lm/lvl1_slabs.webp",
+      "scale": 5.42451,
+      "size": 2048
+    },
+    "lvl1_wc": {
+      "file": "lm/lvl1_wc.webp",
+      "scale": 8.14618,
+      "size": 512
+    },
+    "furniture": {
+      "file": "lm/furniture.webp",
+      "scale": 4.30927,
+      "size": 2048
+    },
+    "lvl1_furniture": {
+      "file": "lm/lvl1_furniture.webp",
+      "scale": 5.14751,
+      "size": 2048
+    }
+  }
+}
