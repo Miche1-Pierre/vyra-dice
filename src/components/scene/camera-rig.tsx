@@ -5,7 +5,7 @@ import { useFrame, useThree } from "@react-three/fiber"
 import { useEffect, useMemo, useRef } from "react"
 import * as THREE from "three"
 
-import { useExperience, type View } from "@/lib/store"
+import { useExperience } from "@/lib/store"
 import { overviewPose, seatPose, tablePose, zonePose, type CameraPose } from "@/lib/venue/camera"
 import { toThree, type VenueLayout } from "@/lib/venue/layout"
 
@@ -173,9 +173,9 @@ export function CameraRig({
     }
   }, [sceneReady, view])
 
-  // any user gesture during the intro skips it
+  // any user gesture during the intro skips it (listeners armed only once it plays)
   useEffect(() => {
-    if (view !== "intro") return
+    if (view !== "intro" || !sceneReady) return
     const skip = () => {
       if (!intro.current.playing) return
       onIntroSkipped?.(Math.round(performance.now() - intro.current.start))
@@ -190,10 +190,9 @@ export function CameraRig({
       window.removeEventListener("wheel", skip)
       window.removeEventListener("keydown", skip)
     }
-  }, [view, finishIntro, onIntroSkipped])
+  }, [view, sceneReady, finishIntro, onIntroSkipped])
 
   // react to state changes
-  const lastView = useRef<View>("intro")
   useEffect(() => {
     const c = controls.current
     if (!c || view === "intro") return
@@ -209,7 +208,6 @@ export function CameraRig({
         apply(zonePose(layout, focusedZoneId, aspect), true)
       else apply(overviewPose(layout, aspect), true)
     }
-    lastView.current = view
     // aspect handled separately below
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [view, focusedZoneId, selectedTableId, resetNonce, layout])
