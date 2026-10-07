@@ -1,0 +1,31 @@
+"use client"
+
+import { Bloom, EffectComposer, SMAA, ToneMapping, Vignette } from "@react-three/postprocessing"
+import { ToneMappingMode } from "postprocessing"
+
+export type Quality = "low" | "high"
+
+/** HDR bloom on the LEDs, AgX tone mapping, soft vignette. Cheaper chain on phones. */
+export function Effects({ quality }: { quality: Quality }) {
+  const high = quality === "high"
+  const chain = [
+    <Bloom
+      key="bloom"
+      mipmapBlur
+      intensity={high ? 0.95 : 0.8}
+      luminanceThreshold={0.9}
+      luminanceSmoothing={0.3}
+      radius={0.74}
+      resolutionScale={high ? 1 : 0.5}
+    />,
+    <ToneMapping key="tone" mode={ToneMappingMode.AGX} />,
+    <Vignette key="vignette" offset={0.28} darkness={0.6} />,
+  ]
+  // MSAA on desktop, SMAA (cheaper) on phones
+  if (!high) chain.push(<SMAA key="smaa" />)
+  return (
+    <EffectComposer multisampling={high ? 4 : 0} enableNormalPass={false}>
+      {chain}
+    </EffectComposer>
+  )
+}
