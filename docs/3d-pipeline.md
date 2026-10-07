@@ -60,6 +60,7 @@ Un test vérifie que les deux correspondent table par table.
 | `fx_ledrain`                                      | shader « pluie » : UV0.v = position le long du tube, UV1 = (phase, vitesse)              |
 | `fx_spheres`                                      | light show partagé (`fx/show.ts`) + halo par globe, UV1.x = phase du globe               |
 | `fx_screen`                                       | shader égaliseur (UV0 0→1 sur l'écran)                                                   |
+| `fx_sign_wall_<n                                  | s                                                                                        | e   | w>` | enseigne murale, affichée seulement du côté qu'elle regarde (sinon vue inversée à travers la coupe) |
 | matériau émissif (`Emission Strength` > 0)        | couleur HDR → bloom (néons, LED, bouteilles)                                             |
 | matériau transparent (verre)                      | verre physique (reflets d'environnement), double face                                    |
 | `rig`, `lvl1_railing` (métal noir, sans lightmap) | métal brossé : reflets d'environnement seulement                                         |
