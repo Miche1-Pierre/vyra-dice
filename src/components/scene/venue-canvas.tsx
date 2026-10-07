@@ -4,6 +4,7 @@ import { PerformanceMonitor } from "@react-three/drei"
 import { Canvas } from "@react-three/fiber"
 import { Component, Suspense, useState, type ReactNode } from "react"
 
+import { ClubEnvironment } from "@/components/scene/club-environment"
 import { Effects, type Quality } from "@/components/scene/effects"
 import { Backdrop } from "@/components/scene/fx/backdrop"
 import { Beams } from "@/components/scene/fx/beams"
@@ -75,7 +76,8 @@ export default function VenueCanvas({
           onIncline={() => setDpr((d) => Math.min(quality === "high" ? 2 : 1.5, d + 0.25))}
         />
         <Suspense fallback={null}>
-          <VenueModel club={club} />
+          <ClubEnvironment intensity={quality === "high" ? 1 : 0.85} />
+          <VenueModel club={club} quality={quality} />
           <Backdrop center={venueCenter(layout)} />
           <Beams layout={layout} intensity={quality === "high" ? 1 : 0.8} />
           <ZoneOverlays layout={layout} />
