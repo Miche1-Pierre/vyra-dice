@@ -32,6 +32,8 @@ export interface ZoneView {
   fromPerPerson: number | null
   available: number
   total: number
+  /** Short availability wording shared by the sidebar, the tags and the dock. */
+  availability: { label: string; tone: TableStatus }
   tables: TableView[]
 }
 
@@ -45,6 +47,18 @@ export interface ViewModel {
 const minOf = (values: (number | null)[]) => {
   const xs = values.filter((v): v is number => v !== null)
   return xs.length ? Math.min(...xs) : null
+}
+
+/** "3/4 dispo", "Sur demande" (nothing bookable directly, but not sold out) or "Complet". */
+export function availabilityOf(tables: Pick<TableView, "status">[]): {
+  label: string
+  tone: TableStatus
+} {
+  const available = tables.filter((t) => t.status === "available").length
+  if (available > 0) return { label: `${available}/${tables.length} dispo`, tone: "available" }
+  if (tables.some((t) => t.status === "on_request"))
+    return { label: "Sur demande", tone: "on_request" }
+  return { label: "Complet", tone: "sold" }
 }
 
 /** Joins the commercial content (prices, statuses) with the venue geometry (zones, levels). */
@@ -91,6 +105,7 @@ export function buildViewModel(content: VenueContent, layout: VenueLayout): View
         fromPerPerson: minOf(open.map((t) => t.perPerson)),
         available: zoneTables.filter((t) => t.status === "available").length,
         total: zoneTables.length,
+        availability: availabilityOf(zoneTables),
         tables: zoneTables,
       }
     })
@@ -107,6 +122,7 @@ export function buildViewModel(content: VenueContent, layout: VenueLayout): View
       fromLabel: z.fromMinimum !== null ? formatEuro(z.fromMinimum) : null,
       available: z.available,
       total: z.total,
+      availability: z.availability,
     })),
     tableMarkers: Object.values(tables).map((t) => ({
       id: t.id,
