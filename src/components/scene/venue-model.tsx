@@ -46,6 +46,24 @@ interface PreparedVenue {
   upper: THREE.Material[]
   /** Hanging globes, for their halos. */
   globes: Globe[]
+  /** Wall-mounted signs, hidden when the cutaway shows the back of their wall. */
+  wallSigns: WallSign[]
+}
+
+interface WallSign {
+  object: THREE.Object3D
+  anchor: THREE.Vector3
+  /** Direction the sign faces (three.js space). */
+  normal: THREE.Vector3
+}
+
+/** `fx_sign_wall_<n|s|e|w>`: the suffix is the direction the sign faces (Blender compass). */
+const WALL_SIGN = /^fx_sign_wall_([nsew])$/
+const FACING: Record<string, [number, number, number]> = {
+  n: [0, 0, -1],
+  s: [0, 0, 1],
+  e: [1, 0, 0],
+  w: [-1, 0, 0],
 }
 
 const FX_NAMES = new Set(["fx_ledrain", "fx_spheres", "fx_screen"])
@@ -83,6 +101,7 @@ function prepareVenue(
   const timed: TimedMaterial[] = []
   const upper: THREE.Material[] = []
   const sphereMeshes: THREE.Mesh[] = []
+  const wallSigns: WallSign[] = []
   const detail = quality === "high"
 
   scene.updateMatrixWorld(true)
@@ -146,8 +165,13 @@ function prepareVenue(
     mat.userData.baseDepthWrite = mat.depthWrite
     mesh.material = mat
     if (owner.startsWith("lvl1_")) upper.push(mat)
+    const facing = WALL_SIGN.exec(owner)?.[1]
+    if (facing) {
+      const anchor = new THREE.Box3().setFromObject(mesh).getCenter(new THREE.Vector3())
+      wallSigns.push({ object: mesh, anchor, normal: new THREE.Vector3(...FACING[facing]) })
+    }
   })
-  return { root: scene, timed, upper, globes: extractGlobes(sphereMeshes) }
+  return { root: scene, timed, upper, globes: extractGlobes(sphereMeshes), wallSigns }
 }
 
 function applyUpperOpacity(materials: THREE.Material[], k: number) {
@@ -206,8 +230,13 @@ export function VenueModel({ club, quality }: { club: string; quality: Quality }
   }, [prepared, setSceneReady])
 
   const upperOpacity = useRef(1)
+  const toCamera = useMemo(() => new THREE.Vector3(), [])
   useFrame((state, delta) => {
     const t = state.clock.elapsedTime
+    for (const sign of prepared.wallSigns) {
+      sign.object.visible =
+        toCamera.subVectors(state.camera.position, sign.anchor).dot(sign.normal) > 0
+    }
     for (const m of prepared.timed) m.uniforms.uTime.value = t
     const wanted = useExperience.getState().levelFilter === 0 ? 0.07 : 1
     const cur = upperOpacity.current
