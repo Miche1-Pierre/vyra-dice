@@ -1,63 +1,92 @@
-# Pipeline 3D — Blender → web
+# Pipeline 3D — du plan au navigateur
 
 Objectif : une visite qui « fait pro » sur un téléphone moyen. Le levier n'est pas le nombre de polygones,
-c'est la **lumière bakée**, des **matériaux crédibles** et une **caméra bien mise en scène**.
+c'est la **lumière précalculée** (lightmaps Cycles), des **matériaux crédibles** et une **caméra mise en scène**.
 
-## Outils
+Tout est **généré par script** : on ne retouche pas un `.blend` à la main, on modifie le layout ou le script puis on
+régénère. C'est ce qui rend la production d'un nouveau club reproductible (VYR-35).
 
-- Blender 5.1 (piloté aussi via le MCP `blender` — addon `blender_mcp` → onglet N « BlenderMCP » → _Connect to Claude_, port 9876).
-- Sources d'assets (licences compatibles usage commercial) : Poly Haven (CC0 : HDRI, textures, modèles), ambientCG (CC0), Sketchfab (vérifier licence par modèle). Photos/relevés du club pour la fidélité.
-- `pnpm assets:optimize` (gltf-transform : meshopt + WebP ≤ 2048 px).
+## Vue d'ensemble
 
-## Un fichier par lieu : `art/blender/<club-slug>.blend`
+```
+art/layouts/<club>.json          plan en mètres (source de vérité, partagée avec le web)
+        │  art/scripts/build_<club>.py  (+ vyra3d.py)          ~3 s
+        ▼
+art/blender/<club>.blend         scène générée (non versionnée)
+        │  art/scripts/bake_export.py  (Cycles GPU, headless)   ~1 min (rapide) / ~10 min (final)
+        ▼
+art/export/<club>.glb            géométrie + matériaux (UV0 albedo, UV1 lightmap / données FX)
+art/export/<club>/lm/*.png       lightmaps encodées sRGB + échelle par objet
+        │  pnpm assets:optimize <club>  (gltf-transform)
+        ▼
+public/models/<club>/            <club>.glb (meshopt, WebP) · lm/*.webp · lightmaps.json   ← versionné, servi tel quel
+```
 
-Collections :
+## Commandes
 
-| Collection    | Contenu                                                         | Exporté |
-| ------------- | --------------------------------------------------------------- | ------- |
-| `ARCHI`       | Murs, sol, plafond, arches, bar, scène — fusionnés par matériau | oui     |
-| `FURNITURE`   | Mobilier non interactif (enceintes, barrières, déco)            | oui     |
-| `TABLES`      | Une mesh/empty par table réservable                             | oui     |
-| `CAMERAS`     | Points de vue (empties)                                         | oui     |
-| `LIGHTS_BAKE` | Lumières utilisées pour le bake uniquement                      | non     |
-| `REF`         | Plans, photos de référence                                      | non     |
+```bash
+# 1. construire la scène (Blender ouvert avec le MCP, ou en headless)
+"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe" -b -P art/scripts/build_naho.py
 
-## Conventions de nommage (contrat avec le code)
+# 2. précalculer l'éclairage et exporter (GPU OptiX si dispo)
+"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe" -b art/blender/naho.blend -P art/scripts/bake_export.py -- --club naho
+#    passe rapide pour itérer : --samples 128 --res-scale 0.5
+#    ne refaire qu'un objet :   --only bar,stage
 
-Le code retrouve les objets **par nom** — ne pas renommer sans mettre à jour `src/content/clubs/<slug>.ts`.
+# 3. optimiser pour le web
+pnpm assets:optimize naho
+```
 
-| Nom Blender         | Rôle côté web                                                          |
-| ------------------- | ---------------------------------------------------------------------- |
-| `table_<id>`        | Table cliquable ; `<id>` = `Table.id` de la config club (`table_b1`)   |
-| `table_<id>_anchor` | Empty : position du marqueur prix (au-dessus de la table)              |
-| `cam_<id>`          | Empty : caméra « vue depuis la table » (axe -Z = direction de vue)     |
-| `cam_intro_<n>`     | Keyframes de l'ouverture cinématique                                   |
-| `cam_overview`      | Vue d'ensemble par défaut                                              |
-| `zone_<id>`         | Volume/sol d'une zone (surbrillance), seulement si le club a des zones |
-| `emissive_*`        | Matériaux néon/LED → bloom côté web                                    |
+Depuis Claude Code, le MCP `blender` permet de lancer l'étape 1 dans le Blender ouvert et de regarder le résultat
+(`look`) avant de précalculer.
 
-## Éclairage & bake
+## Le layout (`art/layouts/<club>.json`)
 
-1. Modéliser à l'échelle réelle (1 unité = 1 m), origine au centre de la salle, sol à Z=0.
-2. Éclairer en Cycles (ambiance club : bases sombres, accents saturés de la DA du club).
-3. Bake **Combined/Diffuse** dans une lightmap (UV2) ou atlas par groupe de meshes statiques ; 2048–4096 px puis réduit à l'export.
-4. Matériaux exportés : Principled BSDF simple (base color, roughness/metal, normal) — pas de nœuds procéduraux (non exportables).
-5. Les tables restent avec un matériau propre (pas bakées dans l'atlas) pour pouvoir les surligner.
+Axes Blender : x = est, y = nord, z = haut, en mètres (three.js : `(x, z, -y)`, voir `toThree`). Contient le bâtiment,
+les vides double hauteur, les dalles de mezzanine, garde-corps, poteaux, escaliers, bar, scène, écran, WC, entrée,
+pluie de LED, lyres, décor, **zones** (tier `lounge` / `vip` / `prestige`, niveau 0/1), **tables** (id, zone, type,
+position, orientation `facing`), gabarits de mobilier et caméras (vue d'ensemble, intro).
 
-## Export glTF
+Le web lit ce même fichier (`src/lib/venue/layout.ts`, validé par zod) pour placer marqueurs, zones cliquables,
+halos et points de vue. Le contenu commercial (prix, capacités, statuts) vit à part : `src/content/clubs/<club>.ts`.
+Un test vérifie que les deux correspondent table par table.
 
-- Format **glTF Binary (.glb)**, `+Y Up`, appliquer les modifiers, inclure custom properties (extras) et empties.
-- Exclure `LIGHTS_BAKE` et `REF`. Compression : laisser à gltf-transform.
-- Fichier : `art/export/<club-slug>.glb` → `pnpm assets:optimize` → `public/models/<club-slug>.glb`.
+## Contrat de nommage GLB ↔ web
 
-## Budget (mobile)
+| Objet (nom Blender = nœud glTF)                   | Traitement côté web (`venue-model.tsx`)                                     |
+| ------------------------------------------------- | --------------------------------------------------------------------------- |
+| propriété `vyra_lm` (taille px)                   | reçoit sa lightmap (`lightmaps.json`), matériau unlit + lightMap            |
+| préfixe `lvl1_`                                   | appartient à la mezzanine : fondu quand on n'affiche que le RDC             |
+| `fx_ledrain`                                      | shader « pluie » : UV0.v = position le long du tube, UV1 = (phase, vitesse) |
+| `fx_spheres`                                      | shader de respiration, UV1 = (phase, couleur)                               |
+| `fx_screen`                                       | shader égaliseur (UV0 0→1 sur l'écran)                                      |
+| matériau émissif (`Emission Strength` > 0)        | couleur HDR → bloom                                                         |
+| matériau transparent (verre)                      | verre additif léger, double face                                            |
+| `rig`, `lvl1_railing` (métal noir, sans lightmap) | couleur sombre unie                                                         |
 
-| Mesure              | Cible                    |
-| ------------------- | ------------------------ |
-| Poids GLB final     | ≤ 4 Mo                   |
-| Triangles           | ≤ 300 k                  |
-| Draw calls          | ≤ 100                    |
-| Textures            | ≤ 2048 px, WebP          |
-| Lumières dynamiques | 0–2 (le reste est bakée) |
+Les murs et le plafond sont **mono-face, tournés vers l'intérieur** : vus de l'extérieur ils disparaissent, ce qui
+donne la coupe (cutaway) de la vue d'ensemble sans aucune logique.
 
-Checklist avant merge d'un asset : nommage OK, échelle OK, poids OK, test sur un vrai téléphone, capture jointe à la PR.
+## Éclairage précalculé
+
+- Sources du bake : tubes LED, sphères, écran, néons, rubans LED (matériaux émissifs) + spots non exportés
+  (`NAHO_LIGHTS_BAKE`) : douches sur chaque table, plafonniers sous mezzanine, wall-washers du mur végétal,
+  wash de scène, ambiances violette (salle) et magenta (mezzanine).
+- Bake `DIFFUSE` direct + indirect (sans la couleur) par objet, UV dédiées (`smart_project`), marge 8 px, débruitage
+  léger. Stockage 8 bits : `(valeur / échelle) ^ (1/2.2)` ; l'échelle (percentile 99,6) est dans le manifest.
+- Web : `lightMapIntensity = échelle × π × exposition`, tone mapping AgX en post-process, bloom sur les émissifs.
+
+## Budget mobile (mesuré sur Naho)
+
+| Mesure              | Cible        | Naho (POC)            |
+| ------------------- | ------------ | --------------------- |
+| Triangles           | ≤ 300 k      | ~83 k                 |
+| GLB optimisé        | ≤ 4 Mo total | ~1,9 Mo               |
+| Lightmaps (WebP)    | (inclus)     | voir `lightmaps.json` |
+| Objets / draw calls | ≤ 100        | ~45 + FX              |
+
+## Textures
+
+Générées en numpy (tileables, déterministes) : carrelage, béton ciré noir, chêne fumé, mur végétal avec quelques
+fleurs orange. Aucune image tierce n'entre dans le produit. Les photos de référence restent locales
+(`art/ref/<club>/photos/`, ignoré par git) : elles servent à modéliser, pas à être republiées.
