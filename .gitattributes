@@ -1,0 +1,20 @@
+# Normalize text to LF in the repo
+* text=auto eol=lf
+
+# Binary 3D / art sources tracked with Git LFS (art/ only — shipped assets in public/ stay small)
+art/**/*.blend filter=lfs diff=lfs merge=lfs -text
+art/**/*.blend1 filter=lfs diff=lfs merge=lfs -text
+art/**/*.fbx filter=lfs diff=lfs merge=lfs -text
+art/**/*.exr filter=lfs diff=lfs merge=lfs -text
+art/**/*.hdr filter=lfs diff=lfs merge=lfs -text
+art/**/*.psd filter=lfs diff=lfs merge=lfs -text
+art/**/*.png filter=lfs diff=lfs merge=lfs -text
+art/**/*.jpg filter=lfs diff=lfs merge=lfs -text
+art/**/*.glb filter=lfs diff=lfs merge=lfs -text
+
+# Shipped runtime assets: binary, not LFS (Vercel serves them directly)
+*.glb binary
+*.ktx2 binary
+*.webp binary
+*.png binary
+*.jpg binary
