@@ -31,41 +31,50 @@ Règles non négociables (issues du cadrage) :
 | Analytics               | PostHog (EU cloud)                                       | Funnels, replays, feature flags — rien à coder from scratch      |
 | Hébergement             | Vercel                                                   | Previews par PR, edge cache des GLB                              |
 
-## Arborescence cible
+## Arborescence
 
 ```
+art/
+  layouts/<club>.json                # plan en mètres : zones, tables, escaliers… (source de vérité géométrique)
+  scripts/                           # vyra3d.py (toolkit), build_<club>.py, bake_export.py — voir 3d-pipeline.md
+  ref/<club>/                        # croquis (versionné) + photos de référence (locales, non versionnées)
+public/models/<club>/                # bundle web : <club>.glb, lm/*.webp, lightmaps.json
 src/
   app/
     page.tsx                         # landing VYRA (pitch promoteurs)
-    [club]/[event]/page.tsx          # expérience publique (RSC : charge la config club)
-    [club]/[event]/request/actions.ts# Server Action : valider, persister, notifier
+    [club]/[event]/page.tsx          # expérience publique (RSC : charge le contenu du club)
+    [club]/[event]/actions.ts        # Server Action submitBookingRequest : valider, limiter, enregistrer
   components/
-    ui/                              # shadcn (ne pas éditer à la main sauf thème)
-    scene/                           # R3F : <Venue>, <TableMarker>, <CameraRig>, <Effects>
-    booking/                         # panneau table, comparateur, formulaire, accusé de réception
-  content/clubs/<slug>.ts            # config club typée (offres validées) — source MVP
+    ui/                              # shadcn (base-ui) — ne pas éditer à la main sauf thème
+    scene/                           # R3F : modèle + lightmaps, FX, caméra, zones, halos, marqueurs, effets
+    experience/                      # UI : sidebar, barre, fiche table, formulaire, accusé, comparatif, liste
+    analytics/                       # provider PostHog + bandeau de consentement
+  content/clubs/<club>.ts            # contenu commercial typé (prix, capacités, statuts) — démo pour Naho
   lib/
-    schema.ts                        # zod : Club, Event, Zone, Table, Offer, BookingRequest
-    analytics/                       # wrapper PostHog + taxonomie d'événements
-    store.ts                         # zustand : table sélectionnée, mode caméra, etc.
-public/models/<slug>.glb             # GLB optimisé
-art/                                 # sources Blender (LFS)
+    schema.ts                        # zod : club, événement, zones, tables, demande, résultat d'envoi
+    store.ts                         # zustand : vue (intro/ensemble/zone/table/assis), sélection, panneaux
+    venue/                           # layout.ts (géométrie typée), camera.ts (cadrages), offers.ts, tiers.ts
+    analytics/                       # client PostHog typé + taxonomie d'événements
+  server/requests/                   # puits de demandes (démo en mémoire), rate limit
 ```
 
-## Modèle de données (v0)
+## Modèle de données (POC)
 
 ```
-Club     { slug, name, city, contact: { whatsapp, phone, email }, brand: { colors, logo } }
-Event    { slug, clubSlug, name, date, doorsOpen, ticketUrl? (Shotgun), status }
-Zone     { id, name, description }                     # uniquement si le club a des zones
-Table    { id, zoneId?, label, capacity: {min,max}, priceType: "minimum"|"fixed"|"on_request",
-           price?, currency, perks[], conditions[], status: "available"|"limited"|"on_request"|"sold",
-           node: "table_<id>", viewpoint: "cam_<id>", media[] }
-BookingRequest { id (court, lisible ex. VYR-7K2Q), eventSlug, tableId, name, phone, email?,
-           partySize, arrivalTime?, message?, consent, createdAt,
-           status: "received"|"forwarded"|"confirmed"|"refused"|"cancelled"|"no_show",
-           finalAmount?, source (utm/ref) }
+Layout (art/layouts)  zones { id, tier: lounge|vip|prestige, level: 0|1, rect }
+                      tables { id, zone, kind, x, y, facing }        ← géométrie, partagée Blender / web
+Content (src/content) club { slug, name, address, requestPrefix, contact, demo, disclaimer }
+                      event { slug, name, date, doors, ticketUrl?, offersValidatedAt | null }
+                      zones { id, tier, name, shortName, description, perks[] }
+                      tables { id, label, zoneId, capacity {min,max}, minimumSpend | null,
+                               status: available|on_request|sold, perks[], view }
+BookingRequest        { clubSlug, eventSlug, tableId, fullName, phone, email?, partySize,
+                        arrivalTime, message?, consent, idempotencyKey, attribution? }
+                      → requestId lisible (ex. NHO-7K2QX), statut "received", transmission "not_sent_demo"
 ```
+
+`status` des tables = déclaratif (saisi par le club), jamais un stock temps réel. `offersValidatedAt: null`
+signifie « non validé par le club » : l'interface affiche alors la mention démo.
 
 `status` des tables = déclaratif (saisi par le club), jamais un stock temps réel (hors MVP).
 
