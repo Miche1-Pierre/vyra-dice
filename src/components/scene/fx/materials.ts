@@ -15,6 +15,27 @@ const OUTPUT = /* glsl */ `
   #include <colorspace_fragment>
 `
 
+/**
+ * Shared by every globe and halo: what the camera is looking at. Globes standing between the
+ * camera and that point dissolve (`uOcclude` = 1 in zone and table views).
+ */
+export const GLOBE_FOCUS = {
+  uFocus: { value: new THREE.Vector3() },
+  uOcclude: { value: 0 },
+}
+
+const OCCLUSION_GLSL = /* glsl */ `
+  uniform vec3 uFocus;
+  uniform float uOcclude;
+  // 1 when p sits on the line of sight between the camera and the focus point
+  float globeOcclusion(vec3 p) {
+    vec3 seg = uFocus - cameraPosition;
+    float t = clamp(dot(p - cameraPosition, seg) / max(dot(seg, seg), 1e-4), 0.0, 1.0);
+    float d = length(p - (cameraPosition + seg * t));
+    return uOcclude * (1.0 - step(0.9, t)) * (1.0 - smoothstep(0.7, 1.7, d));
+  }
+`
+
 type Uniforms<T> = { [K in keyof T]: { value: T[K] } }
 export type ShaderWith<T> = THREE.ShaderMaterial & { uniforms: Uniforms<T> }
 export type TimedMaterial = ShaderWith<{ uTime: number }>
@@ -76,6 +97,7 @@ export function createSphereMaterial(): TimedMaterial {
     uniforms: {
       uTime: { value: 0 },
       uIntensity: { value: 2.1 },
+      ...GLOBE_FOCUS,
     },
     vertexShader: /* glsl */ `
       attribute vec2 aData;
@@ -95,6 +117,7 @@ export function createSphereMaterial(): TimedMaterial {
     `,
     fragmentShader: /* glsl */ `
       ${SHOW_GLSL}
+      ${OCCLUSION_GLSL}
       uniform float uIntensity;
       varying float vPhase;
       varying vec3 vNormalV;
@@ -102,9 +125,9 @@ export function createSphereMaterial(): TimedMaterial {
       varying vec3 vWorld;
       void main() {
         // dissolve globes that brush past the camera (screen-door, no sorting needed)
-        float near = smoothstep(1.4, 3.4, length(vView));
+        float keep = smoothstep(1.8, 4.6, length(vView)) * (1.0 - globeOcclusion(vWorld));
         float noise = fract(52.9829189 * fract(dot(gl_FragCoord.xy, vec2(0.06711056, 0.00583715))));
-        if (near < noise) discard;
+        if (keep < noise) discard;
         vec3 col = showColor(vPhase, vWorld);
         float facing = clamp(dot(normalize(vNormalV), normalize(vView)), 0.0, 1.0);
         // hot core seen through the shade, softer limb
@@ -129,12 +152,14 @@ export function createSphereGlowMaterial(): GlowMaterial {
       uTime: { value: 0 },
       uIntensity: { value: 0.85 },
       uScale: { value: 3.4 },
+      ...GLOBE_FOCUS,
     },
     vertexShader: /* glsl */ `
       attribute vec3 aCenter;
       attribute float aRadius;
       attribute float aPhase;
       uniform float uScale;
+      ${OCCLUSION_GLSL}
       varying vec2 vUv;
       varying float vPhase;
       varying vec3 vWorld;
@@ -144,7 +169,7 @@ export function createSphereGlowMaterial(): GlowMaterial {
         vPhase = aPhase;
         vWorld = aCenter;
         vec4 mv = viewMatrix * vec4(aCenter, 1.0);
-        vNear = smoothstep(1.6, 4.0, -mv.z);
+        vNear = smoothstep(2.0, 5.2, -mv.z) * (1.0 - globeOcclusion(aCenter));
         mv.xy += position.xy * aRadius * uScale * 2.0;
         gl_Position = projectionMatrix * mv;
       }

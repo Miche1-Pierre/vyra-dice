@@ -12,6 +12,7 @@ import {
   createLedRainMaterial,
   createScreenMaterial,
   createSphereMaterial,
+  GLOBE_FOCUS,
   type TimedMaterial,
 } from "@/components/scene/fx/materials"
 import { useExperience } from "@/lib/store"
@@ -233,6 +234,11 @@ export function VenueModel({ club, quality }: { club: string; quality: Quality }
   const toCamera = useMemo(() => new THREE.Vector3(), [])
   useFrame((state, delta) => {
     const t = state.clock.elapsedTime
+    // globes between the camera and the zone / table being looked at dissolve
+    const { view } = useExperience.getState()
+    const controls = state.controls as { getTarget?: (out: THREE.Vector3) => THREE.Vector3 } | null
+    controls?.getTarget?.(GLOBE_FOCUS.uFocus.value)
+    GLOBE_FOCUS.uOcclude.value = view === "zone" || view === "table" ? 1 : 0
     for (const sign of prepared.wallSigns) {
       sign.object.visible =
         toCamera.subVectors(state.camera.position, sign.anchor).dot(sign.normal) > 0
