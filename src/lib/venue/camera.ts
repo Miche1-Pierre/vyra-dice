@@ -113,7 +113,7 @@ export function zonePose(layout: VenueLayout, zoneId: string, aspect: number): C
   const span = Math.max(w, d)
   const portrait = aspect < 0.8
   const lowCeiling = zone.level === 0 && isUnderSlab(layout, cx, cy)
-  const elevation = elevationFor(zone.level, lowCeiling, 58, 50)
+  const elevation = elevationFor(zone.level, lowCeiling, 46, 36)
 
   // On a tall screen, look along an elongated zone (row of booths in perspective) instead of
   // across it, picking the side that keeps the camera inside the venue.
@@ -150,17 +150,19 @@ export function tablePose(layout: VenueLayout, tableId: string, aspect: number):
   const portrait = aspect < 0.8
   const level = tableLevel(layout, table)
   const lowCeiling = level === 0 && isUnderSlab(layout, table.x, table.y)
-  const elevation = elevationFor(level, lowCeiling, 55, 40)
+  const elevation = elevationFor(level, lowCeiling, 40, 30)
+  // three-quarter view: the booth reads in volume and the room it faces stays in frame
+  const dir = rotateY(f, portrait ? 18 : 26)
   let position: Vec3
   if (elevation === null) {
     const dist = width * (portrait ? 1.9 : 1.35) + 2.4
-    position = add(add(target, scale(f, dist)), [0, 2.6 - base[1], 0])
+    position = add(add(target, scale(dir, dist)), [0, 2.6 - base[1], 0])
   } else {
-    const dist = width * (portrait ? 1.7 : 1.2) + 3.2
+    const dist = width * (portrait ? 1.9 : 1.45) + 4
     const e = (elevation * Math.PI) / 180
-    position = add(add(target, scale(f, dist * Math.cos(e))), [0, dist * Math.sin(e), 0])
+    position = add(add(target, scale(dir, dist * Math.cos(e))), [0, dist * Math.sin(e), 0])
   }
-  return { target, position, fov: portrait ? 58 : 44 }
+  return { target, position, fov: portrait ? 56 : 40 }
 }
 
 /** First-person view from the back seat of the booth, looking at the room. */
