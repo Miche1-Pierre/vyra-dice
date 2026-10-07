@@ -18,18 +18,18 @@ Règles non négociables (issues du cadrage) :
 
 ## Stack
 
-| Couche          | Choix                                                        | Pourquoi                                                    |
-| --------------- | ------------------------------------------------------------ | ----------------------------------------------------------- |
-| App             | Next.js 16 (App Router, RSC, Server Actions), TypeScript     | SSR rapide du shell, une seule app front+API, déploiement Vercel |
-| UI              | Tailwind v4 + shadcn/ui, `motion` pour les transitions       | Composants accessibles, design maîtrisé                     |
-| 3D              | three.js + React Three Fiber + drei + postprocessing         | Écosystème le plus mûr pour le web 3D en React              |
-| Assets          | Blender → glTF (GLB) → gltf-transform (meshopt + WebP)       | Lumière bakée = rendu « pro » à coût GPU quasi nul sur mobile |
-| État client     | zustand                                                      | Partage scène 3D ↔ UI sans re-render React à chaque frame   |
-| Formulaires     | react-hook-form + zod                                        | Même schéma validé côté client et serveur                   |
-| Données (à brancher G1) | Supabase (Postgres, région EU)                       | Demandes + statuts + RLS multi-clubs ; dashboard club plus tard |
-| Notifications (G1) | Email transactionnel (Resend) + lien WhatsApp pré-rempli  | Réception fiable côté club sans intégration profonde        |
-| Analytics       | PostHog (EU cloud)                                           | Funnels, replays, feature flags — rien à coder from scratch |
-| Hébergement     | Vercel                                                       | Previews par PR, edge cache des GLB                         |
+| Couche                  | Choix                                                    | Pourquoi                                                         |
+| ----------------------- | -------------------------------------------------------- | ---------------------------------------------------------------- |
+| App                     | Next.js 16 (App Router, RSC, Server Actions), TypeScript | SSR rapide du shell, une seule app front+API, déploiement Vercel |
+| UI                      | Tailwind v4 + shadcn/ui, `motion` pour les transitions   | Composants accessibles, design maîtrisé                          |
+| 3D                      | three.js + React Three Fiber + drei + postprocessing     | Écosystème le plus mûr pour le web 3D en React                   |
+| Assets                  | Blender → glTF (GLB) → gltf-transform (meshopt + WebP)   | Lumière bakée = rendu « pro » à coût GPU quasi nul sur mobile    |
+| État client             | zustand                                                  | Partage scène 3D ↔ UI sans re-render React à chaque frame        |
+| Formulaires             | react-hook-form + zod                                    | Même schéma validé côté client et serveur                        |
+| Données (à brancher G1) | Supabase (Postgres, région EU)                           | Demandes + statuts + RLS multi-clubs ; dashboard club plus tard  |
+| Notifications (G1)      | Email transactionnel (Resend) + lien WhatsApp pré-rempli | Réception fiable côté club sans intégration profonde             |
+| Analytics               | PostHog (EU cloud)                                       | Funnels, replays, feature flags — rien à coder from scratch      |
+| Hébergement             | Vercel                                                   | Previews par PR, edge cache des GLB                              |
 
 ## Arborescence cible
 

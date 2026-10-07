@@ -13,28 +13,28 @@ c'est la **lumière bakée**, des **matériaux crédibles** et une **caméra bie
 
 Collections :
 
-| Collection    | Contenu                                                        | Exporté |
-| ------------- | -------------------------------------------------------------- | ------- |
+| Collection    | Contenu                                                         | Exporté |
+| ------------- | --------------------------------------------------------------- | ------- |
 | `ARCHI`       | Murs, sol, plafond, arches, bar, scène — fusionnés par matériau | oui     |
-| `FURNITURE`   | Mobilier non interactif (enceintes, barrières, déco)           | oui     |
-| `TABLES`      | Une mesh/empty par table réservable                            | oui     |
-| `CAMERAS`     | Points de vue (empties)                                        | oui     |
-| `LIGHTS_BAKE` | Lumières utilisées pour le bake uniquement                     | non     |
-| `REF`         | Plans, photos de référence                                     | non     |
+| `FURNITURE`   | Mobilier non interactif (enceintes, barrières, déco)            | oui     |
+| `TABLES`      | Une mesh/empty par table réservable                             | oui     |
+| `CAMERAS`     | Points de vue (empties)                                         | oui     |
+| `LIGHTS_BAKE` | Lumières utilisées pour le bake uniquement                      | non     |
+| `REF`         | Plans, photos de référence                                      | non     |
 
 ## Conventions de nommage (contrat avec le code)
 
 Le code retrouve les objets **par nom** — ne pas renommer sans mettre à jour `src/content/clubs/<slug>.ts`.
 
-| Nom Blender           | Rôle côté web                                                    |
-| --------------------- | ---------------------------------------------------------------- |
-| `table_<id>`          | Table cliquable ; `<id>` = `Table.id` de la config club (`table_b1`) |
-| `table_<id>_anchor`   | Empty : position du marqueur prix (au-dessus de la table)        |
-| `cam_<id>`            | Empty : caméra « vue depuis la table » (axe -Z = direction de vue) |
-| `cam_intro_<n>`       | Keyframes de l'ouverture cinématique                             |
-| `cam_overview`        | Vue d'ensemble par défaut                                        |
-| `zone_<id>`           | Volume/sol d'une zone (surbrillance), seulement si le club a des zones |
-| `emissive_*`          | Matériaux néon/LED → bloom côté web                              |
+| Nom Blender         | Rôle côté web                                                          |
+| ------------------- | ---------------------------------------------------------------------- |
+| `table_<id>`        | Table cliquable ; `<id>` = `Table.id` de la config club (`table_b1`)   |
+| `table_<id>_anchor` | Empty : position du marqueur prix (au-dessus de la table)              |
+| `cam_<id>`          | Empty : caméra « vue depuis la table » (axe -Z = direction de vue)     |
+| `cam_intro_<n>`     | Keyframes de l'ouverture cinématique                                   |
+| `cam_overview`      | Vue d'ensemble par défaut                                              |
+| `zone_<id>`         | Volume/sol d'une zone (surbrillance), seulement si le club a des zones |
+| `emissive_*`        | Matériaux néon/LED → bloom côté web                                    |
 
 ## Éclairage & bake
 
@@ -52,12 +52,12 @@ Le code retrouve les objets **par nom** — ne pas renommer sans mettre à jour 
 
 ## Budget (mobile)
 
-| Mesure                     | Cible       |
-| -------------------------- | ----------- |
-| Poids GLB final            | ≤ 4 Mo      |
-| Triangles                  | ≤ 300 k     |
-| Draw calls                 | ≤ 100       |
-| Textures                   | ≤ 2048 px, WebP |
-| Lumières dynamiques        | 0–2 (le reste est bakée) |
+| Mesure              | Cible                    |
+| ------------------- | ------------------------ |
+| Poids GLB final     | ≤ 4 Mo                   |
+| Triangles           | ≤ 300 k                  |
+| Draw calls          | ≤ 100                    |
+| Textures            | ≤ 2048 px, WebP          |
+| Lumières dynamiques | 0–2 (le reste est bakée) |
 
 Checklist avant merge d'un asset : nommage OK, échelle OK, poids OK, test sur un vrai téléphone, capture jointe à la PR.

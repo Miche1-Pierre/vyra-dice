@@ -4,15 +4,15 @@ Repo : https://github.com/Miche1-Pierre/vyra-dice · Linear : https://linear.app
 
 ## Responsabilités
 
-| Domaine (label Linear)      | Responsable           | Où ça vit dans le repo                            |
-| --------------------------- | --------------------- | ------------------------------------------------- |
-| Dev                         | Pierre                | `src/`, `scripts/`, `art/`, `.github/`            |
-| Data / analytics            | Pierre                | `src/lib/analytics/`, `docs/analytics.md`         |
-| Vente                       | Jonathan              | `docs/sales/`                                     |
-| Audit                       | Jonathan              | `docs/audit/`                                     |
-| Produit / design            | Pierre + Jonathan     | `docs/`, `src/content/` (offres, textes, médias)  |
-| Implémentation / adoption   | Pierre + Jonathan     | `docs/clubs/<slug>.md` (onboarding par club)      |
-| Opérations / support        | Pierre + Jonathan     | `docs/ops/` (runbooks, contact de secours)        |
+| Domaine (label Linear)    | Responsable       | Où ça vit dans le repo                           |
+| ------------------------- | ----------------- | ------------------------------------------------ |
+| Dev                       | Pierre            | `src/`, `scripts/`, `art/`, `.github/`           |
+| Data / analytics          | Pierre            | `src/lib/analytics/`, `docs/analytics.md`        |
+| Vente                     | Jonathan          | `docs/sales/`                                    |
+| Audit                     | Jonathan          | `docs/audit/`                                    |
+| Produit / design          | Pierre + Jonathan | `docs/`, `src/content/` (offres, textes, médias) |
+| Implémentation / adoption | Pierre + Jonathan | `docs/clubs/<slug>.md` (onboarding par club)     |
+| Opérations / support      | Pierre + Jonathan | `docs/ops/` (runbooks, contact de secours)       |
 
 `CODEOWNERS` reflète ce tableau : une PR qui touche `docs/sales/` demande la review de Jonathan, `src/` celle de Pierre.
 
