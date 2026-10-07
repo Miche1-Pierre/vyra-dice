@@ -9,7 +9,7 @@ import { SunMark } from "@/components/experience/brand"
 import { CompareView, TableList } from "@/components/experience/browse"
 import { CommandMenu } from "@/components/experience/command-menu"
 import { Dock, type DockEntry } from "@/components/experience/dock"
-import { useIsDesktop, useQuality, useWebGLSupport } from "@/components/experience/hooks"
+import { useQuality, useViewport, useWebGLSupport } from "@/components/experience/hooks"
 import {
   BrandBar,
   LevelSwitch,
@@ -203,7 +203,9 @@ export function Experience({
 }) {
   const layout = getLayout(clubSlug)
   const vm = useMemo(() => (layout ? buildViewModel(content, layout) : null), [content, layout])
-  const isDesktop = useIsDesktop()
+  const { isDesktop, roomy, wide, shortLandscape } = useViewport()
+  // the card floats at the side on desktops and on phones held sideways
+  const sidePanel = isDesktop || shortLandscape
   const quality = useQuality()
   const webgl = useWebGLSupport()
   const fallback2d = useExperience((s) => s.fallback2d)
@@ -267,14 +269,16 @@ export function Experience({
         <div
           className={cn(
             "pointer-events-none absolute inset-x-0 top-0 z-30 flex items-start justify-between gap-3 transition-opacity duration-500",
-            isDesktop ? "p-4" : "px-3 pt-[max(0.75rem,env(safe-area-inset-top))]",
+            isDesktop
+              ? "p-4"
+              : "px-3 pt-[max(0.75rem,env(safe-area-inset-top))] pl-[max(0.75rem,env(safe-area-inset-left))]",
             intro && "opacity-0",
           )}
         >
           <div
             className={cn(
               "pointer-events-auto flex min-w-0",
-              isDesktop ? "items-center gap-2.5" : "flex-1 flex-col items-start gap-2",
+              sidePanel ? "items-center gap-2.5" : "flex-1 flex-col items-start gap-2",
             )}
           >
             <BrandBar
@@ -283,8 +287,10 @@ export function Experience({
               table={table}
               dateLabel={dateLabel}
               isDesktop={isDesktop}
+              compact={!roomy}
             />
-            {!intro && view !== "seat" && (isDesktop || !panelOpen) ? (
+            {/* next to an open card only when there is room for both */}
+            {!intro && view !== "seat" && (!panelOpen || roomy) ? (
               <LevelSwitch size={isDesktop ? "md" : "sm"} />
             ) : null}
           </div>
@@ -298,12 +304,18 @@ export function Experience({
           table={table}
           canRequest={!isDesktop && table !== null && table.status !== "sold"}
         />
-        <Dock entries={dockEntries} hidden={dockHidden} isDesktop={isDesktop} />
+        <Dock
+          entries={dockEntries}
+          hidden={dockHidden}
+          isDesktop={isDesktop}
+          dense={shortLandscape}
+        />
 
         <Panel
           open={panelOpen}
           onClose={closePanel}
-          isDesktop={isDesktop}
+          isDesktop={sidePanel}
+          compact={shortLandscape}
           label={
             panel === "table" && table
               ? `Table ${table.label}`
@@ -342,6 +354,7 @@ export function Experience({
           clubSlug={clubSlug}
           eventSlug={eventSlug}
           isDesktop={isDesktop}
+          centered={wide}
         />
         <CommandMenu content={content} zones={vm.zones} tables={vm.tables} isDesktop={isDesktop} />
       </div>

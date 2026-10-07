@@ -113,12 +113,15 @@ export function BrandBar({
   table,
   dateLabel,
   isDesktop,
+  compact = !isDesktop,
 }: {
   content: VenueContent
   zones: ZoneView[]
   table: TableView | null
   dateLabel: string
   isDesktop: boolean
+  /** Drop the secondary labels (level, date) when the bar shares the width. */
+  compact?: boolean
 }) {
   const view = useExperience((s) => s.view)
   const focusedZoneId = useExperience((s) => s.focusedZoneId)
@@ -175,7 +178,7 @@ export function BrandBar({
           zone={zone}
           table={table}
           dateLabel={dateLabel}
-          compact={!isDesktop}
+          compact={compact}
         />
         {content.club.demo && isDesktop ? (
           <span

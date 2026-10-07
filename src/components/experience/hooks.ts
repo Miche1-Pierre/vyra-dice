@@ -20,9 +20,25 @@ export function useMediaQuery(query: string, serverValue = false): boolean {
   )
 }
 
-/** ≥ 1024 px: sidebar + floating panels; below: full-screen canvas + bottom sheets. */
+/** ≥ 1024 px: dock with magnification + floating card; below: shelf + bottom sheets. */
 export function useIsDesktop(): boolean {
   return useMediaQuery("(min-width: 1024px)", true)
+}
+
+/**
+ * Layout breakpoints beyond desktop / phone: `roomy` desktops (≥ 1280 px) keep every control
+ * next to an open card, `wide` screens (≥ 640 px, tablets) get centred sheets and dialogs, and
+ * `shortLandscape` phones get a side card instead of a bottom sheet.
+ */
+export function useViewport() {
+  const isDesktop = useIsDesktop()
+  const roomy = useMediaQuery("(min-width: 1280px)", true)
+  const wide = useMediaQuery("(min-width: 640px)", true)
+  const shortLandscape = useMediaQuery(
+    "(max-height: 499px) and (orientation: landscape) and (max-width: 1023px)",
+    false,
+  )
+  return { isDesktop, roomy, wide, shortLandscape }
 }
 
 const noSubscription = () => () => {}

@@ -238,7 +238,8 @@ function ZoneTag({
         <ZoneTile tier={zone.tier} icon={zone.icon} className="size-7 rounded-full" />
         <span className="leading-tight">
           <span className="text-label block text-[13px] leading-4 font-semibold">{zone.name}</span>
-          <span className="num text-label-2 mt-px flex items-center gap-1.5 text-[11px] leading-[14px]">
+          {/* very short screens (phones held sideways): name only, the price is in the dock */}
+          <span className="num text-label-2 mt-px flex items-center gap-1.5 text-[11px] leading-[14px] [@media(max-height:499px)]:hidden">
             {zone.fromLabel ? <span>dès {zone.fromLabel}</span> : null}
             <span className="flex items-center gap-1 max-sm:hidden">
               <StatusIcon status={zone.availability.tone} className="size-[11px]" />

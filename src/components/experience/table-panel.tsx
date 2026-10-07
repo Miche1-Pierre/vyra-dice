@@ -663,7 +663,7 @@ function RequestSuccess({
   )
 }
 
-/** Modal flow (form → acknowledgement): centred glass sheet on desktop, full sheet on phones. */
+/** Modal flow (form → acknowledgement): centred glass dialog on wide screens, full sheet on phones. */
 export function RequestDialog(props: {
   table: TableView | null
   icon: ZoneIcon
@@ -671,10 +671,12 @@ export function RequestDialog(props: {
   clubSlug: string
   eventSlug: string
   isDesktop: boolean
+  /** Centred dialog (tablets, desktops) instead of a full-height sheet (phones). */
+  centered?: boolean
 }) {
   const dialog = useExperience((s) => s.dialog)
   const openDialog = useExperience((s) => s.openDialog)
-  const { table, isDesktop } = props
+  const { table, isDesktop, centered = isDesktop } = props
   return (
     <DialogPrimitive.Root
       open={dialog !== null && (dialog === "ack" || table !== null)}
@@ -687,8 +689,8 @@ export function RequestDialog(props: {
         <DialogPrimitive.Popup
           className={cn(
             "glass-thick glass-rim text-label fixed z-[61] flex flex-col overflow-hidden transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] outline-none data-[ending-style]:opacity-0 data-[starting-style]:opacity-0",
-            isDesktop
-              ? "top-1/2 left-1/2 max-h-[88vh] w-[540px] -translate-x-1/2 -translate-y-1/2 rounded-[32px] data-[ending-style]:scale-[0.96] data-[starting-style]:scale-[0.96]"
+            centered
+              ? "top-1/2 left-1/2 max-h-[min(88vh,calc(100dvh-1.5rem))] w-[min(540px,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2 rounded-[32px] data-[ending-style]:scale-[0.96] data-[starting-style]:scale-[0.96]"
               : "inset-x-0 bottom-0 max-h-[94dvh] rounded-t-[32px] data-[ending-style]:translate-y-full data-[starting-style]:translate-y-full",
           )}
         >

@@ -21,10 +21,14 @@ export function Panel({
   children,
   footer,
   className,
+  compact = false,
 }: {
   open: boolean
   onClose: () => void
+  /** Floating card at the right; otherwise a bottom sheet. */
   isDesktop: boolean
+  /** Narrower card with tight margins (phones held sideways). */
+  compact?: boolean
   /** Accessible name of the region. */
   label: string
   /** Optional header row; without it the content draws its own hero under the close button. */
@@ -84,7 +88,10 @@ export function Panel({
             exit={{ opacity: 0, x: 56, scale: 0.97 }}
             transition={{ type: "spring", stiffness: 320, damping: 34 }}
             className={cn(
-              "glass-thick glass-rim absolute top-4 right-4 bottom-[100px] z-40 flex w-[400px] origin-right flex-col overflow-hidden rounded-[30px]",
+              "glass-thick glass-rim absolute z-40 flex origin-right flex-col overflow-hidden",
+              compact
+                ? "top-2 right-[max(0.5rem,env(safe-area-inset-right))] bottom-2 w-[340px] rounded-[26px]"
+                : "top-4 right-4 bottom-[100px] w-[400px] rounded-[30px]",
               className,
             )}
           >
@@ -108,7 +115,7 @@ export function Panel({
               if (info.offset.y > 110 || info.velocity.y > 600) onClose()
             }}
             className={cn(
-              "glass-thick glass-rim absolute inset-x-2 bottom-2 z-40 flex max-h-[64dvh] flex-col overflow-hidden rounded-[30px]",
+              "glass-thick glass-rim absolute inset-x-2 bottom-2 z-40 flex max-h-[64dvh] flex-col overflow-hidden rounded-[30px] sm:inset-x-0 sm:mx-auto sm:w-[min(560px,calc(100%-1rem))]",
               className,
             )}
           >
