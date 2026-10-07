@@ -5,6 +5,8 @@ import { useFrame, useLoader } from "@react-three/fiber"
 import { useEffect, useMemo, useRef } from "react"
 import * as THREE from "three"
 
+import type { Quality } from "@/components/scene/effects"
+import { finishFor } from "@/components/scene/fx/finishes"
 import { extractGlobes, GlobeGlow, type Globe } from "@/components/scene/fx/globes"
 import {
   createLedRainMaterial,
@@ -43,6 +45,8 @@ interface PreparedVenue {
 }
 
 const FX_NAMES = new Set(["fx_ledrain", "fx_spheres", "fx_screen"])
+/** Metals keep their finish (environment reflections) even without a lightmap. */
+const METALS = new Set(["naho_black_metal", "naho_gold", "naho_slat"])
 
 /**
  * Blender node owning a mesh. glTF splits a multi-material node into a group named after the
@@ -70,10 +74,12 @@ function prepareVenue(
   scene: THREE.Object3D,
   manifest: LightmapManifest,
   lightmaps: Record<string, THREE.Texture>,
+  quality: Quality,
 ): PreparedVenue {
   const timed: TimedMaterial[] = []
   const upper: THREE.Material[] = []
   const sphereMeshes: THREE.Mesh[] = []
+  const detail = quality === "high"
 
   scene.updateMatrixWorld(true)
   scene.traverse((obj) => {
@@ -99,6 +105,8 @@ function prepareVenue(
     } else if (isEmissive(src)) {
       const color = src.emissive.clone().multiplyScalar(src.emissiveIntensity * EMISSION_SCALE)
       mat = new THREE.MeshBasicMaterial({ color, fog: false })
+    } else if (src.name === "naho_glass") {
+      mat = finishFor({ src, lightMap: null, lightMapIntensity: 1, detail })!
     } else if (src.transparent || src.opacity < 1) {
       mat = new THREE.MeshBasicMaterial({
         color: new THREE.Color("#b9c9dd"),
@@ -108,16 +116,25 @@ function prepareVenue(
         side: THREE.DoubleSide,
       })
     } else {
-      const lm = lightmaps[owner]
+      const lm = lightmaps[owner] ?? null
       const entry = manifest.lightmaps[owner]
-      mat = new THREE.MeshBasicMaterial({
-        color: src.color,
-        map: src.map ?? null,
-        lightMap: lm ?? null,
-        lightMapIntensity: entry ? entry.scale * Math.PI * LIGHTMAP_EXPOSURE : 1,
-        side: src.side,
-      })
-      if (!lm) (mat as THREE.MeshBasicMaterial).color.multiplyScalar(0.6)
+      const lightMapIntensity = entry ? entry.scale * Math.PI * LIGHTMAP_EXPOSURE : 1
+      const finished =
+        lm || METALS.has(src.name)
+          ? finishFor({ src, lightMap: lm, lightMapIntensity, detail })
+          : null
+      if (finished) {
+        mat = finished
+      } else {
+        mat = new THREE.MeshBasicMaterial({
+          color: src.color,
+          map: src.map ?? null,
+          lightMap: lm ?? null,
+          lightMapIntensity,
+          side: src.side,
+        })
+        if (!lm) (mat as THREE.MeshBasicMaterial).color.multiplyScalar(0.6)
+      }
     }
     mat.name = src.name
     mat.userData.baseOpacity = mat.opacity
@@ -141,7 +158,7 @@ function applyUpperOpacity(materials: THREE.Material[], k: number) {
   }
 }
 
-export function VenueModel({ club }: { club: string }) {
+export function VenueModel({ club, quality }: { club: string; quality: Quality }) {
   const base = `/models/${club}`
   const manifest = MANIFESTS[club]
   const names = useMemo(() => Object.keys(manifest.lightmaps), [manifest])
@@ -168,8 +185,8 @@ export function VenueModel({ club }: { club: string }) {
       tex.needsUpdate = true
       byName[n] = tex
     })
-    return prepareVenue(gltf.scene, manifest, byName)
-  }, [gltf.scene, manifest, names, textures])
+    return prepareVenue(gltf.scene, manifest, byName, quality)
+  }, [gltf.scene, manifest, names, textures, quality])
 
   const setSceneReady = useExperience((s) => s.setSceneReady)
   useEffect(() => {
@@ -194,7 +211,7 @@ export function VenueModel({ club }: { club: string }) {
   return (
     <>
       <primitive object={prepared.root} dispose={null} />
-      <GlobeGlow globes={prepared.globes} />
+      <GlobeGlow globes={prepared.globes} intensity={quality === "high" ? 1 : 0.85} />
     </>
   )
 }
