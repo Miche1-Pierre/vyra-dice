@@ -4,64 +4,101 @@ import { X } from "lucide-react"
 import { AnimatePresence, motion, useDragControls } from "motion/react"
 import type { ReactNode } from "react"
 
+import { IconBtn } from "@/components/experience/ui"
 import { cn } from "@/lib/utils"
 
 /**
- * Non-modal panel: floating card on the right on desktop, draggable bottom sheet on phones.
- * The 3D view stays interactive around it.
+ * Non-modal glass card: floats at the right of the club on desktop (the dock stays reachable
+ * below it), rises as a draggable bottom sheet on phones. The 3D stays interactive around it.
  */
 export function Panel({
   open,
   onClose,
   isDesktop,
-  children,
   label,
+  title,
+  aside,
+  children,
+  footer,
   className,
 }: {
   open: boolean
   onClose: () => void
   isDesktop: boolean
-  children: ReactNode
+  /** Accessible name of the region. */
   label: string
+  /** Optional header row; without it the content draws its own hero under the close button. */
+  title?: ReactNode
+  aside?: ReactNode
+  children: ReactNode
+  footer?: ReactNode
   className?: string
 }) {
   const drag = useDragControls()
+  const close = (
+    <IconBtn
+      label="Fermer"
+      keys={isDesktop ? ["Esc"] : undefined}
+      onClick={onClose}
+      className="text-label-2 bg-white/[0.08]"
+    >
+      <X />
+    </IconBtn>
+  )
+  const header = title ? (
+    <div className="flex h-14 shrink-0 items-center justify-between gap-2 pr-3 pl-5">
+      <div className="text-headline text-label min-w-0 truncate">{title}</div>
+      <div className="flex shrink-0 items-center gap-1">
+        {aside}
+        {close}
+      </div>
+    </div>
+  ) : (
+    <div className="absolute top-3 right-3 z-20 flex items-center gap-1">
+      {aside}
+      {close}
+    </div>
+  )
+  const body = (
+    <>
+      {header}
+      <div className="relative min-h-0 flex-1 overflow-y-auto overscroll-contain">{children}</div>
+      {footer ? (
+        <div className="relative shrink-0 px-4 pt-3 pb-4 before:pointer-events-none before:absolute before:inset-x-0 before:-top-8 before:h-8 before:bg-gradient-to-t before:from-[rgb(17_15_21/0.82)] before:to-transparent max-lg:pb-[max(1rem,env(safe-area-inset-bottom))]">
+          {footer}
+        </div>
+      ) : null}
+    </>
+  )
+
   return (
     <AnimatePresence>
       {open ? (
         isDesktop ? (
           <motion.section
             key="panel-desktop"
-            role="dialog"
+            role="complementary"
             aria-label={label}
-            initial={{ opacity: 0, x: 24 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 24 }}
-            transition={{ type: "spring", damping: 28, stiffness: 260 }}
+            initial={{ opacity: 0, x: 56, scale: 0.97 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            exit={{ opacity: 0, x: 56, scale: 0.97 }}
+            transition={{ type: "spring", stiffness: 320, damping: 34 }}
             className={cn(
-              "absolute top-20 right-5 bottom-5 z-40 flex w-[400px] flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#0e0a14]/90 shadow-2xl backdrop-blur-xl",
+              "glass-thick glass-rim absolute top-4 right-4 bottom-[100px] z-40 flex w-[400px] origin-right flex-col overflow-hidden rounded-[30px]",
               className,
             )}
           >
-            <button
-              type="button"
-              onClick={onClose}
-              aria-label="Fermer"
-              className="absolute top-3 right-3 z-10 grid size-8 place-items-center rounded-full bg-white/[0.06] text-white/80 hover:bg-white/15"
-            >
-              <X className="size-4" />
-            </button>
-            <div className="flex-1 overflow-y-auto overscroll-contain">{children}</div>
+            {body}
           </motion.section>
         ) : (
           <motion.section
             key="panel-mobile"
             role="dialog"
             aria-label={label}
-            initial={{ y: "100%" }}
+            initial={{ y: "105%" }}
             animate={{ y: 0 }}
-            exit={{ y: "100%" }}
-            transition={{ type: "spring", damping: 30, stiffness: 300 }}
+            exit={{ y: "105%" }}
+            transition={{ type: "spring", damping: 36, stiffness: 360 }}
             drag="y"
             dragListener={false}
             dragControls={drag}
@@ -71,27 +108,17 @@ export function Panel({
               if (info.offset.y > 110 || info.velocity.y > 600) onClose()
             }}
             className={cn(
-              "absolute inset-x-0 bottom-0 z-40 flex max-h-[78dvh] flex-col rounded-t-3xl border-t border-white/10 bg-[#0e0a14]/95 shadow-[0_-20px_60px_-20px_rgba(0,0,0,0.8)] backdrop-blur-xl",
+              "glass-thick glass-rim absolute inset-x-2 bottom-2 z-40 flex max-h-[64dvh] flex-col overflow-hidden rounded-[30px]",
               className,
             )}
           >
             <div
               onPointerDown={(e) => drag.start(e)}
-              className="flex shrink-0 cursor-grab touch-none justify-center pt-3 pb-2"
+              className="absolute inset-x-0 top-0 z-30 flex h-6 cursor-grab touch-none justify-center pt-2"
             >
-              <span className="h-1.5 w-12 rounded-full bg-white/25" />
+              <span className="h-[5px] w-9 rounded-full bg-white/25" />
             </div>
-            <button
-              type="button"
-              onClick={onClose}
-              aria-label="Fermer"
-              className="absolute top-2.5 right-3 z-10 grid size-8 place-items-center rounded-full bg-white/[0.06] text-white/80"
-            >
-              <X className="size-4" />
-            </button>
-            <div className="flex-1 overflow-y-auto overscroll-contain pb-[max(1rem,env(safe-area-inset-bottom))]">
-              {children}
-            </div>
+            {body}
           </motion.section>
         )
       ) : null}

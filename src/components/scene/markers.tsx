@@ -9,6 +9,8 @@ import { cn } from "@/lib/utils"
 import { useExperience } from "@/lib/store"
 import { tableMarkerPosition, zoneMarkerPosition } from "@/lib/venue/camera"
 import type { VenueLayout } from "@/lib/venue/layout"
+import { StatusIcon, ZoneTile } from "@/components/experience/ui"
+import type { ZoneIcon } from "@/lib/schema"
 import { STATUS, TIERS, type TableStatus } from "@/lib/venue/tiers"
 import type { TableKind } from "@/lib/venue/layout"
 
@@ -16,6 +18,7 @@ export interface ZoneMarkerData {
   id: string
   name: string
   tier: TableKind
+  icon: ZoneIcon
   level: 0 | 1
   fromLabel: string | null
   available: number
@@ -164,7 +167,6 @@ export function Markers({
             >
               <TableTag
                 table={t}
-                tier={zones.find((z) => z.id === t.zoneId)?.tier ?? "lounge"}
                 active={t.id === selectedTableId || t.id === hoveredTableId}
                 onClick={() => selectTable(t.id)}
                 onHover={(on) => hoverTable(on ? t.id : null)}
@@ -177,22 +179,28 @@ export function Markers({
 }
 
 /** Screen margins and stem sizes used by the card layout (px). */
-const EDGE = 10
-const GAP = 4
-const ZONE_STEM = 32 // 20 px line + 12 px dot
+const EDGE = 12
+const GAP = 6
+const ZONE_STEM = 30 // 22 px line + 8 px pin
 const TABLE_STEM = 12
 
-function Stem({ color }: { color: string }) {
+function Stem({ color, height }: { color: string; height: number }) {
   return (
     <div className="flex flex-col items-center">
-      <div className="w-px bg-white/60" style={{ height: "calc(20px + var(--lift, 0px))" }} />
       <div
-        className="size-3 rounded-full border-2 border-white/90 shadow-[0_0_12px_currentColor]"
-        style={{ backgroundColor: color, color }}
+        className="w-px bg-gradient-to-b from-white/60 to-white/10"
+        style={{ height: `calc(${height}px + var(--lift, 0px))` }}
+      />
+      <div
+        className="size-2 rounded-full ring-[1.5px] ring-black/70"
+        style={{ backgroundColor: color, boxShadow: `0 0 10px 2px ${color}aa` }}
       />
     </div>
   )
 }
+
+const chip =
+  "pointer-events-auto relative whitespace-nowrap text-left outline-none transition-[transform,box-shadow,background-color] duration-200 ease-out focus-visible:ring-2 focus-visible:ring-gold/80"
 
 function ZoneTag({
   zone,
@@ -211,40 +219,36 @@ function ZoneTag({
         type="button"
         onClick={onClick}
         aria-label={`${zone.name}, ${tier.label}, ${zone.fromLabel ? `dès ${zone.fromLabel}, ` : ""}${zone.availability.label}`}
-        className="group pointer-events-auto relative rounded-lg border border-white/15 bg-black/75 px-2.5 py-1.5 text-left whitespace-nowrap shadow-xl backdrop-blur-md transition hover:-translate-y-0.5 hover:border-white/40 focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:outline-none"
-        style={{ boxShadow: `0 0 0 1px ${tier.color}22, 0 10px 30px -10px ${tier.color}88` }}
+        className={cn(
+          chip,
+          "flex items-center gap-2.5 rounded-full bg-[rgb(16_13_20/0.8)] py-1 pr-3.5 pl-1 shadow-[0_0_0_1px_rgb(255_255_255/0.11),inset_0_1px_0_rgb(255_255_255/0.08),0_10px_28px_rgb(0_0_0/0.55)] backdrop-blur-md hover:scale-[1.05] hover:bg-[rgb(26_22_32/0.9)]",
+        )}
       >
-        <span className="font-heading flex items-center gap-1.5 text-[13px] font-semibold text-white">
-          <span className="inline-block size-2 rounded-full" style={{ background: tier.color }} />
-          {zone.name}
-        </span>
-        <span className="mt-0.5 flex items-center gap-1.5 text-[11px] text-white/65">
-          <span className="font-mono text-[9px] tracking-[0.16em] text-white/45 uppercase max-sm:hidden">
-            {zone.level === 0 ? "RDC" : "Mezz."}
+        <ZoneTile tier={zone.tier} icon={zone.icon} className="size-7 rounded-full" />
+        <span className="leading-tight">
+          <span className="text-label block text-[13px] leading-4 font-semibold">{zone.name}</span>
+          <span className="num text-label-2 mt-px flex items-center gap-1.5 text-[11px] leading-[14px]">
+            {zone.fromLabel ? <span>dès {zone.fromLabel}</span> : null}
+            <span className="flex items-center gap-1 max-sm:hidden">
+              <StatusIcon status={zone.availability.tone} className="size-[11px]" />
+              {zone.availability.label}
+            </span>
           </span>
-          {zone.fromLabel ? <span className="text-white">dès {zone.fromLabel}</span> : null}
-          <span
-            className="inline-block size-1.5 rounded-full"
-            style={{ background: STATUS[zone.availability.tone].color }}
-          />
-          <span className="max-sm:hidden">{zone.availability.label}</span>
         </span>
       </button>
-      <Stem color={tier.color} />
+      <Stem color={tier.color} height={22} />
     </div>
   )
 }
 
 function TableTag({
   table,
-  tier,
   active,
   onClick,
   onHover,
   cardRef,
 }: {
   table: TableMarkerData
-  tier: TableKind
   active: boolean
   onClick: () => void
   onHover: (on: boolean) => void
@@ -259,24 +263,35 @@ function TableTag({
         onClick={onClick}
         onPointerEnter={() => onHover(true)}
         onPointerLeave={() => onHover(false)}
+        aria-label={`Table ${table.label}, ${status.label}${table.priceLabel ? `, minimum ${table.priceLabel}` : ""}`}
         className={cn(
-          "pointer-events-auto relative flex items-center gap-2 rounded-full border bg-black/80 py-1 pr-3 pl-1 whitespace-nowrap shadow-lg backdrop-blur-md transition focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:outline-none",
-          active ? "scale-105 border-white/70" : "border-white/15 hover:border-white/40",
-          table.status === "sold" && "opacity-70",
+          chip,
+          "flex h-7 items-center gap-1.5 rounded-full bg-[rgb(16_13_20/0.86)] pr-3 pl-1 text-[12px]",
+          active
+            ? "scale-[1.08] shadow-[0_0_0_1.5px_#e8c27a,0_0_22px_rgb(232_194_122/0.45),0_8px_22px_rgb(0_0_0/0.55)]"
+            : "shadow-[0_0_0_1px_rgb(255_255_255/0.12),0_8px_22px_rgb(0_0_0/0.5)] hover:scale-[1.06]",
         )}
       >
         <span
-          className="grid size-6 place-items-center rounded-full text-[11px] font-bold text-black"
-          style={{ background: TIERS[tier].color }}
+          className="grid size-5 place-items-center rounded-full"
+          style={{ background: `${status.color}26` }}
         >
-          {table.label}
+          <StatusIcon status={table.status} className="size-3" />
         </span>
-        <span className="text-xs font-medium text-white">
-          {table.status === "sold" ? "Complet" : (table.priceLabel ?? "Sur demande")}
+        <span className="text-label font-semibold">{table.label}</span>
+        <span
+          className={cn(
+            "num",
+            table.status === "sold" ? "text-label-3 line-through" : "text-label-2",
+          )}
+        >
+          {table.priceLabel ?? "sur demande"}
         </span>
-        <span className="inline-block size-1.5 rounded-full" style={{ background: status.color }} />
       </button>
-      <div className="w-px bg-white/50" style={{ height: "calc(12px + var(--lift, 0px))" }} />
+      <div
+        className="w-px bg-gradient-to-b from-white/55 to-white/10"
+        style={{ height: "calc(12px + var(--lift, 0px))" }}
+      />
     </div>
   )
 }
