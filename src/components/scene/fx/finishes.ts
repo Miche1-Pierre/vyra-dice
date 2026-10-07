@@ -160,7 +160,8 @@ function finishRaw(input: FinishInput): THREE.Material | null {
         envMapIntensity: 1.2,
       })
     case "naho_stone": {
-      const { map, roughnessMap } = marbleMaps()
+      // phones: half resolution, the veins are generated on the main thread while loading
+      const { map, roughnessMap } = marbleMaps(detail ? 512 : 256)
       return new THREE.MeshPhysicalMaterial({
         ...b,
         color: tint("#ffffff"),

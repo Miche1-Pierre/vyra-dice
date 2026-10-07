@@ -215,9 +215,8 @@ export function brushedNormal(): THREE.Texture {
 }
 
 /** Black marble with warm veins (bar top, tables): albedo + roughness, tileable. */
-export function marbleMaps(): { map: THREE.Texture; roughnessMap: THREE.Texture } {
-  const map = cached("marble-albedo", () => {
-    const size = 512
+export function marbleMaps(size = 512): { map: THREE.Texture; roughnessMap: THREE.Texture } {
+  const map = cached(`marble-albedo:${size}`, () => {
     const warp = fbm(size, 3, 5, 41, 0.55)
     const warp2 = fbm(size, 6, 4, 43, 0.5)
     const c = canvasOf(size)
@@ -244,7 +243,7 @@ export function marbleMaps(): { map: THREE.Texture; roughnessMap: THREE.Texture 
     }
     ctx.putImageData(img, 0, 0)
     cache.set(
-      "marble-veins",
+      `marble-veins:${size}`,
       greyTexture(
         veinsField.map((v) => 0.12 + v * 0.35),
         size,
@@ -253,7 +252,7 @@ export function marbleMaps(): { map: THREE.Texture; roughnessMap: THREE.Texture 
     )
     return finish(new THREE.CanvasTexture(c), "marble-albedo", true)
   })
-  return { map, roughnessMap: cache.get("marble-veins")! }
+  return { map, roughnessMap: cache.get(`marble-veins:${size}`)! }
 }
 
 /** Polished floor: roughness from the albedo (grout and wear are matte, tiles glossy). */
