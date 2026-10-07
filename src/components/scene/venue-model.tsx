@@ -22,8 +22,12 @@ export interface LightmapManifest {
   version: number
   club: string
   encoding: "srgb"
-  lightmaps: Record<string, { file: string; scale: number; size: number }>
+  /** Content hashes (assets:optimize) version the URLs: a new bake is never served stale. */
+  model?: { file: string; hash: string }
+  lightmaps: Record<string, { file: string; scale: number; size: number; hash?: string }>
 }
+
+const versioned = (url: string, hash?: string) => (hash ? `${url}?v=${hash}` : url)
 
 /** Lightmap manifests are bundled (2 KB) so the textures can be requested with the GLB. */
 const MANIFESTS: Record<string, LightmapManifest> = {
@@ -163,13 +167,17 @@ export function VenueModel({ club, quality }: { club: string; quality: Quality }
   const manifest = MANIFESTS[club]
   const names = useMemo(() => Object.keys(manifest.lightmaps), [manifest])
   const urls = useMemo(
-    () => names.map((n) => `${base}/${manifest.lightmaps[n].file}`),
+    () =>
+      names.map((n) =>
+        versioned(`${base}/${manifest.lightmaps[n].file}`, manifest.lightmaps[n].hash),
+      ),
     [base, manifest, names],
   )
+  const glbUrl = versioned(`${base}/${club}.glb`, manifest.model?.hash)
   // start every download now: the GLB and the lightmaps load in parallel, not in a waterfall
-  useGLTF.preload(`${base}/${club}.glb`, false, true)
+  useGLTF.preload(glbUrl, false, true)
   useLoader.preload(THREE.TextureLoader, urls)
-  const gltf = useGLTF(`${base}/${club}.glb`, false, true)
+  const gltf = useGLTF(glbUrl, false, true)
   const textures = useLoader(THREE.TextureLoader, urls)
 
   const prepared = useMemo(() => {

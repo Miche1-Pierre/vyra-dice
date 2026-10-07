@@ -12,6 +12,7 @@ import { NodeIO } from "@gltf-transform/core"
 import { ALL_EXTENSIONS } from "@gltf-transform/extensions"
 import { dedup, meshopt, prune, textureCompress } from "@gltf-transform/functions"
 import { MeshoptEncoder, MeshoptDecoder } from "meshoptimizer"
+import { createHash } from "node:crypto"
 import { mkdir, readdir, readFile, stat, writeFile } from "node:fs/promises"
 import { join } from "node:path"
 import sharp from "sharp"
@@ -20,6 +21,12 @@ const SRC = "art/export"
 const OUT = "public/models"
 
 const kb = async (p) => `${((await stat(p)).size / 1024).toFixed(0)} KB`
+/** Short content hash: the web appends it to asset URLs so a new bake is never served stale. */
+const hashOf = async (p) =>
+  createHash("sha256")
+    .update(await readFile(p))
+    .digest("hex")
+    .slice(0, 10)
 
 async function optimizeClub(club) {
   const outDir = join(OUT, club)
@@ -44,6 +51,7 @@ async function optimizeClub(club) {
   console.log(`${club}.glb: ${await kb(input)} -> ${await kb(output)}`)
 
   const manifest = JSON.parse(await readFile(join(SRC, `${club}.lightmaps.json`), "utf8"))
+  manifest.model = { file: `${club}.glb`, hash: await hashOf(output) }
   let total = 0
   for (const [name, entry] of Object.entries(manifest.lightmaps)) {
     const png = join(SRC, club, entry.file)
@@ -51,6 +59,7 @@ async function optimizeClub(club) {
     const webp = join(outDir, file)
     await sharp(png).webp({ quality: 86, effort: 6, smartSubsample: true }).toFile(webp)
     entry.file = file
+    entry.hash = await hashOf(webp)
     total += (await stat(webp)).size
     console.log(`  lm ${name}: ${await kb(png)} -> ${await kb(webp)}`)
   }
