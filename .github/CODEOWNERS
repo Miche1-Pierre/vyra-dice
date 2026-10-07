@@ -1,0 +1,17 @@
+# Responsabilités (voir docs/github.md)
+# Pierre : dev + data/analytics — Jonathan : vente + audit — partagé : produit/design, implémentation, ops/support
+
+*                       @Miche1-Pierre
+/src/                   @Miche1-Pierre
+/src/lib/analytics/     @Miche1-Pierre
+/scripts/               @Miche1-Pierre
+/art/                   @Miche1-Pierre
+/.github/               @Miche1-Pierre
+
+# Partagé (produit / design / contenu club)
+/docs/                  @Miche1-Pierre @spykernv
+/src/content/           @Miche1-Pierre @spykernv
+
+# Jonathan (vente + audit)
+/docs/audit/            @spykernv
+/docs/sales/            @spykernv
