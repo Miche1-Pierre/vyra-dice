@@ -22,6 +22,14 @@ import bpy
 import numpy as np
 from mathutils import Matrix, Vector
 
+FONTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "fonts")
+
+
+def load_font(file_name: str) -> bpy.types.VectorFont:
+    """Font from ``art/fonts`` (OFL files committed with the sources), loaded once."""
+    return bpy.data.fonts.load(os.path.abspath(os.path.join(FONTS_DIR, file_name)), check_existing=True)
+
+
 # ---------------------------------------------------------------------------
 # Colour helpers
 # ---------------------------------------------------------------------------
@@ -455,20 +463,69 @@ class MeshBuilder:
                 mat,
             )  # fmt: skip
 
-    def text(self, body: str, mat, size: float, matrix: Matrix, extrude: float = 0.02, align: str = "CENTER"):
+    def text(
+        self,
+        body: str,
+        mat,
+        size: float,
+        matrix: Matrix,
+        extrude: float = 0.02,
+        align: str = "CENTER",
+        font: str | None = None,
+        outline: float = 0.0,
+        spacing: float = 1.0,
+    ):
+        """Text in the local XY plane. ``font``: file in ``art/fonts``. ``outline`` > 0 draws the
+        glyph outlines as tubes of that radius (neon) instead of solid letters."""
         curve = bpy.data.curves.new(f"_txt_{body}", type="FONT")
         curve.body = body
         curve.size = size
-        curve.extrude = extrude
         curve.align_x = align
         curve.align_y = "CENTER"
-        tmp_obj = bpy.data.objects.new("_txt", curve)
+        curve.space_character = spacing
+        if font:
+            curve.font = load_font(font)
+        if outline > 0:
+            curve.fill_mode = "NONE"
+            curve.extrude = 0.0
+            curve.bevel_depth = outline
+            curve.bevel_resolution = 2
+        else:
+            curve.extrude = extrude
+        self._merge_curve(curve, mat, matrix)
+
+    def tubes(self, strokes, radius: float, mat, matrix: Matrix, resolution: int = 3):
+        """Round tubes along 2D polylines of the local XY plane (neon lettering, wires).
+        A stroke is a list of (x, y) points; ``("circle", cx, cy, r)`` draws a ring."""
+        curve = bpy.data.curves.new("_tubes", type="CURVE")
+        curve.dimensions = "3D"
+        curve.bevel_depth = radius
+        curve.bevel_resolution = resolution
+        curve.use_fill_caps = True
+        for stroke in strokes:
+            cyclic = False
+            if stroke and stroke[0] == "circle":
+                _, cx, cy, r = stroke
+                n = 48
+                pts = [(cx + r * math.cos(2 * math.pi * i / n), cy + r * math.sin(2 * math.pi * i / n)) for i in range(n)]
+                cyclic = True
+            else:
+                pts = stroke
+            spline = curve.splines.new("POLY")
+            spline.points.add(len(pts) - 1)
+            for p, (x, y) in zip(spline.points, pts):
+                p.co = (x, y, 0.0, 1.0)
+            spline.use_cyclic_u = cyclic
+        self._merge_curve(curve, mat, matrix)
+
+    def _merge_curve(self, curve, mat, matrix: Matrix):
+        tmp_obj = bpy.data.objects.new("_curve", curve)
         bpy.context.scene.collection.objects.link(tmp_obj)
         dg = bpy.context.evaluated_depsgraph_get()
         me = bpy.data.meshes.new_from_object(tmp_obj.evaluated_get(dg))
         tmp = bmesh.new()
         tmp.from_mesh(me)
-        self._merge(tmp, mat, matrix, smooth=False)
+        self._merge(tmp, mat, matrix, smooth=curve.bevel_depth > 0)
         tmp.free()
         bpy.data.objects.remove(tmp_obj, do_unlink=True)
         bpy.data.curves.remove(curve)
