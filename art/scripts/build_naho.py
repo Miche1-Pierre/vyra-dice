@@ -624,8 +624,11 @@ def build_spheres(c: Ctx) -> None:
 def build_signs(c: Ctx) -> None:
     M = c.M
     xw = c.L["building"]["maxX"] - 0.04
-    # the club's name in neon tubes over the lounge wall, 1.5 m tall
-    naho_wordmark(c.signs, M["neon_white"], 1.5, 0.032, frame((xw - 0.02, -3.4, 6.4), (0, -1, 0), (0, 0, 1)))
+    # the club's name in neon tubes over the lounge wall, 1.5 m tall. Its own object, suffixed
+    # with the direction it faces, so the viewer can hide it when the cutaway shows the wall's back.
+    wall_sign = MeshBuilder("fx_sign_wall_w")
+    naho_wordmark(wall_sign, M["neon_white"], 1.5, 0.032, frame((xw - 0.02, -3.4, 6.4), (0, -1, 0), (0, 0, 1)))
+    wall_sign.finalize(c.C["FX"])
     e = c.L["entrance"]
     to_world = frame((sum(e["x"]) / 2, e["y"] + 0.02, 2.95), (-1, 0, 0), (0, 0, 1))
     c.signs.text("ENTRÉE", M["neon_white"], 0.22, to_world, 0.01, font=FONT_MEDIUM, spacing=1.2)
