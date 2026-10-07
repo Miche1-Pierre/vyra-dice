@@ -53,16 +53,33 @@ Un test vérifie que les deux correspondent table par table.
 
 ## Contrat de nommage GLB ↔ web
 
-| Objet (nom Blender = nœud glTF)                   | Traitement côté web (`venue-model.tsx`)                                     |
-| ------------------------------------------------- | --------------------------------------------------------------------------- |
-| propriété `vyra_lm` (taille px)                   | reçoit sa lightmap (`lightmaps.json`), matériau unlit + lightMap            |
-| préfixe `lvl1_`                                   | appartient à la mezzanine : fondu quand on n'affiche que le RDC             |
-| `fx_ledrain`                                      | shader « pluie » : UV0.v = position le long du tube, UV1 = (phase, vitesse) |
-| `fx_spheres`                                      | shader de respiration, UV1 = (phase, couleur)                               |
-| `fx_screen`                                       | shader égaliseur (UV0 0→1 sur l'écran)                                      |
-| matériau émissif (`Emission Strength` > 0)        | couleur HDR → bloom                                                         |
-| matériau transparent (verre)                      | verre additif léger, double face                                            |
-| `rig`, `lvl1_railing` (métal noir, sans lightmap) | couleur sombre unie                                                         |
+| Objet (nom Blender = nœud glTF)                   | Traitement côté web (`venue-model.tsx`)                                                  |
+| ------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| propriété `vyra_lm` (taille px)                   | reçoit sa lightmap (`lightmaps.json`) + une finition PBR selon son matériau (ci-dessous) |
+| préfixe `lvl1_`                                   | appartient à la mezzanine : fondu quand on n'affiche que le RDC                          |
+| `fx_ledrain`                                      | shader « pluie » : UV0.v = position le long du tube, UV1 = (phase, vitesse)              |
+| `fx_spheres`                                      | light show partagé (`fx/show.ts`) + halo par globe, UV1.x = phase du globe               |
+| `fx_screen`                                       | shader égaliseur (UV0 0→1 sur l'écran)                                                   |
+| matériau émissif (`Emission Strength` > 0)        | couleur HDR → bloom (néons, LED, bouteilles)                                             |
+| matériau transparent (verre)                      | verre physique (reflets d'environnement), double face                                    |
+| `rig`, `lvl1_railing` (métal noir, sans lightmap) | métal brossé : reflets d'environnement seulement                                         |
+
+Un nœud multi-matériaux devient dans glTF un groupe `<nœud>` avec des enfants `<nœud>_1`, `<nœud>_2`… : le
+propriétaire (lightmap, rôle FX, mezzanine) est toujours le **nœud**, résolu en remontant les parents.
+
+### Finitions (`src/components/scene/fx/finishes.ts`)
+
+La lightmap porte la lumière diffuse ; un environnement de reflets (`club-environment.tsx`, panneaux lumineux placés
+comme les sources du club, rendu une fois) apporte ce qu'elle ne peut pas contenir : reflets, métal, brillant du
+velours. Son terme diffus est coupé dans le shader pour ne pas teinter les surfaces. Cartes de relief et de rugosité
+générées côté client (`fx/surfaces.ts`) : dérivées de l'albedo (carrelage, béton, bois, végétal) ou procédurales
+(velours, cuir, marbre noir veiné, métal brossé). Relief + vernis seulement en qualité haute ; sol miroir
+(`fx/floor-gloss.tsx`, second rendu de la scène) seulement sur desktop.
+
+### Versionnage des fichiers
+
+`pnpm assets:optimize` écrit dans `lightmaps.json` une empreinte de contenu du GLB et de chaque lightmap ; le web les
+ajoute aux URLs (`?v=<hash>`), servies avec `Cache-Control: immutable`. Un nouveau bake n'est jamais servi périmé.
 
 Les murs et le plafond sont **mono-face, tournés vers l'intérieur** : vus de l'extérieur ils disparaissent, ce qui
 donne la coupe (cutaway) de la vue d'ensemble sans aucune logique.
@@ -78,15 +95,16 @@ donne la coupe (cutaway) de la vue d'ensemble sans aucune logique.
 
 ## Budget mobile (mesuré sur Naho)
 
-| Mesure              | Cible        | Naho (POC)            |
-| ------------------- | ------------ | --------------------- |
-| Triangles           | ≤ 300 k      | ~83 k                 |
-| GLB optimisé        | ≤ 4 Mo total | ~1,9 Mo               |
-| Lightmaps (WebP)    | (inclus)     | voir `lightmaps.json` |
-| Objets / draw calls | ≤ 100        | ~45 + FX              |
+| Mesure              | Cible        | Naho (POC) |
+| ------------------- | ------------ | ---------- |
+| Triangles           | ≤ 300 k      | ~106 k     |
+| GLB optimisé        | ≤ 4 Mo total | ~2,1 Mo    |
+| Lightmaps (WebP)    | (inclus)     | ~0,9 Mo    |
+| Objets / draw calls | ≤ 100        | ~45 + FX   |
 
 ## Textures
 
 Générées en numpy (tileables, déterministes) : carrelage, béton ciré noir, chêne fumé, mur végétal avec quelques
-fleurs orange. Aucune image tierce n'entre dans le produit. Les photos de référence restent locales
+fleurs orange. Lettrage : Jost (SIL OFL, `art/fonts/`), la typo de l'interface ; `MeshBuilder.text(font=…, outline=…)`
+pour les lettres pleines ou en néon détouré, `MeshBuilder.tubes()` pour les tracés en tubes (logo NΛHO). Aucune image tierce n'entre dans le produit. Les photos de référence restent locales
 (`art/ref/<club>/photos/`, ignoré par git) : elles servent à modéliser, pas à être republiées.
