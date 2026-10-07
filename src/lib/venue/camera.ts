@@ -158,7 +158,7 @@ export function tablePose(layout: VenueLayout, tableId: string, aspect: number):
     const dist = width * (portrait ? 1.9 : 1.35) + 2.4
     position = add(add(target, scale(dir, dist)), [0, 2.6 - base[1], 0])
   } else {
-    const dist = width * (portrait ? 1.9 : 1.45) + 4
+    const dist = portrait ? width * 2.2 + 5.5 : width * 1.45 + 4
     const e = (elevation * Math.PI) / 180
     position = add(add(target, scale(dir, dist * Math.cos(e))), [0, dist * Math.sin(e), 0])
   }
