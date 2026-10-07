@@ -56,9 +56,22 @@ export function overviewPose(layout: VenueLayout, aspect: number): CameraPose {
     return { target, position: orbit(target, 64, 10, 40), fov: 56 }
   }
   if (aspect < 1.3) {
-    return { target: center, position: orbit(center, 58, 28, 46), fov: 46 }
+    return { target: center, position: orbit(center, 60, 28, 46), fov: 46 }
   }
-  return { target: center, position: orbit(center, 50, 36, 50), fov: 40 }
+  const target = add(center, [0, 0, 1.5])
+  return { target, position: orbit(target, 55, 36, 50), fov: 40 }
+}
+
+/** Elevation of the camera above the horizon (degrees) when looking at a zone or a table. */
+function elevationFor(
+  level: 0 | 1,
+  lowCeiling: boolean,
+  steep: number,
+  ground: number,
+): number | null {
+  if (lowCeiling) return null // camera must stay below the slab
+  // mezzanine: look down from above the LED rain and the trusses (the roof is cut away)
+  return level === 1 ? steep : ground
 }
 
 /** Average facing of the tables of a zone (they all look towards the room). */
@@ -69,6 +82,24 @@ function zoneFacing(layout: VenueLayout, zoneId: string): Vec3 {
   return [sum[0] / len, 0, sum[2] / len]
 }
 
+/** Rotates a horizontal three.js direction around the vertical axis. */
+function rotateY(v: Vec3, deg: number): Vec3 {
+  const a = (deg * Math.PI) / 180
+  return [v[0] * Math.cos(a) + v[2] * Math.sin(a), 0, -v[0] * Math.sin(a) + v[2] * Math.cos(a)]
+}
+
+/** Is a three.js point inside the public ground floor (level 0) or the building (level 1)? */
+function insideVenue(layout: VenueLayout, p: Vec3, level: 0 | 1): boolean {
+  const x = p[0]
+  const y = -p[2] // back to Blender north
+  if (level === 0) {
+    const g = layout.groundFloor
+    return x > g.x[0] + 0.5 && x < g.x[1] - 0.5 && y > g.y[0] + 0.5 && y < g.y[1] - 0.5
+  }
+  const b = layout.building
+  return x > b.minX && x < b.maxX && y > b.minY && y < b.maxY
+}
+
 export function zonePose(layout: VenueLayout, zoneId: string, aspect: number): CameraPose {
   const zone = layout.zones.find((z) => z.id === zoneId)
   if (!zone) return overviewPose(layout, aspect)
@@ -76,15 +107,32 @@ export function zonePose(layout: VenueLayout, zoneId: string, aspect: number): C
   const cy = (zone.y[0] + zone.y[1]) / 2
   const floor = levelHeight(layout, zone.level)
   const target = toThree([cx, cy, floor + 0.6])
-  const f = zoneFacing(layout, zoneId)
-  const span = Math.max(zone.x[1] - zone.x[0], zone.y[1] - zone.y[0])
+  const facing = zoneFacing(layout, zoneId)
+  const w = zone.x[1] - zone.x[0]
+  const d = zone.y[1] - zone.y[0]
+  const span = Math.max(w, d)
   const portrait = aspect < 0.8
-  const dist = span * (portrait ? 1.15 : 0.8) + 6
   const lowCeiling = zone.level === 0 && isUnderSlab(layout, cx, cy)
-  const height = lowCeiling ? 2.7 - (floor + 0.6) : dist * 0.55
-  const horizontal = lowCeiling ? dist : dist * 0.84
-  const position = add(add(target, scale(f, horizontal)), [0, height, 0])
-  return { target, position, fov: portrait ? 58 : 44 }
+  const elevation = elevationFor(zone.level, lowCeiling, 58, 50)
+
+  // On a tall screen, look along an elongated zone (row of booths in perspective) instead of
+  // across it, picking the side that keeps the camera inside the venue.
+  const along = portrait && span / Math.min(w, d) > 2.2
+  const place = (dir: Vec3): Vec3 => {
+    if (elevation === null) {
+      const dist = along ? Math.min(w, d) * 2.4 + 6 : span * (portrait ? 1.15 : 0.8) + 6
+      return add(add(target, scale(dir, dist)), [0, 2.7 - (floor + 0.6), 0])
+    }
+    const dist = along ? span * 0.6 + 6 : span * (portrait ? 1.0 : 0.62) + 7
+    const e = (elevation * Math.PI) / 180
+    return add(add(target, scale(dir, dist * Math.cos(e))), [0, dist * Math.sin(e), 0])
+  }
+  let position = place(facing)
+  if (along) {
+    const options = [rotateY(facing, 52), rotateY(facing, -52)].map(place)
+    position = options.find((p) => insideVenue(layout, p, zone.level)) ?? options[0]
+  }
+  return { target, position, fov: portrait ? 60 : 44 }
 }
 
 function tableAnchor(layout: VenueLayout, table: LayoutTable): Vec3 {
@@ -100,11 +148,18 @@ export function tablePose(layout: VenueLayout, tableId: string, aspect: number):
   const f = facingVector(table.facing)
   const { width } = tableFootprint(layout, table)
   const portrait = aspect < 0.8
-  const dist = width * (portrait ? 1.9 : 1.35) + 2.4
   const level = tableLevel(layout, table)
   const lowCeiling = level === 0 && isUnderSlab(layout, table.x, table.y)
-  const height = lowCeiling ? 2.6 - base[1] : dist * 0.5
-  const position = add(add(target, scale(f, dist)), [0, height, 0])
+  const elevation = elevationFor(level, lowCeiling, 55, 40)
+  let position: Vec3
+  if (elevation === null) {
+    const dist = width * (portrait ? 1.9 : 1.35) + 2.4
+    position = add(add(target, scale(f, dist)), [0, 2.6 - base[1], 0])
+  } else {
+    const dist = width * (portrait ? 1.7 : 1.2) + 3.2
+    const e = (elevation * Math.PI) / 180
+    position = add(add(target, scale(f, dist * Math.cos(e))), [0, dist * Math.sin(e), 0])
+  }
   return { target, position, fov: portrait ? 58 : 44 }
 }
 
@@ -130,5 +185,14 @@ export function zoneMarkerPosition(layout: VenueLayout, zoneId: string): Vec3 {
   const zone = layout.zones.find((z) => z.id === zoneId)
   if (!zone) return venueCenter(layout)
   const floor = levelHeight(layout, zone.level)
-  return toThree([(zone.x[0] + zone.x[1]) / 2, (zone.y[0] + zone.y[1]) / 2, floor + 2.6])
+  const cx = (zone.x[0] + zone.x[1]) / 2
+  const cy = (zone.y[0] + zone.y[1]) / 2
+  if (zone.level === 0 && isUnderSlab(layout, cx, cy)) {
+    // under the mezzanine: pin the tag against the back wall so it doesn't sit on the slab's tag
+    const f = zoneFacing(layout, zoneId)
+    const back = Math.min(zone.x[1] - zone.x[0], zone.y[1] - zone.y[0]) / 2 - 0.3
+    const c = toThree([cx, cy, floor + 1.7])
+    return add(c, scale(f, -back))
+  }
+  return toThree([cx, cy, floor + 2.6])
 }

@@ -48,6 +48,20 @@ describe("zonePose", () => {
     expect(pose.position[1]).toBeLessThan(under)
   })
 
+  it("looks along long zones on portrait screens without leaving the venue", () => {
+    const g = layout.groundFloor
+    for (const id of ["lounge-mezzanine", "lounge-vegetal"]) {
+      const pose = zonePose(layout, id, 0.46)
+      const x = pose.position[0]
+      const y = -pose.position[2]
+      expect(x).toBeGreaterThan(g.x[0])
+      expect(x).toBeLessThan(g.x[1])
+      expect(y).toBeGreaterThan(g.y[0])
+      expect(y).toBeLessThan(g.y[1])
+    }
+    expect(zonePose(layout, "lounge-mezzanine", 0.46).position[1]).toBeLessThan(under)
+  })
+
   it("looks at mezzanine zones from above their floor", () => {
     const pose = zonePose(layout, "vip-est", 1.6)
     expect(pose.position[1]).toBeGreaterThan(layout.heights.mezzanine)
