@@ -40,3 +40,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# 3D references: photos are third-party (no reuse licence) — keep them local only
+/art/ref/*/photos/
+# Blender autosaves / bake scratch
+*.blend1
+/art/.bake/
