@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Linear — VYRA-dice (source de vérité des tickets)
+    url: https://linear.app/vyra-dice/team/VYR/all
+    about: Toutes les tâches, bugs et idées se créent dans Linear, pas sur GitHub.
