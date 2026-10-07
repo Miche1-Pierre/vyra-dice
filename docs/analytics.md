@@ -12,19 +12,25 @@ Responsable : Pierre (data/analytics). Les définitions H1–H5 viennent du cadr
 
 ## Taxonomie d'événements (snake_case, propriétés communes : `club`, `event`, `session_id`, `utm_*`, `ref`, `device`)
 
-| Événement                  | Quand                              | Propriétés clés                          | Sert à   |
-| -------------------------- | ---------------------------------- | ---------------------------------------- | -------- |
-| `experience_viewed`        | Page chargée                       | `source`, `webgl_supported`              | H2       |
-| `scene_ready`              | 3D interactive                     | `load_ms`, `gpu_tier`, `fallback_2d`     | H1, perf |
-| `intro_skipped`            | Skip de l'ouverture                | `at_ms`                                  | UX       |
-| `table_viewed`             | Panneau d'une table ouvert         | `table_id`, `zone_id`, `price`, `status` | H1, H3   |
-| `table_view_from_seat`     | « Vue depuis la table » activée    | `table_id`                               | H1       |
-| `tables_compared`          | Comparateur ouvert                 | `table_ids[]`                            | H1       |
-| `request_started`          | Premier champ du formulaire touché | `table_id`                               | H2       |
-| `request_submitted`        | Demande enregistrée côté serveur   | `request_id`, `table_id`, `party_size`   | H2       |
-| `request_failed`           | Erreur d'envoi                     | `reason`                                 | H4       |
-| `fallback_contact_clicked` | Contact de secours utilisé         | `channel`, `context`                     | H4       |
-| `ticket_link_clicked`      | Redirection billetterie (Shotgun)  | `url`                                    | contexte |
+| Événement                  | Quand                                            | Propriétés clés                                          | Sert à   |
+| -------------------------- | ------------------------------------------------ | -------------------------------------------------------- | -------- |
+| `experience_viewed`        | Page chargée                                     | `source`, `webgl_supported`                              | H2       |
+| `scene_ready`              | 3D interactive                                   | `load_ms`, `gpu_tier`, `fallback_2d`                     | H1, perf |
+| `intro_skipped`            | Skip de l'ouverture                              | `at_ms`                                                  | UX       |
+| `zone_viewed`              | Zone ouverte (marqueur ou liste)                 | `zone_id`, `tier`                                        | H1       |
+| `table_viewed`             | Panneau d'une table ouvert                       | `table_id`, `zone_id`, `tier`, `minimum_spend`, `status` | H1, H3   |
+| `table_view_from_seat`     | « Vue depuis la table » activée                  | `table_id`                                               | H1       |
+| `tables_compared`          | Comparateur ouvert                               | `table_ids[]`                                            | H1       |
+| `level_filter_changed`     | Filtre de niveau changé (tout / RDC / mezzanine) | `level` (`all`, `0`, `1`)                                | UX       |
+| `list_view_opened`         | Vue liste des tables ouverte                     | —                                                        | H1, UX   |
+| `request_started`          | Premier champ du formulaire touché               | `table_id`                                               | H2       |
+| `request_submitted`        | Demande enregistrée côté serveur                 | `request_id`, `table_id`, `party_size`, `demo`           | H2       |
+| `request_failed`           | Erreur d'envoi                                   | `table_id`, `reason`                                     | H4       |
+| `fallback_contact_clicked` | Contact de secours utilisé                       | `channel`, `context`                                     | H4       |
+| `ticket_link_clicked`      | Redirection billetterie (Shotgun)                | `url`                                                    | contexte |
+
+Typage côté code : `src/lib/analytics/events.ts`. Avant le choix du visiteur, les événements attendent en mémoire :
+envoyés s'il accepte (avec leur horodatage d'origine), supprimés s'il refuse.
 
 Événements serveur (saisis à la main ou via back-office, rapprochés par `request_id`) :
 `request_confirmed`, `request_refused`, `request_cancelled`, `request_no_show`, `request_paid { amount }`.
