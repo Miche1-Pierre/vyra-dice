@@ -395,12 +395,14 @@ class MeshBuilder:
         tmp.free()
 
     def cylinder(self, cx, cy, z0, z1, radius, mat, sides: int = 16, cap_top=True, cap_bottom=False,
-                 smooth=True, matrix: Matrix | None = None):  # fmt: skip
+                 smooth=True, matrix: Matrix | None = None, radius_top: float | None = None):  # fmt: skip
+        """Vertical cylinder (or cone frustum when ``radius_top`` differs)."""
+        rt = radius if radius_top is None else radius_top
         ring0, ring1 = [], []
         for i in range(sides):
             a = 2 * math.pi * i / sides
             ring0.append((cx + radius * math.cos(a), cy + radius * math.sin(a), z0))
-            ring1.append((cx + radius * math.cos(a), cy + radius * math.sin(a), z1))
+            ring1.append((cx + rt * math.cos(a), cy + rt * math.sin(a), z1))
         if matrix is not None:
             ring0 = [tuple(matrix @ Vector(p)) for p in ring0]
             ring1 = [tuple(matrix @ Vector(p)) for p in ring1]
