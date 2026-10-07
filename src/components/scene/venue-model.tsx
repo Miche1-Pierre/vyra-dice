@@ -13,11 +13,18 @@ import {
 } from "@/components/scene/fx/materials"
 import { useExperience } from "@/lib/store"
 
+import nahoLightmaps from "../../../public/models/naho/lightmaps.json"
+
 export interface LightmapManifest {
   version: number
   club: string
   encoding: "srgb"
   lightmaps: Record<string, { file: string; scale: number; size: number }>
+}
+
+/** Lightmap manifests are bundled (2 KB) so the textures can be requested with the GLB. */
+const MANIFESTS: Record<string, LightmapManifest> = {
+  naho: nahoLightmaps as LightmapManifest,
 }
 
 /** Global brightness of the baked lighting (artistic exposure, 1 = as baked). */
@@ -127,14 +134,17 @@ function applyUpperOpacity(materials: THREE.Material[], k: number) {
 
 export function VenueModel({ club }: { club: string }) {
   const base = `/models/${club}`
-  const gltf = useGLTF(`${base}/${club}.glb`, false, true)
-  const manifestText = useLoader(THREE.FileLoader, `${base}/lightmaps.json`) as string
-  const manifest = useMemo(() => JSON.parse(manifestText) as LightmapManifest, [manifestText])
+  const manifest = MANIFESTS[club]
   const names = useMemo(() => Object.keys(manifest.lightmaps), [manifest])
-  const textures = useLoader(
-    THREE.TextureLoader,
-    names.map((n) => `${base}/${manifest.lightmaps[n].file}`),
+  const urls = useMemo(
+    () => names.map((n) => `${base}/${manifest.lightmaps[n].file}`),
+    [base, manifest, names],
   )
+  // start every download now: the GLB and the lightmaps load in parallel, not in a waterfall
+  useGLTF.preload(`${base}/${club}.glb`, false, true)
+  useLoader.preload(THREE.TextureLoader, urls)
+  const gltf = useGLTF(`${base}/${club}.glb`, false, true)
+  const textures = useLoader(THREE.TextureLoader, urls)
 
   const prepared = useMemo(() => {
     const byName: Record<string, THREE.Texture> = {}
@@ -173,8 +183,4 @@ export function VenueModel({ club }: { club: string }) {
   })
 
   return <primitive object={prepared.root} dispose={null} />
-}
-
-export function preloadVenue(club: string) {
-  useGLTF.preload(`/models/${club}/${club}.glb`, false, true)
 }
