@@ -1,0 +1,8 @@
+# Uploaded by `vercel deploy`: the web app only.
+# Source art (Blender files, bakes, third-party reference photos) never leaves the machine.
+art/
+docs/
+.github/
+scripts/
+*.blend
+*.blend1
