@@ -37,6 +37,10 @@ LAYOUT_PATH = os.path.join(REPO, "art", "layouts", "naho.json")
 TEX_DIR = os.path.join(REPO, "art", "textures", "generated", "naho")
 BLEND_PATH = os.path.join(REPO, "art", "blender", "naho.blend")
 
+# Jost (SIL OFL), the typeface of the web UI, for the club's lettering
+FONT_MEDIUM = "jost-latin-500-normal.woff2"
+FONT_BOLD = "jost-latin-600-normal.woff2"
+
 WARM = (1.0, 0.64, 0.36)
 FOLIAGE_LIGHT = (0.8, 1.0, 0.84)
 
@@ -84,6 +88,36 @@ def frame(origin, xaxis, yaxis) -> Matrix:
     m = Matrix((x, y, z)).transposed().to_4x4()
     m.translation = Vector(origin)
     return m
+
+
+# Naho's wordmark as drawn in the web UI (src/components/experience/brand.tsx): N, an A without
+# crossbar, H, O — thin strokes on a 70 x 20 grid (y down), cap height 16.
+NAHO_STROKES = [
+    [(1.5, 18), (1.5, 2.4), (13, 17.6), (13, 2)],
+    [(18.5, 18), (25, 2.2), (31.5, 18)],
+    [(36.5, 2), (36.5, 18)],
+    [(48.5, 2), (48.5, 18)],
+    [(36.5, 10.1), (48.5, 10.1)],
+    ("circle", 61.2, 10, 8),
+]
+
+
+def naho_wordmark(mb: MeshBuilder, mat, height: float, radius: float, matrix: Matrix) -> None:
+    """Neon tubes spelling NΛHO, centred on the local origin, `height` = cap height."""
+    k = height / 16
+
+    def local(x: float, y: float) -> tuple[float, float]:
+        return ((x - 35.3) * k, (10 - y) * k)
+
+    strokes = []
+    for st in NAHO_STROKES:
+        if st[0] == "circle":
+            _, cx, cy, r = st
+            lx, ly = local(cx, cy)
+            strokes.append(("circle", lx, ly, r * k))
+        else:
+            strokes.append([local(x, y) for x, y in st])
+    mb.tubes(strokes, radius, mat, matrix)
 
 
 # --------------------------------------------------------------------------- materials
@@ -243,10 +277,15 @@ def build_mezzanine(c: Ctx) -> None:
     slab.box(lx0, lx1, ly - 0.06, ly, under - 0.75, under, M["fascia"], skip=("+x", "-x"))
     slab.finalize(c.C["LVL1"], lightmap=2048)
 
-    to_world = frame((-3.4, ly + 0.012, under - 0.38), (-1, 0, 0), (0, 0, 1))
-    c.signs.text("WELCOME", M["neon_white"], 0.5, to_world, extrude=0.015)
-    to_world = frame((-8.6, ly + 0.012, under - 0.38), (-1, 0, 0), (0, 0, 1))
-    c.signs.text("CLUB *", M["neon_green"], 0.5, to_world, extrude=0.015)
+    # as in the club: solid white WELCOME, then CLUB in green neon outlines and a starburst
+    to_world = frame((-3.6, ly + 0.012, under - 0.4), (-1, 0, 0), (0, 0, 1))
+    c.signs.text("WELCOME", M["neon_white"], 0.52, to_world, extrude=0.02, font=FONT_BOLD, spacing=1.05)
+    to_world = frame((-8.0, ly + 0.03, under - 0.4), (-1, 0, 0), (0, 0, 1))
+    c.signs.text("CLUB", M["neon_green"], 0.6, to_world, font=FONT_MEDIUM, outline=0.011, spacing=1.12)
+    star = frame((-9.7, ly + 0.03, under - 0.4), (-1, 0, 0), (0, 0, 1))
+    spokes = [[(math.cos(a) * 0.17, math.sin(a) * 0.17), (-math.cos(a) * 0.17, -math.sin(a) * 0.17)]
+              for a in (0, math.pi / 4, math.pi / 2, 3 * math.pi / 4)]  # fmt: skip
+    c.signs.tubes(spokes, 0.011, M["neon_green"], star)
 
 
 def rail(metal: MeshBuilder, glass: MeshBuilder, p0, p1, height: float, M: dict, step: float = 1.5) -> None:
@@ -270,11 +309,11 @@ def build_railings(c: Ctx) -> None:
         (ax, ay), (bx, by) = seg["from"], seg["to"]
         rail(metal, c.lvl1_glass, (ax, ay, c.mz), (bx, by, c.mz), h, c.M)
     metal.finalize(c.C["LVL1"])
-    # NAHO patina logos on the glass, facing the dance floor
+    # gold Naho wordmarks on the glass, facing the dance floor
     for y in (-9.5, -3.5, 2.5):
-        c.signs.text("NAHO", c.M["neon_gold"], 0.32, frame((8.37, y, c.mz + 0.55), (0, -1, 0), (0, 0, 1)), 0.005)
+        naho_wordmark(c.signs, c.M["neon_gold"], 0.16, 0.0045, frame((8.36, y, c.mz + 0.55), (0, -1, 0), (0, 0, 1)))
     for x in (-6.0, 0.0, 6.0):
-        c.signs.text("NAHO", c.M["neon_gold"], 0.32, frame((x, 10.97, c.mz + 0.55), (1, 0, 0), (0, 0, 1)), 0.005)
+        naho_wordmark(c.signs, c.M["neon_gold"], 0.16, 0.0045, frame((x, 10.96, c.mz + 0.55), (1, 0, 0), (0, 0, 1)))
 
 
 def build_columns(c: Ctx) -> None:
@@ -413,7 +452,7 @@ def build_wc(c: Ctx) -> None:
     mb.box(x0, x1, y0, y1, c.mz, c.mz + 2.9, M["concrete"], skip=("-z", "+x", "+y"))
     mb.wall_y(y0 - 0.01, 11.0, 12.1, c.mz, c.mz + 2.2, M["black"], -1)
     mb.finalize(c.C["LVL1"], lightmap=512)
-    c.signs.text("WC", M["neon_white"], 0.3, frame((11.55, y0 - 0.02, c.mz + 2.45), (1, 0, 0), (0, 0, 1)), 0.01)
+    c.signs.text("WC", M["neon_white"], 0.3, frame((11.55, y0 - 0.02, c.mz + 2.45), (1, 0, 0), (0, 0, 1)), 0.01, font=FONT_MEDIUM)
 
 
 def build_slats(c: Ctx) -> None:
@@ -538,20 +577,30 @@ def build_led_rain(c: Ctx) -> None:
     fx_mesh("fx_ledrain", verts, faces, uv0, data, [c.M["led_pink"]], [0] * len(faces), c.C["FX"], smooth=False)
 
 
+# Opal globes hung around the LED rain like in the club: arcs on both sides of the dance floor,
+# a cluster in front of the stage, a few towards the south stairs. (x, y, z, radius), metres.
+GLOBES = [
+    # west arc, between the vegetal lounge and the dance floor
+    (-5.3, -9.6, 5.3, 0.42), (-3.7, -7.4, 6.4, 0.34), (-5.6, -5.0, 5.8, 0.48), (-3.5, -2.6, 5.0, 0.38),
+    (-5.2, -0.2, 6.6, 0.36), (-3.9, 2.3, 5.5, 0.46), (-5.6, 4.6, 6.2, 0.40),
+    # east arc, at eye level for the VIP east balcony
+    (6.6, -10.0, 5.9, 0.40), (7.6, -7.6, 5.2, 0.46), (6.3, -5.2, 6.5, 0.36), (7.5, -2.8, 5.6, 0.42),
+    (6.5, -0.4, 6.1, 0.48), (7.4, 2.2, 5.3, 0.36),
+    # in front of the stage
+    (-1.6, 4.4, 6.9, 0.44), (0.9, 5.6, 6.0, 0.36), (3.3, 4.6, 6.7, 0.50), (5.6, 5.9, 5.7, 0.38),
+    (-0.2, 5.2, 7.1, 0.32),
+    # towards the south stairs
+    (-1.2, -10.6, 6.3, 0.38), (1.4, -10.2, 5.6, 0.44), (3.8, -10.7, 6.2, 0.36),
+    # accents near the entrance and the prestige corner
+    (-7.6, -10.6, 6.6, 0.50), (7.0, 8.4, 6.4, 0.46),
+]  # fmt: skip
+
+
 def build_spheres(c: Ctx) -> None:
     """Glowing globes. UV1 ('data') = (phase, colour slot) for the web shader."""
-    lr, M = c.L["ledRain"], c.M
+    M = c.M
     rng = v3.seeded(17)
-    pts = []
-    tries = 0
-    while len(pts) < 18 and tries < 5000:
-        tries += 1
-        x, y, z = rng.uniform(-8.8, 7.4), rng.uniform(-10.6, 5.8), rng.uniform(4.5, 7.0)
-        if lr["x"][0] - 0.6 < x < lr["x"][1] + 0.6 and lr["y"][0] - 0.6 < y < lr["y"][1] + 0.6:
-            continue
-        if any((x - px) ** 2 + (y - py) ** 2 < 2.3**2 for px, py, _, _ in pts):
-            continue
-        pts.append((x, y, z, rng.uniform(0.24, 0.46)))
+    pts = list(GLOBES)
     tmp = bmesh.new()
     bmesh.ops.create_icosphere(tmp, subdivisions=3, radius=1.0)
     tv = [v.co.copy() for v in tmp.verts]
@@ -575,9 +624,11 @@ def build_spheres(c: Ctx) -> None:
 def build_signs(c: Ctx) -> None:
     M = c.M
     xw = c.L["building"]["maxX"] - 0.04
-    c.signs.text("NAHO", M["neon_white"], 2.0, frame((xw, -3.4, 6.5), (0, -1, 0), (0, 0, 1)), 0.05)
+    # the club's name in neon tubes over the lounge wall, 1.5 m tall
+    naho_wordmark(c.signs, M["neon_white"], 1.5, 0.032, frame((xw - 0.02, -3.4, 6.4), (0, -1, 0), (0, 0, 1)))
     e = c.L["entrance"]
-    c.signs.text("ENTRÉE", M["neon_white"], 0.22, frame((sum(e["x"]) / 2, e["y"] + 0.02, 2.95), (-1, 0, 0), (0, 0, 1)), 0.01)
+    to_world = frame((sum(e["x"]) / 2, e["y"] + 0.02, 2.95), (-1, 0, 0), (0, 0, 1))
+    c.signs.text("ENTRÉE", M["neon_white"], 0.22, to_world, 0.01, font=FONT_MEDIUM, spacing=1.2)
 
 
 # --------------------------------------------------------------------------- furniture
