@@ -7,7 +7,7 @@ import { setConsent } from "@/lib/analytics/client"
 
 const TITLE = "Mesure d'audience"
 const BODY =
-  "Nous mesurons l'usage de cette démo (pages vues, tables consultées) pour l'améliorer. Aucune donnée de contact n'est utilisée."
+  "Nous mesurons l'usage de cette démo (pages vues, tables consultées, replays de navigation anonymisés) pour l'améliorer. Aucune donnée de contact n'est utilisée."
 
 /** Analytics consent card, bottom left. Refusing is as easy and as visible as accepting. */
 export function ConsentBanner() {

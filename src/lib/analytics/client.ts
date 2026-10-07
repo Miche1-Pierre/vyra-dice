@@ -77,6 +77,8 @@ export function initAnalytics({
       capture_pageview: false,
       capture_pageleave: false,
       disable_session_recording: true,
+      // Replays never contain what buyers type (name, phone, e-mail, message).
+      session_recording: { maskAllInputs: true, maskTextSelector: "[data-ph-mask]" },
       // Nothing is captured before an explicit opt-in, including captures enabled remotely.
       opt_out_capturing_by_default: true,
     })
