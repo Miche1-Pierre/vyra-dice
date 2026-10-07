@@ -17,11 +17,17 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
-        // venue bundles are not content-hashed: cache, but revalidate in the background
+        // unversioned venue files: cache briefly, revalidate in the background
         source: "/models/:path*",
         headers: [
           { key: "Cache-Control", value: "public, max-age=3600, stale-while-revalidate=604800" },
         ],
+      },
+      {
+        // ?v=<content hash> (assets:optimize): a new bake gets a new URL, so cache forever
+        source: "/models/:path*",
+        has: [{ type: "query", key: "v" }],
+        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
       },
     ]
   },
