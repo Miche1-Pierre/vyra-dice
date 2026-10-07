@@ -52,3 +52,6 @@ next-env.d.ts
 /art/export/*.glb
 /art/export/*.lightmaps.json
 /art/export/*/
+
+# Python bytecode from the Blender scripts
+__pycache__/
