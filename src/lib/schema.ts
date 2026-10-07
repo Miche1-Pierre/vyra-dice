@@ -187,8 +187,8 @@ export const bookingRequestInputSchema = z.object(
           error: "Adresse e-mail invalide",
         }),
       )
-      .optional()
-      .transform((email) => email || undefined),
+      .transform((email) => email || undefined)
+      .optional(),
     partySize: z.coerce
       .number({ error: "Indiquez le nombre de personnes" })
       .int({ error: "Indiquez un nombre entier de personnes" })
@@ -199,8 +199,8 @@ export const bookingRequestInputSchema = z.object(
       .string({ error: "Message invalide" })
       .trim()
       .max(500, { error: "Message trop long (500 caractères maximum)" })
-      .optional()
-      .transform((message) => message || undefined),
+      .transform((message) => message || undefined)
+      .optional(),
     consent: z.literal(true, { error: "Merci d'accepter d'être recontacté par le club" }),
     idempotencyKey: z.uuid({ error: "Formulaire expiré, rechargez la page" }),
     attribution: attributionSchema.optional().catch(undefined),

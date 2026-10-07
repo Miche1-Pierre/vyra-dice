@@ -68,6 +68,17 @@ describe("bookingRequestInputSchema", () => {
     expect(parsed.phone).toBe("06 12 34 56 78")
   })
 
+  it("accepts omitted optional fields", () => {
+    const input: Record<string, unknown> = requestInput()
+    delete input.email
+    delete input.message
+    delete input.attribution
+    const parsed = bookingRequestInputSchema.parse(input)
+    expect(parsed).not.toHaveProperty("email")
+    expect(parsed).not.toHaveProperty("message")
+    expect(parsed.attribution).toBeUndefined()
+  })
+
   it("keeps a valid optional email", () => {
     const parsed = bookingRequestInputSchema.parse(requestInput({ email: " camille@example.com " }))
     expect(parsed.email).toBe("camille@example.com")
