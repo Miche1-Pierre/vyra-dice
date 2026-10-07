@@ -39,16 +39,21 @@ interface PreparedVenue {
   upper: THREE.Material[]
 }
 
-function ownerName(obj: THREE.Object3D, known: (name: string) => boolean): string | null {
-  let cur: THREE.Object3D | null = obj
+const FX_NAMES = new Set(["fx_ledrain", "fx_spheres", "fx_screen"])
+
+/**
+ * Blender node owning a mesh. glTF splits a multi-material node into a group named after the
+ * node with one child per material (`lvl1_furniture` → `lvl1_furniture_1`, …): the node name
+ * is what owns the lightmap and the FX role.
+ */
+function nodeName(mesh: THREE.Object3D, manifest: LightmapManifest): string {
+  let cur: THREE.Object3D | null = mesh
   while (cur) {
-    if (known(cur.name)) return cur.name
+    if (cur.name in manifest.lightmaps || FX_NAMES.has(cur.name)) return cur.name
     cur = cur.parent
   }
-  return null
+  return mesh.name.replace(/_\d+$/, "")
 }
-
-const FX_NAMES = new Set(["fx_ledrain", "fx_spheres", "fx_screen"])
 
 function isEmissive(m: THREE.MeshStandardMaterial): boolean {
   return (
@@ -65,16 +70,15 @@ function prepareVenue(
 ): PreparedVenue {
   const timed: TimedMaterial[] = []
   const upper: THREE.Material[] = []
-  const known = (n: string) =>
-    n in manifest.lightmaps || FX_NAMES.has(n) || /^(lvl1_|fx_|glass|rig)/.test(n)
 
   scene.updateMatrixWorld(true)
   scene.traverse((obj) => {
     obj.matrixAutoUpdate = false
     const mesh = obj as THREE.Mesh
     if (!mesh.isMesh) return
-    const owner = ownerName(mesh, known) ?? mesh.name
-    const src = mesh.material as THREE.MeshStandardMaterial
+    const owner = nodeName(mesh, manifest)
+    // StrictMode prepares the same scene twice: always start again from the glTF material
+    const src = (mesh.userData.source ??= mesh.material) as THREE.MeshStandardMaterial
     let mat: THREE.Material
 
     if (owner === "fx_ledrain" || owner === "fx_spheres") {
