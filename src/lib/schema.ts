@@ -15,6 +15,10 @@ const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 const slugSchema = z.string().max(64).regex(SLUG_PATTERN, { error: "Expected a lowercase slug" })
 const textSchema = z.string().min(1)
 
+/** Glyph drawn on the zone's icon in the dock, the search and the price tags. */
+export const zoneIconSchema = z.enum(["leaf", "martini", "disc", "sunrise", "sofa", "crown", "gem"])
+export type ZoneIcon = z.infer<typeof zoneIconSchema>
+
 export const zoneContentSchema = z.object({
   id: slugSchema,
   tier: tierSchema,
@@ -22,6 +26,7 @@ export const zoneContentSchema = z.object({
   shortName: textSchema,
   description: textSchema,
   perks: z.array(textSchema),
+  icon: zoneIconSchema.optional(),
 })
 export type ZoneContent = z.infer<typeof zoneContentSchema>
 

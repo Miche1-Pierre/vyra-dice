@@ -63,6 +63,7 @@ const content: VenueContentInput = {
     {
       id: "lounge-vegetal",
       tier: "lounge",
+      icon: "leaf",
       name: "Lounge Végétal",
       shortName: "Végétal",
       description: "Banquettes le long du mur végétal, en bord de piste.",
@@ -71,6 +72,7 @@ const content: VenueContentInput = {
     {
       id: "lounge-mezzanine",
       tier: "lounge",
+      icon: "martini",
       name: "Lounge Gold",
       shortName: "Gold",
       description: "Alcôves feutrées sous la mezzanine, ambiance dorée.",
@@ -79,6 +81,7 @@ const content: VenueContentInput = {
     {
       id: "vip-balcon",
       tier: "vip",
+      icon: "disc",
       name: "Balcon DJ",
       shortName: "Balcon",
       description: "Au-dessus de la cabine DJ, vue plongeante sur la piste.",
@@ -87,6 +90,7 @@ const content: VenueContentInput = {
     {
       id: "vip-est",
       tier: "vip",
+      icon: "sunrise",
       name: "Mezzanine Est",
       shortName: "Est",
       description: "Le long du garde-corps, face au bar et à la pluie de LED.",
@@ -95,6 +99,7 @@ const content: VenueContentInput = {
     {
       id: "vip-sud",
       tier: "vip",
+      icon: "sofa",
       name: "Mezzanine Sud",
       shortName: "Sud",
       description: "Face à la salle, à deux pas du bar VIP.",
@@ -103,6 +108,7 @@ const content: VenueContentInput = {
     {
       id: "prestige-dj",
       tier: "prestige",
+      icon: "crown",
       name: "Carré DJ",
       shortName: "Carré DJ",
       description: "Le carré le plus exclusif, à hauteur de la scène, avec hôte dédié.",
@@ -111,6 +117,7 @@ const content: VenueContentInput = {
     {
       id: "prestige-loge",
       tier: "prestige",
+      icon: "gem",
       name: "Loge Welcome",
       shortName: "Loge",
       description: "Loge privative au-dessus de l'entrée, vue sur toute la salle.",
