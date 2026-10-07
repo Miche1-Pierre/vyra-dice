@@ -5,78 +5,97 @@
   "lightmaps": {
     "ground_floor": {
       "file": "lm/ground_floor.webp",
-      "scale": 3.80261,
-      "size": 2048
+      "scale": 3.81374,
+      "size": 2048,
+      "hash": "d01bf09662"
     },
     "wall_west": {
       "file": "lm/wall_west.webp",
-      "scale": 3.98085,
-      "size": 2048
+      "scale": 3.99961,
+      "size": 2048,
+      "hash": "367ceee89d"
     },
     "wall_east": {
       "file": "lm/wall_east.webp",
-      "scale": 19.94368,
-      "size": 2048
+      "scale": 4.88787,
+      "size": 2048,
+      "hash": "3472f8c61f"
     },
     "walls_upper": {
       "file": "lm/walls_upper.webp",
-      "scale": 4.85703,
-      "size": 1024
+      "scale": 4.839,
+      "size": 1024,
+      "hash": "ad22c1f928"
     },
     "walls_ground": {
       "file": "lm/walls_ground.webp",
-      "scale": 13.85727,
-      "size": 1024
+      "scale": 13.83923,
+      "size": 1024,
+      "hash": "5cd665c647"
     },
     "ceiling": {
       "file": "lm/ceiling.webp",
-      "scale": 10.29361,
-      "size": 1024
+      "scale": 10.38455,
+      "size": 1024,
+      "hash": "6df753a042"
     },
     "columns": {
       "file": "lm/columns.webp",
-      "scale": 3.92239,
-      "size": 512
+      "scale": 4.11694,
+      "size": 512,
+      "hash": "5e54293ae7"
     },
     "stairs": {
       "file": "lm/stairs.webp",
-      "scale": 18.84475,
-      "size": 1024
+      "scale": 18.85429,
+      "size": 1024,
+      "hash": "5a6ba9be50"
     },
     "bar": {
       "file": "lm/bar.webp",
-      "scale": 17.3553,
-      "size": 1024
+      "scale": 17.35487,
+      "size": 1024,
+      "hash": "6ba85d09fd"
     },
     "stage": {
       "file": "lm/stage.webp",
-      "scale": 12.4156,
-      "size": 1024
+      "scale": 12.42885,
+      "size": 1024,
+      "hash": "081e3717eb"
     },
     "slats": {
       "file": "lm/slats.webp",
-      "scale": 1.88066,
-      "size": 1024
+      "scale": 1.8812,
+      "size": 1024,
+      "hash": "b64137ba41"
     },
     "lvl1_slabs": {
       "file": "lm/lvl1_slabs.webp",
-      "scale": 5.42451,
-      "size": 2048
+      "scale": 5.24581,
+      "size": 2048,
+      "hash": "7ef16aabf0"
     },
     "lvl1_wc": {
       "file": "lm/lvl1_wc.webp",
-      "scale": 8.14618,
-      "size": 512
+      "scale": 8.14711,
+      "size": 512,
+      "hash": "e71d2bc700"
     },
     "furniture": {
       "file": "lm/furniture.webp",
-      "scale": 4.30939,
-      "size": 2048
+      "scale": 4.34517,
+      "size": 2048,
+      "hash": "13755cad23"
     },
     "lvl1_furniture": {
       "file": "lm/lvl1_furniture.webp",
-      "scale": 5.03563,
-      "size": 2048
+      "scale": 5.03998,
+      "size": 2048,
+      "hash": "d49d1e9987"
     }
+  },
+  "model": {
+    "file": "naho.glb",
+    "hash": "aa639f14cb"
   }
 }
