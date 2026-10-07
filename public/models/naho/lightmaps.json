@@ -70,12 +70,12 @@
     },
     "furniture": {
       "file": "lm/furniture.webp",
-      "scale": 4.30927,
+      "scale": 4.30939,
       "size": 2048
     },
     "lvl1_furniture": {
       "file": "lm/lvl1_furniture.webp",
-      "scale": 5.14751,
+      "scale": 5.03563,
       "size": 2048
     }
   }
