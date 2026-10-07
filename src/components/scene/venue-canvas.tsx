@@ -8,6 +8,7 @@ import { ClubEnvironment } from "@/components/scene/club-environment"
 import { Effects, type Quality } from "@/components/scene/effects"
 import { Backdrop } from "@/components/scene/fx/backdrop"
 import { Beams } from "@/components/scene/fx/beams"
+import { FloorGloss } from "@/components/scene/fx/floor-gloss"
 import { CameraRig } from "@/components/scene/camera-rig"
 import { Markers, type TableMarkerData, type ZoneMarkerData } from "@/components/scene/markers"
 import { TableHotspots } from "@/components/scene/table-hotspots"
@@ -78,6 +79,7 @@ export default function VenueCanvas({
         <Suspense fallback={null}>
           <ClubEnvironment intensity={quality === "high" ? 1 : 0.85} />
           <VenueModel club={club} quality={quality} />
+          {quality === "high" && effects ? <FloorGloss layout={layout} /> : null}
           <Backdrop center={venueCenter(layout)} />
           <Beams layout={layout} intensity={quality === "high" ? 1 : 0.8} />
           <ZoneOverlays layout={layout} />
