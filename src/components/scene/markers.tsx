@@ -133,47 +133,58 @@ export function Markers({
     else cards.current.delete(key)
   }
 
-  if (view === "intro" || view === "seat") return null
+  // Every tag stays mounted and is only hidden: drei's <Html> owns a React root per tag, and
+  // unmounting those roots while the scene re-renders makes React warn (and costs remounts).
+  const zoneShown = (z: ZoneMarkerData) => view === "overview" && levelVisible(z.level)
+  const tableShown = (t: TableMarkerData) =>
+    ((view === "zone" && t.zoneId === focusedZoneId) ||
+      (view === "table" && t.id === selectedTableId)) &&
+    levelVisible(t.level)
+  const wrapper = (shown: boolean) => ({
+    pointerEvents: "none" as const,
+    opacity: shown ? 1 : 0,
+    visibility: shown ? ("visible" as const) : ("hidden" as const),
+    transition: "opacity 220ms ease",
+  })
 
   return (
     <>
-      {view === "overview" &&
-        zones
-          .filter((z) => levelVisible(z.level))
-          .map((z) => (
-            <Html
-              key={z.id}
-              position={zonePositions[z.id]}
-              zIndexRange={[30, 10]}
-              style={{ pointerEvents: "none" }}
-            >
-              <ZoneTag
-                zone={z}
-                onClick={() => focusZone(z.id)}
-                cardRef={register(`zone:${z.id}`)}
-              />
-            </Html>
-          ))}
-      {(view === "zone" || view === "table") &&
-        tables
-          .filter((t) => (view === "zone" ? t.zoneId === focusedZoneId : t.id === selectedTableId))
-          .filter((t) => levelVisible(t.level))
-          .map((t) => (
-            <Html
-              key={t.id}
-              position={tablePositions[t.id]}
-              zIndexRange={[30, 10]}
-              style={{ pointerEvents: "none" }}
-            >
-              <TableTag
-                table={t}
-                active={t.id === selectedTableId || t.id === hoveredTableId}
-                onClick={() => selectTable(t.id)}
-                onHover={(on) => hoverTable(on ? t.id : null)}
-                cardRef={register(`table:${t.id}`)}
-              />
-            </Html>
-          ))}
+      {zones.map((z) => {
+        const shown = zoneShown(z)
+        return (
+          <Html
+            key={z.id}
+            position={zonePositions[z.id]}
+            zIndexRange={[30, 10]}
+            style={wrapper(shown)}
+          >
+            <ZoneTag
+              zone={z}
+              onClick={() => focusZone(z.id)}
+              cardRef={shown ? register(`zone:${z.id}`) : null}
+            />
+          </Html>
+        )
+      })}
+      {tables.map((t) => {
+        const shown = tableShown(t)
+        return (
+          <Html
+            key={t.id}
+            position={tablePositions[t.id]}
+            zIndexRange={[30, 10]}
+            style={wrapper(shown)}
+          >
+            <TableTag
+              table={t}
+              active={t.id === selectedTableId || t.id === hoveredTableId}
+              onClick={() => selectTable(t.id)}
+              onHover={(on) => hoverTable(on ? t.id : null)}
+              cardRef={shown ? register(`table:${t.id}`) : null}
+            />
+          </Html>
+        )
+      })}
     </>
   )
 }
