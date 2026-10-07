@@ -1,41 +1,66 @@
-// Optimizes Blender exports for the web.
-// art/export/<name>.glb  ->  public/models/<name>.glb  (meshopt geometry, WebP textures <= 2048px)
-import { execFileSync } from "node:child_process"
-import { mkdirSync, readdirSync, statSync } from "node:fs"
+// Turns the raw Blender export of a venue into the web bundle served from public/models/<club>/.
+//
+//   art/export/<club>.glb              -> public/models/<club>/<club>.glb   (meshopt, WebP textures)
+//   art/export/<club>/lm/*.png         -> public/models/<club>/lm/*.webp    (lightmaps)
+//   art/export/<club>.lightmaps.json   -> public/models/<club>/lightmaps.json
+//
+// Usage: pnpm assets:optimize [club]   (default: every <club>.glb found in art/export)
+//
+// Object names, empty nodes and the second UV set (lightmap / FX data) must survive:
+// prune keeps leaves and attributes, nothing is joined, flattened or simplified.
+import { NodeIO } from "@gltf-transform/core"
+import { ALL_EXTENSIONS } from "@gltf-transform/extensions"
+import { dedup, meshopt, prune, textureCompress } from "@gltf-transform/functions"
+import { MeshoptEncoder, MeshoptDecoder } from "meshoptimizer"
+import { mkdir, readdir, readFile, stat, writeFile } from "node:fs/promises"
 import { join } from "node:path"
+import sharp from "sharp"
 
 const SRC = "art/export"
 const OUT = "public/models"
-const only = process.argv[2] // optional: single file name
 
-mkdirSync(OUT, { recursive: true })
+const kb = async (p) => `${((await stat(p)).size / 1024).toFixed(0)} KB`
 
-const files = readdirSync(SRC).filter((f) => f.endsWith(".glb") && (!only || f === only))
-if (files.length === 0) {
-  console.log(`No .glb in ${SRC}${only ? ` matching ${only}` : ""}`)
-  process.exit(0)
-}
+async function optimizeClub(club) {
+  const outDir = join(OUT, club)
+  await mkdir(join(outDir, "lm"), { recursive: true })
 
-for (const file of files) {
-  const input = join(SRC, file)
-  const output = join(OUT, file)
-  execFileSync(
-    "pnpm",
-    [
-      "exec",
-      "gltf-transform",
-      "optimize",
-      input,
-      output,
-      "--compress",
-      "meshopt",
-      "--texture-compress",
-      "webp",
-      "--texture-size",
-      "2048",
-    ],
-    { stdio: "inherit", shell: true },
+  await MeshoptEncoder.ready
+  await MeshoptDecoder.ready
+  const io = new NodeIO()
+    .registerExtensions(ALL_EXTENSIONS)
+    .registerDependencies({ "meshopt.encoder": MeshoptEncoder, "meshopt.decoder": MeshoptDecoder })
+
+  const input = join(SRC, `${club}.glb`)
+  const doc = await io.read(input)
+  await doc.transform(
+    dedup(),
+    prune({ keepLeaves: true, keepAttributes: true, keepIndices: true }),
+    textureCompress({ encoder: sharp, targetFormat: "webp", quality: 82, resize: [1024, 1024] }),
+    meshopt({ encoder: MeshoptEncoder, level: "medium", quantizeTexcoord: 14, quantizeNormal: 10 }),
   )
-  const kb = (p) => (statSync(p).size / 1024).toFixed(0)
-  console.log(`${file}: ${kb(input)} KB -> ${kb(output)} KB`)
+  const output = join(outDir, `${club}.glb`)
+  await io.write(output, doc)
+  console.log(`${club}.glb: ${await kb(input)} -> ${await kb(output)}`)
+
+  const manifest = JSON.parse(await readFile(join(SRC, `${club}.lightmaps.json`), "utf8"))
+  let total = 0
+  for (const [name, entry] of Object.entries(manifest.lightmaps)) {
+    const png = join(SRC, club, entry.file)
+    const file = entry.file.replace(/\.png$/, ".webp")
+    const webp = join(outDir, file)
+    await sharp(png).webp({ quality: 86, effort: 6, smartSubsample: true }).toFile(webp)
+    entry.file = file
+    total += (await stat(webp)).size
+    console.log(`  lm ${name}: ${await kb(png)} -> ${await kb(webp)}`)
+  }
+  await writeFile(join(outDir, "lightmaps.json"), `${JSON.stringify(manifest, null, 2)}\n`)
+  console.log(`  lightmaps total: ${(total / 1024).toFixed(0)} KB`)
 }
+
+const only = process.argv[2]
+const clubs = only
+  ? [only]
+  : (await readdir(SRC)).filter((f) => f.endsWith(".glb")).map((f) => f.replace(/\.glb$/, ""))
+if (clubs.length === 0) console.log(`No .glb in ${SRC}`)
+for (const club of clubs) await optimizeClub(club)
