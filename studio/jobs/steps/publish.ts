@@ -73,7 +73,9 @@ export async function publish(ctx: RunContext): Promise<void> {
       await ctx.exec("git", ["worktree", "remove", "--force", tree]).catch(() => undefined)
     rmSync(tree, { recursive: true, force: true })
     mkdirSync(path.dirname(tree), { recursive: true })
-    await ctx.exec("git", ["worktree", "add", "-B", branch, tree, `origin/${base}`])
+    // a fresh branch with no upstream: it is pushed under its own name, never onto its base
+    await ctx.exec("git", ["branch", "-D", branch]).catch(() => undefined)
+    await ctx.exec("git", ["worktree", "add", "--no-track", "-b", branch, tree, `origin/${base}`])
   })
 
   await ctx.phase("Dossier du club, registre et captures", async () => {
