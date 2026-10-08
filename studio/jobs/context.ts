@@ -93,10 +93,22 @@ export class RunContext {
       child.on("close", (code) =>
         code === 0
           ? resolve(out)
-          : reject(new Error(`${path.basename(command)} a échoué (code ${code})`)),
+          : reject(
+              Object.assign(new Error(`${path.basename(command)} a échoué (code ${code})`), {
+                output: out,
+              }),
+            ),
       )
     })
   }
+}
+
+/** The useful end of a failed program's output (a Python traceback, an error line). */
+export function errorTail(error: unknown, lines = 25): string {
+  const output = (error as { output?: string })?.output ?? ""
+  const all = output.split(/\r?\n/).filter((l) => l.trim() && blenderNoise(l))
+  const start = all.findIndex((l) => l.startsWith("Traceback"))
+  return (start >= 0 ? all.slice(start) : all).slice(-lines).join("\n") || String(error)
 }
 
 /** Blender's chatter we do not need in the log. */

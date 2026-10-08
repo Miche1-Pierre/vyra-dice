@@ -2,7 +2,7 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 
 import path from "node:path"
 
 import { claudeCode, recordAgent, type AgentResult } from "@studio/jobs/agent"
-import type { RunContext } from "@studio/jobs/context"
+import { BLENDER, errorTail, type RunContext } from "@studio/jobs/context"
 import { build } from "@studio/jobs/steps/build"
 import { readFeedback, writeFeedback } from "@studio/lib/feedback"
 import { readBrief } from "@studio/lib/state"
@@ -35,18 +35,35 @@ function header(ctx: RunContext): string {
   ].join("\n")
 }
 
+/** A quick Blender build (no renders, no save): what the schema cannot catch, Blender will. */
+async function blenderProblems(ctx: RunContext): Promise<string[]> {
+  try {
+    await ctx.exec(
+      BLENDER,
+      ["-b", "-P", "art/scripts/build_club.py", "--", "--club", ctx.slug, "--no-save"],
+      {
+        filter: (line) => /\[check\]|Error|Traceback/.test(line),
+      },
+    )
+    return []
+  } catch (error) {
+    return [`La construction Blender a échoué (art/scripts/build_club.py) :\n${errorTail(error)}`]
+  }
+}
+
 /** Validation rounds: the agent fixes what the Studio reports, in the same session. */
 async function fixUntilValid(ctx: RunContext, first: AgentResult): Promise<void> {
   let session = first.sessionId
   for (let round = 1; ; round++) {
     const v = validateClub(ctx.slug)
-    if (v.ok) {
-      ctx.log("spécification valide")
+    const problems = v.ok
+      ? await ctx.phase("Construction d'essai", () => blenderProblems(ctx))
+      : v.problems
+    if (!problems.length) {
+      ctx.log("spécification valide, la scène se construit")
       return
     }
-    ctx.log(
-      `validation : ${v.problems.length} problème(s)\n${v.problems.join("\n").slice(0, 4000)}`,
-    )
+    ctx.log(`validation : ${problems.length} problème(s)\n${problems.join("\n").slice(0, 4000)}`)
     if (round > MAX_FIX_ROUNDS)
       throw new Error(`Spécification encore invalide après ${MAX_FIX_ROUNDS} corrections`)
     const r = await ctx.phase(`Correction ${round}`, () =>
@@ -55,7 +72,7 @@ async function fixUntilValid(ctx: RunContext, first: AgentResult): Promise<void>
         maxTurns: 30,
         prompt: [
           "Le Studio a validé tes fichiers et trouvé ces problèmes :",
-          v.problems.join("\n\n"),
+          problems.join("\n\n"),
           "Corrige-les tous (rien d'autre), puis résume tes corrections en une phrase.",
         ].join("\n\n"),
       }),

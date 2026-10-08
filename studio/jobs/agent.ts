@@ -151,7 +151,12 @@ export const claudeCode: AgentRunner = {
 
     ctx.log(`agent ${MODEL} — session ${sessionId}${request.resume ? " (reprise)" : ""}`)
     return new Promise<AgentResult>((resolve, reject) => {
-      const child = spawn(claudeBinary(), args, { cwd: REPO, env, windowsHide: true })
+      const child = spawn(claudeBinary(), args, {
+        cwd: REPO,
+        env,
+        windowsHide: true,
+        stdio: ["ignore", "pipe", "pipe"],
+      })
       let buffer = ""
       let result: AgentResult | null = null
       const denials: string[] = []
