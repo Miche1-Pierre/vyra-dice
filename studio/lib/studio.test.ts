@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest"
 import { slugify } from "@studio/lib/brief"
 import { appendLesson, safeFileName } from "@studio/lib/clubs"
 import { clubPaths, insideClub } from "@studio/lib/paths"
-import { identifierOf, registerClub } from "@studio/lib/registry-file"
+import { identifierOf, publishClub, registerClub, registrationOf } from "@studio/lib/registry-file"
 
 describe("slugify", () => {
   it("makes URL and folder names from club names", () => {
@@ -45,12 +45,26 @@ describe("registerClub", () => {
     expect(identifierOf("809-social-club")).toBe("club809SocialClub")
   })
 
-  it("adds one import and one entry, in slug order, and only once", () => {
+  it("adds a generated club to the drafts: one import, in slug order, only once", () => {
     const once = registerClub("809-social-club", registry)
     expect(once).toContain(`import club809SocialClub from "./809-social-club"`)
     expect(once.indexOf("./809-social-club")).toBeLessThan(once.indexOf("./naho"))
-    expect(once).toMatch(/= \[[^\]]*club809SocialClub\]/)
+    expect(once).toMatch(/drafts: readonly ClubDefinition\[\] = \[[^\]]*club809SocialClub\]/)
+    expect(registrationOf("809-social-club", once)).toBe("draft")
     expect(registerClub("809-social-club", once)).toBe(once)
+  })
+
+  it("publishes a draft by moving it to the served clubs, only once", () => {
+    const published = publishClub("809-social-club", registerClub("809-social-club", registry))
+    expect(registrationOf("809-social-club", published)).toBe("published")
+    expect(published).toMatch(/clubs: readonly ClubDefinition\[\] = \[[^\]]*club809SocialClub\]/)
+    expect(published).not.toMatch(/drafts: readonly ClubDefinition\[\] = \[[^\]]*club809Social/)
+    expect(publishClub("809-social-club", published)).toBe(published)
+  })
+
+  it("leaves a published club where it is", () => {
+    expect(registrationOf("naho", registry)).toBe("published")
+    expect(registerClub("naho", registry)).toBe(registry)
   })
 })
 

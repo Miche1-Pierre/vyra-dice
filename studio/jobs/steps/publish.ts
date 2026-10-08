@@ -14,7 +14,7 @@ import sharp from "sharp"
 
 import type { RunContext } from "@studio/jobs/context"
 import { CLUB_TEXT, formatFiles } from "@studio/jobs/format"
-import { registerClub } from "@studio/lib/registry-file"
+import { publishClub } from "@studio/lib/registry-file"
 import { validateClub } from "@studio/lib/validate"
 
 /** What leaves the machine: the club as the site reads it. Never scene.json, build/ or private/. */
@@ -87,7 +87,7 @@ export async function publish(ctx: RunContext): Promise<void> {
       if (existsSync(src)) cpSync(src, path.join(dest, entry), { recursive: true })
     }
     const registry = path.join(tree, "clubs", "registry.ts")
-    writeFileSync(registry, registerClub(ctx.slug, readFileSync(registry, "utf8")))
+    writeFileSync(registry, publishClub(ctx.slug, readFileSync(registry, "utf8")))
     // the PR's checks run prettier: the published files are formatted like the repo
     await formatFiles(
       ctx,
