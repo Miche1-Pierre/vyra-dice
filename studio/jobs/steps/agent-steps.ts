@@ -7,6 +7,7 @@ import { CLUB_TEXT, formatFiles } from "@studio/jobs/format"
 import { build } from "@studio/jobs/steps/build"
 import { readLessons } from "@studio/lib/clubs"
 import { readFeedback, writeFeedback } from "@studio/lib/feedback"
+import { IMAGE } from "@studio/lib/paths"
 import { readBrief } from "@studio/lib/state"
 import { validateClub } from "@studio/lib/validate"
 
@@ -151,7 +152,7 @@ export async function review(ctx: RunContext): Promise<void> {
     const captures =
       !session && existsSync(ctx.paths.captures)
         ? readdirSync(ctx.paths.captures)
-            .filter((f) => f.endsWith(".png"))
+            .filter((f) => IMAGE.test(f))
             .map((f) => `clubs/${ctx.slug}/studio/captures/${f}`)
         : []
     const r = await ctx.phase(`Revue des rendus ${i}/${iterations}`, () =>

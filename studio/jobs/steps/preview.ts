@@ -6,6 +6,7 @@ import path from "node:path"
 
 import { Browser } from "@studio/jobs/browser"
 import type { RunContext } from "@studio/jobs/context"
+import { keepCaptures } from "@studio/jobs/history"
 import { REPO } from "@studio/lib/paths"
 import { clubIndexSource, writeRegistration } from "@studio/lib/registry-file"
 
@@ -100,7 +101,7 @@ export async function preview(ctx: RunContext): Promise<void> {
       await Browser.sleep(2500)
       await b.click(720, 450) // skip the intro
       await Browser.sleep(3500)
-      await b.screenshot(path.join(p.captures, "desktop-overview.png"))
+      await b.screenshot(path.join(p.captures, "desktop-overview.jpg"))
       const zone = await b.evaluate<string | null>(`(() => {
         const items = [...document.querySelectorAll("nav[aria-label='Dock'] [aria-label]")];
         return items[1]?.getAttribute("aria-label") ?? null;
@@ -110,11 +111,11 @@ export async function preview(ctx: RunContext): Promise<void> {
         (await b.clickOn(`nav[aria-label='Dock'] [aria-label=${JSON.stringify(zone)}]`))
       ) {
         await Browser.sleep(3500)
-        await b.screenshot(path.join(p.captures, "desktop-zone.png"))
+        await b.screenshot(path.join(p.captures, "desktop-zone.jpg"))
       }
       if (await b.clickOn("[aria-label^='Table ']")) {
         await Browser.sleep(3500)
-        await b.screenshot(path.join(p.captures, "desktop-table.png"))
+        await b.screenshot(path.join(p.captures, "desktop-table.jpg"))
       }
       await b.viewport(390, 844, true)
       await b.goto(url)
@@ -122,7 +123,7 @@ export async function preview(ctx: RunContext): Promise<void> {
         await Browser.sleep(2500)
         await b.click(195, 420)
         await Browser.sleep(3500)
-        await b.screenshot(path.join(p.captures, "mobile-overview.png"))
+        await b.screenshot(path.join(p.captures, "mobile-overview.jpg"))
       }
       if (b.errors.length)
         ctx.log(`Erreurs de la page :\n${[...new Set(b.errors)].slice(0, 10).join("\n")}`)
@@ -130,4 +131,5 @@ export async function preview(ctx: RunContext): Promise<void> {
       b.close()
     }
   })
+  keepCaptures(ctx)
 }

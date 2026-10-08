@@ -191,7 +191,12 @@ export class Browser {
   }
 
   async screenshot(file: string): Promise<void> {
-    const r = (await this.send("Page.captureScreenshot", { format: "png" })) as { data: string }
+    // .jpg: light enough to be versioned with the club's history
+    const jpeg = /\.jpe?g$/i.test(file)
+    const r = (await this.send(
+      "Page.captureScreenshot",
+      jpeg ? { format: "jpeg", quality: 85 } : { format: "png" },
+    )) as { data: string }
     writeFileSync(file, Buffer.from(r.data, "base64"))
   }
 

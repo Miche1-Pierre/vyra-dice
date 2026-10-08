@@ -19,6 +19,9 @@ export const PLAYBOOK_DIR = path.join(REPO, "studio", "playbook")
 /** Lowercase slug, as in URLs and folder names. */
 export const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 
+/** Renders and captures (PNG from Blender, JPEG once kept in the history). */
+export const IMAGE = /\.(png|jpe?g)$/i
+
 export function clubPaths(slug: string) {
   if (!SLUG.test(slug)) throw new Error(`Invalid club slug: ${slug}`)
   const dir = path.join(CLUBS_DIR, slug)
