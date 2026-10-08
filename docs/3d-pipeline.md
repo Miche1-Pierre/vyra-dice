@@ -10,9 +10,9 @@ régénère. C'est ce qui rend la production d'un nouveau club reproductible (VY
 
 ```
 clubs/<club>/layout.json             plan en mètres (source de vérité, partagée avec le web)
-        │  clubs/<club>/blender/build.py  (+ art/scripts/vyra3d.py)   ~3 s
+        │  + clubs/<club>/scene.json → art/scripts/build_club.py         ~5 s (+ aperçus ~30 s)
         ▼
-clubs/<club>/build/<club>.blend      scène générée (non versionnée)
+clubs/<club>/build/<club>.blend      scène générée + report.json + previews/*.png (non versionnés)
         │  art/scripts/bake_export.py  (Cycles GPU, headless)          ~1 min (rapide) / ~10 min (final)
         ▼
 clubs/<club>/build/export/           <club>.glb (UV0 albedo, UV1 lightmap / données FX) · lm/*.png · lightmaps.json
@@ -26,11 +26,26 @@ public/clubs/<club>/                 servi sous /clubs/<club>/ (copie, non versi
 
 Organisation d'un dossier de club et procédure d'ajout : `docs/clubs.md`.
 
+## Un seul constructeur, des données par club
+
+`art/scripts/build_club.py` construit n'importe quel club : le plan (`layout.json`) donne la géométrie partagée avec le
+web, `scene.json` tout le reste — palette de matières (rôle → matière Blender du club), puis la liste des éléments
+dans l'ordre de construction : maillages faits d'opérations (`floor`, `wall_x`, `wall_y`, `box`, `face`, `beam`,
+`cylinder`), mezzanine, garde-corps, poteaux, escaliers, bar, scène, lames, structures, lyres, enceintes, banquettes,
+décor, pluie de LED, globes, logo en néon, textes, puis l'éclairage du bake. Les nombres peuvent être des expressions
+sur les valeurs nommées du plan (`under - 0.05`, `maxX - 0.04`, `mezzanine_loge_sw_y1`…, liste dans `Values`).
+
+Chaque construction écrit `build/report.json` (objets, triangles, lumières, contrôles : budget mobile, objets
+attendus, surfaces avec lightmap) et, avec `--previews`, des rendus de revue (vue d'ensemble sans plafond, plan vu
+de dessus, quelques tables). `art/scripts/fingerprint.py` compare deux constructions objet par objet (sommets,
+faces, UV, matières, lumières) : le Naho reconstruit depuis ses données est identique à l'octet à l'ancien script
+écrit à la main, GLB exporté compris.
+
 ## Commandes
 
 ```bash
 # 1. construire la scène (Blender ouvert avec le MCP, ou en headless)
-"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe" -b -P clubs/naho/blender/build.py
+"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe" -b -P art/scripts/build_club.py -- --club naho --previews
 
 # 2. précalculer l'éclairage et exporter (GPU OptiX si dispo)
 "C:/Program Files/Blender Foundation/Blender 5.1/blender.exe" -b clubs/naho/build/naho.blend -P art/scripts/bake_export.py

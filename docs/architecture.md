@@ -40,8 +40,8 @@ clubs/
     content.json · layout.json       # offres de la soirée · plan en mètres (source de vérité géométrique)
     brand.json · ambiance.json       # identité dans l'interface · ambiance 3D (light show, reflets, finitions)
     public/                          # bundle web : <club>.glb, lm/*.webp, lightmaps.json (servi sous /clubs/<club>/)
-    blender/ · reference/            # construction Blender · croquis ; build/ et private/ restent locaux
-art/scripts/                         # outils 3D communs : vyra3d.py, bake_export.py — voir 3d-pipeline.md
+    scene.json · reference/          # scène Blender (données) · croquis ; build/ et private/ restent locaux
+art/scripts/                         # outils 3D communs : build_club.py, vyra3d.py, bake_export.py, fingerprint.py
 scripts/                             # optimize-glb.mjs (bundle web), sync-club-assets.mjs (→ public/clubs/)
 src/
   app/

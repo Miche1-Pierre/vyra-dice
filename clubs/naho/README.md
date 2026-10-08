@@ -16,16 +16,16 @@ rez-de-chaussée (lounges). D'où les teintes des niveaux dans `brand.json` : ve
 
 ## Fichiers
 
-| Fichier            | Contenu                                                                                      |
-| ------------------ | -------------------------------------------------------------------------------------------- |
-| `content.json`     | soirée du samedi : 7 zones, 22 tables, prestations, conditions                               |
-| `layout.json`      | plan en mètres (mezzanine en U, bar central, scène DJ, mur végétal, pluie de LED)            |
-| `brand.json`       | or de l'enseigne, Jost, logo NΛHO redessiné (A sans barre), soleil levant                    |
-| `ambiance.json`    | light show des globes (124 BPM, blanc chaud / rose / lilas / bleu / ambre), finitions        |
-| `blender/build.py` | construction de la salle (`blender -b -P clubs/naho/blender/build.py`)                       |
-| `public/`          | bundle web : `naho.glb` (~2,1 Mo) et 15 lightmaps WebP (~0,9 Mo)                             |
-| `naho.test.ts`     | ce que la démo affiche : ordre des prix par niveau, tables vendues, cadrages propres au lieu |
-| `private/photos/`  | photos du club (Instagram, site) pour modéliser — locales, jamais versionnées ni publiées    |
+| Fichier           | Contenu                                                                                      |
+| ----------------- | -------------------------------------------------------------------------------------------- |
+| `content.json`    | soirée du samedi : 7 zones, 22 tables, prestations, conditions                               |
+| `layout.json`     | plan en mètres (mezzanine en U, bar central, scène DJ, mur végétal, pluie de LED)            |
+| `brand.json`      | or de l'enseigne, Jost, logo NΛHO redessiné (A sans barre), soleil levant                    |
+| `ambiance.json`   | light show des globes (124 BPM, blanc chaud / rose / lilas / bleu / ambre), finitions        |
+| `scene.json`      | scène Blender : palette, murs, enseignes WELCOME / CLUB / NΛHO, structure, 23 globes, bake   |
+| `public/`         | bundle web : `naho.glb` (~2,1 Mo) et 15 lightmaps WebP (~0,9 Mo)                             |
+| `naho.test.ts`    | ce que la démo affiche : ordre des prix par niveau, tables vendues, cadrages propres au lieu |
+| `private/photos/` | photos du club (Instagram, site) pour modéliser — locales, jamais versionnées ni publiées    |
 
 ## À valider avec le club
 

@@ -1,4 +1,4 @@
-"""Bake lightmaps and export the web bundle of a venue built by ``clubs/<club>/blender/build.py``.
+"""Bake lightmaps and export the web bundle of a venue built by ``art/scripts/build_club.py``.
 
 Headless (recommended — runs on the GPU without freezing the UI):
     blender -b clubs/<club>/build/<club>.blend -P art/scripts/bake_export.py
