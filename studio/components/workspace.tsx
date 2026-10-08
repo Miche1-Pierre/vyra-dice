@@ -771,9 +771,15 @@ function Feedback({ data, onChange }: { data: ClubDetail; onChange: () => void }
   const [realism, setRealism] = useState(0)
   const [fidelity, setFidelity] = useState(0)
   const [note, setNote] = useState("")
+  // Blender renders, then the site captures (what the client sees)
   const targets = useMemo(
-    () => ["", ...data.previews.map((p) => p.replace(".png", "")), "démo"],
-    [data.previews],
+    () => [
+      "",
+      ...data.previews.map((p) => p.replace(".png", "")),
+      ...data.captures.map((c) => c.replace(".png", "")),
+      "démo",
+    ],
+    [data.previews, data.captures],
   )
   return (
     <div className="grid gap-8 xl:grid-cols-2">
