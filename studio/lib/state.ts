@@ -108,8 +108,8 @@ export function clubState(
     view(
       "brief",
       "Brief et sources",
-      brief ? "done" : "todo",
-      brief ? `${sources} source(s)` : undefined,
+      brief || content ? "done" : "todo",
+      brief ? `${sources} source(s)` : content ? "club fait main" : undefined,
       mtime(p.brief),
     ),
     view(
