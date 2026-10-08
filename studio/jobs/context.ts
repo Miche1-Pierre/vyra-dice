@@ -6,8 +6,16 @@ import type { RunStatus } from "@studio/lib/jobs"
 import { withoutLocalPaths, withoutLocalPathsDeep } from "@studio/lib/local-paths"
 import { clubPaths, REPO, type ClubPaths } from "@studio/lib/paths"
 
+/** Blender 5.1: VYRA_BLENDER, else where its installer puts it on this system. */
 export const BLENDER =
-  process.env.VYRA_BLENDER ?? "C:/Program Files/Blender Foundation/Blender 5.1/blender.exe"
+  process.env.VYRA_BLENDER ??
+  (
+    {
+      win32: "C:/Program Files/Blender Foundation/Blender 5.1/blender.exe",
+      darwin: "/Applications/Blender.app/Contents/MacOS/Blender",
+    } as Record<string, string>
+  )[process.platform] ??
+  "blender"
 
 /** What a step gets: its club, its options, a log and phase bookkeeping persisted in status.json. */
 export class RunContext {
