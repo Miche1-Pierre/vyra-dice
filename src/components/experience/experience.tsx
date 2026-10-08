@@ -5,7 +5,7 @@ import { GitCompareArrows, MessageCircle, Rows3, Search, Ticket } from "lucide-r
 import dynamic from "next/dynamic"
 import { useEffect, useMemo, useRef, type ReactNode } from "react"
 
-import { SunMark } from "@/components/experience/brand"
+import { ClubMark } from "@/components/experience/brand"
 import { CompareView, TableList } from "@/components/experience/browse"
 import { CommandMenu } from "@/components/experience/command-menu"
 import { Dock, type DockEntry } from "@/components/experience/dock"
@@ -25,6 +25,7 @@ import { Tile, ZoneTile } from "@/components/experience/ui"
 import { useShortcuts } from "@/components/experience/use-shortcuts"
 import { buildViewModel, type ViewModel } from "@/components/experience/view-model"
 import { track } from "@/lib/analytics/client"
+import type { ClubBrand } from "@/lib/clubs/brand"
 import type { ClubDefinition } from "@/lib/clubs/club"
 import { formatDateFr, formatEuro } from "@/lib/format"
 import type { VenueContent } from "@/lib/schema"
@@ -83,7 +84,12 @@ function useAnalyticsBridge(vm: ViewModel, webgl: boolean | null) {
   )
 }
 
-function useDockEntries(vm: ViewModel, content: VenueContent, isDesktop: boolean): DockEntry[] {
+function useDockEntries(
+  vm: ViewModel,
+  content: VenueContent,
+  brand: ClubBrand,
+  isDesktop: boolean,
+): DockEntry[] {
   const view = useExperience((s) => s.view)
   const panel = useExperience((s) => s.panel)
   const focusedZoneId = useExperience((s) => s.focusedZoneId)
@@ -104,7 +110,7 @@ function useDockEntries(vm: ViewModel, content: VenueContent, isDesktop: boolean
         active: view === "overview" && panel === null,
         tile: (
           <Tile tone="ink" className="[&_svg]:size-[62%]">
-            <SunMark className="h-auto w-[62%]" />
+            <ClubMark brand={brand} name={content.club.name} className="h-auto w-[62%]" />
           </Tile>
         ),
         onSelect: () => s().resetView(),
@@ -147,7 +153,7 @@ function useDockEntries(vm: ViewModel, content: VenueContent, isDesktop: boolean
         keys: ["C"],
         badge: compareCount,
         active: panel === "compare",
-        tile: graphite(<GitCompareArrows className="text-gold" />),
+        tile: graphite(<GitCompareArrows className="text-brand" />),
         onSelect: () => s().openPanel(s().panel === "compare" ? null : "compare"),
       })
     }
@@ -187,7 +193,7 @@ function useDockEntries(vm: ViewModel, content: VenueContent, isDesktop: boolean
       if (tail.length) entries.push({ kind: "separator", id: "sep-links" }, ...tail)
     }
     return entries
-  }, [vm.zones, content, isDesktop, view, panel, focusedZoneId, compareCount, tableCount])
+  }, [vm.zones, content, brand, isDesktop, view, panel, focusedZoneId, compareCount, tableCount])
 }
 
 export function Experience({ club }: { club: ClubDefinition }) {
@@ -217,7 +223,7 @@ export function Experience({ club }: { club: ClubDefinition }) {
 
   useAnalyticsBridge(vm, webgl)
   useShortcuts(isDesktop)
-  const dockEntries = useDockEntries(vm, content, isDesktop)
+  const dockEntries = useDockEntries(vm, content, club.brand, isDesktop)
 
   const dateLabel = formatDateFr(content.event.date)
   const eventLine = `${content.event.name} · ${dateLabel} · ${content.event.doors.replace(":", "h")}`
@@ -241,6 +247,7 @@ export function Experience({ club }: { club: ClubDefinition }) {
               club={club.slug}
               assets={club.assets}
               ambiance={club.ambiance}
+              tiers={club.brand.tiers}
               layout={layout}
               zoneMarkers={vm.zoneMarkers}
               tableMarkers={vm.tableMarkers}
@@ -273,6 +280,7 @@ export function Experience({ club }: { club: ClubDefinition }) {
           >
             <BrandBar
               content={content}
+              brand={club.brand}
               zones={vm.zones}
               table={table}
               dateLabel={dateLabel}
@@ -327,13 +335,15 @@ export function Experience({ club }: { club: ClubDefinition }) {
           footer={panel === "table" && table ? <TableFooter table={table} /> : undefined}
         >
           {panel === "list" ? <TableList zones={vm.zones} /> : null}
-          {panel === "compare" ? <CompareView tables={vm.tables} zones={vm.zones} /> : null}
+          {panel === "compare" ? (
+            <CompareView tables={vm.tables} zones={vm.zones} accentName={club.brand.accent.name} />
+          ) : null}
           {panel === "table" && table ? (
             <TableDetails table={table} icon={tableIcon} content={content} />
           ) : null}
         </Panel>
 
-        <LoadingScreen club={content.club} eventLine={eventLine} />
+        <LoadingScreen name={content.club.name} brand={club.brand} eventLine={eventLine} />
         <IntroSkip isDesktop={isDesktop} />
         <Island />
 
@@ -346,7 +356,13 @@ export function Experience({ club }: { club: ClubDefinition }) {
           isDesktop={isDesktop}
           centered={wide}
         />
-        <CommandMenu content={content} zones={vm.zones} tables={vm.tables} isDesktop={isDesktop} />
+        <CommandMenu
+          content={content}
+          brand={club.brand}
+          zones={vm.zones}
+          tables={vm.tables}
+          isDesktop={isDesktop}
+        />
       </div>
     </TooltipPrimitive.Provider>
   )

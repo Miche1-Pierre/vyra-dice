@@ -12,7 +12,7 @@ export default function Home() {
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(55%_45%_at_50%_0%,rgb(191_90_242/0.2),transparent_70%),radial-gradient(40%_40%_at_88%_88%,rgb(255_61_154/0.14),transparent_70%),radial-gradient(35%_35%_at_8%_82%,rgb(58_155_255/0.12),transparent_70%)]"
       />
       <div className="relative max-w-2xl text-center">
-        <p className="eyebrow text-gold">VYRA · visites 3D de clubs</p>
+        <p className="eyebrow text-brand">VYRA · visites 3D de clubs</p>
         <h1 className="text-label mt-6 text-[42px] leading-[1.04] font-medium tracking-[-0.03em] sm:text-[64px]">
           Faites visiter le club avant de vendre la table.
         </h1>
@@ -26,7 +26,7 @@ export default function Home() {
             <Link
               key={slug}
               href={`/${slug}/${content.event.slug}`}
-              className="gold-pill text-callout inline-flex h-12 items-center gap-2 rounded-full px-7 font-medium transition-[filter,transform] hover:brightness-105 active:scale-[0.98]"
+              className="brand-pill text-callout inline-flex h-12 items-center gap-2 rounded-full px-7 font-medium transition-[filter,transform] hover:brightness-105 active:scale-[0.98]"
             >
               Voir la démo — {content.club.name} <ArrowRight className="size-4" />
             </Link>

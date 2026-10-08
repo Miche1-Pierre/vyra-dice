@@ -2,6 +2,7 @@ import { z } from "zod"
 
 import { ambianceSchema, type ClubAmbiance } from "@/lib/clubs/ambiance"
 import { assetManifestSchema, type AssetManifest } from "@/lib/clubs/assets"
+import { brandSchema, type ClubBrand } from "@/lib/clubs/brand"
 import { venueContentSchema, type VenueContent } from "@/lib/schema"
 import { venueLayoutSchema, type VenueLayout } from "@/lib/venue/layout"
 
@@ -15,6 +16,8 @@ export interface ClubDefinition {
   content: VenueContent
   /** Plan shared with the Blender build (`layout.json`). */
   layout: VenueLayout
+  /** Accent, tier hues, typeface, wordmark and emblem in the interface (`brand.json`). */
+  brand: ClubBrand
   /** Light show, FX colours, reflections and material finishes (`ambiance.json`). */
   ambiance: ClubAmbiance
   /** Web bundle: model and lightmaps with their content hashes (`public/lightmaps.json`). */
@@ -38,14 +41,15 @@ export function defineClub(files: ClubFiles): ClubDefinition {
   }
   const content = parse("content.json", venueContentSchema, files.content)
   const layout = parse("layout.json", venueLayoutSchema, files.layout)
+  const brand = parse("brand.json", brandSchema, files.brand)
   const ambiance = parse("ambiance.json", ambianceSchema, files.ambiance)
   const assets = parse("public/lightmaps.json", assetManifestSchema, files.assets)
   if (content && layout && assets) problems.push(...crossCheck({ content, layout, assets }))
-  if (!content || !layout || !ambiance || !assets || problems.length > 0) {
+  if (!content || !layout || !brand || !ambiance || !assets || problems.length > 0) {
     const slug = content?.club.slug ?? layout?.club ?? "?"
     throw new Error(`Invalid club "${slug}" (clubs/${slug}/):\n${problems.join("\n")}`)
   }
-  return { slug: content.club.slug, content, layout, ambiance, assets }
+  return { slug: content.club.slug, content, layout, brand, ambiance, assets }
 }
 
 /** The content, the plan and the bundle must describe the same venue, zone for zone. */

@@ -5,6 +5,7 @@ import { useMemo } from "react"
 import * as THREE from "three"
 
 import { createHaloMaterial } from "@/components/scene/fx/materials"
+import type { ClubBrand } from "@/lib/clubs/brand"
 import { useExperience } from "@/lib/store"
 import {
   levelHeight,
@@ -13,12 +14,17 @@ import {
   toThree,
   type VenueLayout,
 } from "@/lib/venue/layout"
-import { TIERS } from "@/lib/venue/tiers"
 
 const hitMaterial = new THREE.MeshBasicMaterial({ visible: false })
 
 /** Invisible pick boxes over each booth + a pulsing halo for hover / selection / comparison. */
-export function TableHotspots({ layout }: { layout: VenueLayout }) {
+export function TableHotspots({
+  layout,
+  tiers,
+}: {
+  layout: VenueLayout
+  tiers: ClubBrand["tiers"]
+}) {
   const tables = useMemo(
     () =>
       layout.tables.map((t) => {
@@ -27,7 +33,7 @@ export function TableHotspots({ layout }: { layout: VenueLayout }) {
         const { width, depth } = tableFootprint(layout, t)
         const zone = layout.zones.find((z) => z.id === t.zone)
         const halo = createHaloMaterial()
-        halo.uniforms.uColor.value.set(TIERS[zone?.tier ?? "lounge"].color)
+        halo.uniforms.uColor.value.set(tiers[zone?.tier ?? t.kind].color)
         return {
           table: t,
           level,
@@ -38,7 +44,7 @@ export function TableHotspots({ layout }: { layout: VenueLayout }) {
           halo,
         }
       }),
-    [layout],
+    [layout, tiers],
   )
 
   const hoverTable = useExperience((s) => s.hoverTable)

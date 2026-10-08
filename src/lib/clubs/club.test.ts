@@ -5,8 +5,8 @@ import { listClubs } from "@/lib/clubs/registry"
 
 /** Valid files to break: a copy of the first registered club's. */
 function files() {
-  const { content, layout, ambiance, assets } = structuredClone(listClubs()[0])
-  return { content, layout, ambiance, assets }
+  const { content, layout, brand, ambiance, assets } = structuredClone(listClubs()[0])
+  return { content, layout, brand, ambiance, assets }
 }
 
 const reject = (input: ClubFiles) => () => defineClub(input)

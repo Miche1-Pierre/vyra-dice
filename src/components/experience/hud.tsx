@@ -3,7 +3,7 @@
 import { ChevronLeft, Mail, MessageCircle, ScanEye, Search } from "lucide-react"
 import { AnimatePresence, motion } from "motion/react"
 
-import { SunMark, Wordmark } from "@/components/experience/brand"
+import { Emblem, Wordmark } from "@/components/experience/brand"
 import {
   Btn,
   Kbd,
@@ -15,6 +15,7 @@ import {
 } from "@/components/experience/ui"
 import type { TableView, ZoneView } from "@/components/experience/view-model"
 import { track } from "@/lib/analytics/client"
+import type { ClubBrand } from "@/lib/clubs/brand"
 import type { VenueContent } from "@/lib/schema"
 import { useExperience, type LevelFilter } from "@/lib/store"
 import { cn } from "@/lib/utils"
@@ -109,6 +110,7 @@ function Context({
 /** Top-left: back, club mark + wordmark, context, demo tag. */
 export function BrandBar({
   content,
+  brand,
   zones,
   table,
   dateLabel,
@@ -116,6 +118,7 @@ export function BrandBar({
   compact = !isDesktop,
 }: {
   content: VenueContent
+  brand: ClubBrand
   zones: ZoneView[]
   table: TableView | null
   dateLabel: string
@@ -167,10 +170,15 @@ export function BrandBar({
           type="button"
           onClick={resetView}
           aria-label={`${content.club.name} — vue d’ensemble`}
-          className="text-label focus-visible:ring-gold/70 flex shrink-0 items-center gap-2 rounded-full outline-none focus-visible:ring-2"
+          className="text-label focus-visible:ring-brand/70 flex shrink-0 items-center gap-2 rounded-full outline-none focus-visible:ring-2"
         >
-          <SunMark className={isDesktop ? "h-[13px]" : "h-3"} />
-          <Wordmark club={content.club} gold className={isDesktop ? "h-[12px]" : "h-[11px]"} />
+          <Emblem emblem={brand.emblem} className={isDesktop ? "h-[13px]" : "h-3"} />
+          <Wordmark
+            name={content.club.name}
+            wordmark={brand.wordmark}
+            foil
+            className={isDesktop ? "h-[12px]" : "h-[11px]"}
+          />
         </button>
         <span aria-hidden className="h-4 w-px shrink-0 bg-white/[0.16]" />
         <Context
@@ -183,7 +191,7 @@ export function BrandBar({
         {content.club.demo && isDesktop ? (
           <span
             title={content.club.disclaimer}
-            className="eyebrow text-gold ml-1 shrink-0 rounded-full px-2 py-[3px] text-[9px] leading-3 tracking-[0.22em] shadow-[inset_0_0_0_1px_rgb(232_194_122/0.4)]"
+            className="eyebrow text-brand ml-1 shrink-0 rounded-full px-2 py-[3px] text-[9px] leading-3 tracking-[0.22em] shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--brand)_40%,transparent)]"
           >
             Démo
           </span>
@@ -294,7 +302,7 @@ export function SeatOverlay({
               transition={SOFT_SPRING}
               className="glass glass-rim text-footnote pointer-events-auto relative flex h-11 items-center gap-3 rounded-full pr-1.5 pl-4"
             >
-              <ScanEye className="text-gold size-4" />
+              <ScanEye className="text-brand size-4" />
               <span className="text-label truncate">
                 Vue depuis la table {table.label}
                 <span className="text-label-3 hidden sm:inline">
@@ -310,7 +318,7 @@ export function SeatOverlay({
           {canRequest ? (
             <div className="absolute inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-30">
               <Btn
-                variant="gold"
+                variant="brand"
                 size="lg"
                 className="w-full"
                 onClick={() => openDialog("request")}

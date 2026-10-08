@@ -11,7 +11,7 @@ import { tableMarkerPosition, zoneMarkerPosition } from "@/lib/venue/camera"
 import type { VenueLayout } from "@/lib/venue/layout"
 import { StatusIcon, ZoneTile } from "@/components/experience/ui"
 import type { ZoneIcon } from "@/lib/schema"
-import { STATUS, TIERS, type TableStatus } from "@/lib/venue/tiers"
+import { STATUS, TIERS, tierColor, withAlpha, type TableStatus } from "@/lib/venue/tiers"
 import type { TableKind } from "@/lib/venue/layout"
 
 export interface ZoneMarkerData {
@@ -204,14 +204,17 @@ function Stem({ color, height }: { color: string; height: number }) {
       />
       <div
         className="size-2 rounded-full ring-[1.5px] ring-black/70"
-        style={{ backgroundColor: color, boxShadow: `0 0 10px 2px ${color}aa` }}
+        style={{
+          backgroundColor: color,
+          boxShadow: `0 0 10px 2px ${withAlpha(color, 0xaa / 255)}`,
+        }}
       />
     </div>
   )
 }
 
 const chip =
-  "pointer-events-auto relative whitespace-nowrap text-left outline-none transition-[transform,box-shadow,background-color] duration-200 ease-out focus-visible:ring-2 focus-visible:ring-gold/80"
+  "pointer-events-auto relative whitespace-nowrap text-left outline-none transition-[transform,box-shadow,background-color] duration-200 ease-out focus-visible:ring-2 focus-visible:ring-brand/80"
 
 function ZoneTag({
   zone,
@@ -248,7 +251,7 @@ function ZoneTag({
           </span>
         </span>
       </button>
-      <Stem color={tier.color} height={22} />
+      <Stem color={tierColor(zone.tier)} height={22} />
     </div>
   )
 }
@@ -280,7 +283,7 @@ function TableTag({
           chip,
           "flex h-7 items-center gap-1.5 rounded-full bg-[rgb(16_13_20/0.86)] pr-3 pl-1 text-[12px]",
           active
-            ? "scale-[1.08] shadow-[0_0_0_1.5px_#e8c27a,0_0_22px_rgb(232_194_122/0.45),0_8px_22px_rgb(0_0_0/0.55)]"
+            ? "scale-[1.08] shadow-[0_0_0_1.5px_var(--brand),0_0_22px_color-mix(in_srgb,var(--brand)_45%,transparent),0_8px_22px_rgb(0_0_0/0.55)]"
             : "shadow-[0_0_0_1px_rgb(255_255_255/0.12),0_8px_22px_rgb(0_0_0/0.5)] hover:scale-[1.06]",
         )}
       >

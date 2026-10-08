@@ -3,15 +3,18 @@
 import { useProgress } from "@react-three/drei"
 import { AnimatePresence, motion } from "motion/react"
 
-import { ClubLine, SunMark, Wordmark } from "@/components/experience/brand"
+import { Emblem, Tagline, Wordmark } from "@/components/experience/brand"
+import type { ClubBrand } from "@/lib/clubs/brand"
 import { useExperience } from "@/lib/store"
 
-/** Signature reveal while the venue streams in: the sun rises, the name draws itself. */
+/** Signature reveal while the venue streams in: the emblem rises, the name draws itself. */
 export function LoadingScreen({
-  club,
+  name,
+  brand,
   eventLine,
 }: {
-  club: { slug: string; name: string }
+  name: string
+  brand: ClubBrand
   eventLine: string
 }) {
   const { progress } = useProgress()
@@ -35,16 +38,22 @@ export function LoadingScreen({
         >
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_45%_at_50%_42%,rgb(232_194_122/0.09),transparent_70%)]"
+            className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_45%_at_50%_42%,color-mix(in_srgb,var(--brand)_9%,transparent),transparent_70%)]"
           />
           <div
             className="relative flex flex-col items-center"
             role="status"
             aria-label={`Chargement de la visite 3D, ${Math.round(progress)} %`}
           >
-            <SunMark draw className="h-9" />
-            <Wordmark club={club} draw gold className="text-label mt-5 h-9" />
-            <ClubLine className="text-gold/80 mt-3 pl-[0.62em]" />
+            <Emblem emblem={brand.emblem} draw className="h-9" />
+            <Wordmark
+              name={name}
+              wordmark={brand.wordmark}
+              draw
+              foil
+              className="text-label mt-5 h-9"
+            />
+            <Tagline text={brand.tagline} className="text-brand/80 mt-3 pl-[0.62em]" />
             <motion.p
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
@@ -55,7 +64,7 @@ export function LoadingScreen({
             </motion.p>
             <div className="mt-6 h-[2px] w-40 overflow-hidden rounded-full bg-white/[0.08]">
               <motion.div
-                className="from-gold-deep via-gold h-full rounded-full bg-gradient-to-r to-[#f8e3b0] shadow-[0_0_12px_rgb(232_194_122/0.7)]"
+                className="from-brand-deep via-brand h-full rounded-full bg-gradient-to-r to-(--foil-hi) shadow-[0_0_12px_color-mix(in_srgb,var(--brand)_70%,transparent)]"
                 initial={{ width: "0%" }}
                 animate={{ width: `${Math.max(3, progress)}%` }}
                 transition={{ ease: "easeOut", duration: 0.4 }}

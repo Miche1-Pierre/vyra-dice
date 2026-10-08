@@ -1,23 +1,23 @@
 import type { TableKind } from "@/lib/venue/layout"
 
 /**
- * Zone tiers, colour-coded like the club sketch: green = ground floor, violet = VIP,
- * blue = prestige. Values match the `--lounge / --vip / --prestige` CSS tokens.
- * `deep` is the darker end of the icon-tile gradient.
+ * Zone tiers, from entry level to most exclusive. Their hues belong to each club (brand.json
+ * `tiers`): the interface reads them as CSS custom properties, the 3D from the brand.
  */
-export const TIERS: Record<
-  TableKind,
-  { label: string; color: string; deep: string; order: number; floor: string }
-> = {
-  lounge: {
-    label: "Lounge",
-    color: "#32d074",
-    deep: "#0d5a33",
-    order: 0,
-    floor: "Rez-de-chaussée",
-  },
-  vip: { label: "VIP", color: "#bf5af2", deep: "#4d1475", order: 1, floor: "Mezzanine" },
-  prestige: { label: "Prestige", color: "#3a9bff", deep: "#0d3a80", order: 2, floor: "Mezzanine" },
+export const TIERS: Record<TableKind, { label: string; order: number }> = {
+  lounge: { label: "Lounge", order: 0 },
+  vip: { label: "VIP", order: 1 },
+  prestige: { label: "Prestige", order: 2 },
+}
+
+/** CSS colour of a tier (`--lounge`…), set per club by the venue page. */
+export const tierColor = (tier: TableKind) => `var(--${tier})`
+/** Darker end of the tier's tile gradient. */
+export const tierDeep = (tier: TableKind) => `var(--${tier}-deep)`
+
+/** A CSS colour (custom properties included) at the given opacity. */
+export function withAlpha(color: string, alpha: number): string {
+  return `color-mix(in srgb, ${color} ${Math.round(alpha * 10000) / 100}%, transparent)`
 }
 
 export const STATUS = {

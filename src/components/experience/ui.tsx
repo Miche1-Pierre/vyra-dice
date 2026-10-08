@@ -20,10 +20,10 @@ import { useId, type ComponentProps, type CSSProperties, type ReactNode } from "
 import type { ZoneIcon } from "@/lib/schema"
 import { cn } from "@/lib/utils"
 import type { TableKind } from "@/lib/venue/layout"
-import { STATUS, TIERS, type TableStatus } from "@/lib/venue/tiers"
+import { STATUS, tierColor, tierDeep, withAlpha, type TableStatus } from "@/lib/venue/tiers"
 
 /*
- * Night Glass primitives: pills and circles in liquid glass, one gold action, app-icon tiles,
+ * Night Glass primitives: pills and circles in liquid glass, one accent action, app-icon tiles,
  * and the few Apple controls the flow needs (segmented control, stepper, switch).
  */
 
@@ -31,11 +31,11 @@ export const SPRING = { type: "spring", stiffness: 420, damping: 36 } as const
 export const SOFT_SPRING = { type: "spring", stiffness: 260, damping: 30 } as const
 
 export const btn = cva(
-  "relative inline-flex shrink-0 items-center justify-center gap-2 rounded-full font-medium whitespace-nowrap transition-[background-color,color,box-shadow,transform,filter] duration-200 outline-none select-none focus-visible:ring-2 focus-visible:ring-gold/70 active:scale-[0.97] disabled:pointer-events-none disabled:opacity-40 [&_svg]:shrink-0",
+  "relative inline-flex shrink-0 items-center justify-center gap-2 rounded-full font-medium whitespace-nowrap transition-[background-color,color,box-shadow,transform,filter] duration-200 outline-none select-none focus-visible:ring-2 focus-visible:ring-brand/70 active:scale-[0.97] disabled:pointer-events-none disabled:opacity-40 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        gold: "gold-pill hover:brightness-[1.06]",
+        brand: "brand-pill hover:brightness-[1.06]",
         glass:
           "bg-fill text-label shadow-[inset_0_1px_0_rgb(255_255_255/0.08)] hover:bg-white/[0.16]",
         plain: "text-label-2 hover:bg-fill-2 hover:text-label",
@@ -131,7 +131,7 @@ export function RoundBtn({
         aria-label={label}
         aria-pressed={active}
         className={cn(
-          "glass glass-rim text-label focus-visible:ring-gold/70 relative grid shrink-0 place-items-center rounded-full transition-[transform,background-color] duration-200 outline-none hover:bg-white/[0.12] focus-visible:ring-2 active:scale-95",
+          "glass glass-rim text-label focus-visible:ring-brand/70 relative grid shrink-0 place-items-center rounded-full transition-[transform,background-color] duration-200 outline-none hover:bg-white/[0.12] focus-visible:ring-2 active:scale-95",
           size === "md" ? "size-10 [&_svg]:size-[18px]" : "size-8 [&_svg]:size-4",
           active && "bg-white/[0.16]",
           className,
@@ -160,7 +160,7 @@ export function IconBtn({
         aria-label={label}
         aria-pressed={active}
         className={cn(
-          "text-label-2 hover:bg-fill hover:text-label focus-visible:ring-gold/70 grid size-8 shrink-0 place-items-center rounded-full transition-colors duration-150 outline-none focus-visible:ring-2 [&_svg]:size-4",
+          "text-label-2 hover:bg-fill hover:text-label focus-visible:ring-brand/70 grid size-8 shrink-0 place-items-center rounded-full transition-colors duration-150 outline-none focus-visible:ring-2 [&_svg]:size-4",
           active && "bg-fill text-label",
           className,
         )}
@@ -199,7 +199,10 @@ export function TierDot({ tier, className }: { tier: TableKind; className?: stri
     <span
       aria-hidden
       className={cn("inline-block size-2 shrink-0 rounded-full", className)}
-      style={{ background: TIERS[tier].color, boxShadow: `0 0 10px ${TIERS[tier].color}99` }}
+      style={{
+        background: tierColor(tier),
+        boxShadow: `0 0 10px ${withAlpha(tierColor(tier), 0x99 / 255)}`,
+      }}
     />
   )
 }
@@ -237,7 +240,7 @@ export function Tile({
   children: ReactNode
 }) {
   const background = tier
-    ? `radial-gradient(120% 90% at 30% 0%, ${TIERS[tier].color} 0%, ${TIERS[tier].deep} 78%)`
+    ? `radial-gradient(120% 90% at 30% 0%, ${tierColor(tier)} 0%, ${tierDeep(tier)} 78%)`
     : tone === "ink"
       ? "radial-gradient(120% 100% at 30% 0%, #2b2420 0%, #070507 72%)"
       : "radial-gradient(120% 100% at 30% 0%, #5a5662 0%, #222027 75%)"
@@ -342,7 +345,7 @@ export function Segmented<T extends string | number>({
             aria-checked={active}
             onClick={() => onChange(o.value)}
             className={cn(
-              "focus-visible:ring-gold/70 relative isolate h-full rounded-full px-3.5 font-medium whitespace-nowrap transition-colors duration-200 outline-none focus-visible:ring-2",
+              "focus-visible:ring-brand/70 relative isolate h-full rounded-full px-3.5 font-medium whitespace-nowrap transition-colors duration-200 outline-none focus-visible:ring-2",
               size === "md" ? "text-footnote" : "text-caption",
               active ? "text-label" : "text-label-2 hover:text-label",
             )}
@@ -422,7 +425,7 @@ export function SwitchTrack() {
   return (
     <span
       aria-hidden
-      className="peer-focus-visible:ring-gold/70 relative h-[31px] w-[51px] shrink-0 rounded-full bg-white/[0.16] shadow-[inset_0_0_0_1px_rgb(255_255_255/0.06)] transition-colors duration-200 peer-checked:bg-[#30d158] peer-focus-visible:ring-2 peer-checked:[&>span]:translate-x-5"
+      className="peer-focus-visible:ring-brand/70 relative h-[31px] w-[51px] shrink-0 rounded-full bg-white/[0.16] shadow-[inset_0_0_0_1px_rgb(255_255_255/0.06)] transition-colors duration-200 peer-checked:bg-[#30d158] peer-focus-visible:ring-2 peer-checked:[&>span]:translate-x-5"
     >
       <span className="absolute top-[2px] left-[2px] size-[27px] rounded-full bg-white shadow-[0_3px_8px_rgb(0_0_0/0.25),0_1px_1px_rgb(0_0_0/0.16)] transition-transform duration-200 ease-[cubic-bezier(0.3,1.4,0.5,1)]" />
     </span>
@@ -444,7 +447,7 @@ export function Stat({
       <p
         className={cn(
           "num text-[19px] leading-6 font-semibold tracking-[-0.01em]",
-          accent ? "text-gold-leaf" : "text-label",
+          accent ? "text-foil" : "text-label",
         )}
       >
         {value}

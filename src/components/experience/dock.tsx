@@ -135,7 +135,7 @@ function DockIcon({
     onFocus: () => setHover(true),
     onBlur: () => setHover(false),
     className: cn(
-      "relative block size-full rounded-[23%] outline-none focus-visible:ring-2 focus-visible:ring-gold/80 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent",
+      "relative block size-full rounded-[23%] outline-none focus-visible:ring-2 focus-visible:ring-brand/80 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent",
       entry.disabled && "pointer-events-none opacity-40",
     ),
   }

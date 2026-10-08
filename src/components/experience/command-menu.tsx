@@ -5,10 +5,11 @@ import { Command } from "cmdk"
 import { Box, GitCompareArrows, Layers2, MessageCircle, Rows3, Search, Ticket } from "lucide-react"
 import type { ReactNode } from "react"
 
-import { SunMark } from "@/components/experience/brand"
+import { ClubMark } from "@/components/experience/brand"
 import { Kbd, StatusIcon, Tile, ZoneTile } from "@/components/experience/ui"
 import type { TableView, ZoneView } from "@/components/experience/view-model"
 import { track } from "@/lib/analytics/client"
+import type { ClubBrand } from "@/lib/clubs/brand"
 import { formatEuro } from "@/lib/format"
 import type { VenueContent } from "@/lib/schema"
 import { useExperience } from "@/lib/store"
@@ -58,11 +59,13 @@ function ActionTile({ children }: { children: ReactNode }) {
 /** Spotlight: jump to any table or space, or run a view action. */
 export function CommandMenu({
   content,
+  brand,
   zones,
   tables,
   isDesktop,
 }: {
   content: VenueContent
+  brand: ClubBrand
   zones: ZoneView[]
   tables: Record<string, TableView>
   isDesktop: boolean
@@ -94,7 +97,7 @@ export function CommandMenu({
               <Command.Input
                 autoFocus
                 placeholder="Une table, un espace, une action…"
-                className="text-label caret-gold placeholder:text-label-3 h-full flex-1 bg-transparent text-[20px] font-light outline-none"
+                className="text-label caret-brand placeholder:text-label-3 h-full flex-1 bg-transparent text-[20px] font-light outline-none"
               />
               {isDesktop ? <Kbd>Esc</Kbd> : null}
             </div>
@@ -158,7 +161,7 @@ export function CommandMenu({
                   value="vue d'ensemble club"
                   icon={
                     <Tile tone="ink" className="size-7 rounded-[8px] [&_svg]:size-4">
-                      <SunMark className="h-2.5" />
+                      <ClubMark brand={brand} name={content.club.name} className="h-2.5" />
                     </Tile>
                   }
                   aside={isDesktop ? "R" : undefined}

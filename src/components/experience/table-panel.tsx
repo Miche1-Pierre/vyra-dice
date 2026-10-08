@@ -32,7 +32,7 @@ import {
 } from "@/lib/schema"
 import { useExperience } from "@/lib/store"
 import { cn } from "@/lib/utils"
-import { STATUS, TIERS } from "@/lib/venue/tiers"
+import { STATUS, TIERS, tierColor, withAlpha } from "@/lib/venue/tiers"
 
 const levelLabel = (level: 0 | 1) => (level === 0 ? "Rez-de-chaussée" : "Mezzanine")
 
@@ -74,19 +74,20 @@ export function TableDetails({
   const toggleCompare = useExperience((s) => s.toggleCompare)
   const inCompare = compareIds.includes(table.id)
   const tier = TIERS[table.tier]
+  const tint = tierColor(table.tier)
 
   return (
     <div className="pb-4">
       <header
         className="relative px-5 pt-5 pb-5"
         style={{
-          background: `radial-gradient(130% 100% at 0% 0%, ${tier.color}3d 0%, ${tier.color}0f 45%, transparent 75%)`,
+          background: `radial-gradient(130% 100% at 0% 0%, ${withAlpha(tint, 0x3d / 255)} 0%, ${withAlpha(tint, 0x0f / 255)} 45%, transparent 75%)`,
         }}
       >
         <div className="flex items-center gap-3 pr-10">
           <ZoneTile tier={table.tier} icon={icon} className="size-11" />
           <div className="min-w-0">
-            <Eyebrow style={{ color: tier.color }}>
+            <Eyebrow style={{ color: tint }}>
               {tier.label} · {levelLabel(table.level)}
             </Eyebrow>
             <p className="text-footnote text-label-2 mt-1 truncate">{table.zoneName}</p>
@@ -104,7 +105,7 @@ export function TableDetails({
         <div className="mt-3 flex flex-wrap items-center gap-2">
           <StatusChip status={table.status} />
           {inCompare ? (
-            <span className="text-caption text-gold inline-flex h-6 items-center gap-1.5 rounded-full px-2.5 font-medium shadow-[inset_0_0_0_1px_rgb(232_194_122/0.4)]">
+            <span className="text-caption text-brand inline-flex h-6 items-center gap-1.5 rounded-full px-2.5 font-medium shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--brand)_40%,transparent)]">
               <GitCompareArrows className="size-3" /> Dans le comparatif
             </span>
           ) : null}
@@ -142,7 +143,7 @@ export function TableDetails({
           <ul className="mt-2.5 space-y-2">
             {table.perks.map((p) => (
               <li key={p} className="text-ui text-label flex items-start gap-2.5">
-                <span className="bg-gold/15 text-gold mt-[3px] grid size-4 shrink-0 place-items-center rounded-full">
+                <span className="bg-brand/15 text-brand mt-[3px] grid size-4 shrink-0 place-items-center rounded-full">
                   <Check className="size-2.5" strokeWidth={3} />
                 </span>
                 {p}
@@ -182,7 +183,10 @@ export function TableDetails({
         <Btn
           size="md"
           onClick={() => toggleCompare(table.id, table.label)}
-          className={cn(inCompare && "text-gold shadow-[inset_0_0_0_1px_rgb(232_194_122/0.45)]")}
+          className={cn(
+            inCompare &&
+              "text-brand shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--brand)_45%,transparent)]",
+          )}
         >
           <GitCompareArrows /> {inCompare ? "Comparée" : "Comparer"}
         </Btn>
@@ -197,7 +201,7 @@ export function TableFooter({ table }: { table: TableView }) {
   return (
     <div>
       <Btn
-        variant="gold"
+        variant="brand"
         size="lg"
         className="w-full"
         disabled={sold}
@@ -288,7 +292,7 @@ function Row({
 }
 
 const input =
-  "h-12 w-full bg-transparent text-right text-ui text-label caret-gold outline-none placeholder:text-label-3 aria-invalid:text-[#ff6961]"
+  "h-12 w-full bg-transparent text-right text-ui text-label caret-brand outline-none placeholder:text-label-3 aria-invalid:text-[#ff6961]"
 
 function RequestForm({
   table,
@@ -403,7 +407,7 @@ function RequestForm({
             </p>
           </div>
           <div className="text-right">
-            <p className="num text-headline text-gold-leaf">
+            <p className="num text-headline text-foil">
               {table.minimumSpend !== null ? formatEuro(table.minimumSpend) : "—"}
             </p>
             <p className="text-caption text-label-3">minimum</p>
@@ -451,7 +455,7 @@ function RequestForm({
                         className={cn(
                           "num text-footnote h-8 rounded-full px-3.5 font-medium transition-[background-color,color,box-shadow] duration-150",
                           active
-                            ? "bg-gold/[0.16] text-gold shadow-[inset_0_0_0_1px_rgb(232_194_122/0.55)]"
+                            ? "bg-brand/[0.16] text-brand shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--brand)_55%,transparent)]"
                             : "text-label-2 hover:text-label bg-white/[0.07] hover:bg-white/[0.12]",
                         )}
                       >
@@ -507,7 +511,7 @@ function RequestForm({
             aria-label="Message (facultatif)"
             rows={3}
             placeholder="Anniversaire, bouteilles souhaitées… (facultatif)"
-            className="text-ui text-label caret-gold placeholder:text-label-3 block w-full resize-none bg-transparent px-4 py-3 outline-none"
+            className="text-ui text-label caret-brand placeholder:text-label-3 block w-full resize-none bg-transparent px-4 py-3 outline-none"
             {...register("message")}
           />
         </Group>
@@ -547,7 +551,7 @@ function RequestForm({
       <div className="shrink-0 space-y-2.5 px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))]">
         <Btn
           type="submit"
-          variant="gold"
+          variant="brand"
           size="lg"
           className="w-full"
           disabled={formState.isSubmitting}
@@ -561,7 +565,7 @@ function RequestForm({
         </Btn>
         {content.club.demo ? (
           <p className="text-caption text-label-3 flex items-center justify-center gap-2">
-            <span className="bg-gold size-1.5 rounded-full" /> Mode démo — rien n’est transmis au
+            <span className="bg-brand size-1.5 rounded-full" /> Mode démo — rien n’est transmis au
             club
           </p>
         ) : null}
@@ -603,7 +607,7 @@ function RequestSuccess({
           initial={{ scale: 0.4, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: "spring", stiffness: 260, damping: 16 }}
-          className="gold-pill grid size-16 place-items-center rounded-full"
+          className="brand-pill grid size-16 place-items-center rounded-full"
         >
           <svg viewBox="0 0 24 24" className="size-8" fill="none" aria-hidden>
             <motion.path
@@ -648,13 +652,13 @@ function RequestSuccess({
         </p>
         {last.demo ? (
           <p className="text-caption text-label-3 mt-3 flex items-center gap-2">
-            <span className="bg-gold size-1.5 rounded-full" /> Mode démo — aucune demande n’a été
+            <span className="bg-brand size-1.5 rounded-full" /> Mode démo — aucune demande n’a été
             envoyée au club.
           </p>
         ) : null}
       </div>
       <div className="space-y-3 px-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
-        <Btn variant="gold" size="lg" className="w-full" onClick={resetView}>
+        <Btn variant="brand" size="lg" className="w-full" onClick={resetView}>
           Revenir à la visite
         </Btn>
         <FallbackContact club={content.club} context="ack" className="justify-center" />

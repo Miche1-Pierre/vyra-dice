@@ -5,9 +5,10 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-sans: var(--font-jost);
-  --font-heading: var(--font-jost);
-  --font-mono: var(--font-jost);
+  /* the club's typeface (brand.json "font"), Jost by default */
+  --font-sans: var(--club-font);
+  --font-heading: var(--club-font);
+  --font-mono: var(--club-font);
 
   /* shadcn primitives (consent banner, ui/*) */
   --color-background: var(--background);
@@ -42,7 +43,7 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  /* Night Glass: label levels, hairlines, fills, the Naho gold and the tier hues */
+  /* Night Glass: label levels, hairlines, fills, the club's accent and tier hues */
   --color-ink: var(--ink);
   --color-label: var(--label);
   --color-label-2: var(--label-2);
@@ -51,8 +52,8 @@
   --color-hairline-strong: var(--hairline-strong);
   --color-fill: var(--fill);
   --color-fill-2: var(--fill-2);
-  --color-gold: var(--gold);
-  --color-gold-deep: var(--gold-deep);
+  --color-brand: var(--brand);
+  --color-brand-deep: var(--brand-deep);
   --color-lounge: var(--lounge);
   --color-vip: var(--vip);
   --color-prestige: var(--prestige);
@@ -76,10 +77,33 @@
 }
 
 /*
+ * Club tokens: the venue page overrides them with the club's brand.json (an unlayered :root
+ * rule, which beats this layer). These defaults are VYRA's own accent and tier hues.
+ */
+@layer base {
+  :root {
+    --brand: #e8c27a;
+    --brand-deep: #b98a3e;
+    --brand-on: #1d1406;
+    --brand-hi: #f6dfa6;
+    --brand-lo: #c9984a;
+    --foil-hi: #f8e3b0;
+    --foil: #e1b768;
+    --foil-lo: #b88a40;
+    --lounge: #32d074;
+    --lounge-deep: #0d5a33;
+    --vip: #bf5af2;
+    --vip-deep: #4d1475;
+    --prestige: #3a9bff;
+    --prestige-deep: #0d3a80;
+    --club-font: var(--font-jost);
+  }
+}
+
+/*
  * Night Glass — the product UI floats over the club in Apple-style liquid glass:
  * translucent dark panes with a specular rim, label/secondary/tertiary text levels,
- * and one precious accent: Naho's gold. Tier hues follow the club sketch
- * (green = ground-floor lounges, violet = VIP mezzanine, blue = prestige).
+ * and one precious accent: the club's (`--brand`). Tier hues come from the club too.
  */
 .dark {
   --ink: #060408;
@@ -92,11 +116,6 @@
   --fill-2: rgb(130 126 145 / 0.12);
   --glass: rgb(22 19 27 / 0.56);
   --glass-thick: rgb(17 15 21 / 0.82);
-  --gold: #e8c27a;
-  --gold-deep: #b98a3e;
-  --lounge: #32d074;
-  --vip: #bf5af2;
-  --prestige: #3a9bff;
   --ok: #30d158;
   --wait: #ffd60a;
   --off: #8e8e93;
@@ -107,8 +126,8 @@
   --card-foreground: #f5f4f7;
   --popover: #16131b;
   --popover-foreground: #f5f4f7;
-  --primary: #e8c27a;
-  --primary-foreground: #1a1206;
+  --primary: var(--brand);
+  --primary-foreground: var(--brand-on);
   --secondary: rgb(130 126 145 / 0.2);
   --secondary-foreground: #f5f4f7;
   --muted: rgb(130 126 145 / 0.14);
@@ -118,20 +137,20 @@
   --destructive: #ff453a;
   --border: rgb(255 255 255 / 0.09);
   --input: rgb(255 255 255 / 0.12);
-  --ring: rgb(232 194 122 / 0.6);
-  --chart-1: #e8c27a;
-  --chart-2: #32d074;
-  --chart-3: #bf5af2;
-  --chart-4: #3a9bff;
+  --ring: color-mix(in srgb, var(--brand) 60%, transparent);
+  --chart-1: var(--brand);
+  --chart-2: var(--lounge);
+  --chart-3: var(--vip);
+  --chart-4: var(--prestige);
   --chart-5: #8e8e93;
   --sidebar: #0d0b10;
   --sidebar-foreground: #f5f4f7;
-  --sidebar-primary: #e8c27a;
-  --sidebar-primary-foreground: #1a1206;
+  --sidebar-primary: var(--brand);
+  --sidebar-primary-foreground: var(--brand-on);
   --sidebar-accent: rgb(130 126 145 / 0.2);
   --sidebar-accent-foreground: #f5f4f7;
   --sidebar-border: rgb(255 255 255 / 0.09);
-  --sidebar-ring: rgb(232 194 122 / 0.6);
+  --sidebar-ring: color-mix(in srgb, var(--brand) 60%, transparent);
 }
 
 @layer base {
@@ -145,7 +164,7 @@
     @apply bg-ink text-label;
   }
   ::selection {
-    background: rgb(232 194 122 / 0.3);
+    background: color-mix(in srgb, var(--brand) 30%, transparent);
   }
   button:not(:disabled),
   [role="button"]:not(:disabled) {
@@ -214,26 +233,32 @@
   }
 }
 
-/** Naho gold, poured: the single primary action. */
-@utility gold-pill {
-  color: #1d1406;
-  background-image: linear-gradient(180deg, #f6dfa6 0%, #e8c27a 46%, #c9984a 100%);
+/** The club's accent, poured: the single primary action. */
+@utility brand-pill {
+  color: var(--brand-on);
+  background-image: linear-gradient(
+    180deg,
+    var(--brand-hi) 0%,
+    var(--brand) 46%,
+    var(--brand-lo) 100%
+  );
   box-shadow:
     inset 0 1px 0 rgb(255 255 255 / 0.55),
-    inset 0 -1px 0 rgb(120 80 20 / 0.35),
-    0 10px 28px -10px rgb(232 194 122 / 0.55),
+    inset 0 -1px 0
+      color-mix(in srgb, color-mix(in srgb, var(--brand-deep), black 35%) 35%, transparent),
+    0 10px 28px -10px color-mix(in srgb, var(--brand) 55%, transparent),
     0 2px 6px rgb(0 0 0 / 0.35);
 }
 
-/** Text in gold leaf. */
-@utility text-gold-leaf {
-  background-image: linear-gradient(180deg, #f8e3b0, #e1b768 55%, #b88a40);
+/** Text in metallic foil (prices, figures). */
+@utility text-foil {
+  background-image: linear-gradient(180deg, var(--foil-hi), var(--foil) 55%, var(--foil-lo));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
-/* ── Type scale (Jost) ─────────────────────────────────────────────────────────────────── */
+/* ── Type scale (club typeface, Jost by default) ───────────────────────────────────────── */
 
 @utility text-micro {
   font-size: 11px;
@@ -275,7 +300,7 @@
   font-weight: 500;
   letter-spacing: -0.02em;
 }
-/** Small capitals spaced like the « C L U B » under Naho's logo. */
+/** Small capitals, widely spaced (eyebrows, the tagline under a club's wordmark). */
 @utility eyebrow {
   font-size: 11px;
   line-height: 14px;

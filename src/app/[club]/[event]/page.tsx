@@ -4,6 +4,7 @@ import { Suspense } from "react"
 
 import { AnalyticsProvider } from "@/components/analytics/analytics-provider"
 import { Experience } from "@/components/experience/experience"
+import { brandCss } from "@/lib/clubs/brand"
 import { getClub, getVenueContent, listVenues } from "@/lib/clubs/registry"
 
 export function generateStaticParams() {
@@ -33,6 +34,8 @@ async function Venue({ params }: Pick<PageProps<"/[club]/[event]">, "params">) {
   if (!club || club.content.event.slug !== event) notFound()
   return (
     <>
+      {/* the club's colours and typeface, on :root so portals (dialogs, menus) get them too */}
+      <style>{brandCss(club.brand)}</style>
       <AnalyticsProvider club={slug} event={event} demo={club.content.club.demo} />
       <Experience club={club} />
     </>

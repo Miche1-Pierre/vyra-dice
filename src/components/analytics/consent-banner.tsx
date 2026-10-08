@@ -9,7 +9,7 @@ const BODY =
   "Nous mesurons l'usage de cette démo (pages vues, tables consultées, replays de navigation anonymisés) pour l'améliorer. Aucune donnée de contact n'est utilisée."
 
 const choice =
-  "h-10 flex-1 rounded-full bg-white/[0.1] text-ui font-medium text-label shadow-[inset_0_1px_0_rgb(255_255_255/0.08)] transition-colors hover:bg-white/[0.16] focus-visible:ring-2 focus-visible:ring-gold/70 focus-visible:outline-none"
+  "h-10 flex-1 rounded-full bg-white/[0.1] text-ui font-medium text-label shadow-[inset_0_1px_0_rgb(255_255_255/0.08)] transition-colors hover:bg-white/[0.16] focus-visible:ring-2 focus-visible:ring-brand/70 focus-visible:outline-none"
 
 /** Analytics consent card, bottom left. Refusing is as easy and as visible as accepting. */
 export function ConsentBanner() {
