@@ -1,0 +1,55 @@
+{
+  "id": "20261008131952-review",
+  "step": "review",
+  "state": "done",
+  "options": {
+    "iterations": 1
+  },
+  "createdAt": "2026-10-08T13:19:52.796Z",
+  "phases": [
+    {
+      "name": "Revue des rendus 1/1",
+      "startedAt": "2026-10-08T13:19:56.763Z",
+      "endedAt": "2026-10-08T13:31:57.374Z",
+      "ok": true
+    },
+    {
+      "name": "Validation et corrections",
+      "startedAt": "2026-10-08T13:31:57.384Z",
+      "endedAt": "2026-10-08T13:32:06.803Z",
+      "ok": true
+    },
+    {
+      "name": "Construction d'essai",
+      "startedAt": "2026-10-08T13:31:57.488Z",
+      "endedAt": "2026-10-08T13:32:06.801Z",
+      "ok": true
+    },
+    {
+      "name": "Vérification de la spécification",
+      "startedAt": "2026-10-08T13:32:06.805Z",
+      "endedAt": "2026-10-08T13:32:06.818Z",
+      "ok": true
+    },
+    {
+      "name": "Construction Blender et aperçus",
+      "startedAt": "2026-10-08T13:32:06.821Z",
+      "endedAt": "2026-10-08T13:32:42.945Z",
+      "ok": true
+    }
+  ],
+  "pid": 44208,
+  "startedAt": "2026-10-08T13:19:56.735Z",
+  "result": {
+    "agentRuns": 1,
+    "turns": 50,
+    "costUsd": 2.66,
+    "sessions": [
+      "57315911-f83f-4762-87f2-f85bf8b78c31"
+    ],
+    "objects": 28,
+    "triangles": 54116,
+    "lights": 62
+  },
+  "endedAt": "2026-10-08T13:32:42.951Z"
+}

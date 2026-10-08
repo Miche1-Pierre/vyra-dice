@@ -1,0 +1,20 @@
+{
+  "items": [
+    {
+      "id": "f1",
+      "text": "Vue de la table L1 (capture desktop-table) : la caméra est derrière l'escalier, on voit les marches et l'enseigne LUMEN à l'envers au lieu de la table. La table doit se voir dégagée.",
+      "target": "démo",
+      "createdAt": "2026-10-08T13:19:03.802Z",
+      "status": "addressed",
+      "addressedIn": "20261008131956"
+    },
+    {
+      "id": "f2",
+      "text": "Vue de la zone Lounge Quai (capture desktop-zone) : les poutres et les globes au premier plan cachent les banquettes. On doit voir la rangée de lounges sans obstacle.",
+      "target": "démo",
+      "createdAt": "2026-10-08T13:19:28.687Z",
+      "status": "addressed",
+      "addressedIn": "20261008131956"
+    }
+  ]
+}

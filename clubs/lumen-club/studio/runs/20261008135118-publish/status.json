@@ -1,0 +1,28 @@
+{
+  "id": "20261008135118-publish",
+  "step": "publish",
+  "state": "failed",
+  "options": {
+    "dryRun": true,
+    "base": "feat/VYR-58-club-folders"
+  },
+  "createdAt": "2026-10-08T13:51:18.483Z",
+  "phases": [
+    {
+      "name": "Branche depuis origin/feat/VYR-58-club-folders",
+      "startedAt": "2026-10-08T13:51:21.888Z",
+      "endedAt": "2026-10-08T13:51:25.154Z",
+      "ok": true
+    },
+    {
+      "name": "Dossier du club, registre et captures",
+      "startedAt": "2026-10-08T13:51:25.155Z",
+      "endedAt": "2026-10-08T13:51:26.338Z",
+      "ok": false
+    }
+  ],
+  "pid": 4172,
+  "startedAt": "2026-10-08T13:51:21.806Z",
+  "endedAt": "2026-10-08T13:51:26.341Z",
+  "error": "node.exe a échoué (code 1)"
+}

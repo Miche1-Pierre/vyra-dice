@@ -1,0 +1,14 @@
+{
+  "slug": "lumen-club",
+  "name": "Lumen Club",
+  "city": "Toulon",
+  "links": {
+    "other": []
+  },
+  "brief": "Club FICTIF cr�� pour tester VYRA Studio : aucune source r�elle, tout est � imaginer de fa�on cr�dible. Ancien entrep�t portuaire reconverti : une grande nef d'environ 24 � 16 m, 8 m sous plafond, murs de brique sombre, charpente m�tallique apparente. Mezzanine en L sur les c�t�s nord et est (espace VIP), avec une loge prestige face � la sc�ne. Bar central en laiton et marbre vert. Sc�ne DJ au sud avec un mur d'�crans LED. Signature lumineuse : globes ambr�s suspendus au-dessus de la piste et pluie de LED bleu p�trole. Identit� : le nom LUMEN en capitales fines, couleur signature laiton (#c9a46a), ambiance industrielle chic. Offre : environ 8 tables lounge au rez-de-chauss�e, 6 VIP sur la mezzanine, 1 loge prestige. Soir�e du samedi.",
+  "event": {
+    "name": "Samedi soir",
+    "slug": "samedi-soir"
+  },
+  "createdAt": "2026-10-08T12:49:46.927Z"
+}

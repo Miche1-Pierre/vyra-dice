@@ -1,0 +1,123 @@
+[15:33:06] Étape « auto » — lumen-club
+[15:33:06] — research : déjà fait
+[15:33:06] — spec : déjà fait
+[15:33:06] — build : déjà fait
+[15:33:06] — review : déjà fait
+[15:33:06] ══ bake ══
+[15:33:06] ▶ Bake des lightmaps (final)
+[15:33:55]   [bake] device OPTIX: ['NVIDIA GeForce RTX 5070 Laptop GPU']
+[15:33:55]   [bake] ground_floor        2048px scale=3.8494   43.8s
+[15:34:32]   [bake] wall_west           2048px scale=7.9189   37.1s
+[15:35:18]   [bake] wall_east           2048px scale=4.3965   46.5s
+[15:35:27]   [bake] wall_north          1024px scale=3.3160    9.1s
+[15:35:36]   [bake] wall_south          1024px scale=7.6856    8.9s
+[15:35:48]   [bake] ceiling             1024px scale=3.1225   11.8s
+[15:35:52]   [bake] columns              512px scale=2.4951    3.8s
+[15:36:05]   [bake] stairs              1024px scale=2.0386   12.6s
+[15:36:15]   [bake] bar                 1024px scale=21.0218   10.8s
+[15:36:27]   [bake] stage               1024px scale=19.8602   11.6s
+[15:36:31]   [bake] wc                   512px scale=1.0390    3.5s
+[15:37:24]   [bake] lvl1_slabs          2048px scale=5.6443   53.1s
+[15:37:48]   [bake] furniture           2048px scale=4.2331   24.3s
+[15:38:12]   [bake] lvl1_furniture      2048px scale=7.3303   24.6s
+[15:38:14]   [bake] done in 303.4s -> clubs\lumen-club\build\export
+[15:38:14] ✔ Bake des lightmaps (final) (307.9 s)
+[15:38:14] ▶ Optimisation web
+[15:38:16]   prune: Removed types... Accessor (274)
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_1; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[15:38:16]   prune: Removed types... Accessor (163)
+[15:38:16]   lumen-club.glb: 4703 KB -> 1159 KB
+[15:38:17]     lm ground_floor: 2300 KB -> 57 KB
+[15:38:17]     lm wall_west: 1575 KB -> 32 KB
+[15:38:18]     lm wall_east: 2285 KB -> 40 KB
+[15:38:19]     lm wall_north: 392 KB -> 9 KB
+[15:38:19]     lm wall_south: 377 KB -> 9 KB
+[15:38:20]     lm ceiling: 729 KB -> 26 KB
+[15:38:20]     lm columns: 221 KB -> 10 KB
+[15:38:20]     lm stairs: 851 KB -> 31 KB
+[15:38:20]     lm bar: 448 KB -> 12 KB
+[15:38:21]     lm stage: 442 KB -> 10 KB
+[15:38:21]     lm wc: 206 KB -> 8 KB
+[15:38:22]     lm lvl1_slabs: 2426 KB -> 55 KB
+[15:38:24]     lm furniture: 2839 KB -> 193 KB
+[15:38:26]     lm lvl1_furniture: 2842 KB -> 228 KB
+[15:38:26]     lightmaps total: 721 KB
+[15:38:27]   club assets: lumen-club, naho -> public\clubs
+[15:38:27] ✔ Optimisation web (12.7 s)
+[15:38:27] ══ preview ══
+[15:38:27] ▶ Enregistrement dans clubs/registry.ts
+[15:38:27] déjà enregistré
+[15:38:27] ✔ Enregistrement dans clubs/registry.ts (0.0 s)
+[15:38:27] ▶ Tests de contrat (tous les clubs)
+[15:38:37]    ✓ src/lib/clubs/brand.test.ts (3 tests) 18ms
+[15:38:37]    ✓ src/lib/clubs/ambiance.test.ts (5 tests) 27ms
+[15:38:37]    ✓ src/lib/venue/offers.test.ts (7 tests) 12ms
+[15:38:37]    ✓ src/lib/venue/camera.test.ts (17 tests) 16ms
+[15:38:37]    ✓ src/lib/clubs/registry.test.ts (14 tests) 29ms
+[15:38:37]    ✓ src/lib/venue/layout.test.ts (14 tests) 34ms
+[15:38:37]    ✓ src/components/experience/view-model.test.ts (11 tests) 23ms
+[15:38:37]    ✓ src/lib/clubs/club.test.ts (6 tests) 38ms
+[15:38:37]    Test Files  8 passed (8)
+[15:38:37]         Tests  77 passed (77)
+[15:38:37] ✔ Tests de contrat (tous les clubs) (10.6 s)
+[15:38:37] ▶ Viewer local
+[15:38:38] ✔ Viewer local (0.3 s)
+[15:38:38] ▶ Captures
+[15:39:10] ✔ Captures (31.9 s)
+[15:39:10] — lessons : déjà fait
+[15:39:10] Terminé.

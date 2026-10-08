@@ -1,0 +1,26 @@
+{
+  "id": "20261008134009-lessons",
+  "step": "lessons",
+  "state": "done",
+  "options": {},
+  "createdAt": "2026-10-08T13:40:09.794Z",
+  "phases": [
+    {
+      "name": "Leçons pour le guide",
+      "startedAt": "2026-10-08T13:40:13.506Z",
+      "endedAt": "2026-10-08T13:41:22.430Z",
+      "ok": true
+    }
+  ],
+  "pid": 67600,
+  "startedAt": "2026-10-08T13:40:13.460Z",
+  "result": {
+    "agentRuns": 1,
+    "turns": 14,
+    "costUsd": 0.37,
+    "sessions": [
+      "8e8eeec0-6e96-497d-89b5-aa4bdf356069"
+    ]
+  },
+  "endedAt": "2026-10-08T13:41:22.437Z"
+}

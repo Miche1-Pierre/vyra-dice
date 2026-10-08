@@ -1,0 +1,26 @@
+{
+  "id": "20261008124948-research",
+  "step": "research",
+  "state": "done",
+  "options": {},
+  "createdAt": "2026-10-08T12:49:48.831Z",
+  "phases": [
+    {
+      "name": "Lecture des sources et note de recherche",
+      "startedAt": "2026-10-08T12:49:51.730Z",
+      "endedAt": "2026-10-08T12:51:37.770Z",
+      "ok": true
+    }
+  ],
+  "pid": 32544,
+  "startedAt": "2026-10-08T12:49:51.709Z",
+  "result": {
+    "agentRuns": 1,
+    "turns": 12,
+    "costUsd": 0.38,
+    "sessions": [
+      "b1ec00d1-b97c-4893-9f69-d331245aa79c"
+    ]
+  },
+  "endedAt": "2026-10-08T12:51:37.773Z"
+}

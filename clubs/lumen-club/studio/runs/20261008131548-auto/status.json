@@ -1,0 +1,51 @@
+{
+  "id": "20261008131548-auto",
+  "step": "auto",
+  "state": "done",
+  "options": {},
+  "createdAt": "2026-10-08T13:15:48.606Z",
+  "phases": [
+    {
+      "name": "Enregistrement dans clubs/registry.ts",
+      "startedAt": "2026-10-08T13:15:52.344Z",
+      "endedAt": "2026-10-08T13:15:52.347Z",
+      "ok": true
+    },
+    {
+      "name": "Tests de contrat (tous les clubs)",
+      "startedAt": "2026-10-08T13:15:52.349Z",
+      "endedAt": "2026-10-08T13:16:02.441Z",
+      "ok": true
+    },
+    {
+      "name": "Viewer local",
+      "startedAt": "2026-10-08T13:16:02.442Z",
+      "endedAt": "2026-10-08T13:16:02.698Z",
+      "ok": true
+    },
+    {
+      "name": "Captures",
+      "startedAt": "2026-10-08T13:16:02.701Z",
+      "endedAt": "2026-10-08T13:16:40.948Z",
+      "ok": true
+    },
+    {
+      "name": "Leçons pour le guide",
+      "startedAt": "2026-10-08T13:16:40.970Z",
+      "endedAt": "2026-10-08T13:17:43.165Z",
+      "ok": true
+    }
+  ],
+  "pid": 40984,
+  "startedAt": "2026-10-08T13:15:52.147Z",
+  "result": {
+    "viewer": "http://localhost:3100/lumen-club/samedi-soir",
+    "agentRuns": 1,
+    "turns": 13,
+    "costUsd": 0.34,
+    "sessions": [
+      "3ecf9ac8-4624-446a-be71-0bed209bf8d0"
+    ]
+  },
+  "endedAt": "2026-10-08T13:17:43.170Z"
+}

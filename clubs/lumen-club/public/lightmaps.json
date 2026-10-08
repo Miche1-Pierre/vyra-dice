@@ -1,0 +1,95 @@
+{
+  "version": 1,
+  "club": "lumen-club",
+  "encoding": "srgb",
+  "lightmaps": {
+    "ground_floor": {
+      "file": "lm/ground_floor.webp",
+      "scale": 3.84937,
+      "size": 2048,
+      "hash": "1294d5dbae"
+    },
+    "wall_west": {
+      "file": "lm/wall_west.webp",
+      "scale": 7.91887,
+      "size": 2048,
+      "hash": "f8f27df8ac"
+    },
+    "wall_east": {
+      "file": "lm/wall_east.webp",
+      "scale": 4.3965,
+      "size": 2048,
+      "hash": "80e1486bba"
+    },
+    "wall_north": {
+      "file": "lm/wall_north.webp",
+      "scale": 3.31601,
+      "size": 1024,
+      "hash": "3806fd8dbd"
+    },
+    "wall_south": {
+      "file": "lm/wall_south.webp",
+      "scale": 7.68557,
+      "size": 1024,
+      "hash": "1279718d5e"
+    },
+    "ceiling": {
+      "file": "lm/ceiling.webp",
+      "scale": 3.12252,
+      "size": 1024,
+      "hash": "745543ebde"
+    },
+    "columns": {
+      "file": "lm/columns.webp",
+      "scale": 2.49505,
+      "size": 512,
+      "hash": "9d21df3265"
+    },
+    "stairs": {
+      "file": "lm/stairs.webp",
+      "scale": 2.0386,
+      "size": 1024,
+      "hash": "4e78292c44"
+    },
+    "bar": {
+      "file": "lm/bar.webp",
+      "scale": 21.0218,
+      "size": 1024,
+      "hash": "ddc8a31c97"
+    },
+    "stage": {
+      "file": "lm/stage.webp",
+      "scale": 19.86022,
+      "size": 1024,
+      "hash": "0bb0ad2f33"
+    },
+    "wc": {
+      "file": "lm/wc.webp",
+      "scale": 1.03903,
+      "size": 512,
+      "hash": "d3c99ceae7"
+    },
+    "lvl1_slabs": {
+      "file": "lm/lvl1_slabs.webp",
+      "scale": 5.64431,
+      "size": 2048,
+      "hash": "40a48a3330"
+    },
+    "furniture": {
+      "file": "lm/furniture.webp",
+      "scale": 4.2331,
+      "size": 2048,
+      "hash": "5f45026363"
+    },
+    "lvl1_furniture": {
+      "file": "lm/lvl1_furniture.webp",
+      "scale": 7.33034,
+      "size": 2048,
+      "hash": "19bd3e2a6c"
+    }
+  },
+  "model": {
+    "file": "lumen-club.glb",
+    "hash": "e9456e6033"
+  }
+}

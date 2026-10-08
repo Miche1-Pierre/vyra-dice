@@ -1,0 +1,38 @@
+{
+  "id": "20261008125153-spec",
+  "step": "spec",
+  "state": "done",
+  "options": {},
+  "createdAt": "2026-10-08T12:51:53.166Z",
+  "phases": [
+    {
+      "name": "Écriture de la spécification",
+      "startedAt": "2026-10-08T12:51:56.355Z",
+      "endedAt": "2026-10-08T13:03:22.635Z",
+      "ok": true
+    },
+    {
+      "name": "Validation et corrections",
+      "startedAt": "2026-10-08T13:03:22.638Z",
+      "endedAt": "2026-10-08T13:03:30.550Z",
+      "ok": true
+    },
+    {
+      "name": "Construction d'essai",
+      "startedAt": "2026-10-08T13:03:22.717Z",
+      "endedAt": "2026-10-08T13:03:30.548Z",
+      "ok": true
+    }
+  ],
+  "pid": 6644,
+  "startedAt": "2026-10-08T12:51:56.333Z",
+  "result": {
+    "agentRuns": 1,
+    "turns": 29,
+    "costUsd": 2.9,
+    "sessions": [
+      "827a6a9a-72df-41a8-b0e8-14fe148f37a1"
+    ]
+  },
+  "endedAt": "2026-10-08T13:03:30.552Z"
+}
