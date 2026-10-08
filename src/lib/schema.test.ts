@@ -9,7 +9,7 @@ import {
 
 function requestInput(overrides: Record<string, unknown> = {}) {
   return {
-    clubSlug: "naho",
+    clubSlug: "demo",
     eventSlug: "samedi",
     tableId: "v1",
     fullName: "  Camille Martin ",

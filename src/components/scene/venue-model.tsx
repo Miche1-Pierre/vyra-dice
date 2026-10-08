@@ -15,25 +15,8 @@ import {
   GLOBE_FOCUS,
   type TimedMaterial,
 } from "@/components/scene/fx/materials"
+import { assetUrl, modelUrl, type AssetManifest } from "@/lib/clubs/assets"
 import { useExperience } from "@/lib/store"
-
-import nahoLightmaps from "@clubs/naho/public/lightmaps.json"
-
-export interface LightmapManifest {
-  version: number
-  club: string
-  encoding: "srgb"
-  /** Content hashes (assets:optimize) version the URLs: a new bake is never served stale. */
-  model?: { file: string; hash: string }
-  lightmaps: Record<string, { file: string; scale: number; size: number; hash?: string }>
-}
-
-const versioned = (url: string, hash?: string) => (hash ? `${url}?v=${hash}` : url)
-
-/** Lightmap manifests are bundled (2 KB) so the textures can be requested with the GLB. */
-const MANIFESTS: Record<string, LightmapManifest> = {
-  naho: nahoLightmaps as LightmapManifest,
-}
 
 /** Global brightness of the baked lighting (artistic exposure, 1 = as baked). */
 const LIGHTMAP_EXPOSURE = 1.15
@@ -76,7 +59,7 @@ const METALS = new Set(["naho_black_metal", "naho_gold", "naho_slat"])
  * node with one child per material (`lvl1_furniture` → `lvl1_furniture_1`, …): the node name
  * is what owns the lightmap and the FX role.
  */
-function nodeName(mesh: THREE.Object3D, manifest: LightmapManifest): string {
+function nodeName(mesh: THREE.Object3D, manifest: AssetManifest): string {
   let cur: THREE.Object3D | null = mesh
   while (cur) {
     if (cur.name in manifest.lightmaps || FX_NAMES.has(cur.name)) return cur.name
@@ -95,7 +78,7 @@ function isEmissive(m: THREE.MeshStandardMaterial): boolean {
 
 function prepareVenue(
   scene: THREE.Object3D,
-  manifest: LightmapManifest,
+  manifest: AssetManifest,
   lightmaps: Record<string, THREE.Texture>,
   quality: Quality,
 ): PreparedVenue {
@@ -187,18 +170,25 @@ function applyUpperOpacity(materials: THREE.Material[], k: number) {
   }
 }
 
-export function VenueModel({ club, quality }: { club: string; quality: Quality }) {
-  const base = `/clubs/${club}`
-  const manifest = MANIFESTS[club]
+/**
+ * The club's baked venue. The manifest comes with the page, so the lightmaps are requested
+ * together with the GLB instead of after it.
+ */
+export function VenueModel({
+  club,
+  assets: manifest,
+  quality,
+}: {
+  club: string
+  assets: AssetManifest
+  quality: Quality
+}) {
   const names = useMemo(() => Object.keys(manifest.lightmaps), [manifest])
   const urls = useMemo(
-    () =>
-      names.map((n) =>
-        versioned(`${base}/${manifest.lightmaps[n].file}`, manifest.lightmaps[n].hash),
-      ),
-    [base, manifest, names],
+    () => names.map((n) => assetUrl(club, manifest.lightmaps[n].file, manifest.lightmaps[n].hash)),
+    [club, manifest, names],
   )
-  const glbUrl = versioned(`${base}/${club}.glb`, manifest.model?.hash)
+  const glbUrl = modelUrl(club, manifest)
   // start every download now: the GLB and the lightmaps load in parallel, not in a waterfall
   useGLTF.preload(glbUrl, false, true)
   useLoader.preload(THREE.TextureLoader, urls)

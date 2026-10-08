@@ -1,0 +1,393 @@
+{
+  "$comment": "Naho Club (La Garde) — démo de prospection. Tables, prix et statuts PROVISOIRES, non validés par le club : ne jamais les présenter comme des offres réelles (VYR-15). Les ids de zones et de tables sont ceux de layout.json.",
+  "club": {
+    "slug": "naho",
+    "name": "Naho Club",
+    "city": "La Garde",
+    "address": "116 avenue de Digne, 83130 La Garde",
+    "requestPrefix": "NHO",
+    "contact": {
+      "email": "contact@naho-club.com",
+      "instagram": "naho_club"
+    },
+    "demo": true,
+    "disclaimer": "Démo — plan, tables et prix provisoires, non validés par Naho Club."
+  },
+  "event": {
+    "slug": "samedi",
+    "name": "Samedi soir",
+    "date": "2026-10-10",
+    "doors": "23:30",
+    "ticketUrl": "https://shotgun.live/fr/venues/naho-club",
+    "offersValidatedAt": null
+  },
+  "zones": [
+    {
+      "id": "lounge-vegetal",
+      "tier": "lounge",
+      "name": "Lounge Végétal",
+      "shortName": "Végétal",
+      "description": "Banquettes le long du mur végétal, en bord de piste.",
+      "perks": ["Service à table", "Softs et glaçons inclus"],
+      "icon": "leaf"
+    },
+    {
+      "id": "lounge-mezzanine",
+      "tier": "lounge",
+      "name": "Lounge Gold",
+      "shortName": "Gold",
+      "description": "Alcôves feutrées sous la mezzanine, ambiance dorée.",
+      "perks": ["Service à table", "Softs et glaçons inclus"],
+      "icon": "martini"
+    },
+    {
+      "id": "vip-balcon",
+      "tier": "vip",
+      "name": "Balcon DJ",
+      "shortName": "Balcon",
+      "description": "Au-dessus de la cabine DJ, vue plongeante sur la piste.",
+      "perks": ["Service à table dédié", "Softs et glaçons inclus", "Accès coupe-file"],
+      "icon": "disc"
+    },
+    {
+      "id": "vip-est",
+      "tier": "vip",
+      "name": "Mezzanine Est",
+      "shortName": "Est",
+      "description": "Le long du garde-corps, face au bar et à la pluie de LED.",
+      "perks": ["Service à table dédié", "Softs et glaçons inclus", "Accès coupe-file"],
+      "icon": "sunrise"
+    },
+    {
+      "id": "vip-sud",
+      "tier": "vip",
+      "name": "Mezzanine Sud",
+      "shortName": "Sud",
+      "description": "Face à la salle, à deux pas du bar VIP.",
+      "perks": ["Service à table dédié", "Softs et glaçons inclus", "Accès coupe-file"],
+      "icon": "sofa"
+    },
+    {
+      "id": "prestige-dj",
+      "tier": "prestige",
+      "name": "Carré DJ",
+      "shortName": "Carré DJ",
+      "description": "Le carré le plus exclusif, à hauteur de la scène, avec hôte dédié.",
+      "perks": [
+        "Hôte dédié",
+        "Accès coupe-file",
+        "Softs, glaçons et finger food inclus",
+        "Show bouteille"
+      ],
+      "icon": "crown"
+    },
+    {
+      "id": "prestige-loge",
+      "tier": "prestige",
+      "name": "Loge Welcome",
+      "shortName": "Loge",
+      "description": "Loge privative au-dessus de l'entrée, vue sur toute la salle.",
+      "perks": [
+        "Hôte dédié",
+        "Accès coupe-file",
+        "Softs, glaçons et finger food inclus",
+        "Show bouteille"
+      ],
+      "icon": "gem"
+    }
+  ],
+  "tables": [
+    {
+      "id": "l1",
+      "label": "L1",
+      "zoneId": "lounge-vegetal",
+      "capacity": {
+        "min": 4,
+        "max": 6
+      },
+      "minimumSpend": 350,
+      "status": "available",
+      "perks": [],
+      "view": "Côté entrée, face au bar"
+    },
+    {
+      "id": "l2",
+      "label": "L2",
+      "zoneId": "lounge-vegetal",
+      "capacity": {
+        "min": 4,
+        "max": 6
+      },
+      "minimumSpend": 350,
+      "status": "sold",
+      "perks": [],
+      "view": "Bord de piste, vue sur le bar"
+    },
+    {
+      "id": "l3",
+      "label": "L3",
+      "zoneId": "lounge-vegetal",
+      "capacity": {
+        "min": 4,
+        "max": 6
+      },
+      "minimumSpend": 400,
+      "status": "available",
+      "perks": [],
+      "view": "Au centre du mur végétal, face à la piste"
+    },
+    {
+      "id": "l4",
+      "label": "L4",
+      "zoneId": "lounge-vegetal",
+      "capacity": {
+        "min": 4,
+        "max": 6
+      },
+      "minimumSpend": 400,
+      "status": "available",
+      "perks": [],
+      "view": "Bord de piste, entre bar et scène"
+    },
+    {
+      "id": "l5",
+      "label": "L5",
+      "zoneId": "lounge-vegetal",
+      "capacity": {
+        "min": 4,
+        "max": 6
+      },
+      "minimumSpend": 450,
+      "status": "available",
+      "perks": [],
+      "view": "Au pied de l'escalier, près du DJ"
+    },
+    {
+      "id": "l6",
+      "label": "L6",
+      "zoneId": "lounge-mezzanine",
+      "capacity": {
+        "min": 4,
+        "max": 6
+      },
+      "minimumSpend": 350,
+      "status": "available",
+      "perks": [],
+      "view": "Alcôve côté scène, sous la mezzanine"
+    },
+    {
+      "id": "l7",
+      "label": "L7",
+      "zoneId": "lounge-mezzanine",
+      "capacity": {
+        "min": 4,
+        "max": 6
+      },
+      "minimumSpend": 350,
+      "status": "sold",
+      "perks": [],
+      "view": "Alcôve feutrée, vue sur la scène"
+    },
+    {
+      "id": "l8",
+      "label": "L8",
+      "zoneId": "lounge-mezzanine",
+      "capacity": {
+        "min": 4,
+        "max": 6
+      },
+      "minimumSpend": 400,
+      "status": "available",
+      "perks": [],
+      "view": "Alcôve centrale, face au bar"
+    },
+    {
+      "id": "l9",
+      "label": "L9",
+      "zoneId": "lounge-mezzanine",
+      "capacity": {
+        "min": 4,
+        "max": 6
+      },
+      "minimumSpend": 400,
+      "status": "available",
+      "perks": [],
+      "view": "Alcôve feutrée, face au bar"
+    },
+    {
+      "id": "l10",
+      "label": "L10",
+      "zoneId": "lounge-mezzanine",
+      "capacity": {
+        "min": 4,
+        "max": 6
+      },
+      "minimumSpend": 350,
+      "status": "available",
+      "perks": [],
+      "view": "Alcôve en retrait, au calme"
+    },
+    {
+      "id": "v1",
+      "label": "V1",
+      "zoneId": "vip-balcon",
+      "capacity": {
+        "min": 6,
+        "max": 8
+      },
+      "minimumSpend": 900,
+      "status": "available",
+      "perks": [],
+      "view": "Côté escalier, vue plongeante sur la piste"
+    },
+    {
+      "id": "v2",
+      "label": "V2",
+      "zoneId": "vip-balcon",
+      "capacity": {
+        "min": 6,
+        "max": 8
+      },
+      "minimumSpend": 1000,
+      "status": "on_request",
+      "perks": [],
+      "view": "Pile au-dessus du DJ, vue sur toute la salle"
+    },
+    {
+      "id": "v3",
+      "label": "V3",
+      "zoneId": "vip-balcon",
+      "capacity": {
+        "min": 6,
+        "max": 8
+      },
+      "minimumSpend": 900,
+      "status": "available",
+      "perks": [],
+      "view": "Au-dessus de la scène, vue sur la piste et le bar"
+    },
+    {
+      "id": "v4",
+      "label": "V4",
+      "zoneId": "vip-est",
+      "capacity": {
+        "min": 6,
+        "max": 8
+      },
+      "minimumSpend": 750,
+      "status": "available",
+      "perks": [],
+      "view": "Garde-corps côté scène, vue sur la piste"
+    },
+    {
+      "id": "v5",
+      "label": "V5",
+      "zoneId": "vip-est",
+      "capacity": {
+        "min": 6,
+        "max": 8
+      },
+      "minimumSpend": 750,
+      "status": "sold",
+      "perks": [],
+      "view": "Face au bar et à la pluie de LED"
+    },
+    {
+      "id": "v6",
+      "label": "V6",
+      "zoneId": "vip-est",
+      "capacity": {
+        "min": 6,
+        "max": 8
+      },
+      "minimumSpend": 700,
+      "status": "available",
+      "perks": [],
+      "view": "Face au bar, vue sur toute la salle"
+    },
+    {
+      "id": "v7",
+      "label": "V7",
+      "zoneId": "vip-est",
+      "capacity": {
+        "min": 6,
+        "max": 8
+      },
+      "minimumSpend": 700,
+      "status": "available",
+      "perks": [],
+      "view": "Angle sud, vue sur la salle et la loge"
+    },
+    {
+      "id": "v8",
+      "label": "V8",
+      "zoneId": "vip-sud",
+      "capacity": {
+        "min": 6,
+        "max": 8
+      },
+      "minimumSpend": 650,
+      "status": "available",
+      "perks": [],
+      "view": "Dans l'axe de la scène, à deux pas du bar VIP"
+    },
+    {
+      "id": "v9",
+      "label": "V9",
+      "zoneId": "vip-sud",
+      "capacity": {
+        "min": 6,
+        "max": 8
+      },
+      "minimumSpend": 700,
+      "status": "available",
+      "perks": [],
+      "view": "Au-dessus de l'escalier, face à la salle"
+    },
+    {
+      "id": "v10",
+      "label": "V10",
+      "zoneId": "vip-sud",
+      "capacity": {
+        "min": 6,
+        "max": 8
+      },
+      "minimumSpend": 650,
+      "status": "available",
+      "perks": [],
+      "view": "Angle est, vue sur la salle et la mezzanine"
+    },
+    {
+      "id": "p1",
+      "label": "P1",
+      "zoneId": "prestige-dj",
+      "capacity": {
+        "min": 10,
+        "max": 15
+      },
+      "minimumSpend": 2500,
+      "status": "on_request",
+      "perks": [],
+      "view": "À hauteur de la scène, face au DJ"
+    },
+    {
+      "id": "p2",
+      "label": "P2",
+      "zoneId": "prestige-loge",
+      "capacity": {
+        "min": 10,
+        "max": 12
+      },
+      "minimumSpend": 2000,
+      "status": "available",
+      "perks": [],
+      "view": "Au-dessus de l'entrée, vue sur toute la salle"
+    }
+  ],
+  "conditions": [
+    "Le minimum de consommation s'entend par table, sur la carte bouteilles.",
+    "La table n'est réservée qu'après confirmation par le club.",
+    "Arrivée avant 01h00 ; au-delà, la table peut être réattribuée.",
+    "Tenue correcte exigée, 18 ans minimum."
+  ]
+}

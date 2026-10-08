@@ -1,0 +1,9 @@
+import type { ClubDefinition } from "@/lib/clubs/club"
+
+import naho from "./naho"
+
+/**
+ * Every club the app serves at `/<slug>/<event>`. Adding a club = creating its folder and adding
+ * it here, nowhere else (docs/clubs.md). Each folder validates its own files when it loads.
+ */
+export const clubs: readonly ClubDefinition[] = [naho]

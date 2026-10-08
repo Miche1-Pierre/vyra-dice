@@ -14,7 +14,7 @@ const posthog = vi.hoisted(() => ({
 
 vi.mock("posthog-js", () => ({ default: posthog }))
 
-const venue = { club: "naho", event: "samedi", demo: true }
+const venue = { club: "demo", event: "samedi", demo: true }
 
 function fakeWindow({ search = "", consent }: { search?: string; consent?: string } = {}) {
   const store = new Map<string, string>(consent ? [["vyra-consent", consent]] : [])

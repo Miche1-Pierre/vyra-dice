@@ -4,7 +4,7 @@ import { Suspense } from "react"
 
 import { AnalyticsProvider } from "@/components/analytics/analytics-provider"
 import { Experience } from "@/components/experience/experience"
-import { getVenueContent, listVenues } from "@/content/clubs"
+import { getClub, getVenueContent, listVenues } from "@/lib/clubs/registry"
 
 export function generateStaticParams() {
   return listVenues().map(({ club, event }) => ({ club, event }))
@@ -28,13 +28,13 @@ function VenueShell() {
 }
 
 async function Venue({ params }: Pick<PageProps<"/[club]/[event]">, "params">) {
-  const { club, event } = await params
-  const content = getVenueContent(club, event)
-  if (!content) notFound()
+  const { club: slug, event } = await params
+  const club = getClub(slug)
+  if (!club || club.content.event.slug !== event) notFound()
   return (
     <>
-      <AnalyticsProvider club={club} event={event} demo={content.club.demo} />
-      <Experience clubSlug={club} eventSlug={event} content={content} />
+      <AnalyticsProvider club={slug} event={event} demo={club.content.club.demo} />
+      <Experience club={club} />
     </>
   )
 }
