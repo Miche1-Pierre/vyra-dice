@@ -1,0 +1,12 @@
+/* The product's Night Glass design system (tokens, glass materials, type scale), plus the Studio. */
+@import "../../src/app/globals.css";
+
+@source "../../src";
+@source "..";
+
+/* Run logs and JSON */
+@utility font-code {
+  font-family: ui-monospace, "Cascadia Code", "SF Mono", Consolas, monospace;
+  font-size: 12px;
+  line-height: 18px;
+}
