@@ -2,6 +2,7 @@ import { existsSync, readdirSync, readFileSync, statSync } from "node:fs"
 import path from "node:path"
 
 import { briefSchema, type Brief } from "@studio/lib/brief"
+import { git } from "@studio/lib/git"
 import { listRuns, type RunStatus, type StepId } from "@studio/lib/jobs"
 import { CLUBS_DIR, clubPaths, REPO, SLUG } from "@studio/lib/paths"
 import { registrationOf } from "@studio/lib/registry-file"
@@ -54,6 +55,26 @@ function safeRegistration(slug: string): ReturnType<typeof registrationOf> {
   }
 }
 
+/**
+ * Is the club in git, and is everything shared? `no`: never committed; `changed`: changes not
+ * committed yet (the share runs' own folders aside: they are committed with the next share).
+ */
+function gitShareState(slug: string): "no" | "changed" | "shared" {
+  try {
+    if (!git(["ls-files", "--", `clubs/${slug}`])) return "no"
+    const pending = git([
+      "status",
+      "--porcelain",
+      "--",
+      `clubs/${slug}`,
+      `:(exclude)clubs/${slug}/studio/runs/*-publish`,
+    ])
+    return pending ? "changed" : "shared"
+  } catch {
+    return "no"
+  }
+}
+
 export function isRegistered(slug: string): boolean {
   const registry = readFileSync(path.join(REPO, "clubs", "registry.ts"), "utf8")
   return new RegExp(`from "\\./${slug}"`).test(registry)
@@ -98,16 +119,11 @@ export function clubState(
     ? readdirSync(path.join(p.studio, "reviews"))
     : []
   const captures = existsSync(p.captures) ? readdirSync(p.captures) : []
-  // shared = the last publish run that pushed; published = in the clubs of the live site
-  const shared = runs.find(
-    (r) =>
-      r.step === "publish" && r.state === "done" && !(r.result as { dryRun?: boolean })?.dryRun,
-  )
+  // shared = the club is in git (committed here or pulled from main); live = in the site's clubs
+  const shared = gitShareState(slug)
+  const lastShare = runs.find((r) => r.step === "publish" && r.state === "done")
   const liveClub = safeRegistration(slug) === "published"
-  // something ran since the last share: there is new history to share
-  const unshared =
-    !!shared?.endedAt &&
-    runs.some((r) => r.step !== "publish" && (r.endedAt ?? "") > shared.endedAt!)
+  const unshared = shared === "changed"
   const lessons = readJson<{ proposals?: unknown[] }>(p.lessons)
 
   const view = (
@@ -217,15 +233,15 @@ export function clubState(
     view(
       "publish",
       "Partage et mise en ligne",
-      shared || liveClub ? (unshared ? "stale" : "done") : "todo",
-      unshared
-        ? "nouveautés à partager"
-        : liveClub
-          ? "en ligne"
-          : shared
-            ? "brouillon partagé"
-            : undefined,
-      shared?.endedAt ? Date.parse(shared.endedAt) : undefined,
+      shared === "no" ? "todo" : unshared ? "stale" : "done",
+      shared === "no"
+        ? undefined
+        : unshared
+          ? "nouveautés à partager"
+          : liveClub
+            ? "en ligne"
+            : "brouillon partagé",
+      lastShare?.endedAt ? Date.parse(lastShare.endedAt) : undefined,
     ),
   ]
   const thumb = path.join(p.previews, "overview.png")
