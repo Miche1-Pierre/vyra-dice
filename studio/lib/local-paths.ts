@@ -1,4 +1,5 @@
 import os from "node:os"
+import path from "node:path"
 
 import { REPO } from "@studio/lib/paths"
 
@@ -10,10 +11,16 @@ import { REPO } from "@studio/lib/paths"
 const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
 const forms = (p: string) => [...new Set([p, p.replace(/\\/g, "/"), p.replace(/\//g, "\\")])]
 
+// the home folder as seen from the repo (`..\Users\<name>`), when the repo is not inside it
+const homeFromRepo = path.relative(REPO, os.homedir())
+
 const RULES: [RegExp, string][] = [
   // the repo first: it may live in the home folder
   ...forms(REPO).map((p): [RegExp, string] => [new RegExp(`${escape(p)}[\\\\/]?`, "gi"), ""]),
   ...forms(os.homedir()).map((p): [RegExp, string] => [new RegExp(escape(p), "gi"), "~"]),
+  ...(/^\.\.[\\/]+[^.\\/]/.test(homeFromRepo)
+    ? forms(homeFromRepo).map((p): [RegExp, string] => [new RegExp(escape(p), "gi"), "~"])
+    : []),
 ]
 
 export function withoutLocalPaths(text: string): string {
