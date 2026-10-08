@@ -3,6 +3,7 @@ import path from "node:path"
 
 import { claudeCode, recordAgent, type AgentResult } from "@studio/jobs/agent"
 import { BLENDER, errorTail, type RunContext } from "@studio/jobs/context"
+import { CLUB_TEXT, formatFiles } from "@studio/jobs/format"
 import { build } from "@studio/jobs/steps/build"
 import { readLessons } from "@studio/lib/clubs"
 import { readFeedback, writeFeedback } from "@studio/lib/feedback"
@@ -62,6 +63,10 @@ async function fixUntilValid(ctx: RunContext, first: AgentResult): Promise<void>
       : v.problems
     if (!problems.length) {
       ctx.log("spécification valide, la scène se construit")
+      await formatFiles(
+        ctx,
+        CLUB_TEXT.map((f) => `clubs/${ctx.slug}/${f}`),
+      )
       return
     }
     ctx.log(`validation : ${problems.length} problème(s)\n${problems.join("\n").slice(0, 4000)}`)
