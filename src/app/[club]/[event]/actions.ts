@@ -2,7 +2,7 @@
 
 import { headers } from "next/headers"
 
-import { getVenueContent } from "@/content/clubs"
+import { getVenueContent } from "@/lib/clubs/registry"
 import { createRequestId } from "@/lib/request-id"
 import { bookingRequestInputSchema, toFieldErrors, type SubmitResult } from "@/lib/schema"
 import { demoSink } from "@/server/requests/demo-sink"

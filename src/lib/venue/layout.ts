@@ -1,7 +1,5 @@
 import { z } from "zod"
 
-import layoutJson from "@clubs/naho/layout.json"
-
 /*
  * Venue geometry of each club (`clubs/<club>/layout.json`), read by its Blender build.
  *
@@ -149,15 +147,6 @@ export function parseLayout(json: unknown): VenueLayout {
     throw new Error(`Invalid venue layout:\n${z.prettifyError(result.error)}`)
   }
   return result.data
-}
-
-/** Layouts by club slug, validated at import time so a broken export fails loudly. */
-export const layouts: Record<string, VenueLayout> = {
-  naho: parseLayout(layoutJson),
-}
-
-export function getLayout(club: string): VenueLayout | null {
-  return Object.hasOwn(layouts, club) ? layouts[club] : null
 }
 
 /** Converts a point from Blender axes (x east, y north, z up) to three.js (x, y up, z south). */

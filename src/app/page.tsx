@@ -1,7 +1,10 @@
 import { ArrowRight } from "lucide-react"
 import Link from "next/link"
 
+import { listClubs } from "@/lib/clubs/registry"
+
 export default function Home() {
+  const demos = listClubs().filter((club) => club.content.club.demo)
   return (
     <main className="bg-ink relative grid min-h-dvh place-items-center overflow-hidden px-6 py-16">
       <div
@@ -19,12 +22,15 @@ export default function Home() {
           d’habitude.
         </p>
         <div className="mt-10 flex flex-col items-center gap-3">
-          <Link
-            href="/naho/samedi"
-            className="gold-pill text-callout inline-flex h-12 items-center gap-2 rounded-full px-7 font-medium transition-[filter,transform] hover:brightness-105 active:scale-[0.98]"
-          >
-            Voir la démo — Naho Club <ArrowRight className="size-4" />
-          </Link>
+          {demos.map(({ slug, content }) => (
+            <Link
+              key={slug}
+              href={`/${slug}/${content.event.slug}`}
+              className="gold-pill text-callout inline-flex h-12 items-center gap-2 rounded-full px-7 font-medium transition-[filter,transform] hover:brightness-105 active:scale-[0.98]"
+            >
+              Voir la démo — {content.club.name} <ArrowRight className="size-4" />
+            </Link>
+          ))}
           <p className="text-caption text-label-3">
             Démo de prospection : plan, tables et prix provisoires.
           </p>

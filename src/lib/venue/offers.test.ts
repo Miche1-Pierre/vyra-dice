@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest"
 
-import { nahoContent } from "@/content/clubs/naho"
 import type { VenueContent } from "@/lib/schema"
 import { pricePerPerson, tierRank, zoneSummary } from "@/lib/venue/offers"
+import { demoVenue } from "@/test/fixtures"
 
 describe("pricePerPerson", () => {
   it("splits the minimum spend over a full table, rounded up", () => {
@@ -17,46 +17,40 @@ describe("pricePerPerson", () => {
 
 describe("zoneSummary", () => {
   it("ignores sold tables in the 'from' prices", () => {
-    // l2 (350 €) is sold, l1 (350 €) is not.
-    expect(zoneSummary(nahoContent, "lounge-vegetal")).toEqual({
+    // l2 (300 €) is sold, l1 (350 €) is not.
+    expect(zoneSummary(demoVenue, "lounge")).toEqual({
       fromMinimum: 350,
       fromPerPerson: 59,
-      available: 4,
-      total: 5,
-    })
-    // v5 (750 €) is sold; the cheapest open tables are v6 / v7 at 700 €.
-    expect(zoneSummary(nahoContent, "vip-est")).toEqual({
-      fromMinimum: 700,
-      fromPerPerson: 88,
-      available: 3,
-      total: 4,
+      available: 1,
+      total: 2,
     })
   })
 
-  it("counts tables on request as still open", () => {
-    expect(zoneSummary(nahoContent, "prestige-dj")).toEqual({
-      fromMinimum: 2500,
-      fromPerPerson: 167,
-      available: 1,
-      total: 1,
+  it("counts tables on request as still open and skips unpriced ones", () => {
+    // v1 (700 €) is on request, v2 has no price.
+    expect(zoneSummary(demoVenue, "vip")).toEqual({
+      fromMinimum: 700,
+      fromPerPerson: 88,
+      available: 2,
+      total: 2,
     })
   })
 
   it("has no 'from' price when every table is sold", () => {
     const soldOut: VenueContent = {
-      ...nahoContent,
-      tables: nahoContent.tables.map((table) => ({ ...table, status: "sold" })),
+      ...demoVenue,
+      tables: demoVenue.tables.map((table) => ({ ...table, status: "sold" })),
     }
-    expect(zoneSummary(soldOut, "vip-balcon")).toEqual({
+    expect(zoneSummary(soldOut, "vip")).toEqual({
       fromMinimum: null,
       fromPerPerson: null,
       available: 0,
-      total: 3,
+      total: 2,
     })
   })
 
   it("is empty for an unknown zone", () => {
-    expect(zoneSummary(nahoContent, "nowhere")).toEqual({
+    expect(zoneSummary(demoVenue, "nowhere")).toEqual({
       fromMinimum: null,
       fromPerPerson: null,
       available: 0,

@@ -25,10 +25,10 @@ import { Tile, ZoneTile } from "@/components/experience/ui"
 import { useShortcuts } from "@/components/experience/use-shortcuts"
 import { buildViewModel, type ViewModel } from "@/components/experience/view-model"
 import { track } from "@/lib/analytics/client"
+import type { ClubDefinition } from "@/lib/clubs/club"
 import { formatDateFr, formatEuro } from "@/lib/format"
 import type { VenueContent } from "@/lib/schema"
 import { useExperience } from "@/lib/store"
-import { getLayout } from "@/lib/venue/layout"
 import { cn } from "@/lib/utils"
 
 const VenueCanvas = dynamic(() => import("@/components/scene/venue-canvas"), { ssr: false })
@@ -82,8 +82,6 @@ function useAnalyticsBridge(vm: ViewModel, webgl: boolean | null) {
     [vm],
   )
 }
-
-const EMPTY_VM: ViewModel = { zones: [], tables: {}, zoneMarkers: [], tableMarkers: [] }
 
 function useDockEntries(vm: ViewModel, content: VenueContent, isDesktop: boolean): DockEntry[] {
   const view = useExperience((s) => s.view)
@@ -192,17 +190,9 @@ function useDockEntries(vm: ViewModel, content: VenueContent, isDesktop: boolean
   }, [vm.zones, content, isDesktop, view, panel, focusedZoneId, compareCount, tableCount])
 }
 
-export function Experience({
-  clubSlug,
-  eventSlug,
-  content,
-}: {
-  clubSlug: string
-  eventSlug: string
-  content: VenueContent
-}) {
-  const layout = getLayout(clubSlug)
-  const vm = useMemo(() => (layout ? buildViewModel(content, layout) : null), [content, layout])
+export function Experience({ club }: { club: ClubDefinition }) {
+  const { content, layout } = club
+  const vm = useMemo(() => buildViewModel(content, layout), [content, layout])
   const { isDesktop, roomy, wide, shortLandscape } = useViewport()
   // the card floats at the side on desktops and on phones held sideways
   const sidePanel = isDesktop || shortLandscape
@@ -218,18 +208,16 @@ export function Experience({
   const compareCount = useExperience((s) => s.compareIds.length)
 
   useEffect(() => {
-    if (webgl === false || !layout) setFallback2d()
-  }, [webgl, layout, setFallback2d])
+    if (webgl === false) setFallback2d()
+  }, [webgl, setFallback2d])
 
   useEffect(() => {
     if (fallback2d) openPanel("list")
   }, [fallback2d, openPanel])
 
-  useAnalyticsBridge(vm ?? EMPTY_VM, webgl)
+  useAnalyticsBridge(vm, webgl)
   useShortcuts(isDesktop)
-  const dockEntries = useDockEntries(vm ?? EMPTY_VM, content, isDesktop)
-
-  if (!vm || !layout) return null
+  const dockEntries = useDockEntries(vm, content, isDesktop)
 
   const dateLabel = formatDateFr(content.event.date)
   const eventLine = `${content.event.name} · ${dateLabel} · ${content.event.doors.replace(":", "h")}`
@@ -250,7 +238,8 @@ export function Experience({
         <main className="absolute inset-0">
           {!fallback2d && webgl && quality ? (
             <VenueCanvas
-              club={clubSlug}
+              club={club.slug}
+              assets={club.assets}
               layout={layout}
               zoneMarkers={vm.zoneMarkers}
               tableMarkers={vm.tableMarkers}
@@ -351,8 +340,8 @@ export function Experience({
           table={table}
           icon={tableIcon}
           content={content}
-          clubSlug={clubSlug}
-          eventSlug={eventSlug}
+          clubSlug={club.slug}
+          eventSlug={content.event.slug}
           isDesktop={isDesktop}
           centered={wide}
         />

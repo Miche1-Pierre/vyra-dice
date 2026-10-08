@@ -10,11 +10,20 @@ vi.mock("next/headers", () => ({
   headers: async () => new Headers({ "x-forwarded-for": `${client.ip}, 10.0.0.1` }),
 }))
 
+// a fictional club: the action must not depend on the clubs actually registered
+vi.mock("@/lib/clubs/registry", async () => {
+  const { demoVenue } = await import("@/test/fixtures")
+  return {
+    getVenueContent: (club: string, event: string) =>
+      club === demoVenue.club.slug && event === demoVenue.event.slug ? demoVenue : null,
+  }
+})
+
 function request(overrides: Record<string, unknown> = {}) {
   return {
-    clubSlug: "naho",
+    clubSlug: "demo",
     eventSlug: "samedi",
-    tableId: "v1",
+    tableId: "v2",
     fullName: "Camille Martin",
     phone: "06 12 34 56 78",
     email: "camille@example.com",
@@ -41,7 +50,7 @@ describe("submitBookingRequest", () => {
   it("acknowledges a valid demo request with a club request id", async () => {
     const result = await submitBookingRequest(request())
     expect(result).toMatchObject({ ok: true, demo: true, duplicate: false })
-    expect(result.ok && isRequestId(result.requestId, "NHO")).toBe(true)
+    expect(result.ok && isRequestId(result.requestId, "DEM")).toBe(true)
   })
 
   it("returns the same id when the same request is sent twice", async () => {
@@ -60,7 +69,7 @@ describe("submitBookingRequest", () => {
   })
 
   it("refuses a group larger than the table", async () => {
-    const result = await submitBookingRequest(request({ tableId: "v1", partySize: 9 }))
+    const result = await submitBookingRequest(request({ tableId: "v2", partySize: 9 }))
     expect(result).toEqual({
       ok: false,
       error: "validation",
@@ -69,9 +78,13 @@ describe("submitBookingRequest", () => {
   })
 
   it("accepts a group smaller than the table's minimum", async () => {
-    expect(await submitBookingRequest(request({ tableId: "v1", partySize: 2 }))).toMatchObject({
+    expect(await submitBookingRequest(request({ tableId: "v2", partySize: 2 }))).toMatchObject({
       ok: true,
     })
+  })
+
+  it("accepts a table on request", async () => {
+    expect(await submitBookingRequest(request({ tableId: "v1" }))).toMatchObject({ ok: true })
   })
 
   it("reports unknown tables and venues", async () => {
@@ -121,15 +134,9 @@ describe("submitBookingRequest", () => {
 
   it("does not acknowledge requests for a live club without a sink", async () => {
     vi.resetModules()
-    vi.doMock("@/content/clubs", async (importOriginal) => {
-      const original = await importOriginal<typeof import("@/content/clubs")>()
-      return {
-        ...original,
-        getVenueContent: (club: string, event: string) => {
-          const content = original.getVenueContent(club, event)
-          return content && { ...content, club: { ...content.club, demo: false } }
-        },
-      }
+    vi.doMock("@/lib/clubs/registry", async () => {
+      const { demoVenue } = await import("@/test/fixtures")
+      return { getVenueContent: () => ({ ...demoVenue, club: { ...demoVenue.club, demo: false } }) }
     })
     const log = vi.spyOn(console, "error").mockImplementation(() => {})
     try {
@@ -137,7 +144,7 @@ describe("submitBookingRequest", () => {
       expect(await submitLive(request())).toEqual({ ok: false, error: "server" })
       expect(log).toHaveBeenCalled()
     } finally {
-      vi.doUnmock("@/content/clubs")
+      vi.doUnmock("@/lib/clubs/registry")
       vi.resetModules()
     }
   })

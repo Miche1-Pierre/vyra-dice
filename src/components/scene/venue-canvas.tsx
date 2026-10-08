@@ -15,6 +15,7 @@ import { Markers, type TableMarkerData, type ZoneMarkerData } from "@/components
 import { TableHotspots } from "@/components/scene/table-hotspots"
 import { VenueModel } from "@/components/scene/venue-model"
 import { ZoneOverlays } from "@/components/scene/zone-overlays"
+import type { AssetManifest } from "@/lib/clubs/assets"
 import { useExperience } from "@/lib/store"
 import { venueCenter } from "@/lib/venue/camera"
 import type { VenueLayout } from "@/lib/venue/layout"
@@ -38,6 +39,7 @@ class SceneErrorBoundary extends Component<
 
 export interface VenueCanvasProps {
   club: string
+  assets: AssetManifest
   layout: VenueLayout
   zoneMarkers: ZoneMarkerData[]
   tableMarkers: TableMarkerData[]
@@ -47,6 +49,7 @@ export interface VenueCanvasProps {
 
 export default function VenueCanvas({
   club,
+  assets,
   layout,
   zoneMarkers,
   tableMarkers,
@@ -85,7 +88,7 @@ export default function VenueCanvas({
         )}
         <Suspense fallback={null}>
           <ClubEnvironment intensity={quality === "high" ? 1 : 0.85} />
-          <VenueModel club={club} quality={quality} />
+          <VenueModel club={club} assets={assets} quality={quality} />
           {quality === "high" && effects ? <FloorGloss layout={layout} /> : null}
           <Backdrop center={venueCenter(layout)} />
           <Beams layout={layout} intensity={quality === "high" ? 1 : 0.8} />

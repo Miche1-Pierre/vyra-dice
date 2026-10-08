@@ -37,9 +37,9 @@ describe("createRateLimiter", () => {
 
   it("limits each key separately", () => {
     const limiter = createRateLimiter({ limit: 1, windowMs: MINUTE })
-    expect(limiter.check("naho:1.2.3.4", 0).allowed).toBe(true)
-    expect(limiter.check("naho:1.2.3.4", 1).allowed).toBe(false)
-    expect(limiter.check("naho:5.6.7.8", 1).allowed).toBe(true)
+    expect(limiter.check("demo:1.2.3.4", 0).allowed).toBe(true)
+    expect(limiter.check("demo:1.2.3.4", 1).allowed).toBe(false)
+    expect(limiter.check("demo:5.6.7.8", 1).allowed).toBe(true)
   })
 
   it("defaults to 5 attempts per 10 minutes", () => {

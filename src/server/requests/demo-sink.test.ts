@@ -5,7 +5,7 @@ import type { BookingRequestRecord } from "@/server/requests/sink"
 
 function record(idempotencyKey: string, requestId: string): BookingRequestRecord {
   return {
-    clubSlug: "naho",
+    clubSlug: "demo",
     eventSlug: "samedi",
     tableId: "v1",
     fullName: "Camille Martin",
@@ -24,41 +24,41 @@ function record(idempotencyKey: string, requestId: string): BookingRequestRecord
 describe("createDemoSink", () => {
   it("returns the first request id when an idempotency key is replayed", async () => {
     const sink = createDemoSink()
-    expect(await sink.save(record("key-1", "NHO-AAAAA"))).toEqual({
-      requestId: "NHO-AAAAA",
+    expect(await sink.save(record("key-1", "DEM-AAAAA"))).toEqual({
+      requestId: "DEM-AAAAA",
       duplicate: false,
     })
-    expect(await sink.save(record("key-1", "NHO-BBBBB"))).toEqual({
-      requestId: "NHO-AAAAA",
+    expect(await sink.save(record("key-1", "DEM-BBBBB"))).toEqual({
+      requestId: "DEM-AAAAA",
       duplicate: true,
     })
   })
 
   it("keeps distinct keys apart", async () => {
     const sink = createDemoSink()
-    await sink.save(record("key-1", "NHO-AAAAA"))
-    expect(await sink.save(record("key-2", "NHO-BBBBB"))).toEqual({
-      requestId: "NHO-BBBBB",
+    await sink.save(record("key-1", "DEM-AAAAA"))
+    expect(await sink.save(record("key-2", "DEM-BBBBB"))).toEqual({
+      requestId: "DEM-BBBBB",
       duplicate: false,
     })
   })
 
   it("does not share state between sinks", async () => {
-    await createDemoSink().save(record("key-1", "NHO-AAAAA"))
-    expect((await createDemoSink().save(record("key-1", "NHO-BBBBB"))).duplicate).toBe(false)
+    await createDemoSink().save(record("key-1", "DEM-AAAAA"))
+    expect((await createDemoSink().save(record("key-1", "DEM-BBBBB"))).duplicate).toBe(false)
   })
 
   it("forgets the oldest keys beyond its capacity", async () => {
     const sink = createDemoSink({ maxEntries: 2 })
-    await sink.save(record("key-1", "NHO-AAAAA"))
-    await sink.save(record("key-2", "NHO-BBBBB"))
-    await sink.save(record("key-3", "NHO-CCCCC"))
-    expect(await sink.save(record("key-3", "NHO-DDDDD"))).toEqual({
-      requestId: "NHO-CCCCC",
+    await sink.save(record("key-1", "DEM-AAAAA"))
+    await sink.save(record("key-2", "DEM-BBBBB"))
+    await sink.save(record("key-3", "DEM-CCCCC"))
+    expect(await sink.save(record("key-3", "DEM-DDDDD"))).toEqual({
+      requestId: "DEM-CCCCC",
       duplicate: true,
     })
-    expect(await sink.save(record("key-1", "NHO-EEEEE"))).toEqual({
-      requestId: "NHO-EEEEE",
+    expect(await sink.save(record("key-1", "DEM-EEEEE"))).toEqual({
+      requestId: "DEM-EEEEE",
       duplicate: false,
     })
   })
