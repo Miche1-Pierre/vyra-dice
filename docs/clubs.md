@@ -21,8 +21,9 @@ clubs/
     reference/              croquis et plans que l'on a le droit de versionner
     README.md               sources, statut (démo, pilote…), ce qui reste à valider avec le club
     <slug>.test.ts          attentes propres au club (facultatif)
+    studio/                 historique VYRA Studio : brief, note de recherche, runs (journaux, rendus, captures), revues, retours, notes, leçons
     build/                  .blend, textures générées, export brut — ignoré par git, régénérable
-    private/                photos et documents tiers — ignoré par git, jamais publié
+    private/                photos et plans tiers (sources) — ignoré par git, jamais publié (le dépôt est public)
 ```
 
 `public/` est recopié dans `public/clubs/<slug>/` (ignoré par git) par `scripts/sync-club-assets.mjs`, lancé

@@ -47,7 +47,7 @@ export interface NewClubInput {
   eventName?: string
 }
 
-/** Creates clubs/<slug>/private/studio/brief.json; the agent does the rest. */
+/** Creates clubs/<slug>/studio/brief.json; the agent does the rest. */
 export function createClub(input: NewClubInput): Brief {
   const slug = slugify(input.name)
   if (!SLUG.test(slug)) throw new Error("Nom de club invalide")

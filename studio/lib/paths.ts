@@ -3,11 +3,12 @@ import path from "node:path"
 /*
  * Where the Studio reads and writes. It runs from the repo root (`pnpm studio`, `pnpm studio:job`).
  *
- *   clubs/<slug>/                       the club, as published (content, plan, brand, ambiance, bundle)
- *   clubs/<slug>/scene.json             its Blender scene (Studio data, not published)
- *   clubs/<slug>/build/                 Blender scene, export, report, previews (gitignored)
- *   clubs/<slug>/private/sources/       photos and plans we were given (gitignored, never published)
- *   clubs/<slug>/private/studio/        brief, research note, runs, feedback, evaluations (gitignored)
+ *   clubs/<slug>/                       the club, as the site reads it (content, plan, brand, ambiance, bundle)
+ *   clubs/<slug>/scene.json             its Blender scene
+ *   clubs/<slug>/studio/                its history in the Studio (versioned): brief, research note, runs with
+ *                                       their logs, renders and captures, reviews, feedback, ratings, lessons
+ *   clubs/<slug>/build/                 Blender scene, export, report, previews (gitignored, rebuilt locally)
+ *   clubs/<slug>/private/sources/       photos and plans we were given (gitignored: not ours to publish)
  *   studio/playbook/                    the agent's guide, enriched club after club (versioned)
  */
 
@@ -21,7 +22,7 @@ export const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 export function clubPaths(slug: string) {
   if (!SLUG.test(slug)) throw new Error(`Invalid club slug: ${slug}`)
   const dir = path.join(CLUBS_DIR, slug)
-  const studio = path.join(dir, "private", "studio")
+  const studio = path.join(dir, "studio")
   return {
     dir,
     build: path.join(dir, "build"),

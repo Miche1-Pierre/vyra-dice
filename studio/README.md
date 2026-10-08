@@ -21,18 +21,18 @@ de l'équipe (`claude auth status`), `gh` connecté pour publier. Le viewer de d
 
 | Étape                | Qui                   | Produit                                                                                                                              |
 | -------------------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| Brief et sources     | l'équipe (formulaire) | `private/studio/brief.json`, `private/sources/*`                                                                                     |
-| Note de recherche    | agent                 | `private/studio/research.md` (faits / suppositions / manques)                                                                        |
+| Brief et sources     | l'équipe (formulaire) | `studio/brief.json`, `private/sources/*`                                                                                             |
+| Note de recherche    | agent                 | `studio/research.md` (faits / suppositions / manques)                                                                                |
 | Spécification        | agent + validation    | `content`, `layout`, `brand`, `ambiance`, `scene.json`, `README.md`                                                                  |
 | Construction 3D      | Blender               | `build/<slug>.blend`, `build/report.json`, `build/previews/*.png`                                                                    |
-| Revue des rendus     | agent + retours       | corrections + `private/studio/reviews/*.json`, puis reconstruction                                                                   |
+| Revue des rendus     | agent + retours       | corrections + `studio/reviews/*.json`, puis reconstruction                                                                           |
 | Éclairage précalculé | Blender + optimiseur  | `public/` (GLB, lightmaps WebP, empreintes)                                                                                          |
 | Aperçu et captures   | Studio                | entrée dans `clubs/registry.ts`, tests de contrat, captures                                                                          |
 | Leçons pour le guide | agent + équipe        | propositions ; acceptées → `studio/playbook/lessons.md` (commit)                                                                     |
 | Publication          | Studio                | branche depuis `origin/main` + pull request (essai à blanc possible, au besoin depuis une branche pas encore mergée : option `base`) |
 
 Chaque étape tourne dans son propre processus (`pnpm studio:job <club> <run>`), écrit `status.json` (état, phases,
-durées, résultats) et `log.txt` dans `private/studio/runs/<run>/` : une étape en échec se relance seule, et le Studio
+durées, résultats) et `log.txt` dans `studio/runs/<run>/` : une étape en échec se relance seule, et le Studio
 peut redémarrer sans perdre un run.
 
 ## L'agent

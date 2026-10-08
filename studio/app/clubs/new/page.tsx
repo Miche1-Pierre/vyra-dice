@@ -19,8 +19,9 @@ export default function NewClubPage() {
       <h1 className="text-display text-label mt-3">Ce qu&apos;on sait du lieu</h1>
       <p className="text-callout text-label-2 mt-2">
         Les photos et plans restent sur cette machine (
-        <code className="font-code">clubs/&lt;club&gt;/private/</code>, jamais versionnés). La démo
-        générée restera une démo jusqu&apos;à l&apos;accord écrit du club.
+        <code className="font-code">clubs/&lt;club&gt;/private/</code>, jamais versionnés : le dépôt
+        est public). Tout le reste — brief, notes, rendus, captures, retours — est versionné avec le
+        club. La démo générée restera une démo jusqu&apos;à l&apos;accord écrit du club.
       </p>
       <Panel className="mt-8 p-6 sm:p-8">
         <NewClubForm />

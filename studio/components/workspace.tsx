@@ -631,7 +631,7 @@ function Preview({ data, viewer }: { data: ClubDetail; viewer: string }) {
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 key={c}
-                src={fileUrl(data.slug, `private/studio/captures/${c}`)}
+                src={fileUrl(data.slug, `studio/captures/${c}`)}
                 alt={c}
                 className="w-full rounded-2xl"
               />

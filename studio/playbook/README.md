@@ -107,7 +107,7 @@ Lis `art/scripts/build_club.py` (les briques et leurs paramètres) et `clubs/nah
 ## Procédure
 
 1. **Recherche** : lis le brief, toutes les sources (photos, plans) et le Naho ; écris
-   `private/studio/research.md` (modèle dans `research-template.md`).
+   `studio/research.md` (modèle dans `research-template.md`).
 2. **Spécification** : écris les six fichiers ; pars des fichiers du Naho et adapte tout ce qui est propre au club.
 3. **Revue** : le Studio te montre les rendus (`build/previews/*.png`) et le rapport (`build/report.json`) ; compare
    aux sources et au brief, corrige `layout.json` / `scene.json` / `ambiance.json`, note tes changements.

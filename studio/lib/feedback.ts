@@ -4,7 +4,7 @@ import path from "node:path"
 import { clubPaths } from "@studio/lib/paths"
 
 /*
- * Human feedback and ratings of a club (private/studio): kept with the club, fed to the next
+ * Human feedback and ratings of a club (clubs/<slug>/studio): versioned with the club, fed to the next
  * review by the agent, and kept as history to measure progress club after club.
  */
 
