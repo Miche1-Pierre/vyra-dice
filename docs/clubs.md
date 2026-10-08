@@ -9,7 +9,7 @@ définition validée du club et l'applique. **Ajouter un club = créer son dossi
 
 ```
 clubs/
-  registry.ts               la liste des clubs servis — le seul endroit où enregistrer un club
+  registry.ts               les clubs servis (`clubs`) et les brouillons du Studio (`drafts`) — le seul endroit où enregistrer un club
   <slug>/
     index.ts                defineClub({ content, layout, brand, ambiance, assets }) : valide et recoupe les fichiers
     content.json            la soirée en vente : club, événement, zones, tables, prix, conditions
@@ -66,7 +66,9 @@ n'alourdit pas la page des autres.
    export default defineClub({ content, layout, brand, ambiance, assets })
    ```
 
-7. **Enregistrement** — dans `clubs/registry.ts` : `import monClub from "./<slug>"` et l'ajouter à `clubs`.
+7. **Enregistrement** — dans `clubs/registry.ts` : `import monClub from "./<slug>"` et l'ajouter à `clubs` (en ligne)
+   ou à `drafts` (brouillon : servi en local, dans les tests et sur les previews Vercel, jamais sur le site en ligne —
+   c'est là que VYRA Studio enregistre les clubs qu'il génère). Publier un brouillon = le passer dans `clubs`.
 8. **Vérifier** — `pnpm check`, puis `pnpm dev` → `http://localhost:3000/<slug>/<event>`. La page d'accueil liste les
    démos automatiquement.
 

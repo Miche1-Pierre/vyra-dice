@@ -1,7 +1,7 @@
 import { ArrowRight } from "lucide-react"
 import Link from "next/link"
 
-import { listClubs } from "@/lib/clubs/registry"
+import { isDraft, listClubs } from "@/lib/clubs/registry"
 
 export default function Home() {
   const demos = listClubs().filter((club) => club.content.club.demo)
@@ -28,7 +28,8 @@ export default function Home() {
               href={`/${slug}/${content.event.slug}`}
               className="brand-pill text-callout inline-flex h-12 items-center gap-2 rounded-full px-7 font-medium transition-[filter,transform] hover:brightness-105 active:scale-[0.98]"
             >
-              Voir la démo — {content.club.name} <ArrowRight className="size-4" />
+              Voir la démo — {content.club.name}
+              {isDraft(slug) ? " (brouillon)" : ""} <ArrowRight className="size-4" />
             </Link>
           ))}
           <p className="text-caption text-label-3">
