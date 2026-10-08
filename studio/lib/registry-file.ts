@@ -4,10 +4,14 @@ import path from "node:path"
 import { REPO } from "@studio/lib/paths"
 
 /*
- * Edits clubs/registry.ts, the one list of served clubs: `import x from "./slug"` and `[…, x]`.
+ * Edits clubs/registry.ts: one `import x from "./slug"` per club, the published list `clubs` and
+ * the Studio's `drafts`. A generated club joins the drafts (served locally and on Vercel
+ * previews, never on the live site); publishing it moves it to `clubs`.
  */
 
 const REGISTRY = path.join(REPO, "clubs", "registry.ts")
+
+type List = "clubs" | "drafts"
 
 /** `809-social-club` → `club809SocialClub`; `naho` → `naho`. */
 export function identifierOf(slug: string): string {
@@ -15,27 +19,66 @@ export function identifierOf(slug: string): string {
   return /^[0-9]/.test(camel) ? `club${camel.charAt(0).toUpperCase()}${camel.slice(1)}` : camel
 }
 
-export function registerClub(slug: string, source = readFileSync(REGISTRY, "utf8")): string {
+const listPattern = (name: List) =>
+  new RegExp(`(export const ${name}: readonly ClubDefinition\\[\\] = \\[)([^\\]]*)(\\])`)
+
+function idsOf(source: string, name: List): string[] {
+  const match = listPattern(name).exec(source)
+  if (!match) throw new Error(`clubs/registry.ts: no "${name}" list`)
+  return match[2]
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean)
+}
+
+function withList(source: string, name: List, ids: string[]): string {
+  return source.replace(listPattern(name), (_, open: string, __: string, close: string) => {
+    return `${open}${ids.join(", ")}${close}`
+  })
+}
+
+/** Adds `import x from "./slug"`, imports kept in slug order. */
+function withImport(source: string, slug: string): string {
   if (new RegExp(`from "\\./${slug}"`).test(source)) return source
-  const id = identifierOf(slug)
   const imports = [...source.matchAll(/^import (\w+) from "\.\/([\w-]+)"$/gm)]
   if (imports.length === 0) throw new Error("clubs/registry.ts: no club import found")
-  const lines = [...imports.map((m) => ({ id: m[1], slug: m[2] })), { id, slug }].sort((a, b) =>
-    a.slug.localeCompare(b.slug),
-  )
+  const lines = [
+    ...imports.map((m) => ({ id: m[1], slug: m[2] })),
+    { id: identifierOf(slug), slug },
+  ].sort((a, b) => a.slug.localeCompare(b.slug))
   const block = lines.map((l) => `import ${l.id} from "./${l.slug}"`).join("\n")
-  const start = imports[0].index!
   const last = imports.at(-1)!
-  const end = last.index! + last[0].length
-  let next = source.slice(0, start) + block + source.slice(end)
-  next = next.replace(/= \[([^\]]*)\]/, (_, list: string) => {
-    const ids = list
-      .split(",")
-      .map((s) => s.trim())
-      .filter(Boolean)
-    return `= [${[...ids, id].join(", ")}]`
-  })
-  return next
+  return source.slice(0, imports[0].index!) + block + source.slice(last.index! + last[0].length)
+}
+
+/** Where a club stands in the registry. */
+export function registrationOf(
+  slug: string,
+  source = readFileSync(REGISTRY, "utf8"),
+): "published" | "draft" | null {
+  const id = identifierOf(slug)
+  if (idsOf(source, "clubs").includes(id)) return "published"
+  return idsOf(source, "drafts").includes(id) ? "draft" : null
+}
+
+/** A generated club joins the drafts; a club already registered stays where it is. */
+export function registerClub(slug: string, source = readFileSync(REGISTRY, "utf8")): string {
+  const next = withImport(source, slug)
+  if (registrationOf(slug, next)) return next
+  return withList(next, "drafts", [...idsOf(next, "drafts"), identifierOf(slug)])
+}
+
+/** Publishing: the club leaves the drafts for the clubs served on the live site. */
+export function publishClub(slug: string, source = readFileSync(REGISTRY, "utf8")): string {
+  const id = identifierOf(slug)
+  let next = withImport(source, slug)
+  next = withList(
+    next,
+    "drafts",
+    idsOf(next, "drafts").filter((d) => d !== id),
+  )
+  const clubs = idsOf(next, "clubs")
+  return clubs.includes(id) ? next : withList(next, "clubs", [...clubs, id])
 }
 
 export function writeRegistration(slug: string): boolean {
