@@ -41,8 +41,9 @@ export class RunContext {
 
   log(message: string): void {
     const time = new Date().toLocaleTimeString("fr-FR", { hour12: false })
-    for (const line of withoutLocalPaths(message).split("\n"))
-      process.stdout.write(`[${time}] ${line}\n`)
+    // plain text: no terminal colours from the tools we run
+    const plain = withoutLocalPaths(message.replace(/\u001b\[[0-9;]*m/g, ""))
+    for (const line of plain.split("\n")) process.stdout.write(`[${time}] ${line}\n`)
   }
 
   /** Runs `fn` as a named phase: logged, timed, recorded in status.json. */
