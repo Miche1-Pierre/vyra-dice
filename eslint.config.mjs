@@ -19,8 +19,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
-    // Generated / binary 3D assets
-    "public/models/**",
+    // Club web bundles (generated 3D assets), copied to public/clubs by assets:sync
+    "clubs/*/public/**",
+    "public/clubs/**",
   ]),
 ])
 

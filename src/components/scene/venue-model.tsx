@@ -17,7 +17,7 @@ import {
 } from "@/components/scene/fx/materials"
 import { useExperience } from "@/lib/store"
 
-import nahoLightmaps from "../../../public/models/naho/lightmaps.json"
+import nahoLightmaps from "@clubs/naho/public/lightmaps.json"
 
 export interface LightmapManifest {
   version: number
@@ -188,7 +188,7 @@ function applyUpperOpacity(materials: THREE.Material[], k: number) {
 }
 
 export function VenueModel({ club, quality }: { club: string; quality: Quality }) {
-  const base = `/models/${club}`
+  const base = `/clubs/${club}`
   const manifest = MANIFESTS[club]
   const names = useMemo(() => Object.keys(manifest.lightmaps), [manifest])
   const urls = useMemo(

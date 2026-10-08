@@ -41,17 +41,14 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# 3D references: photos are third-party (no reuse licence) — keep them local only
-/art/ref/*/photos/
-# Blender autosaves / bake scratch
+# Club sources that are not ours (photos, captures: no reuse licence) — keep them local only
+/clubs/*/private/
+# Club 3D assets copied from clubs/<slug>/public at dev/build time (scripts/sync-club-assets.mjs)
+/public/clubs/
+# Blender scene, generated textures and raw export of each club (rebuilt by clubs/<slug>/blender/build.py
+# and art/scripts/bake_export.py — see docs/3d-pipeline.md)
+/clubs/*/build/
 *.blend1
-/art/.bake/
-# Generated 3D intermediates (rebuild with art/scripts — see docs/3d-pipeline.md)
-/art/blender/*.blend
-/art/textures/generated/
-/art/export/*.glb
-/art/export/*.lightmaps.json
-/art/export/*/
 
 # Python bytecode from the Blender scripts
 __pycache__/

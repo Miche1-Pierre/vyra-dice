@@ -1,17 +1,18 @@
-"""Bake lightmaps and export the web bundle of a venue built by ``build_<club>.py``.
+"""Bake lightmaps and export the web bundle of a venue built by ``clubs/<club>/blender/build.py``.
 
 Headless (recommended — runs on the GPU without freezing the UI):
-    blender -b art/blender/naho.blend -P art/scripts/bake_export.py -- --club naho
+    blender -b clubs/<club>/build/<club>.blend -P art/scripts/bake_export.py
 Options:
+    --club SLUG      club folder (default: the name of the open .blend file)
     --samples N      Cycles samples per texel (default 384)
     --res-scale F    multiply every object's ``vyra_lm`` size (e.g. 0.5 for a quick pass)
     --only a,b       bake only these objects (others keep their previous lightmap file)
     --no-bake        export the GLB only
 
-Outputs (consumed by ``scripts/optimize-glb.mjs``):
-    art/export/<club>.glb               geometry + materials (UV0 albedo, UV1 lightmap/data)
-    art/export/<club>/lm/<object>.png   lightmaps, sRGB-encoded (value / scale) ** (1/2.2)
-    art/export/<club>.lightmaps.json    manifest: object -> {file, scale, size}
+Outputs in ``clubs/<club>/build/export/`` (gitignored, consumed by ``scripts/optimize-glb.mjs``):
+    <club>.glb             geometry + materials (UV0 albedo, UV1 lightmap/data)
+    lm/<object>.png        lightmaps, sRGB-encoded (value / scale) ** (1/2.2)
+    lightmaps.json         manifest: object -> {file, scale, size}
 
 Web side: ``texture.colorSpace = SRGBColorSpace`` and ``material.lightMapIntensity = scale * PI``.
 """
@@ -34,7 +35,8 @@ EXPORT_COLLECTIONS = ("ARCHI", "LVL1", "FURNITURE", "FX")
 
 def parse_args() -> dict:
     argv = sys.argv[sys.argv.index("--") + 1 :] if "--" in sys.argv else []
-    opts = {"club": "naho", "samples": 384, "res_scale": 1.0, "only": None, "bake": True}
+    club = os.path.splitext(os.path.basename(bpy.data.filepath))[0]
+    opts = {"club": club, "samples": 384, "res_scale": 1.0, "only": None, "bake": True}
     i = 0
     while i < len(argv):
         key = argv[i]
@@ -195,10 +197,12 @@ def export_glb(objs: list[bpy.types.Object], path: str) -> None:
 def main() -> None:
     opts = parse_args()
     club = opts["club"]
+    if not club:
+        sys.exit("[bake] unknown club: open clubs/<club>/build/<club>.blend or pass --club")
     root = club.upper()
-    export_dir = os.path.join(REPO, "art", "export")
-    lm_dir = os.path.join(export_dir, club, "lm")
-    manifest_path = os.path.join(export_dir, f"{club}.lightmaps.json")
+    export_dir = os.path.join(REPO, "clubs", club, "build", "export")
+    lm_dir = os.path.join(export_dir, "lm")
+    manifest_path = os.path.join(export_dir, "lightmaps.json")
     manifest = {"version": 1, "club": club, "encoding": "srgb", "lightmaps": {}}
     if os.path.exists(manifest_path):
         with open(manifest_path, encoding="utf-8") as fh:

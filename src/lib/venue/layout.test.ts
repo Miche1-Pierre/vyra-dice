@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import layoutJson from "@art/layouts/naho.json"
+import layoutJson from "@clubs/naho/layout.json"
 import {
   getLayout,
   layouts,
