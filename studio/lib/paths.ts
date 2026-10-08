@@ -44,7 +44,6 @@ export function clubPaths(slug: string) {
     evals: path.join(studio, "evals.json"),
     captures: path.join(studio, "captures"),
     lessons: path.join(studio, "lessons.json"),
-    publish: path.join(studio, "publish.json"),
     files: {
       content: path.join(dir, "content.json"),
       layout: path.join(dir, "layout.json"),

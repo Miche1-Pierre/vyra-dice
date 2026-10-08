@@ -55,7 +55,8 @@ const ABOUT: Record<StepView["id"], string> = {
   bake: "Cycles précalcule la lumière, puis le bundle web est optimisé.",
   preview: "Le club rejoint le registre, passe les tests de contrat, et la démo est capturée.",
   lessons: "L'agent propose ce que le prochain club devrait savoir.",
-  publish: "Branche depuis main, dossier du club et captures, pull request.",
+  publish:
+    "Partage le club et tout son historique par une pull request vers main (jamais de commit sur main) : en brouillon (previews Vercel et local) ou en ligne.",
   auto: "Toutes les étapes restantes, de la recherche aux leçons, sans s’arrêter.",
 }
 
@@ -163,9 +164,9 @@ export function Workspace({ initial }: { initial: ClubDetail }) {
               Ouvrir la démo <ExternalLink className="size-4" />
             </a>
           ) : null}
-          {data.published?.prUrl ? (
+          {data.sharedPr ? (
             <a
-              href={data.published.prUrl}
+              href={data.sharedPr}
               target="_blank"
               rel="noreferrer"
               className="brand-pill text-ui inline-flex h-10 items-center gap-2 rounded-full px-4 font-medium"
@@ -252,7 +253,8 @@ function Pipeline({
   )
   const [quality, setQuality] = useState<"draft" | "final">("final")
   const [iterations, setIterations] = useState(1)
-  const [dryRun, setDryRun] = useState(true)
+  const [live, setLive] = useState(false)
+  const [dryRun, setDryRun] = useState(false)
   const [issue, setIssue] = useState("")
 
   return (
@@ -326,11 +328,20 @@ function Pipeline({
                       <label className="text-footnote text-label-2 flex items-center gap-2">
                         <input
                           type="checkbox"
+                          checked={live}
+                          onChange={(e) => setLive(e.target.checked)}
+                          className="accent-[var(--brand)]"
+                        />
+                        Mettre en ligne (le club quitte les brouillons au merge)
+                      </label>
+                      <label className="text-footnote text-label-2 flex items-center gap-2">
+                        <input
+                          type="checkbox"
                           checked={dryRun}
                           onChange={(e) => setDryRun(e.target.checked)}
                           className="accent-[var(--brand)]"
                         />
-                        Essai à blanc (branche locale, rien n&apos;est poussé)
+                        Essai à blanc (commit local, rien n&apos;est poussé)
                       </label>
                       <input
                         value={issue}
@@ -351,7 +362,9 @@ function Pipeline({
                             step === "publish" &&
                             !dryRun &&
                             !window.confirm(
-                              "Pousser une branche et ouvrir une pull request sur GitHub ?",
+                              live
+                                ? "Pousser la branche et ouvrir (ou mettre à jour) la pull request ? Au merge, le club sera en ligne sur le site public."
+                                : "Pousser la branche et ouvrir (ou mettre à jour) la pull request ? Le club reste un brouillon.",
                             )
                           )
                             return
@@ -362,7 +375,7 @@ function Pipeline({
                               : step === "review"
                                 ? { iterations }
                                 : step === "publish"
-                                  ? { dryRun, issue: issue || undefined }
+                                  ? { live, dryRun, issue: issue || undefined }
                                   : {},
                           )
                         }}
