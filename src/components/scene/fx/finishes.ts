@@ -1,5 +1,6 @@
 import * as THREE from "three"
 
+import type { FinishPreset, FinishSpec } from "@/lib/clubs/ambiance"
 import {
   brushedNormal,
   leatherNormal,
@@ -10,9 +11,10 @@ import {
 } from "@/components/scene/fx/surfaces"
 
 /*
- * Physically based finishes for the venue's Blender materials. Diffuse light comes from the
- * baked lightmaps (same intensity convention as MeshBasicMaterial); the environment map adds
- * what lightmaps cannot hold: view-dependent reflections, metal, lacquer and velvet sheen.
+ * Physically based finishes for the venue's Blender materials, chosen per material by the
+ * club's ambiance (`finishes`). Diffuse light comes from the baked lightmaps (same intensity
+ * convention as MeshBasicMaterial); the environment map adds what lightmaps cannot hold:
+ * view-dependent reflections, metal, lacquer and velvet sheen.
  */
 
 export interface FinishInput {
@@ -66,11 +68,11 @@ function base(input: FinishInput) {
   }
 }
 
-function finishRaw(input: FinishInput): THREE.Material | null {
+function presetMaterial(preset: FinishPreset, input: FinishInput): THREE.Material {
   const { src, detail } = input
   const b = base(input)
-  switch (src.name) {
-    case "naho_tiles": {
+  switch (preset) {
+    case "glazed-tiles": {
       const m = new THREE.MeshStandardMaterial({
         ...b,
         roughness: 1,
@@ -86,7 +88,7 @@ function finishRaw(input: FinishInput): THREE.Material | null {
       }
       return m
     }
-    case "naho_concrete": {
+    case "concrete": {
       const m = new THREE.MeshStandardMaterial({
         ...b,
         roughness: 0.86,
@@ -99,7 +101,7 @@ function finishRaw(input: FinishInput): THREE.Material | null {
       }
       return m
     }
-    case "naho_wood": {
+    case "lacquered-wood": {
       const m = new THREE.MeshStandardMaterial({
         ...b,
         roughness: 0.4,
@@ -112,7 +114,7 @@ function finishRaw(input: FinishInput): THREE.Material | null {
       }
       return m
     }
-    case "naho_foliage": {
+    case "foliage": {
       const m = new THREE.MeshStandardMaterial({
         ...b,
         roughness: 0.58,
@@ -125,7 +127,7 @@ function finishRaw(input: FinishInput): THREE.Material | null {
       }
       return m
     }
-    case "naho_black_metal": {
+    case "brushed-metal": {
       const m = new THREE.MeshStandardMaterial({
         ...b,
         roughness: 0.3,
@@ -138,7 +140,7 @@ function finishRaw(input: FinishInput): THREE.Material | null {
       }
       return m
     }
-    case "naho_gold": {
+    case "brushed-gold": {
       const m = new THREE.MeshStandardMaterial({
         ...b,
         color: tint("#e0b45e"),
@@ -152,14 +154,14 @@ function finishRaw(input: FinishInput): THREE.Material | null {
       }
       return m
     }
-    case "naho_slat":
+    case "satin-metal":
       return new THREE.MeshStandardMaterial({
         ...b,
         roughness: 0.32,
         metalness: 0.6,
         envMapIntensity: 1.2,
       })
-    case "naho_stone": {
+    case "marble": {
       // phones: half resolution, the veins are generated on the main thread while loading
       const { map, roughnessMap } = marbleMaps(detail ? 512 : 256)
       return new THREE.MeshPhysicalMaterial({
@@ -174,7 +176,7 @@ function finishRaw(input: FinishInput): THREE.Material | null {
         envMapIntensity: 1.4,
       })
     }
-    case "naho_leather": {
+    case "leather": {
       const m = new THREE.MeshPhysicalMaterial({
         ...b,
         roughness: 0.46,
@@ -189,9 +191,7 @@ function finishRaw(input: FinishInput): THREE.Material | null {
       }
       return m
     }
-    case "naho_velvet_lounge":
-    case "naho_velvet_vip":
-    case "naho_velvet_prestige": {
+    case "velvet": {
       // same hue, brighter: velvet catches light along its edges without turning pale
       const sheenColor = src.color.clone().multiplyScalar(2.2)
       const m = new THREE.MeshPhysicalMaterial({
@@ -211,7 +211,7 @@ function finishRaw(input: FinishInput): THREE.Material | null {
       }
       return m
     }
-    case "naho_glass":
+    case "glass":
       return new THREE.MeshPhysicalMaterial({
         color: tint("#c9d8ea"),
         transparent: true,
@@ -222,14 +222,23 @@ function finishRaw(input: FinishInput): THREE.Material | null {
         depthWrite: false,
         side: THREE.DoubleSide,
       })
-    default:
-      return null
   }
 }
 
-/** Returns an upgraded material, or null to keep the cheap unlit path. */
-export function finishFor(input: FinishInput): THREE.Material | null {
-  const m = finishRaw(input)
-  if (m instanceof THREE.MeshStandardMaterial && !m.transparent) lightmapFirst(m)
+/** Metals keep their finish (environment reflections) even on objects without a lightmap. */
+export function isMetal(preset: FinishPreset): boolean {
+  return preset === "brushed-metal" || preset === "brushed-gold" || preset === "satin-metal"
+}
+
+/** The club's finish for a material: its preset, then the club's adjustments. */
+export function finishFor(input: FinishInput, spec: FinishSpec): THREE.Material {
+  const m = presetMaterial(spec.preset, input)
+  if (m instanceof THREE.MeshStandardMaterial) {
+    if (spec.tint) m.color.set(spec.tint)
+    if (spec.roughness !== undefined) m.roughness = spec.roughness
+    if (spec.metalness !== undefined) m.metalness = spec.metalness
+    if (spec.envMapIntensity !== undefined) m.envMapIntensity = spec.envMapIntensity
+    if (!m.transparent) lightmapFirst(m)
+  }
   return m
 }

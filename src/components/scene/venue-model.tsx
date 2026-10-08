@@ -6,7 +6,7 @@ import { useEffect, useMemo, useRef } from "react"
 import * as THREE from "three"
 
 import type { Quality } from "@/components/scene/effects"
-import { finishFor } from "@/components/scene/fx/finishes"
+import { finishFor, isMetal } from "@/components/scene/fx/finishes"
 import { extractGlobes, GlobeGlow, type Globe } from "@/components/scene/fx/globes"
 import {
   createLedRainMaterial,
@@ -15,6 +15,7 @@ import {
   GLOBE_FOCUS,
   type TimedMaterial,
 } from "@/components/scene/fx/materials"
+import { finishOf, type ClubAmbiance } from "@/lib/clubs/ambiance"
 import { assetUrl, modelUrl, type AssetManifest } from "@/lib/clubs/assets"
 import { useExperience } from "@/lib/store"
 
@@ -51,8 +52,20 @@ const FACING: Record<string, [number, number, number]> = {
 }
 
 const FX_NAMES = new Set(["fx_ledrain", "fx_spheres", "fx_screen"])
-/** Metals keep their finish (environment reflections) even without a lightmap. */
-const METALS = new Set(["naho_black_metal", "naho_gold", "naho_slat"])
+
+/** For an FX the ambiance leaves out (the club tests require it whenever the model has one). */
+const NEUTRAL_LED_RAIN: NonNullable<ClubAmbiance["ledRain"]> = {
+  colors: ["#ffffff", "#dfe4ff"],
+  intensity: 2,
+}
+const NEUTRAL_SCREEN: NonNullable<ClubAmbiance["screen"]> = {
+  low: [1, 1, 1],
+  high: [0.8, 0.85, 1],
+  backdrop: [
+    [0.08, 0.08, 0.1],
+    [0.1, 0.1, 0.12],
+  ],
+}
 
 /**
  * Blender node owning a mesh. glTF splits a multi-material node into a group named after the
@@ -62,7 +75,7 @@ const METALS = new Set(["naho_black_metal", "naho_gold", "naho_slat"])
 function nodeName(mesh: THREE.Object3D, manifest: AssetManifest): string {
   let cur: THREE.Object3D | null = mesh
   while (cur) {
-    if (cur.name in manifest.lightmaps || FX_NAMES.has(cur.name)) return cur.name
+    if (Object.hasOwn(manifest.lightmaps, cur.name) || FX_NAMES.has(cur.name)) return cur.name
     cur = cur.parent
   }
   return mesh.name.replace(/_\d+$/, "")
@@ -79,6 +92,7 @@ function isEmissive(m: THREE.MeshStandardMaterial): boolean {
 function prepareVenue(
   scene: THREE.Object3D,
   manifest: AssetManifest,
+  ambiance: ClubAmbiance,
   lightmaps: Record<string, THREE.Texture>,
   quality: Quality,
 ): PreparedVenue {
@@ -96,24 +110,28 @@ function prepareVenue(
     const owner = nodeName(mesh, manifest)
     // StrictMode prepares the same scene twice: always start again from the glTF material
     const src = (mesh.userData.source ??= mesh.material) as THREE.MeshStandardMaterial
+    const finish = finishOf(ambiance.finishes, src.name)
     let mat: THREE.Material
 
     if (owner === "fx_ledrain" || owner === "fx_spheres") {
       const data = mesh.geometry.getAttribute("uv1")
       if (data) mesh.geometry.setAttribute("aData", data)
-      const m = owner === "fx_ledrain" ? createLedRainMaterial() : createSphereMaterial()
+      const m =
+        owner === "fx_ledrain"
+          ? createLedRainMaterial(ambiance.ledRain ?? NEUTRAL_LED_RAIN)
+          : createSphereMaterial(ambiance.show)
       if (owner === "fx_spheres") sphereMeshes.push(mesh)
       timed.push(m)
       mat = m
     } else if (owner === "fx_screen") {
-      const m = createScreenMaterial()
+      const m = createScreenMaterial(ambiance.screen ?? NEUTRAL_SCREEN)
       timed.push(m)
       mat = m
     } else if (isEmissive(src)) {
       const color = src.emissive.clone().multiplyScalar(src.emissiveIntensity * EMISSION_SCALE)
       mat = new THREE.MeshBasicMaterial({ color, fog: false })
-    } else if (src.name === "naho_glass") {
-      mat = finishFor({ src, lightMap: null, lightMapIntensity: 1, detail })!
+    } else if (finish?.preset === "glass") {
+      mat = finishFor({ src, lightMap: null, lightMapIntensity: 1, detail }, finish)
     } else if (src.transparent || src.opacity < 1) {
       mat = new THREE.MeshBasicMaterial({
         color: new THREE.Color("#b9c9dd"),
@@ -126,12 +144,9 @@ function prepareVenue(
       const lm = lightmaps[owner] ?? null
       const entry = manifest.lightmaps[owner]
       const lightMapIntensity = entry ? entry.scale * Math.PI * LIGHTMAP_EXPOSURE : 1
-      const finished =
-        lm || METALS.has(src.name)
-          ? finishFor({ src, lightMap: lm, lightMapIntensity, detail })
-          : null
-      if (finished) {
-        mat = finished
+      // metals keep their reflections even where nothing was baked
+      if (finish && (lm || isMetal(finish.preset))) {
+        mat = finishFor({ src, lightMap: lm, lightMapIntensity, detail }, finish)
       } else {
         mat = new THREE.MeshBasicMaterial({
           color: src.color,
@@ -177,10 +192,12 @@ function applyUpperOpacity(materials: THREE.Material[], k: number) {
 export function VenueModel({
   club,
   assets: manifest,
+  ambiance,
   quality,
 }: {
   club: string
   assets: AssetManifest
+  ambiance: ClubAmbiance
   quality: Quality
 }) {
   const names = useMemo(() => Object.keys(manifest.lightmaps), [manifest])
@@ -208,8 +225,8 @@ export function VenueModel({
       tex.needsUpdate = true
       byName[n] = tex
     })
-    return prepareVenue(gltf.scene, manifest, byName, quality)
-  }, [gltf.scene, manifest, names, textures, quality])
+    return prepareVenue(gltf.scene, manifest, ambiance, byName, quality)
+  }, [gltf.scene, manifest, ambiance, names, textures, quality])
 
   const setSceneReady = useExperience((s) => s.setSceneReady)
   useEffect(() => {
@@ -246,7 +263,11 @@ export function VenueModel({
   return (
     <>
       <primitive object={prepared.root} dispose={null} />
-      <GlobeGlow globes={prepared.globes} intensity={quality === "high" ? 1 : 0.85} />
+      <GlobeGlow
+        globes={prepared.globes}
+        show={ambiance.show}
+        intensity={quality === "high" ? 1 : 0.85}
+      />
     </>
   )
 }
