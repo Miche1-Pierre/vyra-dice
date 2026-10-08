@@ -14,7 +14,10 @@
     "test:watch": "vitest",
     "assets:optimize": "node scripts/optimize-glb.mjs",
     "assets:sync": "node scripts/sync-club-assets.mjs",
-    "check": "pnpm lint && pnpm typecheck && pnpm test"
+    "studio": "next dev studio --port 3300",
+    "studio:job": "tsx --tsconfig studio/tsconfig.json studio/jobs/run.ts",
+    "studio:typecheck": "tsc -p studio --noEmit",
+    "check": "pnpm lint && pnpm typecheck && pnpm studio:typecheck && pnpm test"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
@@ -60,6 +63,7 @@
     "prettier-plugin-tailwindcss": "^0.8.1",
     "sharp": "^0.35.5",
     "tailwindcss": "^4",
+    "tsx": "4",
     "typescript": "^5",
     "vitest": "^5.0.3"
   },

@@ -1,5 +1,6 @@
 pnpm-lock.yaml
 .next
+studio/.next
 art
 # Club web bundles (generated) and Blender intermediates
 public/clubs
