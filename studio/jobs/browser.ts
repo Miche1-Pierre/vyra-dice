@@ -143,10 +143,11 @@ export class Browser {
       deviceScaleFactor: mobile ? 2 : 1,
       mobile,
     })
-    await this.send("Emulation.setTouchEmulationEnabled", {
-      enabled: mobile,
-      maxTouchPoints: mobile ? 5 : 0,
-    })
+    // maxTouchPoints must be 1-16 when given: only send it to turn touch on
+    await this.send(
+      "Emulation.setTouchEmulationEnabled",
+      mobile ? { enabled: true, maxTouchPoints: 5 } : { enabled: false },
+    )
   }
 
   async goto(url: string): Promise<void> {
