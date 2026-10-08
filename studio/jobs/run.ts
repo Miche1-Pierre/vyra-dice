@@ -5,6 +5,7 @@ import { build } from "@studio/jobs/steps/build"
 import { preview } from "@studio/jobs/steps/preview"
 import { publish } from "@studio/jobs/steps/publish"
 import type { StepId } from "@studio/lib/jobs"
+import { clubState } from "@studio/lib/state"
 
 /*
  * Runs one step of the pipeline for one club, in its own process (started by the Studio):
@@ -21,6 +22,34 @@ const STEPS: Record<StepId, (ctx: RunContext) => Promise<void>> = {
   preview,
   lessons,
   publish,
+  auto,
+}
+
+/** What "Tout générer" runs, in order, with each step's options. Publishing stays a decision. */
+const GENERATION: [StepId, Record<string, unknown>][] = [
+  ["research", {}],
+  ["spec", {}],
+  ["build", {}],
+  ["review", { iterations: 1 }],
+  ["bake", {}],
+  ["preview", {}],
+  ["lessons", {}],
+]
+
+/** One click: every step not done yet, in order, stopping at the first failure. */
+async function auto(ctx: RunContext): Promise<void> {
+  const base = ctx.options
+  for (const [step, options] of GENERATION) {
+    const state = clubState(ctx.slug).steps.find((s) => s.id === step)?.state
+    if (state === "done") {
+      ctx.log(`— ${step} : déjà fait`)
+      continue
+    }
+    ctx.update({ current: step, options: { ...base, ...options } })
+    ctx.log(`══ ${step} ══`)
+    await STEPS[step](ctx)
+  }
+  ctx.update({ current: undefined, options: base })
 }
 
 async function main(): Promise<void> {

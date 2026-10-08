@@ -28,6 +28,7 @@ export const STEPS = [
   "preview",
   "lessons",
   "publish",
+  "auto",
 ] as const
 export type StepId = (typeof STEPS)[number]
 
@@ -51,6 +52,8 @@ export interface RunStatus {
   phases: Phase[]
   /** Step results: agent turns and cost, build triangles, PR url… */
   result?: Record<string, unknown>
+  /** The step an "auto" run is on. */
+  current?: StepId
 }
 
 function runDir(slug: string, id: string): string {

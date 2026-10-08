@@ -35,6 +35,7 @@ export function NewClubForm() {
   const [drag, setDrag] = useState(false)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [generate, setGenerate] = useState(true)
 
   const add = (list: FileList | null) => {
     if (!list) return
@@ -57,6 +58,13 @@ export function NewClubForm() {
       setError(data.error ?? "Création impossible")
       setBusy(false)
       return
+    }
+    if (generate) {
+      await fetch(`/api/clubs/${data.slug}/runs`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ step: "auto" }),
+      })
     }
     router.push(`/clubs/${data.slug}`)
   }
@@ -172,10 +180,16 @@ export function NewClubForm() {
       </div>
 
       {error ? <p className="text-footnote text-[#ff6961]">{error}</p> : null}
-      <div className="flex items-center justify-end gap-3">
-        <p className="text-caption text-label-3">
-          L&apos;agent lira tout ça pour écrire la note de recherche.
-        </p>
+      <div className="flex flex-wrap items-center justify-end gap-3">
+        <label className="text-footnote text-label-2 mr-auto flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={generate}
+            onChange={(e) => setGenerate(e.target.checked)}
+            className="accent-[var(--brand)]"
+          />
+          Lancer la génération complète (de la recherche à l&apos;aperçu)
+        </label>
         <button
           type="submit"
           disabled={busy}
