@@ -34,6 +34,9 @@ n'alourdit pas la page des autres.
 
 ## Ajouter un club
 
+Le plus simple : **VYRA Studio** (`pnpm studio`, voir `studio/README.md`) fait tout ce qui suit à partir d’un brief et
+de photos, et partage le club par une pull request. À la main :
+
 1. **Dossier** : `clubs/<slug>/` (minuscules, chiffres et tirets : `809-social-club`). Les photos reçues du club
    vont dans `private/`, les croquis et plans diffusables dans `reference/`.
 2. **Plan** — `layout.json` : bâtiment, niveaux, zones (`tier` : `lounge` / `vip` / `prestige`, niveau 0 ou 1),
