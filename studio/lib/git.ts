@@ -11,13 +11,14 @@ import { REPO } from "@studio/lib/paths"
 
 export const MAIN = "main"
 
-export function git(args: string[]): string {
-  return execFileSync("git", args, {
+export function git(args: string[], { trim = true } = {}): string {
+  const out = execFileSync("git", args, {
     cwd: REPO,
     encoding: "utf8",
     stdio: ["ignore", "pipe", "pipe"],
     windowsHide: true,
-  }).trim()
+  })
+  return trim ? out.trim() : out
 }
 
 /** The checked-out branch (`HEAD` when detached). */
@@ -67,7 +68,8 @@ export function unmergedCommits(): string[] {
 
 /** Tracked files with changes not committed yet (untracked files are left out). */
 export function uncommitted(): string[] {
-  return git(["status", "--porcelain", "--untracked-files=no"])
+  // untrimmed: each line starts with its two status columns (" M", "M ")
+  return git(["status", "--porcelain", "--untracked-files=no"], { trim: false })
     .split("\n")
     .filter(Boolean)
     .map((l) => l.slice(3))

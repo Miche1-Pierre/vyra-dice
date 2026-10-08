@@ -5,9 +5,18 @@ import { describe, expect, it } from "vitest"
 
 import { slugify } from "@studio/lib/brief"
 import { appendLesson, safeFileName } from "@studio/lib/clubs"
+import { workBranchName } from "@studio/lib/git"
 import { withoutLocalPaths, withoutLocalPathsDeep } from "@studio/lib/local-paths"
 import { clubPaths, insideClub, REPO } from "@studio/lib/paths"
 import { identifierOf, publishClub, registerClub, registrationOf } from "@studio/lib/registry-file"
+
+describe("work branches", () => {
+  it("names the Studio's branches after the club or the Linear issue, never main", () => {
+    const at = new Date("2026-10-08T14:42:00Z")
+    expect(workBranchName("lumen-club", undefined, at)).toBe("studio/lumen-club-20261008-1442")
+    expect(workBranchName("809-social-club", "VYR-59")).toBe("feat/VYR-59-809-social-club")
+  })
+})
 
 describe("local paths in the versioned history", () => {
   it("names repo files relative to the repo and the home folder as ~", () => {
