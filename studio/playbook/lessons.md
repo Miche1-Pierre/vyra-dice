@@ -17,3 +17,7 @@ l'historique git garde la trace des ajouts.
   jamais à l'aplomb direct d'une table VIP.
 - **Mobile d'abord** : cadrage portrait plus large, étiquettes qui ne se chevauchent pas, ≤ 300 000 triangles.
 - **Identité** : reprendre le logo et sa couleur dans l'interface (accent, logo dessiné), pas seulement dans la 3D.
+
+## Lumen Club (Toulon) — 2026-10-08
+
+- **Vérifier les orientations permises par les briques avant de dessiner le plan** : La brique `stage` ne pose la scène que contre un mur nord (écran en `stage.y1`, tourné vers le sud) et les escaliers ne partent que vers le sud ou l'ouest. Si le brief place la scène ailleurs, décider dès la note de recherche de tourner le plan (le Lumen l'a été de 180°), le signaler comme écart dans le README du club, puis relire tous les textes qui citent une direction ou un voisinage : `description` et `view` des zones et des tables. Au Lumen, la description de Tribord est restée fausse après la rotation. Brique à proposer : une option d'orientation (`side: n|s|e|w`) pour `stage` et pour les escaliers.
