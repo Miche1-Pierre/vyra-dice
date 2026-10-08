@@ -110,9 +110,10 @@ export function Workspace({ initial }: { initial: ClubDetail }) {
   }
 
   const eventSlug = data.brief?.event.slug ?? "samedi"
+  // the viewer the last preview used, whether run alone or by "Tout générer"
   const viewer =
-    (data.runs.find((r) => r.step === "preview" && r.result?.viewer)?.result?.viewer as
-      string | undefined) ?? `http://localhost:3000/${slug}/${eventSlug}`
+    (data.runs.find((r) => (r.step === "preview" || r.step === "auto") && r.result?.viewer)?.result
+      ?.viewer as string | undefined) ?? `http://localhost:3000/${slug}/${eventSlug}`
 
   return (
     <div className="relative min-h-dvh">
