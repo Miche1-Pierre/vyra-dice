@@ -141,6 +141,13 @@ export async function review(ctx: RunContext): Promise<void> {
     const previews = readdirSync(ctx.paths.previews).map(
       (f) => `clubs/${ctx.slug}/build/previews/${f}`,
     )
+    // what the client sees: the zone and table views are framed by the site, not by Blender
+    const captures =
+      !session && existsSync(ctx.paths.captures)
+        ? readdirSync(ctx.paths.captures)
+            .filter((f) => f.endsWith(".png"))
+            .map((f) => `clubs/${ctx.slug}/private/studio/captures/${f}`)
+        : []
     const r = await ctx.phase(`Revue des rendus ${i}/${iterations}`, () =>
       claudeCode.run(ctx, {
         resume: session,
@@ -149,13 +156,18 @@ export async function review(ctx: RunContext): Promise<void> {
           session ? "Nouveaux rendus après tes corrections." : header(ctx),
           `Rapport de construction : clubs/${ctx.slug}/build/report.json`,
           `Rendus à regarder (outil Read) :\n${previews.join("\n")}`,
+          captures.length
+            ? `Captures du site, ce que voit le client (dernier aperçu, peut dater d'avant ce build) :\n${captures.join("\n")}\nLes vues de zone et de table sont cadrées par le site depuis le plan (src/lib/venue/camera.ts) : rien ne doit masquer une table ou une zone depuis sa caméra (escalier, poteau, structure, globe).`
+            : "",
           `Compare-les aux sources, à la note de recherche (clubs/${ctx.slug}/private/studio/research.md) et au brief.`,
           feedback.length
             ? `Retours de l'équipe à traiter en priorité :\n${feedback.map((f) => `- [${f.id}] ${f.target ? `(${f.target}) ` : ""}${f.text}`).join("\n")}`
             : "Pas de retour de l'équipe en attente.",
-          "Corrige dans layout.json, scene.json, ambiance.json (et content.json si une table bouge) ce qui nuit au réalisme ou à la lisibilité : proportions, éléments signature absents, collisions, tables masquées, éclairage.",
+          "Corrige dans layout.json, scene.json, ambiance.json (et content.json si une table bouge ou si un texte est faux) ce qui nuit au réalisme ou à la lisibilité : proportions, éléments signature absents, collisions, tables masquées, éclairage.",
           `Puis écris clubs/${ctx.slug}/private/studio/reviews/${id}.json : {"issues": [...], "changes": [...], "feedbackAddressed": ["<id>"], "remaining": [...]} (phrases courtes en français).`,
-        ].join("\n\n"),
+        ]
+          .filter(Boolean)
+          .join("\n\n"),
       }),
     )
     recordAgent(ctx, r)
