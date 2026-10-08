@@ -36,6 +36,8 @@ export function clubPaths(slug: string) {
     sources: path.join(dir, "private", "sources"),
     studio,
     brief: path.join(studio, "brief.json"),
+    /** The sources' list (versioned), the files themselves staying in private/sources. */
+    sourcesManifest: path.join(studio, "sources.json"),
     research: path.join(studio, "research.md"),
     runs: path.join(studio, "runs"),
     feedback: path.join(studio, "feedback.json"),
