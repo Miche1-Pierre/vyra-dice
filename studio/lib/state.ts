@@ -11,7 +11,8 @@ import { validateClub, type Validation } from "@studio/lib/validate"
  * done when its output exists, stale when what it was made from changed since.
  */
 
-export type StepState = "todo" | "running" | "done" | "stale" | "failed"
+/** `skipped`: an agent step of a hand-made club (no brief): nothing to do. */
+export type StepState = "todo" | "running" | "done" | "stale" | "failed" | "skipped"
 
 export interface StepView {
   id: StepId | "brief"
@@ -106,6 +107,8 @@ export function clubState(
   }
 
   const failingChecks = report?.checks?.filter((c) => !c.ok).map((c) => c.name) ?? []
+  // made by hand (the Naho): research, review and lessons are the agent's, not its steps
+  const handMade = !brief && !!content
   const steps: StepView[] = [
     view(
       "brief",
@@ -117,8 +120,14 @@ export function clubState(
     view(
       "research",
       "Note de recherche",
-      existsSync(p.research) ? (mtime(p.research) < mtime(p.brief) ? "stale" : "done") : "todo",
-      undefined,
+      handMade
+        ? "skipped"
+        : existsSync(p.research)
+          ? mtime(p.research) < mtime(p.brief)
+            ? "stale"
+            : "done"
+          : "todo",
+      handMade ? "club fait main" : undefined,
       mtime(p.research),
     ),
     view(
@@ -148,12 +157,14 @@ export function clubState(
     view(
       "review",
       "Revue des rendus",
-      reviews.length
-        ? mtime(path.join(p.studio, "reviews", reviews.sort().at(-1)!)) < mtime(p.report)
-          ? "stale"
-          : "done"
-        : "todo",
-      reviews.length ? `${reviews.length} passe(s)` : undefined,
+      handMade
+        ? "skipped"
+        : reviews.length
+          ? mtime(path.join(p.studio, "reviews", reviews.sort().at(-1)!)) < mtime(p.report)
+            ? "stale"
+            : "done"
+          : "todo",
+      handMade ? "club fait main" : reviews.length ? `${reviews.length} passe(s)` : undefined,
     ),
     view(
       "bake",
@@ -176,8 +187,12 @@ export function clubState(
     view(
       "lessons",
       "Leçons pour le guide",
-      lessons ? "done" : "todo",
-      lessons?.proposals ? `${lessons.proposals.length} proposition(s)` : undefined,
+      handMade ? "skipped" : lessons ? "done" : "todo",
+      handMade
+        ? "club fait main"
+        : lessons?.proposals
+          ? `${lessons.proposals.length} proposition(s)`
+          : undefined,
       mtime(p.lessons),
     ),
     view("publish", "Publication", published ? "done" : "todo", published?.prUrl, mtime(p.publish)),
@@ -188,7 +203,7 @@ export function clubState(
     name: brief?.name ?? content?.club?.name ?? slug,
     city: brief?.city ?? content?.club?.city ?? "",
     steps,
-    next: steps.find((s) => s.state !== "done")?.id ?? null,
+    next: steps.find((s) => s.state !== "done" && s.state !== "skipped")?.id ?? null,
     lastRun: runs[0] ?? null,
     thumbnail: existsSync(thumb) ? "build/previews/overview.png" : null,
     registered,

@@ -248,7 +248,7 @@ function Pipeline({
   onShowRun: (id: string) => void
 }) {
   const [open, setOpen] = useState<StepView["id"] | null>(
-    steps.find((s) => s.state !== "done")?.id ?? null,
+    steps.find((s) => s.state !== "done" && s.state !== "skipped")?.id ?? null,
   )
   const [quality, setQuality] = useState<"draft" | "final">("final")
   const [iterations, setIterations] = useState(1)
@@ -262,7 +262,7 @@ function Pipeline({
         {steps.map((s, i) => {
           const last = runs.find((r) => r.step === s.id)
           const expanded = open === s.id
-          const runnable = s.id !== "brief"
+          const runnable = s.id !== "brief" && s.state !== "skipped"
           return (
             <li
               key={s.id}
