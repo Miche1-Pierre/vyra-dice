@@ -96,7 +96,7 @@ export function clubState(
     at?: number,
   ): StepView => {
     const run = id !== "brief" ? lastOf(id) : undefined
-    if (running && running.step === id)
+    if (running && (running.step === id || running.current === id))
       return { id, label, state: "running", detail: "en cours", at: running.startedAt }
     if (state !== "done" && run?.state === "failed")
       return { id, label, state: "failed", detail: run.error, at: run.endedAt }

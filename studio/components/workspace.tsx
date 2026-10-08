@@ -56,7 +56,11 @@ const ABOUT: Record<StepView["id"], string> = {
   preview: "Le club rejoint le registre, passe les tests de contrat, et la démo est capturée.",
   lessons: "L'agent propose ce que le prochain club devrait savoir.",
   publish: "Branche depuis main, dossier du club et captures, pull request.",
+  auto: "Toutes les étapes restantes, de la recherche aux leçons, sans s’arrêter.",
 }
+
+const stepLabel = (steps: StepView[], id: string) =>
+  id === "auto" ? "Tout générer" : (steps.find((s) => s.id === id)?.label ?? id)
 
 async function post(url: string, body: unknown): Promise<{ error?: string }> {
   const res = await fetch(url, {
@@ -132,11 +136,22 @@ export function Workspace({ initial }: { initial: ClubDetail }) {
           {active ? (
             <Chip tone="brand">
               <StateIcon state="running" className="size-3.5" />{" "}
-              {data.steps.find((s) => s.id === active.step)?.label}
+              {stepLabel(data.steps, active.current ?? active.step)}
             </Chip>
           ) : null}
         </div>
         <div className="flex items-center gap-2">
+          {!active &&
+          data.brief &&
+          data.steps.some((s) => s.id !== "publish" && s.id !== "brief" && s.state !== "done") ? (
+            <button
+              type="button"
+              onClick={() => start("auto")}
+              className="brand-pill text-ui inline-flex h-10 items-center gap-2 rounded-full px-4 font-medium"
+            >
+              <Play className="size-4" /> Tout générer
+            </button>
+          ) : null}
           {data.registered ? (
             <a
               href={viewer}
@@ -653,7 +668,7 @@ function RunLog({
         >
           {data.runs.map((r) => (
             <option key={r.id} value={r.id} className="bg-[#16131b]">
-              {data.steps.find((s) => s.id === r.step)?.label} ·{" "}
+              {stepLabel(data.steps, r.step)} ·{" "}
               {new Date(r.createdAt).toLocaleString("fr-FR", {
                 dateStyle: "short",
                 timeStyle: "short",
