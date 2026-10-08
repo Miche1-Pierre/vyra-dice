@@ -45,6 +45,7 @@ Blender (scripts Python) → glTF + lightmaps Cycles · PostHog · (Supabase + R
 | [docs/linear.md](docs/linear.md)             | Cadrage, jalons G0–G6, responsabilités, workflow Linear |
 | [docs/github.md](docs/github.md)             | Branches, commits atomiques, PR, CI                     |
 | [docs/architecture.md](docs/architecture.md) | Architecture, modèle de données, flux d'une demande     |
+| [docs/clubs.md](docs/clubs.md)               | Un dossier par club, ajouter un club                    |
 | [docs/3d-pipeline.md](docs/3d-pipeline.md)   | Production d'un club en 3D (layout → Blender → web)     |
 | [docs/analytics.md](docs/analytics.md)       | Événements et lecture H1–H5                             |
 
