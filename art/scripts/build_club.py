@@ -20,11 +20,11 @@ triangles, lightmaps, budget checks); --previews also renders build/previews/*.p
 
 from __future__ import annotations
 
+import ast
 import importlib
 import json
 import math
 import os
-import re
 import sys
 import time
 
@@ -61,7 +61,9 @@ class Values:
     ``i`` is the index and ``v`` the current value.
     """
 
-    EXPR = re.compile(r"^[A-Za-z0-9_+\-*/(). ]+$")
+    #: Only numbers, names and arithmetic: scene.json is written by people and by an agent.
+    ALLOWED = (ast.Expression, ast.BinOp, ast.UnaryOp, ast.Constant, ast.Name, ast.Load,
+               ast.Add, ast.Sub, ast.Mult, ast.Div, ast.USub, ast.UAdd)  # fmt: skip
 
     def __init__(self, layout: dict):
         h, b = layout["heights"], layout["building"]
@@ -100,14 +102,24 @@ class Values:
         self.vars = v
 
     def num(self, value, **local):
+        if isinstance(value, bool):
+            raise ValueError(f"Not a number or an expression: {value!r}")
         if isinstance(value, (int, float)):
             return value
-        if not isinstance(value, str) or not self.EXPR.match(value):
+        if not isinstance(value, str):
             raise ValueError(f"Not a number or an expression: {value!r}")
         try:
-            return eval(value, {"__builtins__": {}}, {**self.vars, **local})  # noqa: S307 - vetted charset
-        except NameError as exc:
-            raise ValueError(f"Unknown name in {value!r}: {exc}") from None
+            tree = ast.parse(value, mode="eval")
+        except SyntaxError:
+            raise ValueError(f"Invalid expression: {value!r}") from None
+        for node in ast.walk(tree):
+            if not isinstance(node, self.ALLOWED) or (isinstance(node, ast.Constant) and not isinstance(node.value, (int, float))):
+                raise ValueError(f"Only numbers, names and + - * / in expressions: {value!r}")
+        names = {**self.vars, **local}
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Name) and node.id not in names:
+                raise ValueError(f"Unknown name '{node.id}' in {value!r}")
+        return eval(compile(tree, "<scene.json>", "eval"), {"__builtins__": {}}, names)  # noqa: S307 - AST vetted
 
     def point(self, values, **local) -> tuple:
         return tuple(self.num(x, **local) for x in values)
