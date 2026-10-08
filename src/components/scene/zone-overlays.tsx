@@ -5,12 +5,18 @@ import { useMemo } from "react"
 import * as THREE from "three"
 
 import { createZoneMaterial } from "@/components/scene/fx/materials"
+import type { ClubBrand } from "@/lib/clubs/brand"
 import { useExperience } from "@/lib/store"
 import { levelHeight, toThree, type VenueLayout } from "@/lib/venue/layout"
-import { TIERS } from "@/lib/venue/tiers"
 
 /** Tier-coloured floor overlays: faint on the overview (reads like the club sketch), bright on focus. */
-export function ZoneOverlays({ layout }: { layout: VenueLayout }) {
+export function ZoneOverlays({
+  layout,
+  tiers,
+}: {
+  layout: VenueLayout
+  tiers: ClubBrand["tiers"]
+}) {
   const zones = useMemo(
     () =>
       layout.zones.map((z) => {
@@ -21,11 +27,11 @@ export function ZoneOverlays({ layout }: { layout: VenueLayout }) {
           (z.y[0] + z.y[1]) / 2,
           levelHeight(layout, z.level) + 0.035,
         ])
-        const material = createZoneMaterial(TIERS[z.tier].color)
+        const material = createZoneMaterial(tiers[z.tier].color)
         material.uniforms.uSize.value.set(w, d)
         return { zone: z, w, d, center, material }
       }),
-    [layout],
+    [layout, tiers],
   )
 
   useFrame((state, delta) => {

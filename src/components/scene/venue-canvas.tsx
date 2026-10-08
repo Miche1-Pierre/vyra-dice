@@ -17,6 +17,7 @@ import { VenueModel } from "@/components/scene/venue-model"
 import { ZoneOverlays } from "@/components/scene/zone-overlays"
 import type { ClubAmbiance } from "@/lib/clubs/ambiance"
 import type { AssetManifest } from "@/lib/clubs/assets"
+import type { ClubBrand } from "@/lib/clubs/brand"
 import { useExperience } from "@/lib/store"
 import { venueCenter } from "@/lib/venue/camera"
 import type { VenueLayout } from "@/lib/venue/layout"
@@ -42,6 +43,8 @@ export interface VenueCanvasProps {
   club: string
   assets: AssetManifest
   ambiance: ClubAmbiance
+  /** Tier hues of the club (floor overlays, table halos). */
+  tiers: ClubBrand["tiers"]
   layout: VenueLayout
   zoneMarkers: ZoneMarkerData[]
   tableMarkers: TableMarkerData[]
@@ -53,6 +56,7 @@ export default function VenueCanvas({
   club,
   assets,
   ambiance,
+  tiers,
   layout,
   zoneMarkers,
   tableMarkers,
@@ -102,8 +106,8 @@ export default function VenueCanvas({
             palettes={ambiance.beams.palettes}
             intensity={quality === "high" ? 1 : 0.8}
           />
-          <ZoneOverlays layout={layout} />
-          <TableHotspots layout={layout} />
+          <ZoneOverlays layout={layout} tiers={tiers} />
+          <TableHotspots layout={layout} tiers={tiers} />
           <Markers layout={layout} zones={zoneMarkers} tables={tableMarkers} />
         </Suspense>
         <CameraRig layout={layout} onIntroSkipped={onIntroSkipped} />

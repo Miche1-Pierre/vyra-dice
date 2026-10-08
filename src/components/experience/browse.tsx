@@ -84,9 +84,12 @@ const ROWS: { label: string; render: (t: TableView) => React.ReactNode }[] = [
 export function CompareView({
   tables,
   zones,
+  accentName,
 }: {
   tables: Record<string, TableView>
   zones: ZoneView[]
+  /** The club's accent, named in the legend (« le meilleur est en or »). */
+  accentName: string
 }) {
   const compareIds = useExperience((s) => s.compareIds)
   const selectTable = useExperience((s) => s.selectTable)
@@ -154,7 +157,7 @@ export function CompareView({
                     row.label === "Par pers." &&
                       t.perPerson === best &&
                       rows.length > 1 &&
-                      "text-gold font-semibold",
+                      "text-brand font-semibold",
                   )}
                 >
                   {row.render(t)}
@@ -183,7 +186,7 @@ export function CompareView({
       {rows.length > 1 ? (
         <p className="text-caption text-label-3 mt-4 text-center">
           Prix par personne à capacité maximale — le meilleur est{" "}
-          <span className="text-gold">en or</span>.
+          <span className="text-brand">en {accentName}</span>.
         </p>
       ) : null}
     </div>

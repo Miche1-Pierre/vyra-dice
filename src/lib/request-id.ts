@@ -5,7 +5,7 @@ const PREFIX_PATTERN = /^[A-Z]{3}$/
 const REQUEST_ID_PATTERN = /^([A-Z]{3})-([0-9A-HJKMNP-TV-Z]{5})$/
 
 /**
- * Short request id given to the buyer and the club, e.g. `NHO-7K2QF`.
+ * Short request id given to the buyer and the club, e.g. `DEM-7K2QF`.
  *
  * 32^5 ≈ 33.5 M combinations: collisions are rare but possible, so a persistent store must keep
  * ids unique (unique constraint + retry).

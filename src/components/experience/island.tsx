@@ -23,7 +23,7 @@ export function Island() {
     return () => window.clearTimeout(id)
   }, [notice, dismiss])
 
-  const Icon = notice?.tone === "ok" ? Check : notice?.tone === "gold" ? Sparkles : Info
+  const Icon = notice?.tone === "ok" ? Check : notice?.tone === "brand" ? Sparkles : Info
 
   return (
     <div className="pointer-events-none fixed inset-x-0 top-[max(0.625rem,env(safe-area-inset-top))] z-[90] flex justify-center px-3">
@@ -43,8 +43,8 @@ export function Island() {
             <span
               className={cn(
                 "grid size-8 shrink-0 place-items-center rounded-full [&_svg]:size-4",
-                notice.tone === "gold"
-                  ? "gold-pill"
+                notice.tone === "brand"
+                  ? "brand-pill"
                   : notice.tone === "ok"
                     ? "bg-[#30d158] text-black"
                     : "text-label bg-white/[0.14]",

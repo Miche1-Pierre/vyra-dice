@@ -1,0 +1,77 @@
+{
+  "$comment": "Identité du Naho dans l’interface : l’or de son enseigne, les teintes du croquis du club (vert = lounges du rez-de-chaussée, violet = VIP, bleu = prestige), Jost (proche du lettrage « C L U B »), le logo NΛHO redessiné (A sans barre) et un soleil levant.",
+  "accent": {
+    "name": "or",
+    "color": "#e8c27a",
+    "deep": "#b98a3e",
+    "on": "#1d1406",
+    "pill": ["#f6dfa6", "#c9984a"],
+    "foil": ["#f8e3b0", "#e1b768", "#b88a40"]
+  },
+  "tiers": {
+    "lounge": {
+      "color": "#32d074",
+      "deep": "#0d5a33"
+    },
+    "vip": {
+      "color": "#bf5af2",
+      "deep": "#4d1475"
+    },
+    "prestige": {
+      "color": "#3a9bff",
+      "deep": "#0d3a80"
+    }
+  },
+  "font": "jost",
+  "wordmark": {
+    "viewBox": [70, 20],
+    "strokeWidth": 1.55,
+    "strokes": [
+      "M1.5 18V2.4L13 17.6V2",
+      "M18.5 18 25 2.2 31.5 18",
+      "M36.5 2v16M48.5 2v16M36.5 10.1h12",
+      "M61.2 2a8 8 0 1 1 0 16 8 8 0 0 1 0-16"
+    ]
+  },
+  "tagline": "Club",
+  "emblem": {
+    "viewBox": [24, 14.5],
+    "shapes": [
+      {
+        "d": "M7 13a5 5 0 0 1 10 0Z"
+      },
+      {
+        "d": "M5.176 11.442L0.886 10.463",
+        "stroke": 1.35
+      },
+      {
+        "d": "M6.527 8.636L4.338 6.89",
+        "stroke": 1.35
+      },
+      {
+        "d": "M8.963 6.693L7.054 2.729",
+        "stroke": 1.35
+      },
+      {
+        "d": "M12 6L12 3.2",
+        "stroke": 1.35
+      },
+      {
+        "d": "M15.037 6.693L16.946 2.729",
+        "stroke": 1.35
+      },
+      {
+        "d": "M17.473 8.636L19.662 6.89",
+        "stroke": 1.35
+      },
+      {
+        "d": "M18.824 11.442L23.114 10.463",
+        "stroke": 1.35
+      },
+      {
+        "d": "M2.5 13.4L21.5 13.4",
+        "stroke": 1.1
+      }
+    ]
+  }
+}

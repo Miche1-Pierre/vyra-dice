@@ -10,7 +10,7 @@ export type Tier = z.infer<typeof tierSchema>
 export const tableStatusSchema = z.enum(["available", "on_request", "sold"])
 export type TableStatus = z.infer<typeof tableStatusSchema>
 
-/** Lowercase URL / content id: `naho`, `lounge-vegetal`, `l1`. */
+/** Lowercase URL / content id: `club-demo`, `lounge-bar`, `l1`. */
 const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 const slugSchema = z.string().max(64).regex(SLUG_PATTERN, { error: "Expected a lowercase slug" })
 const textSchema = z.string().min(1)
@@ -55,7 +55,7 @@ export const clubSchema = z
     name: textSchema,
     city: textSchema,
     address: textSchema,
-    /** Three uppercase letters opening every request id (`NHO-7K2QF`). */
+    /** Three uppercase letters opening every request id (`DEM-7K2QF`). */
     requestPrefix: z.string().regex(/^[A-Z]{3}$/, { error: "Expected three uppercase letters" }),
     /** Fallback channels, shown whenever the page, the 3D or a request fails. */
     contact: z.object({

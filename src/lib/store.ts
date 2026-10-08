@@ -15,7 +15,7 @@ export interface Notice {
   key: number
   title: string
   detail?: string
-  tone?: "gold" | "ok" | "neutral"
+  tone?: "brand" | "ok" | "neutral"
 }
 
 export interface LastRequest {
@@ -124,7 +124,7 @@ export const useExperience = create<ExperienceState>()((set, get) => ({
               next.length >= 2
                 ? `${next.length} / 3 · prêt à comparer`
                 : "Ajoutez-en une autre pour comparer",
-            tone: "gold",
+            tone: "brand",
           },
     )
   },
