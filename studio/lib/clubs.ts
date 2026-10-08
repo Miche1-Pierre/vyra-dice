@@ -11,7 +11,8 @@ const SOURCE_TYPES = /\.(png|jpe?g|webp|gif|pdf)$/i
 const MAX_SOURCE_BYTES = 25 * 1024 * 1024
 
 export function safeFileName(name: string): string {
-  const base = path.basename(name).normalize("NFD").replace(/[̀-ͯ]/g, "")
+  // both separators, whatever the system: a browser may send a Windows path
+  const base = path.win32.basename(name).normalize("NFD").replace(/[̀-ͯ]/g, "")
   const clean = base
     .replace(/[^\w.-]+/g, "-")
     .replace(/-+/g, "-")
