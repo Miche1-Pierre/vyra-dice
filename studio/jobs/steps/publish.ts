@@ -13,7 +13,7 @@ import path from "node:path"
 import sharp from "sharp"
 
 import type { RunContext } from "@studio/jobs/context"
-import { REPO } from "@studio/lib/paths"
+import { CLUB_TEXT, formatFiles } from "@studio/jobs/format"
 import { registerClub } from "@studio/lib/registry-file"
 import { validateClub } from "@studio/lib/validate"
 
@@ -88,23 +88,11 @@ export async function publish(ctx: RunContext): Promise<void> {
     }
     const registry = path.join(tree, "clubs", "registry.ts")
     writeFileSync(registry, registerClub(ctx.slug, readFileSync(registry, "utf8")))
-    // the agent's files, formatted like the rest of the repo: the PR's checks run prettier
-    const text = [...PUBLISHED, "public/lightmaps.json"]
-      .filter((f) => /\.(json|ts|md)$/.test(f))
-      .map((f) => path.join(dest, f))
-      .filter((f) => existsSync(f))
-    await ctx.exec(
-      process.execPath,
-      [
-        path.join(path.dirname(require.resolve("prettier/package.json")), "bin", "prettier.cjs"),
-        "--write",
-        "--no-color",
-        "--config",
-        path.join(REPO, ".prettierrc.json"),
-        ...text,
-        registry,
-      ],
-      { filter: (line) => !line.includes("(unchanged)") },
+    // the PR's checks run prettier: the published files are formatted like the repo
+    await formatFiles(
+      ctx,
+      [...CLUB_TEXT.map((f) => `clubs/${ctx.slug}/${f}`), "clubs/registry.ts"],
+      tree,
     )
     const media = path.join(tree, "docs", "media", "clubs", ctx.slug)
     mkdirSync(media, { recursive: true })
