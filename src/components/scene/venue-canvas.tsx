@@ -9,6 +9,7 @@ import { Effects, type Quality } from "@/components/scene/effects"
 import { Backdrop } from "@/components/scene/fx/backdrop"
 import { Beams } from "@/components/scene/fx/beams"
 import { FloorGloss } from "@/components/scene/fx/floor-gloss"
+import { FrozenClock, readFrozenTime } from "@/components/scene/frozen-clock"
 import { CameraRig } from "@/components/scene/camera-rig"
 import { Markers, type TableMarkerData, type ZoneMarkerData } from "@/components/scene/markers"
 import { TableHotspots } from "@/components/scene/table-hotspots"
@@ -53,6 +54,8 @@ export default function VenueCanvas({
   onIntroSkipped,
 }: VenueCanvasProps) {
   const setFallback2d = useExperience((s) => s.setFallback2d)
+  // reproducible captures: same instant and same resolution on every load
+  const [frozenAt] = useState(readFrozenTime)
   const [dpr, setDpr] = useState(quality === "high" ? 1.75 : 1.25)
   const [effects, setEffects] = useState(true)
 
@@ -68,14 +71,18 @@ export default function VenueCanvas({
       >
         <color attach="background" args={["#060408"]} />
         <fogExp2 attach="fog" args={["#09050d", 0.0055]} />
-        <PerformanceMonitor
-          bounds={() => (quality === "high" ? [45, 60] : [28, 50])}
-          onDecline={() => {
-            setDpr((d) => Math.max(0.85, d - 0.25))
-            if (dpr <= 1) setEffects(false)
-          }}
-          onIncline={() => setDpr((d) => Math.min(quality === "high" ? 2 : 1.5, d + 0.25))}
-        />
+        {frozenAt !== null ? (
+          <FrozenClock at={frozenAt} />
+        ) : (
+          <PerformanceMonitor
+            bounds={() => (quality === "high" ? [45, 60] : [28, 50])}
+            onDecline={() => {
+              setDpr((d) => Math.max(0.85, d - 0.25))
+              if (dpr <= 1) setEffects(false)
+            }}
+            onIncline={() => setDpr((d) => Math.min(quality === "high" ? 2 : 1.5, d + 0.25))}
+          />
+        )}
         <Suspense fallback={null}>
           <ClubEnvironment intensity={quality === "high" ? 1 : 0.85} />
           <VenueModel club={club} quality={quality} />
