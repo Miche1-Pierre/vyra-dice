@@ -3,6 +3,7 @@ import { readFileSync, writeFileSync } from "node:fs"
 import path from "node:path"
 
 import type { RunStatus } from "@studio/lib/jobs"
+import { withoutLocalPaths, withoutLocalPathsDeep } from "@studio/lib/local-paths"
 import { clubPaths, REPO, type ClubPaths } from "@studio/lib/paths"
 
 export const BLENDER =
@@ -30,7 +31,8 @@ export class RunContext {
   }
 
   update(patch: Partial<RunStatus>): void {
-    writeFileSync(this.statusFile, JSON.stringify({ ...this.status, ...patch }, null, 2))
+    const next = withoutLocalPathsDeep({ ...this.status, ...patch })
+    writeFileSync(this.statusFile, JSON.stringify(next, null, 2))
   }
 
   setResult(patch: Record<string, unknown>): void {
@@ -39,7 +41,8 @@ export class RunContext {
 
   log(message: string): void {
     const time = new Date().toLocaleTimeString("fr-FR", { hour12: false })
-    for (const line of message.split("\n")) process.stdout.write(`[${time}] ${line}\n`)
+    for (const line of withoutLocalPaths(message).split("\n"))
+      process.stdout.write(`[${time}] ${line}\n`)
   }
 
   /** Runs `fn` as a named phase: logged, timed, recorded in status.json. */

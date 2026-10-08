@@ -1,10 +1,34 @@
 import { readFileSync } from "node:fs"
+import os from "node:os"
+import path from "node:path"
 import { describe, expect, it } from "vitest"
 
 import { slugify } from "@studio/lib/brief"
 import { appendLesson, safeFileName } from "@studio/lib/clubs"
-import { clubPaths, insideClub } from "@studio/lib/paths"
+import { withoutLocalPaths, withoutLocalPathsDeep } from "@studio/lib/local-paths"
+import { clubPaths, insideClub, REPO } from "@studio/lib/paths"
 import { identifierOf, publishClub, registerClub, registrationOf } from "@studio/lib/registry-file"
+
+describe("local paths in the versioned history", () => {
+  it("names repo files relative to the repo and the home folder as ~", () => {
+    const script = path.join(REPO, "art", "scripts", "build_club.py")
+    expect(withoutLocalPaths(`${script}:948: DeprecationWarning`)).toBe(
+      `${path.join("art", "scripts", "build_club.py")}:948: DeprecationWarning`,
+    )
+    expect(withoutLocalPaths(`${REPO.replace(/\\/g, "/")}/clubs/naho`)).toBe("clubs/naho")
+    expect(withoutLocalPaths(path.join(os.homedir(), "tmp", "x.png"))).toBe(
+      `~${path.sep}${path.join("tmp", "x.png")}`,
+    )
+  })
+
+  it("cleans every string of a run status", () => {
+    const status = { result: { worktree: path.join(os.homedir(), "w"), turns: 3 }, tags: [REPO] }
+    expect(withoutLocalPathsDeep(status)).toEqual({
+      result: { worktree: `~${path.sep}w`, turns: 3 },
+      tags: [""],
+    })
+  })
+})
 
 describe("slugify", () => {
   it("makes URL and folder names from club names", () => {
