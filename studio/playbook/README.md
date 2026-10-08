@@ -95,6 +95,15 @@ Lis `art/scripts/build_club.py` (les briques et leurs paramètres) et `clubs/nah
   dalles, wall-washers sur les murs signature, wash de scène et quelques `areas` de remplissage colorées.
 - Budget mobile : ≤ 300 000 triangles, ≤ 100 objets (le Naho : 106 000 triangles, 29 objets).
 
+## Bibliothèque
+
+- Les briques du constructeur (`ELEMENTS` dans `art/scripts/build_club.py`) sont le catalogue de ce qui se construit.
+- Les scènes des clubs déjà faits (`clubs/*/scene.json`) sont réutilisables : reprends l’élément d’un club proche
+  (enseigne, structure, décor, éclairage) plutôt que de repartir de zéro, et adapte-le au plan.
+- S’il manque une brique pour un élément signature (anneaux lumineux, cabine vitrée…), approche-le avec les briques
+  existantes, signale-le dans le `README.md` du club et propose la brique en leçon : l’équipe l’ajoutera au
+  constructeur pour tous les clubs.
+
 ## Procédure
 
 1. **Recherche** : lis le brief, toutes les sources (photos, plans) et le Naho ; écris
