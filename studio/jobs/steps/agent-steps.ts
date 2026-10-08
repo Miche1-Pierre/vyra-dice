@@ -185,6 +185,27 @@ export async function review(ctx: RunContext): Promise<void> {
     }
     await ctx.phase("Validation et corrections", () => fixUntilValid(ctx, r))
     await build(ctx)
+    // the pass ends with the rebuild it asked for: only a later rebuild makes it stale
+    const report = JSON.parse(readFileSync(ctx.paths.report, "utf8")) as {
+      objects?: number
+      triangles?: number
+    }
+    const saved = JSON.parse(readFileSync(file, "utf8")) as Record<string, unknown>
+    writeFileSync(
+      file,
+      JSON.stringify(
+        {
+          ...saved,
+          rebuilt: {
+            objects: report.objects,
+            triangles: report.triangles,
+            at: new Date().toISOString(),
+          },
+        },
+        null,
+        2,
+      ),
+    )
   }
 }
 
