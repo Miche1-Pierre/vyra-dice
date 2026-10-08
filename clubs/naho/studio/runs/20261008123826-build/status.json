@@ -1,0 +1,29 @@
+{
+  "id": "20261008123826-build",
+  "step": "build",
+  "state": "done",
+  "options": {},
+  "createdAt": "2026-10-08T12:38:26.030Z",
+  "phases": [
+    {
+      "name": "Vérification de la spécification",
+      "startedAt": "2026-10-08T12:38:30.598Z",
+      "endedAt": "2026-10-08T12:38:30.709Z",
+      "ok": true
+    },
+    {
+      "name": "Construction Blender et aperçus",
+      "startedAt": "2026-10-08T12:38:30.711Z",
+      "endedAt": "2026-10-08T12:39:02.345Z",
+      "ok": true
+    }
+  ],
+  "pid": 76756,
+  "startedAt": "2026-10-08T12:38:30.556Z",
+  "result": {
+    "objects": 29,
+    "triangles": 106400,
+    "lights": 95
+  },
+  "endedAt": "2026-10-08T12:39:02.351Z"
+}
