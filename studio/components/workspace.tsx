@@ -84,17 +84,27 @@ export function Workspace({ initial }: { initial: ClubDetail }) {
   const slug = data.slug
   const active = data.runs.find((r) => r.state === "running" || r.state === "queued")
 
-  const refresh = useCallback(async () => {
-    const res = await fetch(`/api/clubs/${slug}/state${runId ? `?run=${runId}` : ""}`, {
-      cache: "no-store",
-    })
-    if (res.ok) setData((await res.json()) as ClubDetail)
-  }, [slug, runId])
+  const load = useCallback(
+    async (run: string | undefined) => {
+      const res = await fetch(`/api/clubs/${slug}/state${run ? `?run=${run}` : ""}`, {
+        cache: "no-store",
+      })
+      if (res.ok) setData((await res.json()) as ClubDetail)
+    },
+    [slug],
+  )
+  const refresh = useCallback(() => load(runId), [load, runId])
 
   useEffect(() => {
     const t = setInterval(refresh, active ? 1500 : 6000)
     return () => clearInterval(t)
   }, [refresh, active])
+
+  /** A run picked in the Journal shows at once, not at the next refresh. */
+  function showRun(id: string) {
+    setRunId(id)
+    void load(id)
+  }
 
   async function start(step: StepId, options: Record<string, unknown> = {}) {
     setError(null)
@@ -190,7 +200,7 @@ export function Workspace({ initial }: { initial: ClubDetail }) {
           onStart={start}
           runs={data.runs}
           onShowRun={(id) => {
-            setRunId(id)
+            showRun(id)
             setTab("log")
           }}
         />
@@ -216,7 +226,7 @@ export function Workspace({ initial }: { initial: ClubDetail }) {
           <div className="p-4 sm:p-5">
             {tab === "renders" ? <Renders data={data} onFeedback={refresh} /> : null}
             {tab === "preview" ? <Preview data={data} viewer={viewer} /> : null}
-            {tab === "log" ? <RunLog data={data} runId={runId} onSelect={setRunId} /> : null}
+            {tab === "log" ? <RunLog data={data} runId={runId} onSelect={showRun} /> : null}
             {tab === "research" ? (
               data.research ? (
                 <Markdown source={data.research} />
