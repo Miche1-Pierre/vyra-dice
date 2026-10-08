@@ -1,13 +1,12 @@
 # art/
 
-Sources 3D (Git LFS). Rien ici n'est servi au navigateur.
+Boîte à outils 3D commune à tous les clubs. Rien ici n'est servi au navigateur ni propre à un club.
 
-| Dossier     | Contenu                                                       |
-| ----------- | ------------------------------------------------------------- |
-| `blender/`  | Fichiers `.blend` sources, un par lieu : `<club-slug>.blend`  |
-| `textures/` | Textures sources (PNG/JPG/PSD) avant bake                     |
-| `hdri/`     | Environnements HDR pour éclairage / reflets                   |
-| `export/`   | Exports glTF binaires bruts depuis Blender (`<club-slug>.glb`) |
+| Dossier    | Contenu                                                                               |
+| ---------- | ------------------------------------------------------------------------------------- |
+| `scripts/` | `vyra3d.py` (bibliothèque Blender : maillages, matières, textures, texte) et `bake_export.py` (bake des lightmaps + export GLB) |
+| `fonts/`   | Polices (OFL) utilisables pour les enseignes modélisées                               |
 
-Pipeline : `art/export/x.glb` → `pnpm assets:optimize` → `public/models/x.glb` (meshopt + WebP).
-Conventions de nommage des objets Blender : voir `docs/3d-pipeline.md`.
+Les sources de chaque club vivent dans `clubs/<slug>/` : plan (`layout.json`), script de construction
+Blender (`blender/build.py`), intermédiaires générés (`build/`, ignoré par git) et bundle web
+(`public/`). Pipeline et conventions de nommage : `docs/3d-pipeline.md`.

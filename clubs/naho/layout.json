@@ -1,5 +1,5 @@
 {
-  "$comment": "Naho Club — layout POC reconstitué depuis le croquis du 07/10/2026 (art/ref/naho/plan-sketch.png). Dimensions PROVISOIRES, non validées par le club. Unités : mètres. Axes Blender : x = est, y = nord, z = haut (glTF/three : X = x, Y = z, Z = -y).",
+  "$comment": "Naho Club — layout POC reconstitué depuis le croquis du 07/10/2026 (clubs/naho/reference/plan-sketch.png). Dimensions PROVISOIRES, non validées par le club. Unités : mètres. Axes Blender : x = est, y = nord, z = haut (glTF/three : X = x, Y = z, Z = -y).",
   "club": "naho",
   "version": 1,
   "heights": {

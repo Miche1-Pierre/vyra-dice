@@ -1,9 +1,9 @@
 import { z } from "zod"
 
-import layoutJson from "@art/layouts/naho.json"
+import layoutJson from "@clubs/naho/layout.json"
 
 /*
- * Venue geometry exported next to the Blender sources (`art/layouts/<club>.json`).
+ * Venue geometry of each club (`clubs/<club>/layout.json`), read by its Blender build.
  *
  * Units are metres, in Blender axes: x = east, y = north, z = up. Use `toThree` to convert a point
  * to three.js / glTF space. A range such as `x: [min, max]` is an axis-aligned extent.

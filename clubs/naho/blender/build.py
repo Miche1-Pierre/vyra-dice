@@ -1,11 +1,13 @@
-"""Build the Naho Club POC venue from ``art/layouts/naho.json`` (VYR-55).
+"""Build the Naho Club POC venue from ``clubs/naho/layout.json`` (VYR-55).
 
 Live Blender (MCP / Python console):
-    import sys; sys.path.insert(0, r"C:/vyra-dice/art/scripts")
-    import importlib, build_naho; importlib.reload(build_naho); build_naho.build()
+    import runpy; runpy.run_path(r"C:/vyra-dice/clubs/naho/blender/build.py", run_name="__main__")
 
 Headless:
-    blender -b -P art/scripts/build_naho.py
+    blender -b -P clubs/naho/blender/build.py
+
+Writes ``clubs/naho/build/naho.blend`` and its generated textures (gitignored); bake and
+export with ``art/scripts/bake_export.py`` (see docs/3d-pipeline.md).
 
 Everything is generated: re-running rebuilds the NAHO collection from scratch.
 Dimensions are PROVISIONAL (reconstructed from a sketch) and must be validated by the club.
@@ -24,18 +26,20 @@ import bpy
 from mathutils import Matrix, Vector
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-if HERE not in sys.path:
-    sys.path.insert(0, HERE)
+CLUB_DIR = os.path.abspath(os.path.join(HERE, ".."))
+REPO = os.path.abspath(os.path.join(CLUB_DIR, "..", ".."))
+TOOLKIT = os.path.join(REPO, "art", "scripts")
+if TOOLKIT not in sys.path:
+    sys.path.insert(0, TOOLKIT)
 
 import vyra3d as v3  # noqa: E402
 
 importlib.reload(v3)
 MeshBuilder = v3.MeshBuilder
 
-REPO = os.path.abspath(os.path.join(HERE, "..", ".."))
-LAYOUT_PATH = os.path.join(REPO, "art", "layouts", "naho.json")
-TEX_DIR = os.path.join(REPO, "art", "textures", "generated", "naho")
-BLEND_PATH = os.path.join(REPO, "art", "blender", "naho.blend")
+LAYOUT_PATH = os.path.join(CLUB_DIR, "layout.json")
+TEX_DIR = os.path.join(CLUB_DIR, "build", "textures")
+BLEND_PATH = os.path.join(CLUB_DIR, "build", "naho.blend")
 
 # Jost (SIL OFL), the typeface of the web UI, for the club's lettering
 FONT_MEDIUM = "jost-latin-500-normal.woff2"

@@ -1,17 +1,14 @@
 # Uploaded by `vercel deploy`: the web app only.
-# Source art (Blender files, bakes, third-party reference photos) never leaves the machine;
-# art/layouts is the exception: the web imports the venue plans (@art/layouts/*).
-art/ref/
-art/blender/
-art/export/
-art/hdri/
-art/textures/
-art/scripts/
-art/fonts/
-art/.bake/
-art/README.md
+# The web reads each club's definition (clubs/<slug>/*.json, index.ts) and its bundle
+# (clubs/<slug>/public, published by scripts/sync-club-assets.mjs at build time).
+# Blender sources, bakes, references and third-party photos never leave the machine.
+art/
+clubs/*/blender/
+clubs/*/build/
+clubs/*/reference/
+clubs/*/private/
 docs/
 .github/
-scripts/
+scripts/optimize-glb.mjs
 *.blend
 *.blend1

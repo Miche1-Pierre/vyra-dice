@@ -1,4 +1,9 @@
 pnpm-lock.yaml
 .next
-public/models
 art
+# Club web bundles (generated) and Blender intermediates
+public/clubs
+clubs/*/public
+clubs/*/build
+# Venue plans are hand-aligned (one table per line, coordinates in columns)
+clubs/*/layout.json
