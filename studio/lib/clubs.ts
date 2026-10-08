@@ -91,6 +91,18 @@ export function readLessons(slug: string): { proposals: LessonProposal[] } | nul
 }
 
 /**
+ * Adds a lesson at the end of its club's section (created at the end of the file if needed), so
+ * a club's lessons read in the order they were accepted.
+ */
+export function appendLesson(content: string, heading: string, entry: string): string {
+  const start = content.indexOf(heading)
+  if (start === -1) return `${content.trimEnd()}\n\n${heading}\n\n${entry}\n`
+  const after = content.indexOf("\n## ", start + heading.length)
+  const section = content.slice(0, after === -1 ? content.length : after).trimEnd()
+  return `${section}\n${entry}\n${after === -1 ? "" : `\n${content.slice(after + 1)}`}`
+}
+
+/**
  * Accepting a lesson appends it to the versioned playbook and commits it on the Studio branch:
  * the git history is the history of what each club taught us.
  */
@@ -108,11 +120,7 @@ export function decideLesson(slug: string, id: string, decision: "accepted" | "r
     ? (JSON.parse(readFileSync(clubPaths(slug).brief, "utf8")) as { name: string; city: string })
     : { name: slug, city: "" }
   const heading = `## ${brief.name}${brief.city ? ` (${brief.city})` : ""} — ${new Date().toISOString().slice(0, 10)}`
-  const entry = `- **${lesson.title}** : ${lesson.text}`
-  const next = content.includes(heading)
-    ? content.replace(heading, `${heading}\n\n${entry}`).replace(`${entry}\n\n-`, `${entry}\n-`)
-    : `${content.trimEnd()}\n\n${heading}\n\n${entry}\n`
-  writeFileSync(file, next)
+  writeFileSync(file, appendLesson(content, heading, `- **${lesson.title}** : ${lesson.text}`))
   try {
     execFileSync("git", ["add", "studio/playbook/lessons.md"], { cwd: REPO })
     execFileSync(
