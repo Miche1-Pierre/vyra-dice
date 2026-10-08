@@ -8,11 +8,12 @@ export default defineConfig({
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
       "@clubs": fileURLToPath(new URL("./clubs", import.meta.url)),
+      "@studio": fileURLToPath(new URL("./studio", import.meta.url)),
     },
   },
   test: {
     environment: "node",
-    include: ["src/**/*.test.{ts,tsx}", "clubs/**/*.test.ts"],
+    include: ["src/**/*.test.{ts,tsx}", "clubs/**/*.test.ts", "studio/**/*.test.ts"],
     passWithNoTests: true,
   },
 })
