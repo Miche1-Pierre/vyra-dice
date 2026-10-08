@@ -41,8 +41,8 @@ async function auto(ctx: RunContext): Promise<void> {
   const base = ctx.options
   for (const [step, options] of GENERATION) {
     const state = clubState(ctx.slug).steps.find((s) => s.id === step)?.state
-    if (state === "done") {
-      ctx.log(`— ${step} : déjà fait`)
+    if (state === "done" || state === "skipped") {
+      ctx.log(`— ${step} : ${state === "done" ? "déjà fait" : "sans objet"}`)
       continue
     }
     ctx.update({ current: step, options: { ...base, ...options } })

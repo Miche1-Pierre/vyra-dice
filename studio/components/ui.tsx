@@ -1,4 +1,4 @@
-import { AlertTriangle, Check, Circle, Loader2, RotateCcw, X } from "lucide-react"
+import { AlertTriangle, Check, Circle, Loader2, Minus, RotateCcw, X } from "lucide-react"
 import type { ReactNode } from "react"
 
 import { cn } from "@/lib/utils"
@@ -24,6 +24,7 @@ export const STATE_STYLE: Record<StepState, { label: string; tone: string }> = {
   done: { label: "Fait", tone: "text-ok" },
   stale: { label: "À refaire", tone: "text-wait" },
   failed: { label: "Échec", tone: "text-[#ff6961]" },
+  skipped: { label: "Sans objet", tone: "text-label-3" },
 }
 
 export function StateIcon({ state, className }: { state: StepState; className?: string }) {
@@ -44,6 +45,7 @@ export function StateIcon({ state, className }: { state: StepState; className?: 
   }
   if (state === "stale") return <RotateCcw className={base} aria-label="À refaire" />
   if (state === "failed") return <AlertTriangle className={base} aria-label="Échec" />
+  if (state === "skipped") return <Minus className={base} aria-label="Sans objet" />
   return <Circle className={base} strokeWidth={1.6} aria-label="À faire" />
 }
 

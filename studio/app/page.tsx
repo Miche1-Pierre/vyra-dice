@@ -87,7 +87,9 @@ export default function ClubsPage() {
                                   ? "h-1 flex-1 rounded-full bg-[#ff6961]"
                                   : s.state === "stale"
                                     ? "bg-wait/70 h-1 flex-1 rounded-full"
-                                    : "h-1 flex-1 rounded-full bg-white/[0.1]"
+                                    : s.state === "skipped"
+                                      ? "h-1 flex-1 rounded-full bg-white/[0.04]"
+                                      : "h-1 flex-1 rounded-full bg-white/[0.1]"
                           }
                         />
                       ))}
