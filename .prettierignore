@@ -8,3 +8,5 @@ clubs/*/public
 clubs/*/build
 # Venue plans are hand-aligned (one table per line, coordinates in columns)
 clubs/*/layout.json
+# VYRA Studio histories: records written by the Studio and the agent, not hand-edited sources
+clubs/*/studio

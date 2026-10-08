@@ -4,6 +4,7 @@ import path from "node:path"
 import { briefSchema, type Brief } from "@studio/lib/brief"
 import { listRuns, type RunStatus, type StepId } from "@studio/lib/jobs"
 import { CLUBS_DIR, clubPaths, REPO, SLUG } from "@studio/lib/paths"
+import { registrationOf } from "@studio/lib/registry-file"
 import { validateClub, type Validation } from "@studio/lib/validate"
 
 /*
@@ -42,6 +43,15 @@ export function readBrief(slug: string): Brief | null {
   if (!existsSync(file)) return null
   const parsed = briefSchema.safeParse(JSON.parse(readFileSync(file, "utf8")))
   return parsed.success ? parsed.data : null
+}
+
+/** Where the club stands in clubs/registry.ts (null when the file cannot be read as expected). */
+function safeRegistration(slug: string): ReturnType<typeof registrationOf> {
+  try {
+    return registrationOf(slug)
+  } catch {
+    return null
+  }
 }
 
 export function isRegistered(slug: string): boolean {
@@ -88,7 +98,16 @@ export function clubState(
     ? readdirSync(path.join(p.studio, "reviews"))
     : []
   const captures = existsSync(p.captures) ? readdirSync(p.captures) : []
-  const published = readJson<{ prUrl?: string; at?: string }>(p.publish)
+  // shared = the last publish run that pushed; published = in the clubs of the live site
+  const shared = runs.find(
+    (r) =>
+      r.step === "publish" && r.state === "done" && !(r.result as { dryRun?: boolean })?.dryRun,
+  )
+  const liveClub = safeRegistration(slug) === "published"
+  // something ran since the last share: there is new history to share
+  const unshared =
+    !!shared?.endedAt &&
+    runs.some((r) => r.step !== "publish" && (r.endedAt ?? "") > shared.endedAt!)
   const lessons = readJson<{ proposals?: unknown[] }>(p.lessons)
 
   const view = (
@@ -195,7 +214,19 @@ export function clubState(
           : undefined,
       mtime(p.lessons),
     ),
-    view("publish", "Publication", published ? "done" : "todo", published?.prUrl, mtime(p.publish)),
+    view(
+      "publish",
+      "Partage et mise en ligne",
+      shared || liveClub ? (unshared ? "stale" : "done") : "todo",
+      unshared
+        ? "nouveautés à partager"
+        : liveClub
+          ? "en ligne"
+          : shared
+            ? "brouillon partagé"
+            : undefined,
+      shared?.endedAt ? Date.parse(shared.endedAt) : undefined,
+    ),
   ]
   const thumb = path.join(p.previews, "overview.png")
   return {

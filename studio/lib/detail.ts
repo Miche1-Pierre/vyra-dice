@@ -69,9 +69,12 @@ export function clubDetail(slug: string, runId?: string) {
     feedback: readFeedback(slug).items,
     evals: readEvals(slug),
     lessons: readLessons(slug)?.proposals ?? [],
-    published: existsSync(p.publish)
-      ? (JSON.parse(readFileSync(p.publish, "utf8")) as { prUrl?: string; branch?: string })
-      : null,
+    // the pull request of the last share
+    sharedPr:
+      (
+        runs.find((r) => r.step === "publish" && r.state === "done")?.result as
+          { prUrl?: string } | undefined
+      )?.prUrl ?? null,
   }
 }
 
