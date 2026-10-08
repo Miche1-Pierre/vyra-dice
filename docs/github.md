@@ -6,12 +6,12 @@ Repo : https://github.com/Miche1-Pierre/vyra-dice · Linear : https://linear.app
 
 | Domaine (label Linear)    | Responsable       | Où ça vit dans le repo                           |
 | ------------------------- | ----------------- | ------------------------------------------------ |
-| Dev                       | Pierre            | `src/`, `scripts/`, `art/`, `.github/`           |
+| Dev                       | Pierre            | `src/`, `clubs/`, `scripts/`, `art/`, `.github/` |
 | Data / analytics          | Pierre            | `src/lib/analytics/`, `docs/analytics.md`        |
 | Vente                     | Jonathan          | `docs/sales/`                                    |
 | Audit                     | Jonathan          | `docs/audit/`                                    |
-| Produit / design          | Pierre + Jonathan | `docs/`, `src/content/` (offres, textes, médias) |
-| Implémentation / adoption | Pierre + Jonathan | `docs/clubs/<slug>.md` (onboarding par club)     |
+| Produit / design          | Pierre + Jonathan | `docs/`, `clubs/` (offres, textes, médias)       |
+| Implémentation / adoption | Pierre + Jonathan | `clubs/<slug>/README.md` (fiche par club)        |
 | Opérations / support      | Pierre + Jonathan | `docs/ops/` (runbooks, contact de secours)       |
 
 `CODEOWNERS` reflète ce tableau : une PR qui touche `docs/sales/` demande la review de Jonathan, `src/` celle de Pierre.
@@ -56,4 +56,4 @@ Jamais commités (`.env*` ignoré). Liste des variables : `.env.example`. Prod/p
 
 ## Assets 3D
 
-Sources (`art/**/*.blend`, textures, HDRI) en **Git LFS**. Les GLB optimisés servis au navigateur (`public/models/`) sont commités normalement. Voir `docs/3d-pipeline.md`.
+Sources (`art/**/*.blend`, textures, HDRI) en **Git LFS**. Les GLB optimisés servis au navigateur (`clubs/<club>/public/`) sont commités normalement. Voir `docs/3d-pipeline.md`.

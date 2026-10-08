@@ -34,23 +34,27 @@ Règles non négociables (issues du cadrage) :
 ## Arborescence
 
 ```
-art/
-  layouts/<club>.json                # plan en mètres : zones, tables, escaliers… (source de vérité géométrique)
-  scripts/                           # vyra3d.py (toolkit), build_<club>.py, bake_export.py — voir 3d-pipeline.md
-  ref/<club>/                        # croquis (versionné) + photos de référence (locales, non versionnées)
-public/models/<club>/                # bundle web : <club>.glb, lm/*.webp, lightmaps.json
+clubs/
+  registry.ts                        # les clubs servis : le seul endroit où enregistrer un club
+  <club>/                            # tout ce qui est propre au club — voir clubs.md
+    content.json · layout.json       # offres de la soirée · plan en mètres (source de vérité géométrique)
+    brand.json · ambiance.json       # identité dans l'interface · ambiance 3D (light show, reflets, finitions)
+    public/                          # bundle web : <club>.glb, lm/*.webp, lightmaps.json (servi sous /clubs/<club>/)
+    blender/ · reference/            # construction Blender · croquis ; build/ et private/ restent locaux
+art/scripts/                         # outils 3D communs : vyra3d.py, bake_export.py — voir 3d-pipeline.md
+scripts/                             # optimize-glb.mjs (bundle web), sync-club-assets.mjs (→ public/clubs/)
 src/
   app/
     page.tsx                         # landing VYRA (pitch promoteurs)
-    [club]/[event]/page.tsx          # expérience publique (RSC : charge le contenu du club)
+    [club]/[event]/page.tsx          # expérience publique (RSC : charge le club, pose son thème sur :root)
     [club]/[event]/actions.ts        # Server Action submitBookingRequest : valider, limiter, enregistrer
   components/
     ui/                              # shadcn (base-ui) — ne pas éditer à la main sauf thème
     scene/                           # R3F : modèle + lightmaps, FX, caméra, zones, halos, marqueurs, effets
     experience/                      # UI : sidebar, barre, fiche table, formulaire, accusé, comparatif, liste
     analytics/                       # provider PostHog + bandeau de consentement
-  content/clubs/<club>.ts            # contenu commercial typé (prix, capacités, statuts) — démo pour Naho
   lib/
+    clubs/                           # définition d'un club (defineClub), registre, marque, ambiance, assets
     schema.ts                        # zod : club, événement, zones, tables, demande, résultat d'envoi
     store.ts                         # zustand : vue (intro/ensemble/zone/table/assis), sélection, panneaux
     venue/                           # layout.ts (géométrie typée), camera.ts (cadrages), offers.ts, tiers.ts
@@ -61,22 +65,23 @@ src/
 ## Modèle de données (POC)
 
 ```
-Layout (art/layouts)  zones { id, tier: lounge|vip|prestige, level: 0|1, rect }
+Layout (layout.json)  zones { id, tier: lounge|vip|prestige, level: 0|1, rect }
                       tables { id, zone, kind, x, y, facing }        ← géométrie, partagée Blender / web
-Content (src/content) club { slug, name, address, requestPrefix, contact, demo, disclaimer }
+Content (content.json) club { slug, name, address, requestPrefix, contact, demo, disclaimer }
                       event { slug, name, date, doors, ticketUrl?, offersValidatedAt | null }
                       zones { id, tier, name, shortName, description, perks[] }
                       tables { id, label, zoneId, capacity {min,max}, minimumSpend | null,
                                status: available|on_request|sold, perks[], view }
 BookingRequest        { clubSlug, eventSlug, tableId, fullName, phone, email?, partySize,
                         arrivalTime, message?, consent, idempotencyKey, attribution? }
-                      → requestId lisible (ex. NHO-7K2QX), statut "received", transmission "not_sent_demo"
+                      → requestId lisible (ex. NHO-7K2QX pour le Naho), statut "received", transmission "not_sent_demo"
 ```
 
 `status` des tables = déclaratif (saisi par le club), jamais un stock temps réel. `offersValidatedAt: null`
 signifie « non validé par le club » : l'interface affiche alors la mention démo.
 
-`status` des tables = déclaratif (saisi par le club), jamais un stock temps réel (hors MVP).
+Un club = un dossier `clubs/<club>/` ; `defineClub` valide ses fichiers et recoupe contenu et plan, des tests de
+contrat tournent sur chaque club enregistré. Le code commun ne nomme aucun club (`docs/clubs.md`).
 
 ## Flux d'une demande
 
