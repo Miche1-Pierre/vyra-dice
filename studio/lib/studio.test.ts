@@ -1,0 +1,55 @@
+import { readFileSync } from "node:fs"
+import { describe, expect, it } from "vitest"
+
+import { slugify } from "@studio/lib/brief"
+import { safeFileName } from "@studio/lib/clubs"
+import { clubPaths, insideClub } from "@studio/lib/paths"
+import { identifierOf, registerClub } from "@studio/lib/registry-file"
+
+describe("slugify", () => {
+  it("makes URL and folder names from club names", () => {
+    expect(slugify("809 Social Club")).toBe("809-social-club")
+    expect(slugify("Le Café Électrique !")).toBe("le-cafe-electrique")
+    expect(slugify("  NAHO  ")).toBe("naho")
+  })
+})
+
+describe("club paths", () => {
+  it("refuses slugs that are not slugs", () => {
+    expect(() => clubPaths("../etc")).toThrow()
+    expect(() => clubPaths("Naho")).toThrow()
+  })
+
+  it("keeps file access inside the club folder", () => {
+    expect(insideClub("naho", "build/previews/top.png")).toMatch(
+      /clubs[\\/]naho[\\/]build[\\/]previews[\\/]top\.png$/,
+    )
+    expect(() => insideClub("naho", "../registry.ts")).toThrow(/Outside/)
+    expect(() => insideClub("naho", "../../package.json")).toThrow(/Outside/)
+  })
+})
+
+describe("safeFileName", () => {
+  it("keeps uploads to plain names", () => {
+    expect(safeFileName("../../Photo bar été.JPG")).toBe("Photo-bar-ete.JPG")
+    expect(safeFileName("C:\\Users\\x\\plan (1).pdf")).toBe("plan-1-.pdf")
+  })
+})
+
+describe("registerClub", () => {
+  const registry = readFileSync("clubs/registry.ts", "utf8")
+
+  it("names the import after the slug", () => {
+    expect(identifierOf("naho")).toBe("naho")
+    expect(identifierOf("lumen-club")).toBe("lumenClub")
+    expect(identifierOf("809-social-club")).toBe("club809SocialClub")
+  })
+
+  it("adds one import and one entry, in slug order, and only once", () => {
+    const once = registerClub("809-social-club", registry)
+    expect(once).toContain(`import club809SocialClub from "./809-social-club"`)
+    expect(once.indexOf("./809-social-club")).toBeLessThan(once.indexOf("./naho"))
+    expect(once).toMatch(/= \[[^\]]*club809SocialClub\]/)
+    expect(registerClub("809-social-club", once)).toBe(once)
+  })
+})
