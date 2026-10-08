@@ -1,0 +1,239 @@
+{
+  "$comment": "Lumen Club (Toulon) — club FICTIF créé pour tester VYRA Studio. Tables, prix et statuts imaginés (données de démo) : ne jamais les présenter comme des offres réelles. Les ids de zones et de tables sont ceux de layout.json.",
+  "club": {
+    "slug": "lumen-club",
+    "name": "Lumen Club",
+    "city": "Toulon",
+    "address": "Toulon",
+    "requestPrefix": "LMN",
+    "contact": {},
+    "demo": true,
+    "disclaimer": "Démo — club fictif : plan, tables et prix imaginés pour illustrer VYRA."
+  },
+  "event": {
+    "slug": "samedi-soir",
+    "name": "Samedi soir",
+    "date": "2026-10-10",
+    "doors": "23:30",
+    "offersValidatedAt": null
+  },
+  "zones": [
+    {
+      "id": "lounge-quai",
+      "tier": "lounge",
+      "name": "Lounge Quai",
+      "shortName": "Quai",
+      "description": "Banquettes contre la brique, face au bar et à la piste.",
+      "perks": ["Service à table", "Softs et glaçons inclus"],
+      "icon": "martini"
+    },
+    {
+      "id": "lounge-arcades",
+      "tier": "lounge",
+      "name": "Les Arcades",
+      "shortName": "Arcades",
+      "description": "Alcôves feutrées sous la mezzanine, vue sur la piste.",
+      "perks": ["Service à table", "Softs et glaçons inclus"],
+      "icon": "sofa"
+    },
+    {
+      "id": "vip-coursive",
+      "tier": "vip",
+      "name": "La Coursive",
+      "shortName": "Coursive",
+      "description": "Le long du garde-corps, à hauteur des globes ambrés.",
+      "perks": ["Service à table dédié", "Softs et glaçons inclus", "Accès coupe-file"],
+      "icon": "disc"
+    },
+    {
+      "id": "vip-babord",
+      "tier": "vip",
+      "name": "Bâbord",
+      "shortName": "Bâbord",
+      "description": "En tribune côté ouest, face à la scène et au mur d'écrans.",
+      "perks": ["Service à table dédié", "Softs et glaçons inclus", "Accès coupe-file"],
+      "icon": "sunrise"
+    },
+    {
+      "id": "vip-tribord",
+      "tier": "vip",
+      "name": "Tribord",
+      "shortName": "Tribord",
+      "description": "En tribune côté est, face à la scène, près du bar de la mezzanine.",
+      "perks": ["Service à table dédié", "Softs et glaçons inclus", "Accès coupe-file"],
+      "icon": "gem"
+    },
+    {
+      "id": "prestige-phare",
+      "tier": "prestige",
+      "name": "Le Phare",
+      "shortName": "Phare",
+      "description": "La loge dans l'axe de la scène, toute la nef à ses pieds, avec hôte dédié.",
+      "perks": [
+        "Hôte dédié",
+        "Accès coupe-file",
+        "Softs, glaçons et finger food inclus",
+        "Show bouteille"
+      ],
+      "icon": "crown"
+    }
+  ],
+  "tables": [
+    {
+      "id": "l1",
+      "label": "L1",
+      "zoneId": "lounge-quai",
+      "capacity": { "min": 4, "max": 6 },
+      "minimumSpend": 350,
+      "status": "available",
+      "perks": [],
+      "view": "Face au bar et à la pluie de LED"
+    },
+    {
+      "id": "l2",
+      "label": "L2",
+      "zoneId": "lounge-quai",
+      "capacity": { "min": 4, "max": 6 },
+      "minimumSpend": 350,
+      "status": "sold",
+      "perks": [],
+      "view": "Face au bar, à deux pas de la piste"
+    },
+    {
+      "id": "l3",
+      "label": "L3",
+      "zoneId": "lounge-quai",
+      "capacity": { "min": 4, "max": 6 },
+      "minimumSpend": 400,
+      "status": "available",
+      "perks": [],
+      "view": "Bord de piste, face aux globes"
+    },
+    {
+      "id": "l4",
+      "label": "L4",
+      "zoneId": "lounge-quai",
+      "capacity": { "min": 4, "max": 6 },
+      "minimumSpend": 450,
+      "status": "available",
+      "perks": [],
+      "view": "Au pied de la scène, côté est"
+    },
+    {
+      "id": "l5",
+      "label": "L5",
+      "zoneId": "lounge-arcades",
+      "capacity": { "min": 4, "max": 6 },
+      "minimumSpend": 300,
+      "status": "available",
+      "perks": [],
+      "view": "Sous la mezzanine, près de l'entrée"
+    },
+    {
+      "id": "l6",
+      "label": "L6",
+      "zoneId": "lounge-arcades",
+      "capacity": { "min": 4, "max": 6 },
+      "minimumSpend": 350,
+      "status": "available",
+      "perks": [],
+      "view": "Alcôve feutrée, face au bar"
+    },
+    {
+      "id": "l7",
+      "label": "L7",
+      "zoneId": "lounge-arcades",
+      "capacity": { "min": 4, "max": 6 },
+      "minimumSpend": 400,
+      "status": "available",
+      "perks": [],
+      "view": "Alcôve face à la piste"
+    },
+    {
+      "id": "l8",
+      "label": "L8",
+      "zoneId": "lounge-arcades",
+      "capacity": { "min": 4, "max": 6 },
+      "minimumSpend": 450,
+      "status": "available",
+      "perks": [],
+      "view": "En bord de piste, près de la scène"
+    },
+    {
+      "id": "v1",
+      "label": "V1",
+      "zoneId": "vip-coursive",
+      "capacity": { "min": 6, "max": 8 },
+      "minimumSpend": 650,
+      "status": "available",
+      "perks": [],
+      "view": "Côté tribune, vue sur le bar et la pluie de LED"
+    },
+    {
+      "id": "v2",
+      "label": "V2",
+      "zoneId": "vip-coursive",
+      "capacity": { "min": 6, "max": 8 },
+      "minimumSpend": 700,
+      "status": "available",
+      "perks": [],
+      "view": "Au-dessus des Arcades, face au bar"
+    },
+    {
+      "id": "v3",
+      "label": "V3",
+      "zoneId": "vip-coursive",
+      "capacity": { "min": 6, "max": 8 },
+      "minimumSpend": 800,
+      "status": "sold",
+      "perks": [],
+      "view": "Au-dessus de la piste, à hauteur des globes"
+    },
+    {
+      "id": "v4",
+      "label": "V4",
+      "zoneId": "vip-coursive",
+      "capacity": { "min": 6, "max": 8 },
+      "minimumSpend": 850,
+      "status": "available",
+      "perks": [],
+      "view": "Au plus près de la scène et du DJ"
+    },
+    {
+      "id": "v5",
+      "label": "V5",
+      "zoneId": "vip-babord",
+      "capacity": { "min": 6, "max": 8 },
+      "minimumSpend": 750,
+      "status": "available",
+      "perks": [],
+      "view": "Face à la scène, vue sur toute la nef"
+    },
+    {
+      "id": "v6",
+      "label": "V6",
+      "zoneId": "vip-tribord",
+      "capacity": { "min": 6, "max": 8 },
+      "minimumSpend": 900,
+      "status": "on_request",
+      "perks": [],
+      "view": "Face à la scène, à deux pas du bar de la mezzanine"
+    },
+    {
+      "id": "p1",
+      "label": "P1",
+      "zoneId": "prestige-phare",
+      "capacity": { "min": 10, "max": 15 },
+      "minimumSpend": 2500,
+      "status": "on_request",
+      "perks": [],
+      "view": "Dans l'axe de la scène, face au mur d'écrans"
+    }
+  ],
+  "conditions": [
+    "Le minimum de consommation s'entend par table, sur la carte bouteilles.",
+    "La table n'est réservée qu'après confirmation par le club.",
+    "Arrivée avant 01h00 ; au-delà, la table peut être réattribuée.",
+    "Tenue correcte exigée, 18 ans minimum."
+  ]
+}

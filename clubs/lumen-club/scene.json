@@ -1,0 +1,759 @@
+{
+  "$comment": "Scène Blender du Lumen Club (fictif), lue par art/scripts/build_club.py avec layout.json : entrepôt portuaire en brique sombre, charpente métallique apparente, bar laiton et marbre vert, globes ambrés sur la piste, pluie de LED bleu pétrole au-dessus du bar, mur d'écrans derrière le DJ. Couleurs et matières supposées d'après le brief. Dégagement des caméras du site (src/lib/venue/camera.ts) : fermes de charpente seulement au-dessus de la tribune sud et de la scène, plus deux longerons le long des murs (aucune ferme au-dessus de la nef entre y = -7 et y = 7,6) ; barre de lyres à y ≥ 5 et x ≥ -3,8 ; globes jamais à x < 1,4 au sud de y = 6,8, ni à x < -1,8.",
+  "version": 1,
+  "fonts": {
+    "medium": "jost-latin-500-normal.woff2",
+    "bold": "jost-latin-600-normal.woff2"
+  },
+  "logo": {
+    "$comment": "LUMEN en capitales fines comme dans l'interface (brand.json) — grille 78 × 20, y vers le bas ; l'arc du U en polyligne.",
+    "capHeight": 16,
+    "center": [38.75, 10],
+    "strokes": [
+      [
+        [1.5, 2],
+        [1.5, 18],
+        [11, 18]
+      ],
+      [
+        [16, 2],
+        [16, 13],
+        [16.381, 14.913],
+        [17.464, 16.536],
+        [19.087, 17.619],
+        [21, 18],
+        [22.913, 17.619],
+        [24.536, 16.536],
+        [25.619, 14.913],
+        [26, 13],
+        [26, 2]
+      ],
+      [
+        [31, 18],
+        [31, 2],
+        [38, 13],
+        [45, 2],
+        [45, 18]
+      ],
+      [
+        [59, 2],
+        [50, 2],
+        [50, 18],
+        [59, 18]
+      ],
+      [
+        [50, 10],
+        [57.5, 10]
+      ],
+      [
+        [64, 18],
+        [64, 2],
+        [76, 18],
+        [76, 2]
+      ]
+    ]
+  },
+  "materials": {
+    "concrete": {
+      "name": "lumen_club_concrete",
+      "texture": {
+        "kind": "concrete",
+        "size": 1024
+      },
+      "roughness": 0.5,
+      "uvScale": 3.0
+    },
+    "wood": {
+      "name": "lumen_club_wood",
+      "texture": {
+        "kind": "wood",
+        "size": 1024
+      },
+      "roughness": 0.5,
+      "uvScale": 2.4
+    },
+    "foliage": {
+      "name": "lumen_club_foliage",
+      "texture": {
+        "kind": "foliage",
+        "size": 512
+      },
+      "roughness": 0.9,
+      "uvScale": 2.0
+    },
+    "brick": {
+      "name": "lumen_club_brick",
+      "color": "#4a2b23",
+      "roughness": 0.9
+    },
+    "ceiling": {
+      "name": "lumen_club_ceiling",
+      "color": "#0c0b0b",
+      "roughness": 0.95
+    },
+    "fascia": {
+      "name": "lumen_club_fascia",
+      "color": "#121214",
+      "roughness": 0.5
+    },
+    "black": {
+      "name": "lumen_club_black",
+      "color": "#151517",
+      "roughness": 0.45,
+      "metallic": 0.6
+    },
+    "brass": {
+      "name": "lumen_club_brass",
+      "color": "#b8925a",
+      "roughness": 0.32,
+      "metallic": 0.9
+    },
+    "marble": {
+      "name": "lumen_club_marble",
+      "color": "#1e4a3c",
+      "roughness": 0.2
+    },
+    "tabletop": {
+      "name": "lumen_club_tabletop",
+      "color": "#151618",
+      "roughness": 0.22
+    },
+    "glass": {
+      "name": "lumen_club_glass",
+      "color": "#a9c4c8",
+      "roughness": 0.05,
+      "alpha": 0.14
+    },
+    "leather": {
+      "name": "lumen_club_leather",
+      "color": "#1a1614",
+      "roughness": 0.5
+    },
+    "velvet_lounge": {
+      "name": "lumen_club_velvet_lounge",
+      "color": "#1f4a36",
+      "roughness": 0.9
+    },
+    "velvet_vip": {
+      "name": "lumen_club_velvet_vip",
+      "color": "#143d52",
+      "roughness": 0.9
+    },
+    "velvet_prestige": {
+      "name": "lumen_club_velvet_prestige",
+      "color": "#5a2418",
+      "roughness": 0.85
+    },
+    "led_amber": {
+      "name": "lumen_club_led_amber",
+      "color": "#ffa548",
+      "emission": "#ffa548",
+      "strength": 8.0
+    },
+    "led_petrol": {
+      "name": "lumen_club_led_petrol",
+      "color": "#0b8796",
+      "emission": "#0b8796",
+      "strength": 6.0
+    },
+    "led_white": {
+      "name": "lumen_club_led_white",
+      "color": "#fff1df",
+      "emission": "#fff1df",
+      "strength": 8.0
+    },
+    "screen": {
+      "name": "lumen_club_screen",
+      "color": "#ff9a3c",
+      "emission": "#ff9a3c",
+      "strength": 3.0
+    },
+    "sphere_amber": {
+      "name": "lumen_club_sphere_amber",
+      "color": "#ff9a3a",
+      "emission": "#ff9a3a",
+      "strength": 2.6
+    },
+    "sphere_honey": {
+      "name": "lumen_club_sphere_honey",
+      "color": "#ff8326",
+      "emission": "#ff8326",
+      "strength": 2.6
+    },
+    "sphere_warm": {
+      "name": "lumen_club_sphere_warm",
+      "color": "#ffc48a",
+      "emission": "#ffc48a",
+      "strength": 2.4
+    },
+    "neon_white": {
+      "name": "lumen_club_neon_white",
+      "color": "#ffffff",
+      "emission": "#ffffff",
+      "strength": 10.0
+    },
+    "neon_amber": {
+      "name": "lumen_club_neon_amber",
+      "color": "#ffc27a",
+      "emission": "#ffc27a",
+      "strength": 10.0
+    },
+    "neon_brass": {
+      "name": "lumen_club_neon_brass",
+      "color": "#d9b26a",
+      "emission": "#d9b26a",
+      "strength": 1.2
+    },
+    "bottle_amber": {
+      "name": "lumen_club_bottle_amber",
+      "color": "#b8682a",
+      "emission": "#c8742a",
+      "strength": 0.55
+    },
+    "bottle_green": {
+      "name": "lumen_club_bottle_green",
+      "color": "#3c6e3a",
+      "emission": "#3f7a3a",
+      "strength": 0.45
+    },
+    "bottle_clear": {
+      "name": "lumen_club_bottle_clear",
+      "color": "#9fb2c6",
+      "emission": "#b8c8d8",
+      "strength": 0.5
+    },
+    "lamp": {
+      "name": "lumen_club_lamp",
+      "color": "#ffcf96",
+      "emission": "#ffcf96",
+      "strength": 10.0
+    },
+    "glow": {
+      "name": "lumen_club_glow",
+      "color": "#ffb26a",
+      "emission": "#ffb26a",
+      "strength": 3.0
+    },
+    "lens": {
+      "name": "lumen_club_lens",
+      "color": "#ffffff",
+      "emission": "#ffffff",
+      "strength": 4.0
+    }
+  },
+  "elements": [
+    {
+      "type": "mesh",
+      "object": "ground_floor",
+      "lightmap": 2048,
+      "ops": [
+        ["floor", "gx0", "gx1", "gy0", "gy1", 0.0, "concrete"],
+        ["floor", "entrance_x0", "entrance_x1", "entrance_y - 0.3", "entrance_y", 0.0, "concrete"]
+      ]
+    },
+    {
+      "type": "mesh",
+      "object": "wall_west",
+      "lightmap": 2048,
+      "ops": [
+        ["wall_x", "minX", "minY", "mezzanine_ouest_y1", 0, "under", "brick", 1],
+        ["wall_x", "minX", "minY", "mezzanine_ouest_y1", "mz", "ceil", "brick", 1],
+        ["wall_x", "minX", "mezzanine_ouest_y1", "maxY", 0, "ceil", "brick", 1]
+      ]
+    },
+    {
+      "type": "mesh",
+      "object": "wall_east",
+      "lightmap": 2048,
+      "ops": [
+        ["wall_x", "maxX", "minY", "mezzanine_palier_est_y1", 0, "under", "brick", -1],
+        ["wall_x", "maxX", "minY", "mezzanine_palier_est_y1", "mz", "ceil", "brick", -1],
+        ["wall_x", "maxX", "mezzanine_palier_est_y1", "maxY", 0, "ceil", "brick", -1]
+      ]
+    },
+    {
+      "type": "mesh",
+      "object": "wall_north",
+      "lightmap": 1024,
+      "ops": [["wall_y", "maxY", "minX", "maxX", 0, "ceil", "brick", -1]]
+    },
+    {
+      "type": "mesh",
+      "object": "wall_south",
+      "lightmap": 1024,
+      "ops": [
+        ["wall_y", "entrance_y", "minX", "entrance_x0", 0, "under", "brick", 1],
+        ["wall_y", "entrance_y", "entrance_x1", "maxX", 0, "under", "brick", 1],
+        ["wall_y", "entrance_y", "entrance_x0", "entrance_x1", 2.7, "under", "brick", 1],
+        ["wall_y", "minY", "minX", "maxX", "mz", "ceil", "brick", 1],
+        ["wall_x", "entrance_x0", "entrance_y - 0.3", "entrance_y", 0, 2.7, "brick", 1],
+        ["wall_x", "entrance_x1", "entrance_y - 0.3", "entrance_y", 0, 2.7, "brick", -1],
+        [
+          "floor",
+          "entrance_x0",
+          "entrance_x1",
+          "entrance_y - 0.3",
+          "entrance_y",
+          2.7,
+          "brick",
+          {
+            "up": false
+          }
+        ]
+      ]
+    },
+    {
+      "type": "mesh",
+      "object": "fx_entrance",
+      "collection": "FX",
+      "ops": [["wall_y", "entrance_y - 0.29", "entrance_x0", "entrance_x1", 0, 2.7, "glow", 1]]
+    },
+    {
+      "type": "mesh",
+      "object": "ceiling",
+      "lightmap": 1024,
+      "ops": [
+        [
+          "floor",
+          "minX",
+          "maxX",
+          "minY",
+          "maxY",
+          "ceil",
+          "ceiling",
+          {
+            "up": false
+          }
+        ]
+      ]
+    },
+    {
+      "type": "mezzanine",
+      "object": "lvl1_slabs",
+      "lightmap": 2048,
+      "top": "wood",
+      "bottom": "fascia",
+      "edge": "fascia",
+      "led": "led_amber"
+    },
+    {
+      "type": "railings",
+      "object": "lvl1_railing",
+      "metal": "black",
+      "glass": "glass"
+    },
+    {
+      "type": "columns",
+      "object": "columns",
+      "material": "black",
+      "half": 0.15,
+      "lightmap": 512
+    },
+    {
+      "type": "stairs",
+      "object": "stairs",
+      "material": "concrete",
+      "lightmap": 1024,
+      "led": {
+        "stairs-est": "led_petrol"
+      },
+      "rail": {
+        "metal": "black",
+        "glass": "glass",
+        "into": "rig",
+        "glassInto": "glass"
+      }
+    },
+    {
+      "type": "bar",
+      "object": "bar",
+      "lightmap": 1024,
+      "seed": 3,
+      "materials": {
+        "base": "black",
+        "body": "brass",
+        "top": "marble",
+        "shelf": "led_amber",
+        "glowTop": "led_amber",
+        "glowKick": "led_petrol"
+      },
+      "emblems": null,
+      "bottles": ["bottle_amber", "bottle_green", "bottle_clear"]
+    },
+    {
+      "type": "stage",
+      "object": "stage",
+      "lightmap": 1024,
+      "materials": {
+        "deck": "fascia",
+        "booth": "black",
+        "top": "brass",
+        "boothLed": "led_petrol",
+        "edgeLed": "led_amber",
+        "screen": "screen"
+      },
+      "gear": {
+        "x0": -0.95,
+        "step": 0.48,
+        "widths": [0.33, 0.33, 0.42, 0.33, 0.33]
+      }
+    },
+    {
+      "type": "mesh",
+      "object": "wc",
+      "lightmap": 512,
+      "ops": [
+        [
+          "box",
+          "wc_x0",
+          "wc_x1",
+          "wc_y0",
+          "wc_y1",
+          0,
+          2.9,
+          "fascia",
+          {
+            "skip": ["-z", "-x", "-y"]
+          }
+        ]
+      ]
+    },
+    {
+      "type": "text",
+      "text": "WC",
+      "material": "neon_white",
+      "size": 0.3,
+      "extrude": 0.01,
+      "font": "medium",
+      "at": ["(wc_x0 + wc_x1) / 2", "wc_y1 + 0.02", 2.35],
+      "x": [-1, 0, 0],
+      "y": [0, 0, 1]
+    },
+    {
+      "type": "text",
+      "text": "ENTRÉE",
+      "material": "neon_white",
+      "size": 0.22,
+      "extrude": 0.01,
+      "font": "medium",
+      "spacing": 1.2,
+      "at": ["(entrance_x0 + entrance_x1) / 2", "entrance_y + 0.02", 2.95],
+      "x": [-1, 0, 0],
+      "y": [0, 0, 1]
+    },
+    {
+      "type": "trusses",
+      "material": "black",
+      "size": 0.45,
+      "segments": [
+        [
+          ["minX + 0.15", -10.0, "ceil - 0.35"],
+          ["maxX - 0.15", -10.0, "ceil - 0.35"]
+        ],
+        [
+          ["minX + 0.15", -7.6, "ceil - 0.35"],
+          ["maxX - 0.15", -7.6, "ceil - 0.35"]
+        ],
+        [
+          ["minX + 0.15", 8.6, "ceil - 0.35"],
+          ["maxX - 0.15", 8.6, "ceil - 0.35"]
+        ],
+        [
+          ["minX + 0.15", 10.8, "ceil - 0.35"],
+          ["maxX - 0.15", 10.8, "ceil - 0.35"]
+        ],
+        [
+          ["minX + 0.15", "minY + 0.15", "ceil - 0.35"],
+          ["minX + 0.15", "maxY - 0.15", "ceil - 0.35"]
+        ],
+        [
+          ["maxX - 0.15", "minY + 0.15", "ceil - 0.35"],
+          ["maxX - 0.15", "maxY - 0.15", "ceil - 0.35"]
+        ]
+      ]
+    },
+    {
+      "type": "trusses",
+      "material": "black",
+      "segments": [
+        [
+          [-3.8, 5.0, 7.2],
+          [5.4, 5.0, 7.2]
+        ],
+        [
+          [-3.8, 8.6, 7.2],
+          [5.4, 8.6, 7.2]
+        ],
+        [
+          [-3.8, 5.0, 7.2],
+          [-3.8, 8.6, 7.2]
+        ],
+        [
+          [5.4, 5.0, 7.2],
+          [5.4, 8.6, 7.2]
+        ]
+      ]
+    },
+    {
+      "type": "ledRainFrame",
+      "material": "black",
+      "size": 0.2,
+      "lift": 0.18
+    },
+    {
+      "type": "movingHeads",
+      "material": "black",
+      "lens": "lens"
+    },
+    {
+      "type": "speakers",
+      "material": "black",
+      "items": [
+        {
+          "x": -6.0,
+          "y": 9.6
+        },
+        {
+          "x": 6.0,
+          "y": 9.6
+        }
+      ],
+      "top": 7.2,
+      "count": 7,
+      "step": 0.31,
+      "tilt": 2.5,
+      "hang": 7.35
+    },
+    {
+      "type": "booths",
+      "materials": {
+        "plinth": "leather",
+        "velvet_lounge": "velvet_lounge",
+        "velvet_vip": "velvet_vip",
+        "velvet_prestige": "velvet_prestige",
+        "frame": "black",
+        "trim": "brass",
+        "top": "tabletop",
+        "lamp": "lamp",
+        "bottleGreen": "bottle_green",
+        "bottleClear": "bottle_clear",
+        "glass": "glass"
+      }
+    },
+    {
+      "type": "backBar",
+      "wallY": "minY",
+      "seed": 99,
+      "materials": {
+        "body": "fascia",
+        "top": "marble",
+        "shelf": "led_amber"
+      },
+      "bottles": ["bottle_amber", "bottle_green", "bottle_clear"]
+    },
+    {
+      "type": "decor",
+      "tableSeed": 200,
+      "plantSeed": 300,
+      "materials": {
+        "frame": "black",
+        "trim": "brass",
+        "top": "marble",
+        "seat": "leather",
+        "foliage": "foliage"
+      }
+    },
+    {
+      "type": "ledRain",
+      "material": "led_petrol",
+      "seed": 7,
+      "tube": 0.017
+    },
+    {
+      "type": "globes",
+      "seed": 17,
+      "materials": ["sphere_amber", "sphere_honey", "sphere_warm"],
+      "weights": [0.5, 0.25, 0.25],
+      "wire": "black",
+      "items": [
+        [1.6, 3.6, 6.2, 0.36],
+        [2.4, 4.6, 5.6, 0.42],
+        [3.4, 3.8, 6.4, 0.38],
+        [4.0, 3.4, 5.5, 0.36],
+        [4.2, 4.6, 5.8, 0.44],
+        [1.8, 5.8, 5.7, 0.4],
+        [3.2, 5.9, 6.0, 0.46],
+        [4.6, 6.4, 6.5, 0.34],
+        [2.2, 6.6, 6.6, 0.34],
+        [4.9, 5.4, 5.6, 0.36],
+        [-1.6, 7.2, 6.1, 0.4],
+        [-0.6, 8.2, 5.6, 0.42],
+        [0.2, 7.0, 6.5, 0.36],
+        [1.2, 7.8, 5.8, 0.44],
+        [-1.4, 8.6, 6.7, 0.32],
+        [2.8, 7.4, 5.5, 0.4],
+        [3.6, 8.4, 6.3, 0.36],
+        [4.4, 7.6, 5.7, 0.42],
+        [1.8, 8.6, 6.6, 0.34],
+        [-0.7, 7.5, 6.8, 0.3]
+      ]
+    },
+    {
+      "type": "logo",
+      "object": "fx_sign_wall_e",
+      "collection": "FX",
+      "material": "neon_amber",
+      "height": 1.3,
+      "tube": 0.03,
+      "at": ["minX + 0.06", 0.0, 6.0],
+      "x": [0, 1, 0],
+      "y": [0, 0, 1]
+    },
+    {
+      "type": "logo",
+      "material": "neon_brass",
+      "height": 0.16,
+      "tube": 0.0045,
+      "at": [-3.96, -3.6, "mz + 0.55"],
+      "x": [0, 1, 0],
+      "y": [0, 0, 1]
+    },
+    {
+      "type": "logo",
+      "material": "neon_brass",
+      "height": 0.16,
+      "tube": 0.0045,
+      "at": [-3.96, -0.2, "mz + 0.55"],
+      "x": [0, 1, 0],
+      "y": [0, 0, 1]
+    },
+    {
+      "type": "logo",
+      "material": "neon_brass",
+      "height": 0.16,
+      "tube": 0.0045,
+      "at": [-3.96, 3.2, "mz + 0.55"],
+      "x": [0, 1, 0],
+      "y": [0, 0, 1]
+    },
+    {
+      "type": "logo",
+      "material": "neon_brass",
+      "height": 0.16,
+      "tube": 0.0045,
+      "at": [-2.6, -7.16, "mz + 0.55"],
+      "x": [-1, 0, 0],
+      "y": [0, 0, 1]
+    },
+    {
+      "type": "logo",
+      "material": "neon_brass",
+      "height": 0.16,
+      "tube": 0.0045,
+      "at": [2.6, -7.16, "mz + 0.55"],
+      "x": [-1, 0, 0],
+      "y": [0, 0, 1]
+    }
+  ],
+  "lights": {
+    "lamps": {
+      "energy": 18.0,
+      "color": [1.0, 0.64, 0.36],
+      "radius": 0.08
+    },
+    "pins": {
+      "energy": 26.0,
+      "color": [1.0, 0.82, 0.62],
+      "size": 34,
+      "blend": 0.55
+    },
+    "spots": [
+      {
+        "name": "dl_arcades",
+        "values": [-6.4, -3.3, 0.1, 3.5, 6.5],
+        "at": [-7.4, "v", "under - 0.05"],
+        "target": [-7.7, "v", 0],
+        "energy": 150.0,
+        "color": [1.0, 0.62, 0.34],
+        "size": 85
+      },
+      {
+        "name": "dl_entree",
+        "values": [-3.4, 0.0, 3.4, 6.0],
+        "at": ["v", -9.4, "under - 0.05"],
+        "target": ["v", -9.4, 0],
+        "energy": 110.0,
+        "color": [1.0, 0.64, 0.36],
+        "size": 85
+      },
+      {
+        "name": "up_east",
+        "count": 6,
+        "at": [7.85, "-4.2 + 2.6 * i", 1.0],
+        "target": [7.98, "-4.2 + 2.6 * i", 7.6],
+        "energy": 360.0,
+        "color": [1.0, 0.58, 0.3],
+        "size": 52,
+        "blend": 0.75
+      },
+      {
+        "name": "up_west",
+        "count": 5,
+        "at": [-7.85, "-5.6 + 2.6 * i", "mz + 0.1"],
+        "target": [-7.98, "-5.6 + 2.6 * i", "ceil"],
+        "energy": 300.0,
+        "color": [1.0, 0.55, 0.28],
+        "size": 52,
+        "blend": 0.75
+      },
+      {
+        "name": "wash",
+        "values": [-3.6, 0.0, 3.6],
+        "at": ["v", 8.6, 7.0],
+        "target": ["v * 0.3", 10.8, 1.6],
+        "energy": 420.0,
+        "color": [1.0, 0.58, 0.24],
+        "size": 38,
+        "blend": 0.4
+      }
+    ],
+    "areas": [
+      {
+        "name": "fill_nef",
+        "values": [
+          [-1.2, 5.6],
+          [3.6, 5.6]
+        ],
+        "at": ["v0", "v1", "ceil - 0.3"],
+        "energy": 1200.0,
+        "color": [1.0, 0.6, 0.28],
+        "size": 4.5
+      },
+      {
+        "name": "fill_bar",
+        "values": [[2.0, -0.5]],
+        "at": ["v0", "v1", "ceil - 0.3"],
+        "energy": 1300.0,
+        "color": [0.18, 0.72, 0.85],
+        "size": 5.0
+      },
+      {
+        "name": "fill_mezz",
+        "values": [
+          [-6.0, -3.0],
+          [-6.0, 3.0],
+          [-4.6, -9.2],
+          [0.0, -10.8],
+          [4.6, -9.2]
+        ],
+        "at": ["v0", "v1", "ceil - 0.3"],
+        "energy": 800.0,
+        "color": [1.0, 0.6, 0.4],
+        "size": 4.0
+      }
+    ]
+  },
+  "world": {
+    "color": [0.004, 0.0035, 0.004]
+  }
+}

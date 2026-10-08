@@ -1,0 +1,109 @@
+{
+  "$comment": "Ambiance 3D du Lumen Club (fictif) : globes ambrés sur la piste (light show ambre / blanc chaud / laiton / bleu pétrole), lyres ambre et pétrole, pluie de LED bleu pétrole au-dessus du bar, mur d'écrans ambre → cyan derrière le DJ, panneaux lumineux des reflets (espace three.js, y vers le haut, mètres) et finition de chaque matière Blender. Couleurs supposées d'après le brief.",
+  "show": {
+    "bpm": 122,
+    "palette": [
+      [1, 0.62, 0.22],
+      [1, 0.86, 0.66],
+      [0.9, 0.66, 0.32],
+      [0.04, 0.55, 0.62],
+      [0.3, 0.85, 1]
+    ]
+  },
+  "beams": {
+    "palettes": [
+      ["#ffb347", "#12a3b4"],
+      ["#fff1dc", "#4fd8ff"],
+      ["#ffc27a", "#ffffff"],
+      ["#12a3b4", "#ffd9a0"]
+    ]
+  },
+  "ledRain": {
+    "colors": ["#13a5b4", "#0a5d6a"],
+    "intensity": 2.0
+  },
+  "screen": {
+    "low": [1, 0.5, 0.12],
+    "high": [0.12, 0.8, 0.95],
+    "backdrop": [
+      [0.03, 0.1, 0.12],
+      [0.18, 0.08, 0.02]
+    ]
+  },
+  "environment": {
+    "background": "#050405",
+    "lightformers": [
+      {
+        "label": "Globes ambrés au-dessus de la piste",
+        "form": "rect",
+        "color": "#ffb05a",
+        "intensity": 2.8,
+        "position": [1.6, 6.2, -6],
+        "scale": [7.5, 6, 1]
+      },
+      {
+        "label": "Pluie de LED bleu pétrole au-dessus du bar",
+        "form": "rect",
+        "color": "#0b8796",
+        "intensity": 2.6,
+        "position": [2, 6.5, 0.5],
+        "scale": [4.5, 7, 1]
+      },
+      {
+        "label": "Mur d'écrans derrière le DJ",
+        "form": "rect",
+        "color": "#ff9a3c",
+        "intensity": 1.6,
+        "position": [0, 2.9, -12],
+        "scale": [12, 4, 1]
+      },
+      {
+        "label": "Lavage chaud, brique ouest",
+        "form": "rect",
+        "color": "#ff9a52",
+        "intensity": 1.2,
+        "position": [-12, 5, 0],
+        "scale": [24, 5, 1]
+      },
+      {
+        "label": "Lavage chaud, brique est",
+        "form": "rect",
+        "color": "#ffae6a",
+        "intensity": 1.0,
+        "position": [12, 4, 0],
+        "scale": [24, 5, 1]
+      },
+      {
+        "label": "Barre de lyres devant la scène",
+        "form": "rect",
+        "color": "#fff1dc",
+        "intensity": 2.2,
+        "position": [0.8, 7.2, -8.6],
+        "scale": [9.2, 0.5, 1]
+      },
+      {
+        "label": "Rebond sombre du sol (les métaux ne virent jamais au noir)",
+        "form": "rect",
+        "color": "#1e1612",
+        "intensity": 0.6,
+        "position": [0, -6, 0],
+        "scale": [40, 40, 1]
+      }
+    ]
+  },
+  "finishes": {
+    "lumen_club_concrete": "concrete",
+    "lumen_club_wood": "lacquered-wood",
+    "lumen_club_foliage": "foliage",
+    "lumen_club_brick": { "preset": "concrete", "roughness": 0.9 },
+    "lumen_club_black": "brushed-metal",
+    "lumen_club_brass": "brushed-gold",
+    "lumen_club_marble": "marble",
+    "lumen_club_tabletop": "marble",
+    "lumen_club_leather": "leather",
+    "lumen_club_velvet_lounge": "velvet",
+    "lumen_club_velvet_vip": "velvet",
+    "lumen_club_velvet_prestige": "velvet",
+    "lumen_club_glass": "glass"
+  }
+}

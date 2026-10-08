@@ -1,0 +1,52 @@
+{
+  "id": "20261008133302-auto",
+  "step": "auto",
+  "state": "done",
+  "options": {},
+  "createdAt": "2026-10-08T13:33:02.891Z",
+  "phases": [
+    {
+      "name": "Bake des lightmaps (final)",
+      "startedAt": "2026-10-08T13:33:06.686Z",
+      "endedAt": "2026-10-08T13:38:14.577Z",
+      "ok": true
+    },
+    {
+      "name": "Optimisation web",
+      "startedAt": "2026-10-08T13:38:14.579Z",
+      "endedAt": "2026-10-08T13:38:27.251Z",
+      "ok": true
+    },
+    {
+      "name": "Enregistrement dans clubs/registry.ts",
+      "startedAt": "2026-10-08T13:38:27.290Z",
+      "endedAt": "2026-10-08T13:38:27.294Z",
+      "ok": true
+    },
+    {
+      "name": "Tests de contrat (tous les clubs)",
+      "startedAt": "2026-10-08T13:38:27.295Z",
+      "endedAt": "2026-10-08T13:38:37.891Z",
+      "ok": true
+    },
+    {
+      "name": "Viewer local",
+      "startedAt": "2026-10-08T13:38:37.892Z",
+      "endedAt": "2026-10-08T13:38:38.220Z",
+      "ok": true
+    },
+    {
+      "name": "Captures",
+      "startedAt": "2026-10-08T13:38:38.225Z",
+      "endedAt": "2026-10-08T13:39:10.148Z",
+      "ok": true
+    }
+  ],
+  "pid": 64060,
+  "startedAt": "2026-10-08T13:33:06.516Z",
+  "result": {
+    "quality": "final",
+    "viewer": "http://localhost:3100/lumen-club/samedi-soir"
+  },
+  "endedAt": "2026-10-08T13:39:10.171Z"
+}

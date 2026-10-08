@@ -1,0 +1,105 @@
+{
+  "id": "20261008130341-auto",
+  "step": "auto",
+  "state": "failed",
+  "options": {},
+  "createdAt": "2026-10-08T13:03:41.145Z",
+  "phases": [
+    {
+      "name": "Vérification de la spécification",
+      "startedAt": "2026-10-08T13:03:44.205Z",
+      "endedAt": "2026-10-08T13:03:44.212Z",
+      "ok": true
+    },
+    {
+      "name": "Construction Blender et aperçus",
+      "startedAt": "2026-10-08T13:03:44.214Z",
+      "endedAt": "2026-10-08T13:04:11.043Z",
+      "ok": true
+    },
+    {
+      "name": "Revue des rendus 1/1",
+      "startedAt": "2026-10-08T13:04:11.075Z",
+      "endedAt": "2026-10-08T13:07:58.854Z",
+      "ok": true
+    },
+    {
+      "name": "Validation et corrections",
+      "startedAt": "2026-10-08T13:07:58.858Z",
+      "endedAt": "2026-10-08T13:08:06.497Z",
+      "ok": true
+    },
+    {
+      "name": "Construction d'essai",
+      "startedAt": "2026-10-08T13:07:58.865Z",
+      "endedAt": "2026-10-08T13:08:06.496Z",
+      "ok": true
+    },
+    {
+      "name": "Vérification de la spécification",
+      "startedAt": "2026-10-08T13:08:06.498Z",
+      "endedAt": "2026-10-08T13:08:06.507Z",
+      "ok": true
+    },
+    {
+      "name": "Construction Blender et aperçus",
+      "startedAt": "2026-10-08T13:08:06.508Z",
+      "endedAt": "2026-10-08T13:08:37.835Z",
+      "ok": true
+    },
+    {
+      "name": "Bake des lightmaps (final)",
+      "startedAt": "2026-10-08T13:08:37.853Z",
+      "endedAt": "2026-10-08T13:14:03.948Z",
+      "ok": true
+    },
+    {
+      "name": "Optimisation web",
+      "startedAt": "2026-10-08T13:14:03.949Z",
+      "endedAt": "2026-10-08T13:14:14.950Z",
+      "ok": true
+    },
+    {
+      "name": "Enregistrement dans clubs/registry.ts",
+      "startedAt": "2026-10-08T13:14:14.975Z",
+      "endedAt": "2026-10-08T13:14:14.984Z",
+      "ok": true
+    },
+    {
+      "name": "Tests de contrat (tous les clubs)",
+      "startedAt": "2026-10-08T13:14:14.986Z",
+      "endedAt": "2026-10-08T13:14:24.653Z",
+      "ok": true
+    },
+    {
+      "name": "Viewer local",
+      "startedAt": "2026-10-08T13:14:24.654Z",
+      "endedAt": "2026-10-08T13:14:24.930Z",
+      "ok": true
+    },
+    {
+      "name": "Captures",
+      "startedAt": "2026-10-08T13:14:24.932Z",
+      "endedAt": "2026-10-08T13:14:25.772Z",
+      "ok": false
+    }
+  ],
+  "pid": 48392,
+  "startedAt": "2026-10-08T13:03:44.050Z",
+  "current": "preview",
+  "result": {
+    "objects": 28,
+    "triangles": 53444,
+    "lights": 62,
+    "agentRuns": 1,
+    "turns": 35,
+    "costUsd": 1.06,
+    "sessions": [
+      "b7a1e3a6-e643-4af6-8cf8-5a6802757ff1"
+    ],
+    "quality": "final",
+    "viewer": "http://localhost:3100/lumen-club/samedi-soir"
+  },
+  "endedAt": "2026-10-08T13:14:25.773Z",
+  "error": "{\"code\":-32602,\"message\":\"Touch points must be between 1 and 16\"}"
+}

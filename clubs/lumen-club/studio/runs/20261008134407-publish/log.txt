@@ -1,0 +1,21 @@
+[15:44:10] Étape « publish » — lumen-club
+[15:44:10] ▶ Branche depuis origin/feat/VYR-58-club-folders
+[15:44:11]   From https://github.com/Miche1-Pierre/vyra-dice
+[15:44:11]    * branch            feat/VYR-58-club-folders -> FETCH_HEAD
+[15:44:12]   Preparing worktree (resetting branch 'feat/club-lumen-club'; was at a26299b)
+[15:44:12]   HEAD is now at e48e14d docs(clubs): before/after captures of the Naho demo
+[15:44:14] ✔ Branche depuis origin/feat/VYR-58-club-folders (3.9 s)
+[15:44:14] ▶ Dossier du club, registre et captures
+[15:44:16]   ~/AppData/Local/Temp/vyra-publish/lumen-club/clubs/lumen-club/content.json 46ms (unchanged)
+[15:44:16]   ~/AppData/Local/Temp/vyra-publish/lumen-club/clubs/lumen-club/layout.json 25ms
+[15:44:16]   ~/AppData/Local/Temp/vyra-publish/lumen-club/clubs/lumen-club/brand.json 3ms (unchanged)
+[15:44:16]   ~/AppData/Local/Temp/vyra-publish/lumen-club/clubs/lumen-club/ambiance.json 8ms (unchanged)
+[15:44:16]   ~/AppData/Local/Temp/vyra-publish/lumen-club/clubs/lumen-club/index.ts 148ms (unchanged)
+[15:44:16]   ~/AppData/Local/Temp/vyra-publish/lumen-club/clubs/lumen-club/README.md 88ms
+[15:44:16]   ~/AppData/Local/Temp/vyra-publish/lumen-club/clubs/lumen-club/public/lightmaps.json 7ms (unchanged)
+[15:44:16]   ~/AppData/Local/Temp/vyra-publish/lumen-club/clubs/registry.ts 17ms (unchanged)
+[15:44:17] ✔ Dossier du club, registre et captures (2.6 s)
+[15:44:17] ▶ Commit
+[15:44:19] ✔ Commit (2.6 s)
+[15:44:19] Essai à blanc : branche feat/club-lumen-club (depuis origin/feat/VYR-58-club-folders) prête dans ~\AppData\Local\Temp\vyra-publish\lumen-club, rien n'a été poussé.
+[15:44:19] Terminé.

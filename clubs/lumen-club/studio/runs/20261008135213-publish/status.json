@@ -1,0 +1,39 @@
+{
+  "id": "20261008135213-publish",
+  "step": "publish",
+  "state": "done",
+  "options": {
+    "dryRun": true,
+    "base": "feat/VYR-58-club-folders"
+  },
+  "createdAt": "2026-10-08T13:52:13.519Z",
+  "phases": [
+    {
+      "name": "Branche depuis origin/feat/VYR-58-club-folders",
+      "startedAt": "2026-10-08T13:52:16.808Z",
+      "endedAt": "2026-10-08T13:52:20.297Z",
+      "ok": true
+    },
+    {
+      "name": "Dossier du club, registre et captures",
+      "startedAt": "2026-10-08T13:52:20.298Z",
+      "endedAt": "2026-10-08T13:52:22.452Z",
+      "ok": true
+    },
+    {
+      "name": "Commit",
+      "startedAt": "2026-10-08T13:52:22.454Z",
+      "endedAt": "2026-10-08T13:52:24.548Z",
+      "ok": true
+    }
+  ],
+  "pid": 54692,
+  "startedAt": "2026-10-08T13:52:16.728Z",
+  "result": {
+    "branch": "feat/club-lumen-club",
+    "base": "feat/VYR-58-club-folders",
+    "dryRun": true,
+    "worktree": "~\\AppData\\Local\\Temp\\vyra-publish\\lumen-club"
+  },
+  "endedAt": "2026-10-08T13:52:24.552Z"
+}

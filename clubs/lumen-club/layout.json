@@ -1,0 +1,106 @@
+{
+  "$comment": "Lumen Club (Toulon) — club FICTIF, plan imaginé d'après le brief (nef ~16 × 24 m, 8 m sous plafond). Plan tourné de 180° par rapport au brief : la brique « stage » de build_club.py ne pose la scène que contre un mur nord, d'où scène au nord, mezzanine en L sud + ouest, loge au sud face à la scène. Le Lounge Quai commence à y = -2,85 : plus au sud, l'escalier masque la vue de table du site (camera.ts). Toutes les cotes sont des SUPPOSITIONS. Unités : mètres. Axes Blender : x = est, y = nord, z = haut (glTF/three : X = x, Y = z, Z = -y).",
+  "club": "lumen-club",
+  "version": 1,
+  "heights": {
+    "mezzanine": 3.6,
+    "slab": 0.4,
+    "ceiling": 8.0,
+    "railing": 1.05,
+    "stage": 0.9
+  },
+  "building": { "minX": -8.0, "maxX": 8.0, "minY": -12.0, "maxY": 12.0, "wall": 0.3 },
+  "groundFloor": { "x": [-8.0, 8.0], "y": [-12.0, 12.0] },
+  "furniture": {
+    "lounge": { "width": 2.7, "depth": 1.9, "seatDepth": 0.62 },
+    "vip": { "width": 3.1, "depth": 2.1, "seatDepth": 0.65 },
+    "prestige": { "width": 4.4, "depth": 2.7, "seatDepth": 0.7 }
+  },
+  "movingHeads": [
+    [-2.6, 8.6, 6.9], [0.0, 8.6, 6.9], [2.6, 8.6, 6.9], [5.0, 8.6, 6.9],
+    [-3.8, 6.0, 6.9], [-3.8, 7.6, 6.9], [5.4, 6.0, 6.9], [5.4, 7.6, 6.9],
+    [0.0, 5.0, 6.9], [2.6, 5.0, 6.9]
+  ],
+  "void": [
+    { "id": "nef", "x": [-4.0, 6.6], "y": [-7.2, 12.0] },
+    { "id": "nef-est", "x": [6.6, 8.0], "y": [-5.1, 12.0] },
+    { "id": "scene-ouest", "x": [-8.0, -4.0], "y": [7.0, 12.0] }
+  ],
+  "mezzanine": [
+    { "id": "sud", "x": [-8.0, 8.0], "y": [-12.0, -7.2] },
+    { "id": "ouest", "x": [-8.0, -4.0], "y": [-7.2, 7.0] },
+    { "id": "palier-est", "x": [6.6, 8.0], "y": [-7.2, -5.1] }
+  ],
+  "railings": [
+    { "from": [-4.0, -7.2], "to": [6.6, -7.2] },
+    { "from": [6.6, -7.2], "to": [6.6, -6.9] },
+    { "from": [6.6, -5.1], "to": [8.0, -5.1] },
+    { "from": [-4.0, -7.2], "to": [-4.0, 7.0] },
+    { "from": [-8.0, 7.0], "to": [-4.0, 7.0] }
+  ],
+  "columns": [
+    [-4.0, -7.2], [0.0, -7.2], [4.0, -7.2],
+    [-4.0, -3.6], [-4.0, 0.0], [-4.0, 3.6], [-4.0, 7.0],
+    [7.0, -5.3]
+  ],
+  "stairs": [
+    { "id": "stairs-est", "x": [1.8, 6.6], "y": [-6.9, -5.1], "bottom": "west", "steps": 20 }
+  ],
+  "bar": { "x": [0.2, 3.8], "y": [-3.5, 2.5], "height": 1.12, "chamfer": 0.8 },
+  "stage": { "x": [-5.0, 5.0], "y": [9.0, 12.0] },
+  "dj": { "x": [-1.6, 1.6], "y": [9.5, 10.4] },
+  "screen": { "x": [-6.0, 6.0], "z": [0.9, 4.9] },
+  "wc": { "x": [-8.0, -5.4], "y": [-12.0, -9.6] },
+  "entrance": { "x": [-1.4, 1.4], "y": -12.0 },
+  "ledRain": { "x": [-0.2, 4.2], "y": [-3.9, 2.9], "z": 7.0, "spacing": 0.36, "length": [0.8, 1.8] },
+  "decor": {
+    "vipBar": { "x": [3.4, 7.0], "y": [-11.6, -10.9], "level": 1 },
+    "highTables": [
+      { "x": -3.4, "y": -9.4, "level": 0 },
+      { "x": 3.4, "y": -9.4, "level": 0 },
+      { "x": 6.0, "y": -9.8, "level": 0 },
+      { "x": -6.6, "y": -10.9, "level": 1 }
+    ],
+    "plants": [
+      { "x": -7.5, "y": -7.0, "level": 0 },
+      { "x": 7.4, "y": 9.8, "level": 0 },
+      { "x": -3.0, "y": -11.4, "level": 1 },
+      { "x": -7.5, "y": 6.4, "level": 1 }
+    ]
+  },
+  "zones": [
+    { "id": "lounge-quai", "tier": "lounge", "level": 0, "x": [5.6, 8.0], "y": [-2.9, 9.0] },
+    { "id": "lounge-arcades", "tier": "lounge", "level": 0, "x": [-8.0, -5.6], "y": [-6.6, 6.8] },
+    { "id": "vip-coursive", "tier": "vip", "level": 1, "x": [-8.0, -4.0], "y": [-7.0, 7.0] },
+    { "id": "vip-babord", "tier": "vip", "level": 1, "x": [-6.4, -2.8], "y": [-10.0, -7.2] },
+    { "id": "vip-tribord", "tier": "vip", "level": 1, "x": [2.8, 6.4], "y": [-10.0, -7.2] },
+    { "id": "prestige-phare", "tier": "prestige", "level": 1, "x": [-2.6, 2.6], "y": [-11.0, -7.2] }
+  ],
+  "tables": [
+    { "id": "l1", "zone": "lounge-quai", "kind": "lounge", "x": 6.8, "y": -1.4, "facing": 180 },
+    { "id": "l2", "zone": "lounge-quai", "kind": "lounge", "x": 6.8, "y": 1.6, "facing": 180 },
+    { "id": "l3", "zone": "lounge-quai", "kind": "lounge", "x": 6.8, "y": 4.6, "facing": 180 },
+    { "id": "l4", "zone": "lounge-quai", "kind": "lounge", "x": 6.8, "y": 7.6, "facing": 180 },
+    { "id": "l5", "zone": "lounge-arcades", "kind": "lounge", "x": -6.8, "y": -5.0, "facing": 0 },
+    { "id": "l6", "zone": "lounge-arcades", "kind": "lounge", "x": -6.8, "y": -1.6, "facing": 0 },
+    { "id": "l7", "zone": "lounge-arcades", "kind": "lounge", "x": -6.8, "y": 1.8, "facing": 0 },
+    { "id": "l8", "zone": "lounge-arcades", "kind": "lounge", "x": -6.8, "y": 5.2, "facing": 0 },
+    { "id": "v1", "zone": "vip-coursive", "kind": "vip", "x": -5.5, "y": -5.3, "facing": 0 },
+    { "id": "v2", "zone": "vip-coursive", "kind": "vip", "x": -5.5, "y": -1.9, "facing": 0 },
+    { "id": "v3", "zone": "vip-coursive", "kind": "vip", "x": -5.5, "y": 1.5, "facing": 0 },
+    { "id": "v4", "zone": "vip-coursive", "kind": "vip", "x": -5.5, "y": 4.9, "facing": 0 },
+    { "id": "v5", "zone": "vip-babord", "kind": "vip", "x": -4.6, "y": -8.6, "facing": 90 },
+    { "id": "v6", "zone": "vip-tribord", "kind": "vip", "x": 4.6, "y": -8.6, "facing": 90 },
+    { "id": "p1", "zone": "prestige-phare", "kind": "prestige", "x": 0.0, "y": -9.4, "facing": 90 }
+  ],
+  "cameras": {
+    "overview": { "position": [15.0, -26.0, 22.0], "target": [0.5, -0.5, 1.5] },
+    "intro": [
+      { "position": [30.0, -48.0, 40.0], "target": [0.5, -0.5, 0.0] },
+      { "position": [8.0, -22.0, 12.0], "target": [1.0, -2.0, 3.0] },
+      { "position": [2.0, -6.0, 5.0], "target": [1.0, 6.0, 4.5] },
+      { "position": [5.0, 1.0, 3.6], "target": [0.0, 10.0, 2.6] },
+      { "position": [15.0, -26.0, 22.0], "target": [0.5, -0.5, 1.5] }
+    ]
+  }
+}

@@ -1,0 +1,12 @@
+[15:51:21] Étape « publish » — lumen-club
+[15:51:21] ▶ Branche depuis origin/feat/VYR-58-club-folders
+[15:51:22]   From https://github.com/Miche1-Pierre/vyra-dice
+[15:51:22]    * branch            feat/VYR-58-club-folders -> FETCH_HEAD
+[15:51:22]   error: branch 'feat/club-lumen-club' not found
+[15:51:23]   Preparing worktree (new branch 'feat/club-lumen-club')
+[15:51:23]   HEAD is now at e48e14d docs(clubs): before/after captures of the Naho demo
+[15:51:25] ✔ Branche depuis origin/feat/VYR-58-club-folders (3.3 s)
+[15:51:25] ▶ Dossier du club, registre et captures
+[15:51:26]   [error] Cannot find package 'prettier-plugin-tailwindcss' imported from ~\AppData\Local\Temp\vyra-publish\lumen-club\noop.js
+[15:51:26] ✖ Dossier du club, registre et captures (1.2 s)
+[15:51:26] Échec : node.exe a échoué (code 1)

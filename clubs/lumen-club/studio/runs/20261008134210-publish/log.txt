@@ -1,0 +1,14 @@
+[15:42:14] Étape « publish » — lumen-club
+[15:42:14] ▶ Branche depuis origin/feat/VYR-58-club-folders
+[15:42:15]   From https://github.com/Miche1-Pierre/vyra-dice
+[15:42:15]    * branch            feat/VYR-58-club-folders -> FETCH_HEAD
+[15:42:15]   Preparing worktree (new branch 'feat/club-lumen-club')
+[15:42:16]   branch 'feat/club-lumen-club' set up to track 'origin/feat/VYR-58-club-folders'.
+[15:42:16]   HEAD is now at e48e14d docs(clubs): before/after captures of the Naho demo
+[15:42:18] ✔ Branche depuis origin/feat/VYR-58-club-folders (3.9 s)
+[15:42:18] ▶ Dossier du club, registre et captures
+[15:42:19] ✔ Dossier du club, registre et captures (0.8 s)
+[15:42:19] ▶ Commit
+[15:42:21] ✔ Commit (2.7 s)
+[15:42:21] Essai à blanc : branche feat/club-lumen-club (depuis origin/feat/VYR-58-club-folders) prête dans ~\AppData\Local\Temp\vyra-publish\lumen-club, rien n'a été poussé.
+[15:42:21] Terminé.

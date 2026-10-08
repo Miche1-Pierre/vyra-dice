@@ -1,0 +1,34 @@
+{
+  "issues": [
+    "Pluie de LED rendue presque blanche (cyan clair), loin du bleu pétrole du brief.",
+    "Globes blanc rosé en vue d'ensemble et de dessus : l'ambre signature ne se lit pas.",
+    "Logos laiton du garde-corps centrés pile devant V1–V4, P1 et V6 : ils masquent la table vue depuis la nef (rendu V2).",
+    "Plateaux de table en marbre vert identiques au velours vert des lounges : la table se confond avec la banquette (L1, L4, L7).",
+    "Brique très sombre (#3b231d) : mur ouest noir en vue d'ensemble, l'enseigne LUMEN semble flotter dans le vide.",
+    "Lounges des Arcades sous la mezzanine (L7) nettement plus sombres que ceux du Quai.",
+    "Mur de scène surexposé (wash de scène trop fort), il écrase le mur d'écrans."
+  ],
+  "changes": [
+    "scene.json : led_petrol plus profond (#0b8796) et moins intense (12 → 6) ; ambiance.json : couleurs et intensité de la pluie et de son panneau de reflet alignées.",
+    "scene.json : globes plus saturés (ambre, miel, chaud) et émission 4 → 2,4–2,6.",
+    "scene.json : logos du garde-corps déplacés entre les tables (coursive y = -3,6 / -0,2 / 3,2 ; tribune sud x = ±2,6), un logo en moins.",
+    "scene.json : nouvelle matière lumen_club_tabletop (marbre noir) pour les tables des banquettes ; finition « marble » dans ambiance.json.",
+    "scene.json : brique éclaircie à #4a2b23 (valeur de la note de recherche).",
+    "scene.json : downlights des Arcades 110 → 150 W.",
+    "scene.json : wash de scène 600 → 420 W.",
+    "layout.json et content.json inchangés : aucune table ne bouge, pas de collision relevée au contrôle des gabarits."
+  ],
+  "feedbackAddressed": [],
+  "remaining": [
+    "Panneau lumineux de l'entrée visible de dos depuis l'extérieur (rectangle blanc en vue d'ensemble) ; même schéma que le Naho, à trancher par l'équipe.",
+    "Description de la zone Tribord (« au-dessus de la pluie de LED ») inexacte : V6 est en tribune sud, loin de la pluie ; à reformuler.",
+    "Plan tourné de 180° par rapport au brief (scène au nord) à cause de la brique stage : à confirmer, ou ajouter une option d'orientation à la brique.",
+    "Vérifier sur le prochain rendu que le mur ouest et l'enseigne LUMEN se lisent en vue d'ensemble.",
+    "Toutes les cotes, couleurs et prix restent des suppositions de démo (club fictif)."
+  ],
+  "rebuilt": {
+    "objects": 28,
+    "triangles": 53444,
+    "at": "2026-10-08T13:08:37.500Z"
+  }
+}
