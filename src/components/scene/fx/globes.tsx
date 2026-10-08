@@ -5,6 +5,7 @@ import { useMemo } from "react"
 import * as THREE from "three"
 
 import { createSphereGlowMaterial } from "@/components/scene/fx/materials"
+import type { LightShow } from "@/lib/clubs/ambiance"
 
 export interface Globe {
   center: THREE.Vector3
@@ -45,7 +46,15 @@ export function extractGlobes(meshes: THREE.Mesh[]): Globe[] {
 }
 
 /** Instanced, camera-facing halos that follow the light show colour of each globe. */
-export function GlobeGlow({ globes, intensity = 1 }: { globes: Globe[]; intensity?: number }) {
+export function GlobeGlow({
+  globes,
+  show,
+  intensity = 1,
+}: {
+  globes: Globe[]
+  show: LightShow
+  intensity?: number
+}) {
   const { geometry, material } = useMemo(() => {
     const quad = new THREE.PlaneGeometry(1, 1)
     const g = new THREE.InstancedBufferGeometry()
@@ -68,10 +77,10 @@ export function GlobeGlow({ globes, intensity = 1 }: { globes: Globe[]; intensit
       new THREE.InstancedBufferAttribute(new Float32Array(globes.map((b) => b.phase)), 1),
     )
     g.instanceCount = globes.length
-    const m = createSphereGlowMaterial()
+    const m = createSphereGlowMaterial(show)
     m.uniforms.uIntensity.value *= intensity
     return { geometry: g, material: m }
-  }, [globes, intensity])
+  }, [globes, show, intensity])
 
   useFrame((state) => {
     material.uniforms.uTime.value = state.clock.elapsedTime

@@ -240,6 +240,7 @@ export function Experience({ club }: { club: ClubDefinition }) {
             <VenueCanvas
               club={club.slug}
               assets={club.assets}
+              ambiance={club.ambiance}
               layout={layout}
               zoneMarkers={vm.zoneMarkers}
               tableMarkers={vm.tableMarkers}

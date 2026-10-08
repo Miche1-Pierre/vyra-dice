@@ -5,18 +5,23 @@ import { useMemo, useRef } from "react"
 import * as THREE from "three"
 
 import { createBeamMaterial } from "@/components/scene/fx/materials"
+import type { ClubAmbiance } from "@/lib/clubs/ambiance"
 import { toThree, type VenueLayout } from "@/lib/venue/layout"
 
-const PALETTES = [
-  ["#ffb347", "#ffd9a0"],
-  ["#ff3d9a", "#ffffff"],
-  ["#7a5cff", "#3fd0ff"],
-  ["#ffffff", "#ff3d9a"],
-]
 const LENGTH = 9.5
+/** Seconds each colour pair of the club stays on. */
+const PALETTE_SECONDS = 9
 
 /** Animated moving-head beams, fired from the fixtures modelled on the trusses. */
-export function Beams({ layout, intensity = 1 }: { layout: VenueLayout; intensity?: number }) {
+export function Beams({
+  layout,
+  palettes,
+  intensity = 1,
+}: {
+  layout: VenueLayout
+  palettes: ClubAmbiance["beams"]["palettes"]
+  intensity?: number
+}) {
   const heads = useMemo(() => {
     const target = toThree([
       (layout.bar.x[0] + layout.bar.x[1]) / 2,
@@ -42,7 +47,7 @@ export function Beams({ layout, intensity = 1 }: { layout: VenueLayout; intensit
 
   useFrame((state) => {
     const t = state.clock.elapsedTime
-    const palette = PALETTES[Math.floor(t / 9) % PALETTES.length]
+    const palette = palettes[Math.floor(t / PALETTE_SECONDS) % palettes.length]
     heads.forEach((h, i) => {
       const g = groups.current[i]
       if (!g) return

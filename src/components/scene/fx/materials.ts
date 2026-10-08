@@ -1,6 +1,10 @@
 import * as THREE from "three"
 
-import { SHOW_GLSL } from "@/components/scene/fx/show"
+import { showGlsl } from "@/components/scene/fx/show"
+import type { ClubAmbiance, LightShow } from "@/lib/clubs/ambiance"
+
+type LedRainColors = NonNullable<ClubAmbiance["ledRain"]>
+type ScreenColors = NonNullable<ClubAmbiance["screen"]>
 
 /**
  * Animated materials for the venue FX meshes exported from Blender.
@@ -47,14 +51,14 @@ export type ZoneMaterial = ShaderWith<{
   uSize: THREE.Vector2
 }>
 
-/** LED tubes: meteors falling down each tube with a soft trail. */
-export function createLedRainMaterial(): TimedMaterial {
+/** LED tubes: meteors falling down each tube with a soft trail, blending the club's two colours. */
+export function createLedRainMaterial({ colors, intensity }: LedRainColors): TimedMaterial {
   return new THREE.ShaderMaterial({
     uniforms: {
       uTime: { value: 0 },
-      uColorA: { value: new THREE.Color("#ff2f92") },
-      uColorB: { value: new THREE.Color("#a33dff") },
-      uIntensity: { value: 2.4 },
+      uColorA: { value: new THREE.Color(colors[0]) },
+      uColorB: { value: new THREE.Color(colors[1]) },
+      uIntensity: { value: intensity },
     },
     vertexShader: /* glsl */ `
       attribute vec2 aData;
@@ -92,7 +96,7 @@ export function createLedRainMaterial(): TimedMaterial {
  * Hanging globes: opal shades lit from inside, coloured by the shared light show.
  * `aData.x` is each globe's phase. HDR output so the bloom wraps them in light.
  */
-export function createSphereMaterial(): TimedMaterial {
+export function createSphereMaterial(show: LightShow): TimedMaterial {
   return new THREE.ShaderMaterial({
     uniforms: {
       uTime: { value: 0 },
@@ -116,7 +120,7 @@ export function createSphereMaterial(): TimedMaterial {
       }
     `,
     fragmentShader: /* glsl */ `
-      ${SHOW_GLSL}
+      ${showGlsl(show)}
       ${OCCLUSION_GLSL}
       uniform float uIntensity;
       varying float vPhase;
@@ -146,7 +150,7 @@ export type GlowMaterial = ShaderWith<{ uTime: number; uIntensity: number; uScal
  * Soft halo around each globe: camera-facing quads (instanced), additive, depth-tested so the
  * globe itself hides the centre and only the glow around its silhouette remains.
  */
-export function createSphereGlowMaterial(): GlowMaterial {
+export function createSphereGlowMaterial(show: LightShow): GlowMaterial {
   return new THREE.ShaderMaterial({
     uniforms: {
       uTime: { value: 0 },
@@ -175,7 +179,7 @@ export function createSphereGlowMaterial(): GlowMaterial {
       }
     `,
     fragmentShader: /* glsl */ `
-      ${SHOW_GLSL}
+      ${showGlsl(show)}
       uniform float uIntensity;
       varying vec2 vUv;
       varying float vPhase;
@@ -195,10 +199,17 @@ export function createSphereGlowMaterial(): GlowMaterial {
   }) as GlowMaterial
 }
 
-/** LED wall behind the DJ: equaliser bars over a warm gradient. */
-export function createScreenMaterial(): TimedMaterial {
+/** LED wall behind the DJ: equaliser bars over a dim gradient, in the club's colours. */
+export function createScreenMaterial(screen: ScreenColors): TimedMaterial {
   return new THREE.ShaderMaterial({
-    uniforms: { uTime: { value: 0 }, uIntensity: { value: 1.25 } },
+    uniforms: {
+      uTime: { value: 0 },
+      uIntensity: { value: 1.25 },
+      uLow: { value: new THREE.Vector3(...screen.low) },
+      uHigh: { value: new THREE.Vector3(...screen.high) },
+      uBackLeft: { value: new THREE.Vector3(...screen.backdrop[0]) },
+      uBackRight: { value: new THREE.Vector3(...screen.backdrop[1]) },
+    },
     vertexShader: /* glsl */ `
       varying vec2 vUv;
       void main() {
@@ -209,6 +220,10 @@ export function createScreenMaterial(): TimedMaterial {
     fragmentShader: /* glsl */ `
       uniform float uTime;
       uniform float uIntensity;
+      uniform vec3 uLow;
+      uniform vec3 uHigh;
+      uniform vec3 uBackLeft;
+      uniform vec3 uBackRight;
       varying vec2 vUv;
       void main() {
         float bars = 56.0;
@@ -216,11 +231,9 @@ export function createScreenMaterial(): TimedMaterial {
         float h = 0.18 + 0.7 * abs(sin(uTime * 2.3 + id * 0.41) * sin(uTime * 1.27 + id * 0.13));
         float gap = step(0.18, fract(vUv.x * bars));
         float bar = step(vUv.y, h) * gap;
-        vec3 low = vec3(1.0, 0.42, 0.08);
-        vec3 high = vec3(1.0, 0.12, 0.5);
-        vec3 grad = mix(low, high, vUv.y);
+        vec3 grad = mix(uLow, uHigh, vUv.y);
         float sweep = smoothstep(0.12, 0.0, abs(fract(uTime * 0.08) - vUv.x));
-        vec3 bg = mix(vec3(0.22, 0.04, 0.1), vec3(0.35, 0.1, 0.02), vUv.x) * (0.35 + sweep * 0.8);
+        vec3 bg = mix(uBackLeft, uBackRight, vUv.x) * (0.35 + sweep * 0.8);
         vec3 col = bg + grad * bar * 1.5;
         gl_FragColor = vec4(col * uIntensity, 1.0);
         ${OUTPUT}

@@ -1,5 +1,6 @@
 import { z } from "zod"
 
+import { ambianceSchema, type ClubAmbiance } from "@/lib/clubs/ambiance"
 import { assetManifestSchema, type AssetManifest } from "@/lib/clubs/assets"
 import { venueContentSchema, type VenueContent } from "@/lib/schema"
 import { venueLayoutSchema, type VenueLayout } from "@/lib/venue/layout"
@@ -14,6 +15,8 @@ export interface ClubDefinition {
   content: VenueContent
   /** Plan shared with the Blender build (`layout.json`). */
   layout: VenueLayout
+  /** Light show, FX colours, reflections and material finishes (`ambiance.json`). */
+  ambiance: ClubAmbiance
   /** Web bundle: model and lightmaps with their content hashes (`public/lightmaps.json`). */
   assets: AssetManifest
 }
@@ -35,17 +38,22 @@ export function defineClub(files: ClubFiles): ClubDefinition {
   }
   const content = parse("content.json", venueContentSchema, files.content)
   const layout = parse("layout.json", venueLayoutSchema, files.layout)
+  const ambiance = parse("ambiance.json", ambianceSchema, files.ambiance)
   const assets = parse("public/lightmaps.json", assetManifestSchema, files.assets)
   if (content && layout && assets) problems.push(...crossCheck({ content, layout, assets }))
-  if (!content || !layout || !assets || problems.length > 0) {
+  if (!content || !layout || !ambiance || !assets || problems.length > 0) {
     const slug = content?.club.slug ?? layout?.club ?? "?"
     throw new Error(`Invalid club "${slug}" (clubs/${slug}/):\n${problems.join("\n")}`)
   }
-  return { slug: content.club.slug, content, layout, assets }
+  return { slug: content.club.slug, content, layout, ambiance, assets }
 }
 
 /** The content, the plan and the bundle must describe the same venue, zone for zone. */
-export function crossCheck({ content, layout, assets }: Omit<ClubDefinition, "slug">): string[] {
+export function crossCheck({
+  content,
+  layout,
+  assets,
+}: Pick<ClubDefinition, "content" | "layout" | "assets">): string[] {
   const problems: string[] = []
   const slug = content.club.slug
   if (layout.club !== slug) problems.push(`layout.json: club "${layout.club}", expected "${slug}"`)
