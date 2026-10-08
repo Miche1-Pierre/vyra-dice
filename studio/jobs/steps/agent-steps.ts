@@ -4,6 +4,7 @@ import path from "node:path"
 import { claudeCode, recordAgent, type AgentResult } from "@studio/jobs/agent"
 import { BLENDER, errorTail, type RunContext } from "@studio/jobs/context"
 import { build } from "@studio/jobs/steps/build"
+import { readLessons } from "@studio/lib/clubs"
 import { readFeedback, writeFeedback } from "@studio/lib/feedback"
 import { readBrief } from "@studio/lib/state"
 import { validateClub } from "@studio/lib/validate"
@@ -222,6 +223,8 @@ export async function review(ctx: RunContext): Promise<void> {
 }
 
 export async function lessons(ctx: RunContext): Promise<void> {
+  // a new pass (after more feedback) adds proposals: the decided ones stay as they were
+  const decided = readLessons(ctx.slug)?.proposals.filter((l) => l.decision) ?? []
   const r = await ctx.phase("Leçons pour le guide", () =>
     claudeCode.run(ctx, {
       maxTurns: 30,
@@ -229,10 +232,30 @@ export async function lessons(ctx: RunContext): Promise<void> {
         header(ctx),
         `Le club est généré. Relis sa note de recherche (clubs/${ctx.slug}/private/studio/research.md), ses revues (clubs/${ctx.slug}/private/studio/reviews/), les retours de l'équipe (clubs/${ctx.slug}/private/studio/feedback.json s'il existe) et studio/playbook/lessons.md.`,
         "Propose 1 à 5 leçons générales, utiles aux clubs suivants (dimensions, pièges de modélisation, règles de style), sans répéter le guide.",
+        decided.length
+          ? `Déjà proposées pour ce club, à ne pas reproposer :\n${decided.map((l) => `- ${l.title} (${l.decision === "accepted" ? "acceptée" : "refusée"})`).join("\n")}`
+          : "",
         `Écris clubs/${ctx.slug}/private/studio/lessons.json : {"proposals": [{"id": "l1", "title": "…", "text": "…"}]}.`,
-      ].join("\n\n"),
+      ]
+        .filter(Boolean)
+        .join("\n\n"),
     }),
   )
   recordAgent(ctx, r)
-  if (!existsSync(ctx.paths.lessons)) throw new Error("Aucune proposition écrite")
+  const written = readLessons(ctx.slug)
+  if (!written) throw new Error("Aucune proposition écrite")
+  if (!decided.length) return
+  const fresh = written.proposals.filter(
+    (l) => !l.decision && !decided.some((d) => d.title === l.title),
+  )
+  const last = Math.max(0, ...decided.map((l) => Number(l.id.replace(/\D/g, "")) || 0))
+  writeFileSync(
+    ctx.paths.lessons,
+    JSON.stringify(
+      { proposals: [...decided, ...fresh.map((l, i) => ({ ...l, id: `l${last + i + 1}` }))] },
+      null,
+      2,
+    ),
+  )
+  ctx.log(`${fresh.length} nouvelle(s) proposition(s), ${decided.length} déjà tranchée(s)`)
 }
