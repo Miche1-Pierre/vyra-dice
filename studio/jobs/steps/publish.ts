@@ -53,20 +53,27 @@ export async function publish(ctx: RunContext): Promise<void> {
       : null
   const branch = issue ? `feat/${issue}-${ctx.slug}` : `feat/club-${ctx.slug}`
   const tree = path.join(os.tmpdir(), "vyra-publish", ctx.slug)
+  // a dry run may start from a branch not merged yet, to try a publication on it
+  const base =
+    typeof ctx.options.base === "string" && /^[\w][\w./-]*$/.test(ctx.options.base)
+      ? ctx.options.base
+      : "main"
+  if (base !== "main" && !ctx.options.dryRun)
+    throw new Error(`Publier depuis ${base} : seulement en essai à blanc, la PR vise main`)
 
-  await ctx.phase("Branche depuis origin/main", async () => {
-    await ctx.exec("git", ["fetch", "origin", "main"])
+  await ctx.phase(`Branche depuis origin/${base}`, async () => {
+    await ctx.exec("git", ["fetch", "origin", base])
     // a club folder only makes sense once main reads clubs/ (VYR-58)
-    await ctx.exec("git", ["cat-file", "-e", "origin/main:clubs/registry.ts"]).catch(() => {
+    await ctx.exec("git", ["cat-file", "-e", `origin/${base}:clubs/registry.ts`]).catch(() => {
       throw new Error(
-        "origin/main ne lit pas encore clubs/ : merger d'abord la PR « un dossier par club » (VYR-58)",
+        `origin/${base} ne lit pas encore clubs/ : merger d'abord la PR « un dossier par club » (VYR-58)`,
       )
     })
     if (existsSync(tree))
       await ctx.exec("git", ["worktree", "remove", "--force", tree]).catch(() => undefined)
     rmSync(tree, { recursive: true, force: true })
     mkdirSync(path.dirname(tree), { recursive: true })
-    await ctx.exec("git", ["worktree", "add", "-B", branch, tree, "origin/main"])
+    await ctx.exec("git", ["worktree", "add", "-B", branch, tree, `origin/${base}`])
   })
 
   await ctx.phase("Dossier du club, registre et captures", async () => {
@@ -108,8 +115,10 @@ export async function publish(ctx: RunContext): Promise<void> {
   })
 
   if (ctx.options.dryRun) {
-    ctx.log(`Essai à blanc : branche ${branch} prête dans ${tree}, rien n'a été poussé.`)
-    ctx.setResult({ branch, dryRun: true, worktree: tree })
+    ctx.log(
+      `Essai à blanc : branche ${branch} (depuis origin/${base}) prête dans ${tree}, rien n'a été poussé.`,
+    )
+    ctx.setResult({ branch, base, dryRun: true, worktree: tree })
     return
   }
 
