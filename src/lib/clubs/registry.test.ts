@@ -2,7 +2,14 @@ import { existsSync, readFileSync } from "node:fs"
 import { join } from "node:path"
 import { describe, expect, it } from "vitest"
 
-import { getClub, getVenueContent, listClubs, listVenues } from "@/lib/clubs/registry"
+import {
+  getClub,
+  getVenueContent,
+  isDraft,
+  listClubs,
+  listVenues,
+  servesDrafts,
+} from "@/lib/clubs/registry"
 
 /** Names of the materials and nodes of a GLB, read from its JSON chunk. */
 function gltfNames(path: string): { materials: Set<string>; nodes: Set<string> } {
@@ -36,6 +43,20 @@ describe("club registry", () => {
       expect(getClub(slug), slug).toBeNull()
       expect(getVenueContent(slug, "samedi"), slug).toBeNull()
     }
+  })
+
+  it("serves drafts in development, tests and Vercel previews, never on the live site", () => {
+    expect(servesDrafts({ NODE_ENV: "development" })).toBe(true)
+    expect(servesDrafts({ NODE_ENV: "test" })).toBe(true)
+    expect(servesDrafts({ NODE_ENV: "production", VERCEL_ENV: "preview" })).toBe(true)
+    expect(servesDrafts({ NODE_ENV: "production", VERCEL_ENV: "production" })).toBe(false)
+    // a production build that does not know where it runs keeps drafts out
+    expect(servesDrafts({ NODE_ENV: "production" })).toBe(false)
+  })
+
+  it("tells drafts from published clubs", () => {
+    expect(isDraft("naho")).toBe(false)
+    expect(isDraft("unknown")).toBe(false)
   })
 
   it("lists every venue night for the static routes", () => {
