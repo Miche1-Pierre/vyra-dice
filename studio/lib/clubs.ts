@@ -1,10 +1,10 @@
-import { execFileSync } from "node:child_process"
 import { createHash } from "node:crypto"
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs"
 import path from "node:path"
 
 import { briefSchema, slugify, type Brief } from "@studio/lib/brief"
-import { clubPaths, PLAYBOOK_DIR, REPO, SLUG } from "@studio/lib/paths"
+import { commitPaths, ensureWorkBranch } from "@studio/lib/git"
+import { clubPaths, PLAYBOOK_DIR, SLUG } from "@studio/lib/paths"
 
 /** Image and plan formats the agent can read (Read shows images; PDFs are plans). */
 const SOURCE_TYPES = /\.(png|jpe?g|webp|gif|pdf)$/i
@@ -133,8 +133,9 @@ export function appendLesson(content: string, heading: string, entry: string): s
 }
 
 /**
- * Accepting a lesson appends it to the versioned playbook and commits it on the Studio branch:
- * the git history is the history of what each club taught us.
+ * Accepting a lesson appends it to the versioned playbook and commits it on the work branch
+ * (never on main; it reaches main with the club's next share): the git history is the history
+ * of what each club taught us.
  */
 export function decideLesson(slug: string, id: string, decision: "accepted" | "rejected"): void {
   const data = readLessons(slug)
@@ -152,22 +153,11 @@ export function decideLesson(slug: string, id: string, decision: "accepted" | "r
   const heading = `## ${brief.name}${brief.city ? ` (${brief.city})` : ""} — ${new Date().toISOString().slice(0, 10)}`
   writeFileSync(file, appendLesson(content, heading, `- **${lesson.title}** : ${lesson.text}`))
   try {
-    execFileSync("git", ["add", "studio/playbook/lessons.md"], { cwd: REPO })
-    execFileSync(
-      "git",
-      [
-        "commit",
-        "-q",
-        "-m",
-        `docs(studio): add a lesson from ${slug}`,
-        "-m",
-        lesson.title,
-        "--",
-        "studio/playbook/lessons.md",
-      ],
-      { cwd: REPO },
-    )
+    ensureWorkBranch(slug)
+    commitPaths(["studio/playbook/lessons.md"], `docs(studio): add a lesson from ${slug}`, {
+      body: lesson.title,
+    })
   } catch {
-    // the lesson stays in the file; committing is a convenience
+    // the lesson stays in the file and leaves with the next share; committing is a convenience
   }
 }
