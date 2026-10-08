@@ -56,6 +56,12 @@ export async function publish(ctx: RunContext): Promise<void> {
 
   await ctx.phase("Branche depuis origin/main", async () => {
     await ctx.exec("git", ["fetch", "origin", "main"])
+    // a club folder only makes sense once main reads clubs/ (VYR-58)
+    await ctx.exec("git", ["cat-file", "-e", "origin/main:clubs/registry.ts"]).catch(() => {
+      throw new Error(
+        "origin/main ne lit pas encore clubs/ : merger d'abord la PR « un dossier par club » (VYR-58)",
+      )
+    })
     if (existsSync(tree))
       await ctx.exec("git", ["worktree", "remove", "--force", tree]).catch(() => undefined)
     rmSync(tree, { recursive: true, force: true })
