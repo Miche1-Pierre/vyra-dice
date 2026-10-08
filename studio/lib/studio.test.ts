@@ -28,9 +28,12 @@ describe("local paths in the versioned history", () => {
     expect(withoutLocalPaths(path.join(os.homedir(), "tmp", "x.png"))).toBe(
       `~${path.sep}${path.join("tmp", "x.png")}`,
     )
-    // tools print paths relative to the repo: the home folder seen from there
+    // tools print paths relative to the repo: the home folder seen from there, when the repo is
+    // outside it (inside it, `../..` names no one and is left as is)
     const fromRepo = path.relative(REPO, path.join(os.homedir(), "tmp"))
-    if (fromRepo.startsWith("..")) expect(withoutLocalPaths(fromRepo)).toBe(`~${path.sep}tmp`)
+    if (/^\.\.[\\/]+[^.\\/]/.test(path.relative(REPO, os.homedir())))
+      expect(withoutLocalPaths(fromRepo)).toBe(`~${path.sep}tmp`)
+    else expect(withoutLocalPaths(fromRepo)).toBe(fromRepo)
   })
 
   it("cleans every string of a run status", () => {
