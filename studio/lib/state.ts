@@ -67,7 +67,9 @@ export function clubState(
   const brief = readBrief(slug)
   const runs = listRuns(slug)
   const running = runs.find((r) => r.state === "running" || r.state === "queued")
-  const lastOf = (step: StepId) => runs.find((r) => r.step === step)
+  // a step's last run: its own, or "Tout générer" when it stopped on that step
+  const lastOf = (step: StepId) =>
+    runs.find((r) => r.step === step || (r.step === "auto" && r.current === step))
   const validation = validateClub(slug)
   const content = readJson<{ club?: { name?: string; city?: string } }>(p.files.content)
 
