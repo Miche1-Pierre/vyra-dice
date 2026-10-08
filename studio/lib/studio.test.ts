@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs"
 import { describe, expect, it } from "vitest"
 
 import { slugify } from "@studio/lib/brief"
-import { safeFileName } from "@studio/lib/clubs"
+import { appendLesson, safeFileName } from "@studio/lib/clubs"
 import { clubPaths, insideClub } from "@studio/lib/paths"
 import { identifierOf, registerClub } from "@studio/lib/registry-file"
 
@@ -51,5 +51,27 @@ describe("registerClub", () => {
     expect(once.indexOf("./809-social-club")).toBeLessThan(once.indexOf("./naho"))
     expect(once).toMatch(/= \[[^\]]*club809SocialClub\]/)
     expect(registerClub("809-social-club", once)).toBe(once)
+  })
+})
+
+describe("appendLesson", () => {
+  const naho = "## Naho Club (La Garde) — 2026-10-07"
+  const lumen = "## Lumen Club (Toulon) — 2026-10-08"
+  const guide = `# Leçons\n\nIntro.\n\n${naho}\n\n- **A** : a.\n`
+
+  it("opens the club's section at the end of the guide", () => {
+    expect(appendLesson(guide, lumen, "- **B** : b.")).toBe(`${guide}\n${lumen}\n\n- **B** : b.\n`)
+  })
+
+  it("keeps a club's lessons in the order they were accepted", () => {
+    const two = appendLesson(appendLesson(guide, lumen, "- **B** : b."), lumen, "- **C** : c.")
+    expect(two).toBe(`${guide}\n${lumen}\n\n- **B** : b.\n- **C** : c.\n`)
+  })
+
+  it("adds to a section that is not the last one", () => {
+    const later = `${guide}\n${lumen}\n\n- **B** : b.\n`
+    expect(appendLesson(later, naho, "- **Z** : z.")).toBe(
+      `# Leçons\n\nIntro.\n\n${naho}\n\n- **A** : a.\n- **Z** : z.\n\n${lumen}\n\n- **B** : b.\n`,
+    )
   })
 })
