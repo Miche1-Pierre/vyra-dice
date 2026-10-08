@@ -1050,8 +1050,25 @@ function Sources({ data, onChange }: { data: ClubDetail; onChange: () => void })
           }}
         />
       </label>
-      {data.sources.length === 0 ? (
+      {data.sources.length === 0 && data.missingSources.length === 0 ? (
         <Empty>Aucune source : l&apos;agent travaillera à partir du brief.</Empty>
+      ) : null}
+      {data.missingSources.length ? (
+        <div className="rounded-2xl bg-white/[0.04] p-4">
+          <p className="eyebrow text-label-3">Sur une autre machine</p>
+          <p className="text-footnote text-label-2 mt-1">
+            Ces sources font partie de l&apos;historique du club, mais leurs fichiers ne sont pas
+            versionnés (le dépôt est public) : récupère-les auprès de l&apos;équipe et dépose-les
+            ici, elles reprendront leur nom.
+          </p>
+          <ul className="mt-3 space-y-1">
+            {data.missingSources.map((s) => (
+              <li key={s.sha256} className="text-footnote text-label-2 font-code">
+                {s.file} · {(s.bytes / 1024 / 1024).toFixed(1)} Mo
+              </li>
+            ))}
+          </ul>
+        </div>
       ) : null}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         {data.sources.map((s) =>

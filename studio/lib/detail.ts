@@ -1,7 +1,7 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs"
 import path from "node:path"
 
-import { readLessons } from "@studio/lib/clubs"
+import { readLessons, readSourcesManifest } from "@studio/lib/clubs"
 import { readEvals, readFeedback } from "@studio/lib/feedback"
 import { listRuns, readLog } from "@studio/lib/jobs"
 import { clubPaths, IMAGE } from "@studio/lib/paths"
@@ -51,6 +51,10 @@ export function clubDetail(slug: string, runId?: string) {
     log: shown ? readLog(slug, shown.id) : "",
     shownMedia: shown ? runMedia(slug, shown.id) : { renders: [], captures: [] },
     sources: list(p.sources),
+    // listed in the history but kept on the machine of whoever added them
+    missingSources: readSourcesManifest(slug).filter(
+      (s) => !existsSync(path.join(p.sources, s.file)),
+    ),
     previews: list(p.previews).filter((f) => f.endsWith(".png")),
     captures: list(p.captures).filter((f) => IMAGE.test(f)),
     research: existsSync(p.research) ? readFileSync(p.research, "utf8") : null,

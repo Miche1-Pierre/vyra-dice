@@ -5,7 +5,7 @@ import { claudeCode, recordAgent, type AgentResult } from "@studio/jobs/agent"
 import { BLENDER, errorTail, type RunContext } from "@studio/jobs/context"
 import { CLUB_TEXT, formatFiles } from "@studio/jobs/format"
 import { build } from "@studio/jobs/steps/build"
-import { readLessons } from "@studio/lib/clubs"
+import { readLessons, readSourcesManifest } from "@studio/lib/clubs"
 import { readFeedback, writeFeedback } from "@studio/lib/feedback"
 import { IMAGE } from "@studio/lib/paths"
 import { readBrief } from "@studio/lib/state"
@@ -20,11 +20,17 @@ import { validateClub } from "@studio/lib/validate"
 const MAX_FIX_ROUNDS = 3
 
 function sourcesList(ctx: RunContext): string {
-  if (!existsSync(ctx.paths.sources)) return "aucune (brief seul)"
-  const files = readdirSync(ctx.paths.sources)
-  return files.length
-    ? files.map((f) => `clubs/${ctx.slug}/private/sources/${f}`).join("\n")
-    : "aucune (brief seul)"
+  const files = existsSync(ctx.paths.sources) ? readdirSync(ctx.paths.sources) : []
+  // listed in the club's history, but kept on the machine of whoever added them
+  const missing = readSourcesManifest(ctx.slug)
+    .map((s) => s.file)
+    .filter((f) => !files.includes(f))
+  return (
+    [
+      ...files.map((f) => `clubs/${ctx.slug}/private/sources/${f}`),
+      ...(missing.length ? [`(absentes de cette machine, fais sans : ${missing.join(", ")})`] : []),
+    ].join("\n") || "aucune (brief seul)"
+  )
 }
 
 function header(ctx: RunContext): string {

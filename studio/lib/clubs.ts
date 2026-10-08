@@ -1,4 +1,5 @@
 import { execFileSync } from "node:child_process"
+import { createHash } from "node:crypto"
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs"
 import path from "node:path"
 
@@ -18,21 +19,50 @@ export function safeFileName(name: string): string {
   return clean.slice(-80) || "source"
 }
 
-/** Saves uploaded photos and plans in private/sources (never committed). */
+export interface SourceEntry {
+  file: string
+  bytes: number
+  sha256: string
+  addedAt: string
+}
+
+/** What sources the club was made from: versioned, unlike the files (not ours to publish). */
+export function readSourcesManifest(slug: string): SourceEntry[] {
+  const file = clubPaths(slug).sourcesManifest
+  return existsSync(file) ? (JSON.parse(readFileSync(file, "utf8")) as SourceEntry[]) : []
+}
+
+/**
+ * Saves uploaded photos and plans in private/sources (never committed: the repo is public) and
+ * lists them in studio/sources.json (committed), so the history says what the club was made from.
+ */
 export async function saveSources(slug: string, files: File[]): Promise<string[]> {
-  const dir = clubPaths(slug).sources
+  const p = clubPaths(slug)
+  const dir = p.sources
   mkdirSync(dir, { recursive: true })
+  const manifest = readSourcesManifest(slug)
   const saved: string[] = []
   for (const file of files) {
     if (!file.size) continue
     if (!SOURCE_TYPES.test(file.name)) throw new Error(`Format non pris en charge : ${file.name}`)
     if (file.size > MAX_SOURCE_BYTES)
       throw new Error(`Fichier trop lourd (25 Mo max) : ${file.name}`)
-    let name = safeFileName(file.name)
-    for (let i = 2; existsSync(path.join(dir, name)); i++)
-      name = name.replace(/(\.\w+)$/, `-${i}$1`)
-    writeFileSync(path.join(dir, name), Buffer.from(await file.arrayBuffer()))
+    const bytes = Buffer.from(await file.arrayBuffer())
+    const sha256 = createHash("sha256").update(bytes).digest("hex")
+    // a source already listed (added on another machine) comes back under its name
+    const known = manifest.find((m) => m.sha256 === sha256)
+    let name = known?.file ?? safeFileName(file.name)
+    if (!known) {
+      for (let i = 2; existsSync(path.join(dir, name)); i++)
+        name = name.replace(/(\.\w+)$/, `-${i}$1`)
+      manifest.push({ file: name, bytes: bytes.length, sha256, addedAt: new Date().toISOString() })
+    }
+    writeFileSync(path.join(dir, name), bytes)
     saved.push(name)
+  }
+  if (saved.length) {
+    mkdirSync(p.studio, { recursive: true })
+    writeFileSync(p.sourcesManifest, JSON.stringify(manifest, null, 2))
   }
   return saved
 }
