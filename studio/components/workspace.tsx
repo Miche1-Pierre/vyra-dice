@@ -713,6 +713,51 @@ function RunLog({
       >
         {data.log || "…"}
       </pre>
+      {data.shownMedia.renders.map((files, i) => (
+        <Gallery
+          key={i}
+          slug={data.slug}
+          files={files}
+          title={data.shownMedia.renders.length > 1 ? `Rendus — construction ${i + 1}` : "Rendus"}
+        />
+      ))}
+      {data.shownMedia.captures.length ? (
+        <Gallery slug={data.slug} files={data.shownMedia.captures} title="Captures du site" />
+      ) : null}
+    </div>
+  )
+}
+
+/** Images a run kept in the club's history, opened full size on click. */
+function Gallery({ slug, title, files }: { slug: string; title: string; files: string[] }) {
+  return (
+    <div>
+      <p className="eyebrow text-label-3">{title}</p>
+      <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-4">
+        {files.map((f) => (
+          <a
+            key={f}
+            href={fileUrl(slug, f)}
+            target="_blank"
+            rel="noreferrer"
+            className="group relative block overflow-hidden rounded-xl bg-black/40"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={fileUrl(slug, f)}
+              alt={f}
+              loading="lazy"
+              className="aspect-video w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+            />
+            <span className="text-caption absolute bottom-1.5 left-2 rounded-full bg-black/60 px-2 text-white/85">
+              {f
+                .split("/")
+                .pop()
+                ?.replace(/\.(png|jpe?g)$/i, "")}
+            </span>
+          </a>
+        ))}
+      </div>
     </div>
   )
 }
@@ -776,7 +821,7 @@ function Feedback({ data, onChange }: { data: ClubDetail; onChange: () => void }
     () => [
       "",
       ...data.previews.map((p) => p.replace(".png", "")),
-      ...data.captures.map((c) => c.replace(".png", "")),
+      ...data.captures.map((c) => c.replace(/\.(png|jpe?g)$/i, "")),
       "démo",
     ],
     [data.previews, data.captures],

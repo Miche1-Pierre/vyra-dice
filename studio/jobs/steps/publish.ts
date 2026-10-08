@@ -15,6 +15,7 @@ import sharp from "sharp"
 import type { RunContext } from "@studio/jobs/context"
 import { CLUB_TEXT, formatFiles } from "@studio/jobs/format"
 import { publishClub } from "@studio/lib/registry-file"
+import { IMAGE } from "@studio/lib/paths"
 import { validateClub } from "@studio/lib/validate"
 
 /** What leaves the machine: the club as the site reads it. Never scene.json, build/ or private/. */
@@ -41,7 +42,7 @@ export async function publish(ctx: RunContext): Promise<void> {
   if (!existsSync(p.files.assets))
     throw new Error("Pas de bundle web : lancer l'éclairage précalculé")
   const captures = existsSync(p.captures)
-    ? readdirSync(p.captures).filter((f) => f.endsWith(".png"))
+    ? readdirSync(p.captures).filter((f) => IMAGE.test(f))
     : []
   if (!captures.length) throw new Error("Pas de captures : lancer l'aperçu")
   const content = JSON.parse(readFileSync(p.files.content, "utf8")) as {
@@ -100,7 +101,7 @@ export async function publish(ctx: RunContext): Promise<void> {
       await sharp(path.join(p.captures, file))
         .resize({ width: 1440, withoutEnlargement: true })
         .jpeg({ quality: 80, mozjpeg: true })
-        .toFile(path.join(media, file.replace(/\.png$/, ".jpg")))
+        .toFile(path.join(media, file.replace(IMAGE, ".jpg")))
     }
   })
 
@@ -138,7 +139,7 @@ export async function publish(ctx: RunContext): Promise<void> {
       issue ? `## Linear\n\nCloses ${issue}\n` : "",
       `## Quoi\n\nDémo de **${content.club.name}** (${content.club.city}) générée par VYRA Studio : \`/${ctx.slug}/${content.event.slug}\`.`,
       "Plan, tables, capacités et prix **provisoires, non validés par le club** ; mode démo, aucune demande transmise.",
-      `\n## Captures\n\n${captures.map((f) => `![${f}](${raw}/${f.replace(/\.png$/, ".jpg")}?raw=true)`).join("\n")}`,
+      `\n## Captures\n\n${captures.map((f) => `![${f}](${raw}/${f.replace(IMAGE, ".jpg")}?raw=true)`).join("\n")}`,
       `\n## À valider avec le club\n\nVoir \`clubs/${ctx.slug}/README.md\`.`,
     ].join("\n")
     const out = await ctx.exec(

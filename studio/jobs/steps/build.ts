@@ -1,6 +1,7 @@
 import { existsSync, readFileSync } from "node:fs"
 
 import { BLENDER, blenderNoise, type RunContext } from "@studio/jobs/context"
+import { keepRenders } from "@studio/jobs/history"
 import { validateClub } from "@studio/lib/validate"
 
 interface Report {
@@ -32,6 +33,7 @@ export async function build(ctx: RunContext): Promise<void> {
   if (!existsSync(ctx.paths.report)) throw new Error("Pas de rapport de construction")
   const report = JSON.parse(readFileSync(ctx.paths.report, "utf8")) as Report
   ctx.setResult({ objects: report.objects, triangles: report.triangles, lights: report.lights })
+  await keepRenders(ctx)
   const failing = report.checks.filter((c) => !c.ok)
   ctx.log(
     `${report.objects} objets, ${report.triangles.toLocaleString("fr-FR")} triangles, ${report.lights} lumières`,

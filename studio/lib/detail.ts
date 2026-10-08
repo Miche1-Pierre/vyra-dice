@@ -4,7 +4,7 @@ import path from "node:path"
 import { readLessons } from "@studio/lib/clubs"
 import { readEvals, readFeedback } from "@studio/lib/feedback"
 import { listRuns, readLog } from "@studio/lib/jobs"
-import { clubPaths } from "@studio/lib/paths"
+import { clubPaths, IMAGE } from "@studio/lib/paths"
 import { clubState } from "@studio/lib/state"
 
 export interface ReviewEntry {
@@ -17,6 +17,22 @@ export interface ReviewEntry {
 
 function list(dir: string): string[] {
   return existsSync(dir) ? readdirSync(dir).sort() : []
+}
+
+/** Images a run kept (renders of each build, site captures), relative to the club folder. */
+function runMedia(slug: string, runId: string): { renders: string[][]; captures: string[] } {
+  const base = path.join("studio", "runs", runId)
+  const dir = path.join(clubPaths(slug).runs, runId)
+  const images = (rel: string) =>
+    list(path.join(dir, rel))
+      .filter((f) => IMAGE.test(f))
+      .map((f) => [base, rel, f].join("/").replace(/\\/g, "/"))
+  return {
+    renders: list(path.join(dir, "renders"))
+      .sort((a, b) => Number(a) - Number(b))
+      .map((n) => images(`renders/${n}`)),
+    captures: images("captures"),
+  }
 }
 
 /** Everything the club page shows, read from the club's files. */
@@ -33,9 +49,10 @@ export function clubDetail(slug: string, runId?: string) {
     runs: runs.slice(0, 30),
     shownRun: shown,
     log: shown ? readLog(slug, shown.id) : "",
+    shownMedia: shown ? runMedia(slug, shown.id) : { renders: [], captures: [] },
     sources: list(p.sources),
     previews: list(p.previews).filter((f) => f.endsWith(".png")),
-    captures: list(p.captures).filter((f) => f.endsWith(".png")),
+    captures: list(p.captures).filter((f) => IMAGE.test(f)),
     research: existsSync(p.research) ? readFileSync(p.research, "utf8") : null,
     reviews: list(reviewsDir)
       .filter((f) => f.endsWith(".json"))
