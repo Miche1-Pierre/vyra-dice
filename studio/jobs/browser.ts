@@ -1,5 +1,5 @@
 import { spawn } from "node:child_process"
-import { writeFileSync } from "node:fs"
+import { existsSync, writeFileSync } from "node:fs"
 import os from "node:os"
 import path from "node:path"
 
@@ -10,7 +10,16 @@ import path from "node:path"
  */
 
 const PORT = 9334
-const CHROME = process.env.VYRA_CHROME ?? "C:/Program Files/Google/Chrome/Application/chrome.exe"
+/** Chrome: VYRA_CHROME, else where its installer puts it on this system. */
+const CHROME =
+  process.env.VYRA_CHROME ??
+  [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe",
+    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    "/usr/bin/google-chrome",
+  ].find((p) => existsSync(p)) ??
+  "google-chrome"
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
 
 type Message = {

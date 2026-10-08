@@ -958,15 +958,23 @@ def setup_render() -> None:
         scn.render.engine = "CYCLES"
     except TypeError as exc:  # pragma: no cover - depends on the build
         print("engine:", exc)
+    scn.cycles.device = "CPU"
     try:
         prefs = bpy.context.preferences.addons["cycles"].preferences
-        prefs.compute_device_type = "OPTIX"
+    except KeyError:
+        prefs = None
+    # the first GPU backend this machine has: NVIDIA, AMD, Apple, Intel
+    for kind in ("OPTIX", "CUDA", "HIP", "METAL", "ONEAPI") if prefs else ():
+        try:
+            prefs.compute_device_type = kind
+        except TypeError:
+            continue
         prefs.get_devices()
-        for dev in prefs.devices:
-            dev.use = dev.type == "OPTIX"
-        scn.cycles.device = "GPU"
-    except (KeyError, TypeError):
-        scn.cycles.device = "CPU"
+        if any(dev.type == kind for dev in prefs.devices):
+            for dev in prefs.devices:
+                dev.use = dev.type == kind
+            scn.cycles.device = "GPU"
+            break
     scn.cycles.samples = 96
     scn.cycles.use_denoising = True
     try:

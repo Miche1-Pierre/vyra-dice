@@ -62,7 +62,7 @@ def setup_cycles(samples: int) -> None:
     scn = bpy.context.scene
     scn.render.engine = "CYCLES"
     prefs = bpy.context.preferences.addons["cycles"].preferences
-    for kind in ("OPTIX", "CUDA", "HIP", "ONEAPI"):
+    for kind in ("OPTIX", "CUDA", "HIP", "METAL", "ONEAPI"):
         try:
             prefs.compute_device_type = kind
         except TypeError:
