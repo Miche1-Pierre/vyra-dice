@@ -15,7 +15,7 @@ import { clubPaths, REPO } from "@studio/lib/paths"
 
 /*
  * A run = one step of the pipeline for one club, executed by `studio/jobs/run.ts` in its own
- * detached process. It writes private/studio/runs/<id>/status.json and log.txt: the Studio only
+ * detached process. It writes clubs/<slug>/studio/runs/<id>/status.json and log.txt: the Studio only
  * reads them, so runs survive a Studio restart and a failed step can be relaunched alone.
  */
 

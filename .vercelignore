@@ -7,6 +7,10 @@ clubs/*/blender/
 clubs/*/build/
 clubs/*/reference/
 clubs/*/private/
+# VYRA Studio: the app, each club's Blender scene and its history stay out of the site's deploys
+/studio/
+clubs/*/scene.json
+clubs/*/studio/
 docs/
 .github/
 scripts/optimize-glb.mjs

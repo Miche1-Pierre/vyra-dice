@@ -31,7 +31,7 @@ function header(ctx: RunContext): string {
   if (!brief) throw new Error("Pas de brief : créer le club depuis le Studio")
   return [
     `Club : ${brief.name} (${brief.city}) — dossier clubs/${ctx.slug}/, slug « ${ctx.slug} ».`,
-    `Brief de l'équipe : clubs/${ctx.slug}/private/studio/brief.json`,
+    `Brief de l'équipe : clubs/${ctx.slug}/studio/brief.json`,
     `Sources :\n${sourcesList(ctx)}`,
     "Commence par lire studio/playbook/README.md (le guide), studio/playbook/lessons.md et studio/playbook/dimensions.md.",
   ].join("\n")
@@ -96,7 +96,7 @@ export async function research(ctx: RunContext): Promise<void> {
       prompt: [
         header(ctx),
         "Puis lis clubs/naho/README.md et clubs/naho/content.json (ce qu'on produit), et chaque source (images : outil Read).",
-        `Écris clubs/${ctx.slug}/private/studio/research.md en suivant studio/playbook/research-template.md.`,
+        `Écris clubs/${ctx.slug}/studio/research.md en suivant studio/playbook/research-template.md.`,
         "Sépare strictement faits, suppositions et manques ; n'invente ni adresse, ni contact, ni prix réel.",
         "Termine ta réponse par trois lignes : ce qui frappe, ce qui manque le plus, la dimension la plus incertaine.",
       ].join("\n\n"),
@@ -117,7 +117,7 @@ export async function spec(ctx: RunContext): Promise<void> {
         maxBudgetUsd: 25,
         prompt: [
           header(ctx),
-          `Note de recherche : clubs/${ctx.slug}/private/studio/research.md`,
+          `Note de recherche : clubs/${ctx.slug}/studio/research.md`,
           "Référence complète à imiter : clubs/naho/{content,layout,brand,ambiance,scene}.json et clubs/naho/README.md.",
           "Schémas : src/lib/schema.ts, src/lib/venue/layout.ts, src/lib/clubs/brand.ts, src/lib/clubs/ambiance.ts, studio/lib/scene-schema.ts ; briques Blender : art/scripts/build_club.py.",
           `Écris dans clubs/${ctx.slug}/ : content.json, layout.json, brand.json, ambiance.json, scene.json et README.md.`,
@@ -152,7 +152,7 @@ export async function review(ctx: RunContext): Promise<void> {
       !session && existsSync(ctx.paths.captures)
         ? readdirSync(ctx.paths.captures)
             .filter((f) => f.endsWith(".png"))
-            .map((f) => `clubs/${ctx.slug}/private/studio/captures/${f}`)
+            .map((f) => `clubs/${ctx.slug}/studio/captures/${f}`)
         : []
     const r = await ctx.phase(`Revue des rendus ${i}/${iterations}`, () =>
       claudeCode.run(ctx, {
@@ -165,12 +165,12 @@ export async function review(ctx: RunContext): Promise<void> {
           captures.length
             ? `Captures du site, ce que voit le client (dernier aperçu, peut dater d'avant ce build) :\n${captures.join("\n")}\nLes vues de zone et de table sont cadrées par le site depuis le plan (src/lib/venue/camera.ts) : rien ne doit masquer une table ou une zone depuis sa caméra (escalier, poteau, structure, globe).`
             : "",
-          `Compare-les aux sources, à la note de recherche (clubs/${ctx.slug}/private/studio/research.md) et au brief.`,
+          `Compare-les aux sources, à la note de recherche (clubs/${ctx.slug}/studio/research.md) et au brief.`,
           feedback.length
             ? `Retours de l'équipe à traiter en priorité :\n${feedback.map((f) => `- [${f.id}] ${f.target ? `(${f.target}) ` : ""}${f.text}`).join("\n")}`
             : "Pas de retour de l'équipe en attente.",
           "Corrige dans layout.json, scene.json, ambiance.json (et content.json si une table bouge ou si un texte est faux) ce qui nuit au réalisme ou à la lisibilité : proportions, éléments signature absents, collisions, tables masquées, éclairage.",
-          `Puis écris clubs/${ctx.slug}/private/studio/reviews/${id}.json : {"issues": [...], "changes": [...], "feedbackAddressed": ["<id>"], "remaining": [...]} (phrases courtes en français).`,
+          `Puis écris clubs/${ctx.slug}/studio/reviews/${id}.json : {"issues": [...], "changes": [...], "feedbackAddressed": ["<id>"], "remaining": [...]} (phrases courtes en français).`,
         ]
           .filter(Boolean)
           .join("\n\n"),
@@ -235,12 +235,12 @@ export async function lessons(ctx: RunContext): Promise<void> {
       maxTurns: 30,
       prompt: [
         header(ctx),
-        `Le club est généré. Relis sa note de recherche (clubs/${ctx.slug}/private/studio/research.md), ses revues (clubs/${ctx.slug}/private/studio/reviews/), les retours de l'équipe (clubs/${ctx.slug}/private/studio/feedback.json s'il existe) et studio/playbook/lessons.md.`,
+        `Le club est généré. Relis sa note de recherche (clubs/${ctx.slug}/studio/research.md), ses revues (clubs/${ctx.slug}/studio/reviews/), les retours de l'équipe (clubs/${ctx.slug}/studio/feedback.json s'il existe) et studio/playbook/lessons.md.`,
         "Propose 1 à 5 leçons générales, utiles aux clubs suivants (dimensions, pièges de modélisation, règles de style), sans répéter le guide.",
         decided.length
           ? `Déjà proposées pour ce club, à ne pas reproposer :\n${decided.map((l) => `- ${l.title} (${l.decision === "accepted" ? "acceptée" : "refusée"})`).join("\n")}`
           : "",
-        `Écris clubs/${ctx.slug}/private/studio/lessons.json : {"proposals": [{"id": "l1", "title": "…", "text": "…"}]}.`,
+        `Écris clubs/${ctx.slug}/studio/lessons.json : {"proposals": [{"id": "l1", "title": "…", "text": "…"}]}.`,
       ]
         .filter(Boolean)
         .join("\n\n"),
