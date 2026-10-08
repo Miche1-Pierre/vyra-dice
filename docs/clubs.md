@@ -17,7 +17,7 @@ clubs/
     brand.json              identité dans l'interface : accent, dorure, teintes des niveaux, police, logo, emblème
     ambiance.json           ambiance 3D : light show, couleurs des FX, panneaux de reflets, finition des matières
     public/                 bundle web versionné, servi sous /clubs/<slug>/ : <slug>.glb, lm/*.webp, lightmaps.json
-    blender/build.py        construction Blender de la salle à partir de layout.json
+    scene.json              scène Blender : palette de matières, murs, enseignes, structure, globes, décor, éclairage
     reference/              croquis et plans que l'on a le droit de versionner
     README.md               sources, statut (démo, pilote…), ce qui reste à valider avec le club
     <slug>.test.ts          attentes propres au club (facultatif)
@@ -41,11 +41,11 @@ n'alourdit pas la page des autres.
 3. **Contenu** — `content.json` (schéma : `src/lib/schema.ts`) : mêmes ids de zones et de tables que le plan, même
    tier par zone. Une démo porte `"demo": true`, une mention qui commence par « Démo » et
    `"offersValidatedAt": null` (aucune offre réelle avant l'accord écrit du club, VYR-15).
-4. **Modèle 3D** — `blender/build.py` construit la salle depuis le plan avec `art/scripts/vyra3d.py` (partir de celui
-   du Naho), en respectant le contrat de nommage de `docs/3d-pipeline.md`. Puis :
+4. **Modèle 3D** — `scene.json` décrit tout ce que le plan ne dit pas (partir de celui du Naho) ; le constructeur
+   générique `art/scripts/build_club.py` en tire la salle, sans code propre au club. Puis :
 
    ```bash
-   "C:/Program Files/Blender Foundation/Blender 5.1/blender.exe" -b -P clubs/<slug>/blender/build.py
+   "C:/Program Files/Blender Foundation/Blender 5.1/blender.exe" -b -P art/scripts/build_club.py -- --club <slug> --previews
    "C:/Program Files/Blender Foundation/Blender 5.1/blender.exe" -b clubs/<slug>/build/<slug>.blend -P art/scripts/bake_export.py
    pnpm assets:optimize <slug>
    ```
