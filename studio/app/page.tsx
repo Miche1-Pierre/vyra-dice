@@ -1,6 +1,7 @@
 import { ArrowUpRight, Plus, Sparkles } from "lucide-react"
 import Link from "next/link"
 
+import { RepoSync } from "@studio/components/repo-sync"
 import { ago, Chip, fileUrl, StateIcon } from "@studio/components/ui"
 import { clubState, listClubSlugs } from "@studio/lib/state"
 
@@ -17,19 +18,22 @@ export default function ClubsPage() {
       <div className="relative mx-auto max-w-6xl px-6 pt-14 pb-24">
         <header className="flex flex-wrap items-end justify-between gap-6">
           <div>
-            <p className="eyebrow text-brand">VYRA Studio · privé, local</p>
+            <p className="eyebrow text-brand">VYRA Studio · local</p>
             <h1 className="text-display text-label mt-3">Clubs</h1>
             <p className="text-callout text-label-2 mt-2 max-w-xl">
               Des photos, un plan, un brief : l&apos;agent écrit le club, Blender le construit et
               l&apos;éclaire, la démo part en revue puis en ligne.
             </p>
           </div>
-          <Link
-            href="/clubs/new"
-            className="brand-pill text-callout inline-flex h-12 items-center gap-2 rounded-full px-6 font-medium transition-[filter,transform] hover:brightness-105 active:scale-[0.98]"
-          >
-            <Plus className="size-4" /> Nouveau club
-          </Link>
+          <div className="flex flex-col items-end gap-3">
+            <RepoSync />
+            <Link
+              href="/clubs/new"
+              className="brand-pill text-callout inline-flex h-12 items-center gap-2 rounded-full px-6 font-medium transition-[filter,transform] hover:brightness-105 active:scale-[0.98]"
+            >
+              <Plus className="size-4" /> Nouveau club
+            </Link>
+          </div>
         </header>
 
         <ul className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
