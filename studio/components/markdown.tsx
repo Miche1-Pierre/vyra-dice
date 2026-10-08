@@ -104,8 +104,13 @@ export function Markdown({ source }: { source: string }) {
     if (/^\s*[-*]\s+/.test(line) || /^\s*\d+\.\s+/.test(line)) {
       const items: string[] = []
       const ordered = /^\s*\d+\./.test(line)
-      while (i < lines.length && (/^\s*[-*]\s+/.test(lines[i]) || /^\s*\d+\.\s+/.test(lines[i]))) {
-        items.push(lines[i].replace(/^\s*(?:[-*]|\d+\.)\s+/, ""))
+      const marker = /^\s*(?:[-*]|\d+\.)\s+/
+      while (i < lines.length) {
+        if (marker.test(lines[i])) items.push(lines[i].replace(marker, ""))
+        // an indented line continues the item above (wrapped text, sub-points)
+        else if (/^\s{2,}\S/.test(lines[i]) && items.length)
+          items[items.length - 1] += ` ${lines[i].trim()}`
+        else break
         i++
       }
       const List = ordered ? "ol" : "ul"
