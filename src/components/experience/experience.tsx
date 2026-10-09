@@ -364,7 +364,12 @@ export function Experience({ club }: { club: ClubDefinition }) {
             <CompareView tables={vm.tables} zones={vm.zones} accentName={club.brand.accent.name} />
           ) : null}
           {panel === "table" && table ? (
-            <TableDetails table={table} icon={tableIcon} content={content} />
+            <TableDetails
+              table={table}
+              siblings={vm.zones.find((z) => z.id === table.zoneId)?.tables ?? [table]}
+              icon={tableIcon}
+              content={content}
+            />
           ) : null}
         </Panel>
 

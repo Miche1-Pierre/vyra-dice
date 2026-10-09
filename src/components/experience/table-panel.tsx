@@ -72,13 +72,18 @@ export function StatusChip({
 
 export function TableDetails({
   table,
+  siblings,
   icon,
   content,
 }: {
   table: TableView
+  /** Every table of the same space, this one included. */
+  siblings: TableView[]
   icon: ZoneIcon
   content: VenueContent
 }) {
+  const selectTable = useExperience((s) => s.selectTable)
+  const hoverTable = useExperience((s) => s.hoverTable)
   const view = useExperience((s) => s.view)
   const compareIds = useExperience((s) => s.compareIds)
   const viewFromSeat = useExperience((s) => s.viewFromSeat)
@@ -176,6 +181,39 @@ export function TableDetails({
           </div>
         ) : null}
       </div>
+
+      {siblings.length > 1 ? (
+        <section className="px-5 pt-6">
+          <Eyebrow>Dans cet espace</Eyebrow>
+          <div className="mt-2.5 flex flex-wrap gap-1.5">
+            {siblings.map((t) => {
+              const current = t.id === table.id
+              return (
+                <button
+                  key={t.id}
+                  type="button"
+                  aria-current={current || undefined}
+                  aria-label={`Table ${t.label}, ${STATUS[t.status].label}`}
+                  onClick={() => selectTable(t.id)}
+                  onPointerEnter={() => hoverTable(t.id)}
+                  onPointerLeave={() => hoverTable(null)}
+                  onFocus={() => hoverTable(t.id)}
+                  onBlur={() => hoverTable(null)}
+                  className={cn(
+                    "text-footnote focus-visible:ring-brand/70 inline-flex h-8 items-center gap-1.5 rounded-full px-3 font-medium transition-colors outline-none focus-visible:ring-2",
+                    current
+                      ? "text-label bg-white/[0.16] shadow-[inset_0_0_0_1px_rgb(255_255_255/0.18)]"
+                      : "text-label-2 hover:text-label bg-white/[0.06] hover:bg-white/[0.1]",
+                  )}
+                >
+                  <StatusIcon status={t.status} className="size-3" />
+                  {t.label}
+                </button>
+              )
+            })}
+          </div>
+        </section>
+      ) : null}
 
       <section className="px-5 pt-6">
         <Eyebrow>La vue</Eyebrow>

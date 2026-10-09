@@ -139,7 +139,9 @@ export function Markers({
   const zoneShown = (z: ZoneMarkerData) => view === "overview" && levelVisible(z.level)
   const tableShown = (t: TableMarkerData) =>
     ((view === "zone" && t.zoneId === focusedZoneId) ||
-      (view === "table" && t.id === selectedTableId)) &&
+      (view === "table" && t.id === selectedTableId) ||
+      // a table pointed at in the list (or hovered in 3D) shows its tag from any view
+      (t.id === hoveredTableId && view !== "intro" && view !== "seat")) &&
     levelVisible(t.level)
   const wrapper = (shown: boolean) => ({
     pointerEvents: "none" as const,
@@ -279,6 +281,8 @@ function TableTag({
         onClick={onClick}
         onPointerEnter={() => onHover(true)}
         onPointerLeave={() => onHover(false)}
+        onFocus={() => onHover(true)}
+        onBlur={() => onHover(false)}
         aria-label={`Table ${table.label}, ${status.label}${table.priceLabel ? `, minimum ${table.priceLabel}` : ""}`}
         className={cn(
           chip,

@@ -9,16 +9,18 @@ import {
   type TableView,
   type ZoneView,
 } from "@/components/experience/view-model"
-import { formatEuro } from "@/lib/format"
+import { formatCapacity, formatEuro } from "@/lib/format"
 import { useExperience } from "@/lib/store"
 import { cn } from "@/lib/utils"
-import { TIERS } from "@/lib/venue/tiers"
+import { STATUS, TIERS } from "@/lib/venue/tiers"
 
 /** Every table, grouped by space in inset lists — also the fallback when 3D isn't available. */
 export function TableList({ zones }: { zones: ZoneView[] }) {
   const selectTable = useExperience((s) => s.selectTable)
   const focusZone = useExperience((s) => s.focusZone)
   const levelFilter = useExperience((s) => s.levelFilter)
+  const hoverTable = useExperience((s) => s.hoverTable)
+  const hoveredTableId = useExperience((s) => s.hoveredTableId)
   return (
     <div className="space-y-6 px-4 pt-1 pb-6">
       {zones
@@ -47,12 +49,19 @@ export function TableList({ zones }: { zones: ZoneView[] }) {
                   <button
                     type="button"
                     onClick={() => selectTable(t.id)}
-                    className="flex min-h-12 w-full items-center gap-3 px-4 py-2 text-left transition-colors hover:bg-white/[0.05]"
+                    // the same table lights up in the 3D, and a booth hovered there lights its row
+                    onPointerEnter={() => hoverTable(t.id)}
+                    onPointerLeave={() => hoverTable(null)}
+                    onFocus={() => hoverTable(t.id)}
+                    onBlur={() => hoverTable(null)}
+                    data-highlighted={hoveredTableId === t.id || undefined}
+                    className="focus-visible:ring-brand/70 flex min-h-12 w-full items-center gap-3 px-4 py-2 text-left transition-colors outline-none hover:bg-white/[0.05] focus-visible:ring-2 focus-visible:ring-inset data-[highlighted]:bg-white/[0.08]"
                   >
                     <StatusIcon status={t.status} />
+                    <span className="sr-only">{STATUS[t.status].label} :</span>
                     <span className="text-ui text-label w-9 shrink-0 font-semibold">{t.label}</span>
                     <span className="text-footnote text-label-3 min-w-0 flex-1 truncate">
-                      {t.view}
+                      <span className="num">{formatCapacity(t.capacity)}</span> · {t.view}
                     </span>
                     <span
                       className={cn(
