@@ -30,23 +30,82 @@ export const zoneContentSchema = z.object({
 })
 export type ZoneContent = z.infer<typeof zoneContentSchema>
 
-export const tableContentSchema = z.object({
-  id: slugSchema,
-  label: textSchema,
-  zoneId: slugSchema,
-  capacity: z
-    .object({ min: z.number().int().positive(), max: z.number().int().positive() })
-    .refine((capacity) => capacity.min <= capacity.max, {
-      error: "capacity.min must not exceed capacity.max",
-    }),
-  /** Minimum spend for the whole table, in whole euros; `null` when the price is on request. */
-  minimumSpend: z.number().int().nonnegative().nullable(),
-  status: tableStatusSchema,
-  /** Perks of this table on top of its zone's perks. */
-  perks: z.array(textSchema),
-  /** What guests see from the table, in a few words. */
-  view: textSchema,
+/**
+ * Guests above `includedGuests` raise the minimum spend by `perGuest` euros each, up to
+ * `capacity.max` (e.g. a table for 6, up to 2 more at +150 € each).
+ */
+export const surchargeSchema = z.object({
+  includedGuests: z.number().int().positive(),
+  perGuest: z.number().int().positive(),
 })
+export type Surcharge = z.infer<typeof surchargeSchema>
+
+/**
+ * Deposit the club asks for once it confirms the table, deducted from the minimum spend: a share
+ * of the minimum for the group, or a fixed amount in whole euros. Nothing is paid with a request.
+ */
+export const depositSchema = z.union([
+  z.object({ percent: z.number().int().min(1).max(100) }),
+  z.object({ amount: z.number().int().positive() }),
+])
+export type Deposit = z.infer<typeof depositSchema>
+
+export const tableContentSchema = z
+  .object({
+    id: slugSchema,
+    label: textSchema,
+    zoneId: slugSchema,
+    capacity: z
+      .object({ min: z.number().int().positive(), max: z.number().int().positive() })
+      .refine((capacity) => capacity.min <= capacity.max, {
+        error: "capacity.min must not exceed capacity.max",
+      }),
+    /** Minimum spend for the whole table, in whole euros; `null` when the price is on request. */
+    minimumSpend: z.number().int().positive().nullable(),
+    /** Optional supplement per guest above the included ones. */
+    surcharge: surchargeSchema.optional(),
+    /** Optional deposit asked at confirmation. */
+    deposit: depositSchema.optional(),
+    status: tableStatusSchema,
+    /** Perks of this table on top of its zone's perks. */
+    perks: z.array(textSchema),
+    /** What guests see from the table, in a few words. */
+    view: textSchema,
+  })
+  .superRefine((table, ctx) => {
+    const { surcharge, deposit, minimumSpend, capacity } = table
+    if (surcharge && minimumSpend === null) {
+      ctx.addIssue({
+        code: "custom",
+        message: "A supplement per guest needs a minimum spend",
+        path: ["surcharge"],
+      })
+    }
+    if (
+      surcharge &&
+      (surcharge.includedGuests < capacity.min || surcharge.includedGuests >= capacity.max)
+    ) {
+      ctx.addIssue({
+        code: "custom",
+        message: "surcharge.includedGuests must be at least capacity.min and below capacity.max",
+        path: ["surcharge", "includedGuests"],
+      })
+    }
+    if (deposit && "percent" in deposit && minimumSpend === null) {
+      ctx.addIssue({
+        code: "custom",
+        message: "A deposit in percent needs a minimum spend",
+        path: ["deposit"],
+      })
+    }
+    if (deposit && "amount" in deposit && minimumSpend !== null && deposit.amount > minimumSpend) {
+      ctx.addIssue({
+        code: "custom",
+        message: "The deposit cannot exceed the minimum spend",
+        path: ["deposit", "amount"],
+      })
+    }
+  })
 export type TableContent = z.infer<typeof tableContentSchema>
 
 export const clubSchema = z
