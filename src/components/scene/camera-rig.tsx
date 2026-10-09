@@ -22,9 +22,12 @@ function easeInOut(t: number) {
  */
 export function CameraRig({
   layout,
+  reducedMotion = false,
   onIntroSkipped,
 }: {
   layout: VenueLayout
+  /** Cut between viewpoints and skip the fly-through. */
+  reducedMotion?: boolean
   onIntroSkipped?: (atMs: number) => void
 }) {
   const controls = useRef<CameraControlsImpl>(null)
@@ -150,7 +153,11 @@ export function CameraRig({
     }
     fovTarget.current = pose.fov
     currentPose.current = pose
-    void c.setLookAt(px, py, pz, tx, ty, tz, transition)
+    void c.setLookAt(px, py, pz, tx, ty, tz, transition && !reducedMotion)
+    if (reducedMotion) {
+      camera.fov = pose.fov
+      camera.updateProjectionMatrix()
+    }
     updateFocalOffset()
   }
 
@@ -174,13 +181,17 @@ export function CameraRig({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // start the intro once everything is on the GPU
+  // start the intro once everything is on the GPU (or go straight to the overview)
   useEffect(() => {
+    if (sceneReady && view === "intro" && reducedMotion) {
+      finishIntro()
+      return
+    }
     if (sceneReady && view === "intro" && !intro.current.playing) {
       intro.current = { playing: true, start: performance.now() }
       if (controls.current) controls.current.enabled = false
     }
-  }, [sceneReady, view])
+  }, [sceneReady, view, reducedMotion, finishIntro])
 
   // any user gesture during the intro skips it (listeners armed only once it plays)
   useEffect(() => {
