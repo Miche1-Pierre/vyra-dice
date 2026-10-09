@@ -94,3 +94,38 @@ describe("price labels", () => {
     ).toBe("complet")
   })
 })
+
+describe("tickets", () => {
+  it("places each ticket in its standing area, with the ticketing site named", () => {
+    const [club] = listClubs()
+    const layout = {
+      ...club.layout,
+      standing: [
+        {
+          id: "ga",
+          level: 1 as const,
+          x: [-2, 2] as [number, number],
+          y: [0, 4] as [number, number],
+          facing: 90,
+        },
+      ],
+    }
+    const content = {
+      ...club.content,
+      event: { ...club.content.event, ticketUrl: "https://shotgun.live/fr/venues/demo" },
+      tickets: [
+        { id: "ga", name: "Fosse", shortName: "Fosse", description: "Debout", fromPrice: 15 },
+      ],
+    }
+    const vm = buildViewModel(content, layout)
+    expect(vm.tickets).toEqual([
+      expect.objectContaining({
+        id: "ga",
+        level: 1,
+        url: "https://shotgun.live/fr/venues/demo",
+        site: "Shotgun",
+      }),
+    ])
+    expect(vm.ticketMarkers[0].priceLabel).toMatch(/^dès 15\s€$/)
+  })
+})

@@ -7,6 +7,8 @@ import {
   lookBounds,
   overviewPose,
   seatPose,
+  standingMarkerPosition,
+  standingPose,
   tableMarkerPosition,
   tablePose,
   venueCenter,
@@ -147,5 +149,24 @@ describe("lookBounds", () => {
       minDistance: null,
       maxDistance: null,
     })
+  })
+})
+
+describe("standingPose", () => {
+  it("stands at eye level in the middle of the area, looking where it faces", () => {
+    const layout = structuredClone(listClubs()[0].layout)
+    layout.standing = [{ id: "ga", level: 0, x: [-2, 2], y: [0, 4], facing: 90 }]
+    const pose = standingPose(layout, "ga", 1.6)
+    // centre (0, 2) in Blender axes → three.js (0, y, -2), eyes 1.65 m above the floor
+    expect(pose.position).toEqual([0, 1.65, -2])
+    // facing north (90°) is three.js −Z, slightly downwards
+    expect(pose.target[2]).toBeLessThan(pose.position[2])
+    expect(pose.target[1]).toBeLessThan(pose.position[1])
+    expect(standingMarkerPosition(layout, "ga")).toEqual([0, 2.4, -2])
+  })
+
+  it("falls back to the overview for an unknown area", () => {
+    const { layout } = listClubs()[0]
+    expect(standingPose(layout, "nowhere", 1.6)).toEqual(overviewPose(layout, 1.6))
   })
 })

@@ -37,6 +37,21 @@ describe("going back", () => {
   })
 })
 
+describe("standing areas", () => {
+  it("opens a ticket card in first person, and goes back to the overview", () => {
+    store().focusZone("lounge")
+    store().focusTicket("ga")
+    expect(store()).toMatchObject({
+      view: "ticket",
+      panel: "ticket",
+      focusedTicketId: "ga",
+      focusedZoneId: null,
+    })
+    store().back()
+    expect(store()).toMatchObject({ view: "overview", panel: null, focusedTicketId: null })
+  })
+})
+
 describe("list without the 3D", () => {
   it("opens the list, and brings the 3D back behind its loading screen", () => {
     store().setSceneReady()

@@ -11,7 +11,12 @@ import { Beams } from "@/components/scene/fx/beams"
 import { FloorGloss } from "@/components/scene/fx/floor-gloss"
 import { FrozenClock, readFrozenTime } from "@/components/scene/frozen-clock"
 import { CameraRig } from "@/components/scene/camera-rig"
-import { Markers, type TableMarkerData, type ZoneMarkerData } from "@/components/scene/markers"
+import {
+  Markers,
+  type TableMarkerData,
+  type TicketMarkerData,
+  type ZoneMarkerData,
+} from "@/components/scene/markers"
 import { TableHotspots } from "@/components/scene/table-hotspots"
 import { VenueModel } from "@/components/scene/venue-model"
 import { ZoneOverlays } from "@/components/scene/zone-overlays"
@@ -51,6 +56,7 @@ export interface VenueCanvasProps {
   layout: VenueLayout
   zoneMarkers: ZoneMarkerData[]
   tableMarkers: TableMarkerData[]
+  ticketMarkers?: TicketMarkerData[]
   quality: Quality
   /** Less motion: no fly-through, cuts instead of camera moves, a still light show. */
   reducedMotion?: boolean
@@ -65,6 +71,7 @@ export default function VenueCanvas({
   layout,
   zoneMarkers,
   tableMarkers,
+  ticketMarkers = [],
   quality,
   reducedMotion = false,
   onIntroSkipped,
@@ -115,7 +122,12 @@ export default function VenueCanvas({
           />
           <ZoneOverlays layout={layout} tiers={tiers} />
           <TableHotspots layout={layout} tiers={tiers} />
-          <Markers layout={layout} zones={zoneMarkers} tables={tableMarkers} />
+          <Markers
+            layout={layout}
+            zones={zoneMarkers}
+            tables={tableMarkers}
+            tickets={ticketMarkers}
+          />
         </Suspense>
         <CameraRig layout={layout} reducedMotion={reducedMotion} onIntroSkipped={onIntroSkipped} />
         {effects ? <Effects quality={quality} /> : null}

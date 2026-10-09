@@ -181,6 +181,31 @@ export function seatPose(layout: VenueLayout, tableId: string, aspect: number): 
   return { position: eye, target, fov: aspect < 0.8 ? 72 : 62 }
 }
 
+/** Eye height of a standing guest, in metres. */
+const STANDING_EYE = 1.65
+
+/** First-person view from the middle of a standing area, at eye level, towards `facing`. */
+export function standingPose(layout: VenueLayout, areaId: string, aspect: number): CameraPose {
+  const area = layout.standing?.find((candidate) => candidate.id === areaId)
+  if (!area) return overviewPose(layout, aspect)
+  const floor = levelHeight(layout, area.level)
+  const eye = toThree([
+    (area.x[0] + area.x[1]) / 2,
+    (area.y[0] + area.y[1]) / 2,
+    floor + STANDING_EYE,
+  ])
+  const target = add(add(eye, scale(facingVector(area.facing), 6)), [0, -0.6, 0])
+  return { position: eye, target, fov: aspect < 0.8 ? 72 : 62 }
+}
+
+/** Anchor of a standing area's ticket marker (three.js space). */
+export function standingMarkerPosition(layout: VenueLayout, areaId: string): Vec3 {
+  const area = layout.standing?.find((candidate) => candidate.id === areaId)
+  if (!area) return venueCenter(layout)
+  const floor = levelHeight(layout, area.level)
+  return toThree([(area.x[0] + area.x[1]) / 2, (area.y[0] + area.y[1]) / 2, floor + 2.4])
+}
+
 /** Anchor of a table's price marker (three.js space). */
 export function tableMarkerPosition(layout: VenueLayout, table: LayoutTable): Vec3 {
   return add(tableAnchor(layout, table), [0, 1.55, 0])

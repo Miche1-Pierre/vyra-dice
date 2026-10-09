@@ -11,6 +11,7 @@ import {
   lookBounds,
   overviewPose,
   seatPose,
+  standingPose,
   tablePose,
   zonePose,
   type CameraPose,
@@ -53,6 +54,7 @@ export function CameraRig({
   const sceneReady = useExperience((s) => s.sceneReady)
   const focusedZoneId = useExperience((s) => s.focusedZoneId)
   const selectedTableId = useExperience((s) => s.selectedTableId)
+  const focusedTicketId = useExperience((s) => s.focusedTicketId)
   const resetNonce = useExperience((s) => s.resetNonce)
   const finishIntro = useExperience((s) => s.finishIntro)
 
@@ -253,6 +255,10 @@ export function CameraRig({
     if (view === "seat" && selectedTableId) {
       configureSeat(c)
       apply(seatPose(layout, selectedTableId, aspect), true, "seat", 0.05)
+    } else if (view === "ticket" && focusedTicketId) {
+      // standing among the crowd: look around from the middle of the area
+      configureSeat(c)
+      apply(standingPose(layout, focusedTicketId, aspect), true, "seat", 0.05)
     } else {
       configureOrbit(c)
       if (view === "table" && selectedTableId)
@@ -263,7 +269,7 @@ export function CameraRig({
     }
     // aspect handled separately below
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [view, focusedZoneId, selectedTableId, resetNonce, layout])
+  }, [view, focusedZoneId, focusedTicketId, selectedTableId, resetNonce, layout])
 
   // re-frame the overview when the viewport changes shape (rotation, resize)
   useEffect(() => {

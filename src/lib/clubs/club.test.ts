@@ -51,6 +51,30 @@ describe("defineClub", () => {
     expect(reject(f)).toThrow(new RegExp(`zone "${zone.id}" is ${zone.tier}, layout\\.json says`))
   })
 
+  it("accepts standing areas sold as tickets, and rejects one side without the other", () => {
+    const f = files()
+    f.layout.standing = [{ id: "ga", level: 0, x: [-2, 2], y: [0, 4], facing: 90 }]
+    f.content.tickets = [
+      {
+        id: "ga",
+        name: "Fosse",
+        shortName: "Fosse",
+        description: "Debout, devant la scène.",
+        fromPrice: 15,
+        url: "https://shotgun.live/fr/events/demo",
+      },
+    ]
+    expect(defineClub(f).content.tickets).toHaveLength(1)
+
+    const noArea = files()
+    noArea.content.tickets = f.content.tickets
+    expect(reject(noArea)).toThrow(/ticket "ga" has no standing area in layout\.json/)
+
+    const noTicket = files()
+    noTicket.layout.standing = f.layout.standing
+    expect(reject(noTicket)).toThrow(/standing area "ga" has no ticket/)
+  })
+
   it("rejects files that belong to another club", () => {
     const f = files()
     f.assets.club = "another-club"

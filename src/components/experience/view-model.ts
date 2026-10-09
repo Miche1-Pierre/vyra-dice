@@ -1,4 +1,5 @@
-import type { TableMarkerData, ZoneMarkerData } from "@/components/scene/markers"
+import type { TableMarkerData, TicketMarkerData, ZoneMarkerData } from "@/components/scene/markers"
+import { ticketingSite } from "@/lib/contact"
 import { formatEuro } from "@/lib/format"
 import type { Deposit, Surcharge, VenueContent, ZoneIcon } from "@/lib/schema"
 import { tableLevel, type Level, type TableKind, type VenueLayout } from "@/lib/venue/layout"
@@ -42,11 +43,27 @@ export interface ZoneView {
   tables: TableView[]
 }
 
+/** Standing area sold on the ticketing site. */
+export interface TicketView {
+  id: string
+  name: string
+  shortName: string
+  description: string
+  fromPrice: number
+  /** Ticketing page of this ticket. */
+  url: string
+  /** Name of the ticketing site, for its link ("Shotgun"). */
+  site: string
+  level: Level
+}
+
 export interface ViewModel {
   zones: ZoneView[]
   tables: Record<string, TableView>
+  tickets: TicketView[]
   zoneMarkers: ZoneMarkerData[]
   tableMarkers: TableMarkerData[]
+  ticketMarkers: TicketMarkerData[]
 }
 
 const DEFAULT_ICON: Record<TableKind, ZoneIcon> = {
@@ -157,9 +174,35 @@ export function buildViewModel(content: VenueContent, layout: VenueLayout): View
     })
     .sort((a, b) => TIERS[a.tier].order - TIERS[b.tier].order)
 
+  const areas = new Map((layout.standing ?? []).map((area) => [area.id, area]))
+  const tickets = (content.tickets ?? []).flatMap<TicketView>((ticket) => {
+    const area = areas.get(ticket.id)
+    const url = ticket.url ?? content.event.ticketUrl
+    if (!area || !url) return []
+    return [
+      {
+        id: ticket.id,
+        name: ticket.name,
+        shortName: ticket.shortName,
+        description: ticket.description,
+        fromPrice: ticket.fromPrice,
+        url,
+        site: ticketingSite(url),
+        level: area.level,
+      },
+    ]
+  })
+
   return {
     zones,
     tables,
+    tickets,
+    ticketMarkers: tickets.map((ticket) => ({
+      id: ticket.id,
+      name: ticket.name,
+      level: ticket.level,
+      priceLabel: `dès ${formatEuro(ticket.fromPrice)}`,
+    })),
     zoneMarkers: zones.map((z) => ({
       id: z.id,
       name: z.name,

@@ -30,6 +30,14 @@ describe("parseLayout", () => {
     expect(() => parseLayout(json)).toThrow(/Duplicate table id/)
   })
 
+  it("accepts standing areas, but not with a zone's id", () => {
+    const json = valid()
+    json.standing = [{ id: "ga", level: 0, x: [-2, 2], y: [0, 4], facing: 90 }]
+    expect(parseLayout(json).standing).toHaveLength(1)
+    json.standing[0].id = json.zones[0].id
+    expect(() => parseLayout(json)).toThrow(/Duplicate area id/)
+  })
+
   it("rejects malformed geometry", () => {
     expect(() => parseLayout({ ...valid(), tables: [] })).toThrow(/Invalid venue layout/)
     expect(() => parseLayout(null)).toThrow(/Invalid venue layout/)

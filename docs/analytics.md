@@ -27,6 +27,7 @@ Responsable : Pierre (data/analytics). Les définitions H1–H5 viennent du cadr
 | `request_submitted`        | Demande enregistrée côté serveur                                 | `request_id`, `table_id`, `party_size`, `demo`           | H2       |
 | `request_failed`           | Erreur d'envoi                                                   | `table_id`, `reason`                                     | H4       |
 | `fallback_contact_clicked` | Contact du club utilisé (WhatsApp, Instagram, téléphone, e-mail) | `channel`, `context`                                     | H4       |
+| `ticket_viewed`            | Espace debout (billet) ouvert                                    | `ticket_id`                                              | H1       |
 | `ticket_link_clicked`      | Redirection billetterie (Shotgun)                                | `url`                                                    | contexte |
 
 Typage côté code : `src/lib/analytics/events.ts`. Avant le choix du visiteur, les événements attendent en mémoire :

@@ -28,6 +28,7 @@ import { Island } from "@/components/experience/island"
 import { IntroSkip, LoadingScreen } from "@/components/experience/loading-screen"
 import { Panel } from "@/components/experience/sheet"
 import { RequestDialog, TableDetails, TableFooter } from "@/components/experience/table-panel"
+import { TicketDetails, TicketFooter } from "@/components/experience/ticket-panel"
 import { Btn, Tile, ZoneTile } from "@/components/experience/ui"
 import { useShortcuts } from "@/components/experience/use-shortcuts"
 import { buildViewModel, zonePriceLabel, type ViewModel } from "@/components/experience/view-model"
@@ -85,6 +86,9 @@ function useAnalyticsBridge(vm: ViewModel, webgl: boolean | null) {
             })
           }
         }
+        if (s.focusedTicketId && s.focusedTicketId !== prev.focusedTicketId) {
+          track("ticket_viewed", { ticket_id: s.focusedTicketId })
+        }
         if (s.panel === "compare" && prev.panel !== "compare") {
           track("tables_compared", { table_ids: s.compareIds })
         }
@@ -98,10 +102,14 @@ function SelectionAnnouncer({ vm }: { vm: ViewModel }) {
   const view = useExperience((s) => s.view)
   const focusedZoneId = useExperience((s) => s.focusedZoneId)
   const selectedTableId = useExperience((s) => s.selectedTableId)
+  const focusedTicketId = useExperience((s) => s.focusedTicketId)
   const table = selectedTableId ? vm.tables[selectedTableId] : null
   const zone = focusedZoneId ? vm.zones.find((z) => z.id === focusedZoneId) : null
+  const ticket = focusedTicketId ? vm.tickets.find((t) => t.id === focusedTicketId) : null
   let message = ""
-  if (table && (view === "table" || view === "seat")) {
+  if (ticket && view === "ticket") {
+    message = `${ticket.name}, billet sans table dès ${formatEuro(ticket.fromPrice)} par personne, vendu sur ${ticket.site}`
+  } else if (table && (view === "table" || view === "seat")) {
     const price =
       table.minimumSpend !== null ? `minimum ${formatEuro(table.minimumSpend)}` : "prix sur demande"
     message = `Table ${table.label}, ${table.zoneName}, ${STATUS[table.status].label}, ${price}`
@@ -127,6 +135,7 @@ function useDockEntries(
   const view = useExperience((s) => s.view)
   const panel = useExperience((s) => s.panel)
   const focusedZoneId = useExperience((s) => s.focusedZoneId)
+  const focusedTicketId = useExperience((s) => s.focusedTicketId)
   const compareCount = useExperience((s) => s.compareIds.length)
   const tableCount = Object.keys(vm.tables).length
 
@@ -159,6 +168,16 @@ function useDockEntries(
         active: focusedZoneId === z.id && view !== "overview",
         tile: <ZoneTile tier={z.tier} icon={z.icon} />,
         onSelect: () => s().focusZone(z.id),
+      })),
+      ...vm.tickets.map<DockEntry>((t) => ({
+        kind: "item",
+        id: `ticket-${t.id}`,
+        label: t.name,
+        short: t.shortName,
+        detail: `billet dès ${formatEuro(t.fromPrice)}`,
+        active: focusedTicketId === t.id && view === "ticket",
+        tile: graphite(<Ticket />),
+        onSelect: () => s().focusTicket(t.id),
       })),
       { kind: "separator", id: "sep-actions" },
       {
@@ -242,7 +261,19 @@ function useDockEntries(
       if (tail.length) entries.push({ kind: "separator", id: "sep-links" }, ...tail)
     }
     return entries
-  }, [vm.zones, content, brand, isDesktop, view, panel, focusedZoneId, compareCount, tableCount])
+  }, [
+    vm.zones,
+    vm.tickets,
+    content,
+    brand,
+    isDesktop,
+    view,
+    panel,
+    focusedZoneId,
+    focusedTicketId,
+    compareCount,
+    tableCount,
+  ])
 }
 
 export function Experience({ club }: { club: ClubDefinition }) {
@@ -263,6 +294,7 @@ export function Experience({ club }: { club: ClubDefinition }) {
   const panel = useExperience((s) => s.panel)
   const view = useExperience((s) => s.view)
   const selectedTableId = useExperience((s) => s.selectedTableId)
+  const focusedTicketId = useExperience((s) => s.focusedTicketId)
   const closePanel = useExperience((s) => s.closePanel)
   const openPanel = useExperience((s) => s.openPanel)
   const compareCount = useExperience((s) => s.compareIds.length)
@@ -283,9 +315,11 @@ export function Experience({ club }: { club: ClubDefinition }) {
   const eventLine = `${content.event.name} · ${dateLabel} · ${content.event.doors.replace(":", "h")}`
   const table = selectedTableId ? vm.tables[selectedTableId] : null
   const tableIcon = table ? (vm.zones.find((z) => z.id === table.zoneId)?.icon ?? "sofa") : "sofa"
+  const ticket = focusedTicketId ? (vm.tickets.find((t) => t.id === focusedTicketId) ?? null) : null
   const panelOpen =
     panel !== null &&
     (panel !== "table" || table !== null) &&
+    (panel !== "ticket" || ticket !== null) &&
     // on phones the seat view gets the whole screen; the overlay carries the CTA
     !(view === "seat" && !isDesktop)
   const intro = view === "intro"
@@ -307,6 +341,7 @@ export function Experience({ club }: { club: ClubDefinition }) {
                 layout={layout}
                 zoneMarkers={vm.zoneMarkers}
                 tableMarkers={vm.tableMarkers}
+                ticketMarkers={vm.ticketMarkers}
                 quality={quality}
                 reducedMotion={reducedMotion}
                 onIntroSkipped={(atMs) => track("intro_skipped", { at_ms: atMs })}
@@ -347,6 +382,7 @@ export function Experience({ club }: { club: ClubDefinition }) {
                 brand={club.brand}
                 zones={vm.zones}
                 table={table}
+                ticket={ticket}
                 dateLabel={dateLabel}
                 isDesktop={isDesktop}
                 compact={!roomy}
@@ -389,9 +425,11 @@ export function Experience({ club }: { club: ClubDefinition }) {
             label={
               panel === "table" && table
                 ? `Table ${table.label}`
-                : panel === "compare"
-                  ? "Comparatif"
-                  : "Toutes les tables"
+                : panel === "ticket" && ticket
+                  ? ticket.name
+                  : panel === "compare"
+                    ? "Comparatif"
+                    : "Toutes les tables"
             }
             title={
               panel === "list" ? (
@@ -412,9 +450,16 @@ export function Experience({ club }: { club: ClubDefinition }) {
                 </Btn>
               ) : undefined
             }
-            footer={panel === "table" && table ? <TableFooter table={table} /> : undefined}
+            footer={
+              panel === "table" && table ? (
+                <TableFooter table={table} />
+              ) : panel === "ticket" && ticket ? (
+                <TicketFooter ticket={ticket} />
+              ) : undefined
+            }
           >
             {panel === "list" ? <TableList zones={vm.zones} /> : null}
+            {panel === "ticket" && ticket ? <TicketDetails ticket={ticket} /> : null}
             {panel === "compare" ? (
               <CompareView
                 tables={vm.tables}
@@ -451,6 +496,7 @@ export function Experience({ club }: { club: ClubDefinition }) {
             brand={club.brand}
             zones={vm.zones}
             tables={vm.tables}
+            tickets={vm.tickets}
             isDesktop={isDesktop}
           />
         </div>

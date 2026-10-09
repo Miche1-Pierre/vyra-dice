@@ -11,10 +11,12 @@ import {
   minimumLabel,
   zonePriceLabel,
   type TableView,
+  type TicketView,
   type ZoneView,
 } from "@/components/experience/view-model"
 import { track } from "@/lib/analytics/client"
 import { contactMessage, instagramUrl, whatsappUrl } from "@/lib/contact"
+import { formatEuro } from "@/lib/format"
 import type { ClubBrand } from "@/lib/clubs/brand"
 import type { VenueContent } from "@/lib/schema"
 import { useExperience } from "@/lib/store"
@@ -67,12 +69,14 @@ export function CommandMenu({
   brand,
   zones,
   tables,
+  tickets = [],
   isDesktop,
 }: {
   content: VenueContent
   brand: ClubBrand
   zones: ZoneView[]
   tables: Record<string, TableView>
+  tickets?: TicketView[]
   isDesktop: boolean
 }) {
   const open = useExperience((s) => s.commandOpen)
@@ -130,6 +134,23 @@ export function CommandMenu({
                     <span className="text-label-3 ml-2">
                       {z.level === 0 ? "Rez-de-chaussée" : "Mezzanine"}
                     </span>
+                  </Item>
+                ))}
+                {tickets.map((t) => (
+                  <Item
+                    key={`ticket-${t.id}`}
+                    value={`billet ${t.name}`}
+                    keywords={[t.shortName, "billet", "debout", "entrée", t.site]}
+                    icon={
+                      <Tile tone="graphite" className="size-7 rounded-[8px]">
+                        <Ticket />
+                      </Tile>
+                    }
+                    aside={`dès ${formatEuro(t.fromPrice)}`}
+                    onSelect={run(() => s().focusTicket(t.id))}
+                  >
+                    <span className="text-label">{t.name}</span>
+                    <span className="text-label-3 ml-2">Billet</span>
                   </Item>
                 ))}
               </Command.Group>

@@ -90,6 +90,17 @@ export function crossCheck({
       )
     }
   }
+  const areas = new Set((layout.standing ?? []).map((area) => area.id))
+  for (const ticket of content.tickets ?? []) {
+    if (!areas.has(ticket.id)) {
+      problems.push(`content.json: ticket "${ticket.id}" has no standing area in layout.json`)
+    }
+  }
+  const sold = new Set((content.tickets ?? []).map((ticket) => ticket.id))
+  for (const area of layout.standing ?? []) {
+    if (!sold.has(area.id)) problems.push(`layout.json: standing area "${area.id}" has no ticket`)
+  }
+
   const describedTables = new Set(content.tables.map((table) => table.id))
   for (const table of layout.tables) {
     if (!describedTables.has(table.id)) {

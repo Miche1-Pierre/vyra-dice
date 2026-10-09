@@ -7,9 +7,11 @@ import * as THREE from "three"
 
 import { cn } from "@/lib/utils"
 import { useExperience } from "@/lib/store"
-import { tableMarkerPosition, zoneMarkerPosition } from "@/lib/venue/camera"
+import { standingMarkerPosition, tableMarkerPosition, zoneMarkerPosition } from "@/lib/venue/camera"
 import type { VenueLayout } from "@/lib/venue/layout"
-import { StatusIcon, ZoneTile } from "@/components/experience/ui"
+import { Ticket } from "lucide-react"
+
+import { StatusIcon, Tile, ZoneTile } from "@/components/experience/ui"
 import type { ZoneIcon } from "@/lib/schema"
 import { STATUS, TIERS, tierColor, withAlpha, type TableStatus } from "@/lib/venue/tiers"
 import type { TableKind } from "@/lib/venue/layout"
@@ -36,16 +38,30 @@ export interface TableMarkerData {
   status: TableStatus
 }
 
-/** Price tags floating in the scene: one per zone on the overview, one per table inside a zone. */
+export interface TicketMarkerData {
+  id: string
+  name: string
+  level: 0 | 1
+  /** "dès 15 €". */
+  priceLabel: string
+}
+
+/**
+ * Price tags floating in the scene: one per zone and per standing area on the overview, one per
+ * table inside a zone.
+ */
 export function Markers({
   layout,
   zones,
   tables,
+  tickets = [],
 }: {
   layout: VenueLayout
   zones: ZoneMarkerData[]
   tables: TableMarkerData[]
+  tickets?: TicketMarkerData[]
 }) {
+  const focusTicket = useExperience((s) => s.focusTicket)
   const view = useExperience((s) => s.view)
   const focusedZoneId = useExperience((s) => s.focusedZoneId)
   const selectedTableId = useExperience((s) => s.selectedTableId)
@@ -58,6 +74,10 @@ export function Markers({
   const zonePositions = useMemo(
     () => Object.fromEntries(zones.map((z) => [z.id, zoneMarkerPosition(layout, z.id)])),
     [layout, zones],
+  )
+  const ticketPositions = useMemo(
+    () => Object.fromEntries(tickets.map((t) => [t.id, standingMarkerPosition(layout, t.id)])),
+    [layout, tickets],
   )
   const tablePositions = useMemo(
     () =>
@@ -87,7 +107,12 @@ export function Markers({
     }[] = []
     for (const [key, el] of cards.current) {
       const [kind, id] = key.split(":")
-      const p = kind === "zone" ? zonePositions[id] : tablePositions[id]
+      const p =
+        kind === "zone"
+          ? zonePositions[id]
+          : kind === "ticket"
+            ? ticketPositions[id]
+            : tablePositions[id]
       if (!p) continue
       projected.set(p[0], p[1], p[2]).project(camera)
       const x = ((projected.x + 1) / 2) * size.width
@@ -97,7 +122,7 @@ export function Markers({
       let shift = 0
       if (x - half < EDGE) shift = EDGE - (x - half)
       else if (x + half > size.width - EDGE) shift = size.width - EDGE - (x + half)
-      const stem = kind === "zone" ? ZONE_STEM : TABLE_STEM
+      const stem = kind === "table" ? TABLE_STEM : ZONE_STEM
       items.push({
         el,
         left: x - half + shift,
@@ -165,6 +190,23 @@ export function Markers({
               zone={z}
               onClick={() => focusZone(z.id)}
               cardRef={shown ? register(`zone:${z.id}`) : null}
+            />
+          </Html>
+        )
+      })}
+      {tickets.map((t) => {
+        const shown = view === "overview" && levelVisible(t.level)
+        return (
+          <Html
+            key={`ticket-${t.id}`}
+            position={ticketPositions[t.id]}
+            zIndexRange={[30, 10]}
+            style={wrapper(shown)}
+          >
+            <TicketTag
+              ticket={t}
+              onClick={() => focusTicket(t.id)}
+              cardRef={shown ? register(`ticket:${t.id}`) : null}
             />
           </Html>
         )
@@ -255,6 +297,44 @@ function ZoneTag({
         </span>
       </button>
       <Stem color={tierColor(zone.tier)} height={22} />
+    </div>
+  )
+}
+
+function TicketTag({
+  ticket,
+  onClick,
+  cardRef,
+}: {
+  ticket: TicketMarkerData
+  onClick: () => void
+  cardRef: Ref<HTMLButtonElement>
+}) {
+  return (
+    <div className="pointer-events-none flex -translate-x-1/2 -translate-y-full flex-col items-center">
+      <button
+        ref={cardRef}
+        type="button"
+        onClick={onClick}
+        aria-label={`${ticket.name}, billet sans table, ${ticket.priceLabel} par personne`}
+        className={cn(
+          chip,
+          "flex items-center gap-2.5 rounded-full bg-[rgb(16_13_20/0.8)] py-1 pr-3.5 pl-1 shadow-[0_0_0_1px_rgb(255_255_255/0.11),inset_0_1px_0_rgb(255_255_255/0.08),0_10px_28px_rgb(0_0_0/0.55)] backdrop-blur-md hover:scale-[1.05] hover:bg-[rgb(26_22_32/0.9)]",
+        )}
+      >
+        <Tile tone="graphite" className="size-7 rounded-full">
+          <Ticket />
+        </Tile>
+        <span className="leading-tight">
+          <span className="text-label block text-[13px] leading-4 font-semibold">
+            {ticket.name}
+          </span>
+          <span className="num text-label-2 mt-px block text-[11px] leading-[14px] [@media(max-height:499px)]:hidden">
+            Billet · {ticket.priceLabel}
+          </span>
+        </span>
+      </button>
+      <Stem color="rgb(255 255 255 / 0.7)" height={22} />
     </div>
   )
 }

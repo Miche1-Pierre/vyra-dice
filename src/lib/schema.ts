@@ -108,6 +108,23 @@ export const tableContentSchema = z
   })
 export type TableContent = z.infer<typeof tableContentSchema>
 
+/**
+ * Entry ticket for a standing area of the plan (same id), sold on the club's ticketing site: the
+ * visit shows where it is and links out, it never sells it.
+ */
+export const ticketOfferSchema = z.object({
+  id: slugSchema,
+  name: textSchema,
+  shortName: textSchema,
+  /** One short line: what this ticket gives (standing, near the stage…). */
+  description: textSchema,
+  /** Lowest price of the ticket per person, in whole euros, as on the ticketing site. */
+  fromPrice: z.number().int().positive(),
+  /** Ticketing page of this ticket; the event's `ticketUrl` otherwise. */
+  url: z.url({ protocol: /^https?$/ }).optional(),
+})
+export type TicketOffer = z.infer<typeof ticketOfferSchema>
+
 export const clubSchema = z
   .object({
     slug: slugSchema,
@@ -180,8 +197,27 @@ export const venueContentSchema = z
     tables: z.array(tableContentSchema).min(1),
     /** Booking conditions shown with every table. */
     conditions: z.array(textSchema),
+    /** Standing areas sold on the ticketing site (optional). */
+    tickets: z.array(ticketOfferSchema).optional(),
   })
   .superRefine((content, ctx) => {
+    const tickets = content.tickets ?? []
+    for (const index of duplicateIndexes(tickets)) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Duplicate ticket id",
+        path: ["tickets", index, "id"],
+      })
+    }
+    tickets.forEach((ticket, index) => {
+      if (!ticket.url && !content.event.ticketUrl) {
+        ctx.addIssue({
+          code: "custom",
+          message: "A ticket needs a url, or the event a ticketUrl",
+          path: ["tickets", index, "url"],
+        })
+      }
+    })
     for (const index of duplicateIndexes(content.zones)) {
       ctx.addIssue({ code: "custom", message: "Duplicate zone id", path: ["zones", index, "id"] })
     }
