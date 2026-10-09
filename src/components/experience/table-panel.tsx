@@ -599,7 +599,12 @@ function RequestForm({
             className="space-y-2 rounded-2xl bg-[#ff453a]/[0.1] px-4 py-3 shadow-[inset_0_0_0_1px_rgb(255_69_58/0.3)]"
           >
             <p className="text-ui text-label">{serverError}</p>
-            <FallbackContact club={content.club} context="request_error" />
+            <FallbackContact
+              club={content.club}
+              eventName={content.event.name}
+              tableLabel={table.label}
+              context="request_error"
+            />
           </div>
         ) : null}
       </div>
@@ -717,7 +722,13 @@ function RequestSuccess({
         <Btn variant="brand" size="lg" className="w-full" onClick={resetView}>
           Revenir à la visite
         </Btn>
-        <FallbackContact club={content.club} context="ack" className="justify-center" />
+        <FallbackContact
+          club={content.club}
+          eventName={content.event.name}
+          tableLabel={table?.label}
+          context="ack"
+          className="justify-center"
+        />
       </div>
     </div>
   )

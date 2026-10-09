@@ -16,6 +16,7 @@ import {
   SearchButton,
   SeatOverlay,
   StatusLegend,
+  WhatsAppButton,
 } from "@/components/experience/hud"
 import { Island } from "@/components/experience/island"
 import { IntroSkip, LoadingScreen } from "@/components/experience/loading-screen"
@@ -25,6 +26,7 @@ import { Tile, ZoneTile } from "@/components/experience/ui"
 import { useShortcuts } from "@/components/experience/use-shortcuts"
 import { buildViewModel, zonePriceLabel, type ViewModel } from "@/components/experience/view-model"
 import { track } from "@/lib/analytics/client"
+import { contactMessage, instagramUrl, whatsappUrl } from "@/lib/contact"
 import type { ClubBrand } from "@/lib/clubs/brand"
 import type { ClubDefinition } from "@/lib/clubs/club"
 import { formatDateFr } from "@/lib/format"
@@ -178,6 +180,21 @@ function useDockEntries(
           onSelect: () => track("ticket_link_clicked", { url: content.event.ticketUrl! }),
         })
       }
+      if (content.club.contact.whatsapp) {
+        tail.push({
+          kind: "item",
+          id: "whatsapp",
+          label: "Écrire au club",
+          detail: "WhatsApp",
+          tile: graphite(<MessageCircle />),
+          href: whatsappUrl(
+            content.club.contact.whatsapp,
+            contactMessage({ clubName: content.club.name, eventName: content.event.name }),
+          ),
+          onSelect: () =>
+            track("fallback_contact_clicked", { channel: "whatsapp", context: "dock" }),
+        })
+      }
       if (content.club.contact.instagram) {
         tail.push({
           kind: "item",
@@ -185,7 +202,7 @@ function useDockEntries(
           label: "Écrire au club",
           detail: "Instagram",
           tile: graphite(<MessageCircle />),
-          href: `https://ig.me/m/${content.club.contact.instagram}`,
+          href: instagramUrl(content.club.contact.instagram),
           onSelect: () =>
             track("fallback_contact_clicked", { channel: "instagram", context: "dock" }),
         })
@@ -294,6 +311,14 @@ export function Experience({ club }: { club: ClubDefinition }) {
           </div>
           <div className="pointer-events-auto flex shrink-0 items-center gap-2">
             {isDesktop && !panelOpen && view !== "seat" ? <StatusLegend /> : null}
+            {!isDesktop ? (
+              <WhatsAppButton
+                club={content.club}
+                eventName={content.event.name}
+                tableLabel={table?.label}
+                context="hud"
+              />
+            ) : null}
             {!isDesktop ? <SearchButton isDesktop={false} /> : null}
           </div>
         </div>
