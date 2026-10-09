@@ -34,6 +34,18 @@ export const layoutZoneSchema = z.object({
   y: rangeSchema,
 })
 
+/**
+ * Standing area without tables (general admission, front row…), sold on the club's ticketing
+ * site. The buyer sees it from its centre, at eye level, looking `facing` (0 = east, 90 = north).
+ */
+export const standingAreaSchema = z.object({
+  id: z.string().min(1),
+  level: levelSchema,
+  x: rangeSchema,
+  y: rangeSchema,
+  facing: z.number(),
+})
+
 export const layoutTableSchema = z.object({
   id: z.string().min(1),
   /** Id of the layout zone the table belongs to. */
@@ -98,6 +110,8 @@ export const venueLayoutSchema = z
       plants: z.array(levelPointSchema),
     }),
     zones: z.array(layoutZoneSchema).min(1),
+    /** Standing areas sold as tickets (optional). */
+    standing: z.array(standingAreaSchema).optional(),
     tables: z.array(layoutTableSchema).min(1),
     cameras: z.object({
       overview: cameraPoseSchema,
@@ -115,6 +129,16 @@ export const venueLayoutSchema = z
         })
       }
       zoneIds.add(zone.id)
+    })
+    ;(layout.standing ?? []).forEach((area, index) => {
+      if (zoneIds.has(area.id)) {
+        ctx.addIssue({
+          code: "custom",
+          message: `Duplicate area id "${area.id}" (zones and standing areas share ids)`,
+          path: ["standing", index, "id"],
+        })
+      }
+      zoneIds.add(area.id)
     })
     const tableIds = new Set<string>()
     layout.tables.forEach((table, index) => {
@@ -139,6 +163,7 @@ export const venueLayoutSchema = z
 export type VenueLayout = z.infer<typeof venueLayoutSchema>
 export type LayoutZone = z.infer<typeof layoutZoneSchema>
 export type LayoutTable = z.infer<typeof layoutTableSchema>
+export type StandingArea = z.infer<typeof standingAreaSchema>
 
 /** Validates a layout export; throws with a readable report when it does not match the schema. */
 export function parseLayout(json: unknown): VenueLayout {

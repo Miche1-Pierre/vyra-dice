@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { contactMessage, instagramUrl, phoneUrl, whatsappUrl } from "@/lib/contact"
+import { contactMessage, instagramUrl, phoneUrl, ticketingSite, whatsappUrl } from "@/lib/contact"
 
 describe("whatsappUrl", () => {
   it("keeps only the digits of the international number", () => {
@@ -18,6 +18,13 @@ describe("other channels", () => {
   it("opens the club's Instagram conversation and dials its number", () => {
     expect(instagramUrl("club.demo")).toBe("https://ig.me/m/club.demo")
     expect(phoneUrl("+33 (0)6 12-34-56-78")).toBe("tel:+330612345678")
+  })
+})
+
+describe("ticketingSite", () => {
+  it("names Shotgun, and other sites by their host", () => {
+    expect(ticketingSite("https://shotgun.live/fr/venues/naho-club")).toBe("Shotgun")
+    expect(ticketingSite("https://www.billetterie.example/soiree")).toBe("billetterie.example")
   })
 })
 

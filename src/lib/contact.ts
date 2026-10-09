@@ -19,6 +19,12 @@ export function instagramUrl(handle: string): string {
   return `https://ig.me/m/${handle}`
 }
 
+/** Name of a ticketing site for its link: "Shotgun", or the host name. */
+export function ticketingSite(url: string): string {
+  const host = new URL(url).hostname.replace(/^www\./, "")
+  return host.includes("shotgun") ? "Shotgun" : host
+}
+
 /** `tel:` link of a phone number as typed by the club. */
 export function phoneUrl(phone: string): string {
   return `tel:${phone.replace(/[^\d+]/g, "")}`

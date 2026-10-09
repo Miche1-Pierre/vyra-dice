@@ -40,8 +40,8 @@ de photos, et partage le club par une pull request. À la main :
 1. **Dossier** : `clubs/<slug>/` (minuscules, chiffres et tirets : `809-social-club`). Les photos reçues du club
    vont dans `private/`, les croquis et plans diffusables dans `reference/`.
 2. **Plan** — `layout.json` : bâtiment, niveaux, zones (`tier` : `lounge` / `vip` / `prestige`, niveau 0 ou 1),
-   tables (id, zone, type, position, orientation), caméras. Axes et champs : `docs/3d-pipeline.md`,
-   schéma : `src/lib/venue/layout.ts`. `club` = le slug.
+   tables (id, zone, type, position, orientation), caméras, et le cas échéant les espaces debout `standing`
+   (voir plus bas). Axes et champs : `docs/3d-pipeline.md`, schéma : `src/lib/venue/layout.ts`. `club` = le slug.
 3. **Contenu** — `content.json` (schéma : `src/lib/schema.ts`) : mêmes ids de zones et de tables que le plan, même
    tier par zone. Une démo porte `"demo": true`, une mention qui commence par « Démo » et
    `"offersValidatedAt": null` (aucune offre réelle avant l'accord écrit du club, VYR-15).
@@ -96,6 +96,21 @@ de photos, et partage le club par une pull request. À la main :
 
 Quand l'acheteur change le nombre de personnes, la fiche recalcule le minimum, la part par personne et
 l'acompte ; la demande enregistre les montants affichés. Une demande ne déclenche aucun paiement.
+
+## Référence — espaces debout et billets
+
+Un club qui vend des entrées par zone (fosse, front row…) les montre dans la visite sans les vendre : chaque espace
+debout du plan a un billet dans le contenu, avec le même id. La visite place un repère sur la vue d'ensemble, montre
+l'espace à hauteur d'yeux (on regarde autour, sans se déplacer) et renvoie vers la billetterie, nommée.
+
+| Fichier        | Champ                        | Rôle                                                                                                                                |
+| -------------- | ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `layout.json`  | `standing[]`                 | `{ "id", "level", "x": [min, max], "y": [min, max], "facing" }` : rectangle de l'espace et direction du regard (0 = est, 90 = nord) |
+| `content.json` | `tickets[]`                  | `{ "id", "name", "shortName", "description", "fromPrice" }` : texte court, prix « dès » par personne en euros entiers               |
+| `content.json` | `tickets[].url` (facultatif) | page de billetterie de ce billet ; sinon `event.ticketUrl`                                                                          |
+
+Les ids des espaces debout ne doivent pas reprendre ceux des zones. `defineClub` vérifie qu'un billet a son espace et
+qu'un espace a son billet.
 
 ## Référence — `brand.json`
 

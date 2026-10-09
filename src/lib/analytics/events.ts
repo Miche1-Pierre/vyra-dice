@@ -22,6 +22,7 @@ export type AnalyticsEvents = {
   request_submitted: { request_id: string; table_id: string; party_size: number; demo: boolean }
   request_failed: { table_id: string; reason: string }
   fallback_contact_clicked: { channel: string; context: string }
+  ticket_viewed: { ticket_id: string }
   ticket_link_clicked: { url: string }
 }
 

@@ -1,6 +1,6 @@
 "use client"
 
-import { ChevronLeft, Mail, MessageCircle, Phone, ScanEye, Search } from "lucide-react"
+import { ChevronLeft, Mail, MessageCircle, Phone, ScanEye, Search, Ticket } from "lucide-react"
 import { AnimatePresence, motion } from "motion/react"
 
 import { Emblem, Wordmark } from "@/components/experience/brand"
@@ -14,7 +14,7 @@ import {
   StatusIcon,
   TierDot,
 } from "@/components/experience/ui"
-import type { TableView, ZoneView } from "@/components/experience/view-model"
+import type { TableView, TicketView, ZoneView } from "@/components/experience/view-model"
 import { track } from "@/lib/analytics/client"
 import { contactMessage, instagramUrl, phoneUrl, whatsappUrl } from "@/lib/contact"
 import type { ClubBrand } from "@/lib/clubs/brand"
@@ -58,16 +58,18 @@ function Context({
   content,
   zone,
   table,
+  ticket,
   dateLabel,
   compact,
 }: {
   content: VenueContent
   zone: ZoneView | null
   table: TableView | null
+  ticket: TicketView | null
   dateLabel: string
   compact: boolean
 }) {
-  const key = table ? `t:${table.id}` : zone ? `z:${zone.id}` : "club"
+  const key = ticket ? `b:${ticket.id}` : table ? `t:${table.id}` : zone ? `z:${zone.id}` : "club"
   return (
     <AnimatePresence mode="popLayout" initial={false}>
       <motion.span
@@ -78,7 +80,13 @@ function Context({
         transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
         className="text-footnote flex min-w-0 items-center gap-2 whitespace-nowrap"
       >
-        {table ? (
+        {ticket ? (
+          <>
+            <Ticket className="text-label-2 size-3.5" aria-hidden />
+            <span className="text-label truncate font-medium">{ticket.name}</span>
+            {!compact ? <span className="text-label-3">Billet</span> : null}
+          </>
+        ) : table ? (
           <>
             <TierDot tier={table.tier} className="size-[7px]" />
             <span className="text-label font-medium">Table {table.label}</span>
@@ -115,6 +123,7 @@ export function BrandBar({
   brand,
   zones,
   table,
+  ticket = null,
   dateLabel,
   isDesktop,
   compact = !isDesktop,
@@ -123,6 +132,8 @@ export function BrandBar({
   brand: ClubBrand
   zones: ZoneView[]
   table: TableView | null
+  /** Standing area seen from inside, if any. */
+  ticket?: TicketView | null
   dateLabel: string
   isDesktop: boolean
   /** Drop the secondary labels (level, date) when the bar shares the width. */
@@ -133,7 +144,7 @@ export function BrandBar({
   const resetView = useExperience((s) => s.resetView)
   const back = useExperience((s) => s.back)
   const zone = zones.find((z) => z.id === (table?.zoneId ?? focusedZoneId)) ?? null
-  const canGoBack = view === "zone" || view === "table" || view === "seat"
+  const canGoBack = view === "zone" || view === "table" || view === "seat" || view === "ticket"
 
   return (
     <div className="flex min-w-0 items-center gap-2">
@@ -187,6 +198,7 @@ export function BrandBar({
           content={content}
           zone={zone}
           table={table}
+          ticket={view === "ticket" ? ticket : null}
           dateLabel={dateLabel}
           compact={compact}
         />

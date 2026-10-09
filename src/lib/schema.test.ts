@@ -231,6 +231,18 @@ describe("venueContentSchema", () => {
     expect(contentIssuePaths(content)).toEqual(["tables.1.id"])
   })
 
+  it("accepts tickets sold on the event's ticketing page or their own", () => {
+    const content = venueContent()
+    content.tickets = [
+      { id: "ga", name: "Fosse", shortName: "Fosse", description: "Debout", fromPrice: 15 },
+    ]
+    expect(contentIssuePaths(content)).toEqual(["tickets.0.url"])
+    content.event.ticketUrl = "https://shotgun.live/fr/events/demo"
+    expect(venueContentSchema.safeParse(content).success).toBe(true)
+    content.tickets.push({ ...content.tickets[0], fromPrice: 0 })
+    expect(contentIssuePaths(content).sort()).toEqual(["tickets.1.fromPrice", "tickets.1.id"])
+  })
+
   it("accepts a WhatsApp number in international format", () => {
     const content = venueContent()
     content.club.contact = { whatsapp: "+33 6 12 34 56 78" }

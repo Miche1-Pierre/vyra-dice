@@ -3,9 +3,9 @@
 import { create } from "zustand"
 
 export type LevelFilter = "all" | 0 | 1
-export type View = "intro" | "overview" | "zone" | "table" | "seat"
+export type View = "intro" | "overview" | "zone" | "table" | "seat" | "ticket"
 /** Side panel (desktop) / bottom sheet (phone). */
-export type Panel = "table" | "compare" | "list" | null
+export type Panel = "table" | "ticket" | "compare" | "list" | null
 /** Modal flow on top of everything: the request form, then its acknowledgement. */
 export type Dialog = "request" | "ack" | null
 
@@ -49,6 +49,8 @@ interface ExperienceState {
   view: View
   levelFilter: LevelFilter
   focusedZoneId: string | null
+  /** Standing area seen from inside (ticket view). */
+  focusedTicketId: string | null
   selectedTableId: string | null
   hoveredTableId: string | null
   /** Group size chosen for the selected table; null until the buyer changes it. */
@@ -70,6 +72,7 @@ interface ExperienceState {
   setListMode: (on: boolean) => void
   finishIntro: () => void
   focusZone: (zoneId: string) => void
+  focusTicket: (ticketId: string) => void
   selectTable: (tableId: string, opts?: { openPanel?: boolean; from?: "list" | "compare" }) => void
   viewFromSeat: () => void
   leaveSeat: () => void
@@ -98,6 +101,7 @@ export const useExperience = create<ExperienceState>()((set, get) => ({
   view: "intro",
   levelFilter: "all",
   focusedZoneId: null,
+  focusedTicketId: null,
   selectedTableId: null,
   hoveredTableId: null,
   guests: null,
@@ -128,12 +132,23 @@ export const useExperience = create<ExperienceState>()((set, get) => ({
     set((s) => ({
       view: "zone",
       focusedZoneId: zoneId,
+      focusedTicketId: null,
       selectedTableId: null,
       panel: s.panel === "list" || s.panel === "compare" ? s.panel : null,
     })),
+  focusTicket: (ticketId) =>
+    set({
+      view: "ticket",
+      focusedTicketId: ticketId,
+      focusedZoneId: null,
+      selectedTableId: null,
+      panel: "ticket",
+      returnTo: null,
+    }),
   selectTable: (tableId, opts) =>
     set((s) => ({
       view: "table",
+      focusedTicketId: null,
       selectedTableId: tableId,
       // another table starts again from its own proposed group size
       guests: tableId === s.selectedTableId ? s.guests : null,
@@ -174,6 +189,7 @@ export const useExperience = create<ExperienceState>()((set, get) => ({
   openPanel: (panel) => set({ panel }),
   closePanel: () =>
     set((s) => {
+      if (s.view === "ticket") return { panel: null, view: "overview", focusedTicketId: null }
       const leavingTable = s.view === "table" || s.view === "seat"
       return {
         // a table opened from the list (or the comparison) goes back to it
@@ -191,6 +207,7 @@ export const useExperience = create<ExperienceState>()((set, get) => ({
     set({
       view: "overview",
       focusedZoneId: null,
+      focusedTicketId: null,
       selectedTableId: null,
       panel: null,
       dialog: null,
@@ -205,7 +222,7 @@ export const useExperience = create<ExperienceState>()((set, get) => ({
     if (s.commandOpen) return set({ commandOpen: false })
     if (s.dialog) return set({ dialog: null })
     if (s.view === "seat") return set({ view: "table" })
-    if (s.panel) return get().closePanel()
+    if (s.panel || s.view === "ticket") return get().closePanel()
     if (s.view === "zone") return get().resetView()
   },
 }))
