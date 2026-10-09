@@ -14,6 +14,7 @@ import {
   type ZoneView,
 } from "@/components/experience/view-model"
 import { track } from "@/lib/analytics/client"
+import { contactMessage, instagramUrl, whatsappUrl } from "@/lib/contact"
 import type { ClubBrand } from "@/lib/clubs/brand"
 import type { VenueContent } from "@/lib/schema"
 import { useExperience } from "@/lib/store"
@@ -253,6 +254,35 @@ export function CommandMenu({
                     Billets d’entrée
                   </Item>
                 ) : null}
+                {content.club.contact.whatsapp ? (
+                  <Item
+                    value="contacter le club whatsapp"
+                    icon={
+                      <ActionTile>
+                        <MessageCircle />
+                      </ActionTile>
+                    }
+                    onSelect={run(() => {
+                      track("fallback_contact_clicked", {
+                        channel: "whatsapp",
+                        context: "command_menu",
+                      })
+                      window.open(
+                        whatsappUrl(
+                          content.club.contact.whatsapp!,
+                          contactMessage({
+                            clubName: content.club.name,
+                            eventName: content.event.name,
+                          }),
+                        ),
+                        "_blank",
+                        "noreferrer",
+                      )
+                    })}
+                  >
+                    Écrire au club sur WhatsApp
+                  </Item>
+                ) : null}
                 {content.club.contact.instagram ? (
                   <Item
                     value="contacter le club instagram"
@@ -267,13 +297,13 @@ export function CommandMenu({
                         context: "command_menu",
                       })
                       window.open(
-                        `https://ig.me/m/${content.club.contact.instagram}`,
+                        instagramUrl(content.club.contact.instagram!),
                         "_blank",
                         "noreferrer",
                       )
                     })}
                   >
-                    Écrire au club
+                    Écrire au club sur Instagram
                   </Item>
                 ) : null}
               </Command.Group>

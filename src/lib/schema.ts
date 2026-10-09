@@ -120,7 +120,17 @@ export const clubSchema = z
     contact: z.object({
       email: z.email().optional(),
       phone: textSchema.optional(),
-      whatsapp: textSchema.optional(),
+      /** WhatsApp number in international format (`+33 6 12 34 56 78`), opened with wa.me. */
+      whatsapp: z
+        .string()
+        .trim()
+        .regex(/^\+[1-9][\d\s().-]+$/, {
+          error: "Expected an international number, e.g. +33 6 12 34 56 78",
+        })
+        .refine((phone) => /^\d{8,15}$/.test(phone.replace(/\D/g, "")), {
+          error: "Expected 8 to 15 digits",
+        })
+        .optional(),
       /** Instagram handle, without the leading @. */
       instagram: z
         .string()

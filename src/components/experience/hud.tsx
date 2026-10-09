@@ -1,11 +1,12 @@
 "use client"
 
-import { ChevronLeft, Mail, MessageCircle, ScanEye, Search } from "lucide-react"
+import { ChevronLeft, Mail, MessageCircle, Phone, ScanEye, Search } from "lucide-react"
 import { AnimatePresence, motion } from "motion/react"
 
 import { Emblem, Wordmark } from "@/components/experience/brand"
 import {
   Btn,
+  Hint,
   Kbd,
   RoundBtn,
   SOFT_SPRING,
@@ -15,6 +16,7 @@ import {
 } from "@/components/experience/ui"
 import type { TableView, ZoneView } from "@/components/experience/view-model"
 import { track } from "@/lib/analytics/client"
+import { contactMessage, instagramUrl, phoneUrl, whatsappUrl } from "@/lib/contact"
 import type { ClubBrand } from "@/lib/clubs/brand"
 import type { VenueContent } from "@/lib/schema"
 import { useExperience, type LevelFilter } from "@/lib/store"
@@ -235,42 +237,103 @@ export function StatusLegend({ className }: { className?: string }) {
   )
 }
 
+const contactLink =
+  "text-label-2 hover:text-label inline-flex items-center gap-1.5 transition-colors"
+
+/** The club's own channels, for a question or when something fails: WhatsApp first. */
 export function FallbackContact({
   club,
+  eventName,
+  tableLabel,
   context,
   className,
 }: {
   club: VenueContent["club"]
+  /** Night named in the WhatsApp message. */
+  eventName: string
+  /** Table named in the WhatsApp message, if any. */
+  tableLabel?: string
   context: string
   className?: string
 }) {
-  const ig = club.contact.instagram
-  const email = club.contact.email
-  if (!ig && !email) return null
+  const { whatsapp, instagram: ig, phone, email } = club.contact
+  if (!whatsapp && !ig && !phone && !email) return null
+  const message = contactMessage({ clubName: club.name, eventName, tableLabel })
   return (
     <div className={cn("text-footnote flex flex-wrap items-center gap-x-4 gap-y-1", className)}>
       <span className="text-label-3">Une question, un groupe ?</span>
+      {whatsapp ? (
+        <a
+          href={whatsappUrl(whatsapp, message)}
+          target="_blank"
+          rel="noreferrer"
+          onClick={() => track("fallback_contact_clicked", { channel: "whatsapp", context })}
+          className={contactLink}
+        >
+          <MessageCircle className="size-3.5" /> WhatsApp
+        </a>
+      ) : null}
       {ig ? (
         <a
-          href={`https://ig.me/m/${ig}`}
+          href={instagramUrl(ig)}
           target="_blank"
           rel="noreferrer"
           onClick={() => track("fallback_contact_clicked", { channel: "instagram", context })}
-          className="text-label-2 hover:text-label inline-flex items-center gap-1.5 transition-colors"
+          className={contactLink}
         >
           <MessageCircle className="size-3.5" /> Instagram
+        </a>
+      ) : null}
+      {phone ? (
+        <a
+          href={phoneUrl(phone)}
+          onClick={() => track("fallback_contact_clicked", { channel: "phone", context })}
+          className={contactLink}
+        >
+          <Phone className="size-3.5" /> {phone}
         </a>
       ) : null}
       {email ? (
         <a
           href={`mailto:${email}`}
           onClick={() => track("fallback_contact_clicked", { channel: "email", context })}
-          className="text-label-2 hover:text-label inline-flex items-center gap-1.5 transition-colors"
+          className={contactLink}
         >
           <Mail className="size-3.5" /> {email}
         </a>
       ) : null}
     </div>
+  )
+}
+
+/** Round link to the club's WhatsApp, with a first message naming the night and the table. */
+export function WhatsAppButton({
+  club,
+  eventName,
+  tableLabel,
+  context,
+}: {
+  club: VenueContent["club"]
+  eventName: string
+  tableLabel?: string
+  context: string
+}) {
+  const number = club.contact.whatsapp
+  if (!number) return null
+  const label = `Écrire à ${club.name} sur WhatsApp`
+  return (
+    <Hint label={label} side="bottom">
+      <a
+        href={whatsappUrl(number, contactMessage({ clubName: club.name, eventName, tableLabel }))}
+        target="_blank"
+        rel="noreferrer"
+        aria-label={label}
+        onClick={() => track("fallback_contact_clicked", { channel: "whatsapp", context })}
+        className="glass glass-rim text-label focus-visible:ring-brand/70 relative grid size-9 shrink-0 place-items-center rounded-full transition-[transform,background-color] duration-200 outline-none hover:bg-white/[0.12] focus-visible:ring-2 active:scale-95 [&_svg]:size-4"
+      >
+        <MessageCircle />
+      </a>
+    </Hint>
   )
 }
 

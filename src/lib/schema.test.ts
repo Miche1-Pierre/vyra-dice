@@ -231,6 +231,12 @@ describe("venueContentSchema", () => {
     expect(contentIssuePaths(content)).toEqual(["tables.1.id"])
   })
 
+  it("accepts a WhatsApp number in international format", () => {
+    const content = venueContent()
+    content.club.contact = { whatsapp: "+33 6 12 34 56 78" }
+    expect(venueContentSchema.safeParse(content).success).toBe(true)
+  })
+
   it("rejects capacities where min exceeds max", () => {
     const content = venueContent()
     content.tables[0].capacity = { min: 8, max: 6 }
@@ -288,12 +294,13 @@ describe("venueContentSchema", () => {
   it("validates club and event formats", () => {
     const content = venueContent()
     content.club.requestPrefix = "dm"
-    content.club.contact = { instagram: "@club" }
+    content.club.contact = { instagram: "@club", whatsapp: "06 12 34 56 78" }
     content.event.date = "10/10/2026"
     content.event.doors = "25:00"
     content.event.ticketUrl = "javascript:alert(1)"
     expect(contentIssuePaths(content).sort()).toEqual([
       "club.contact.instagram",
+      "club.contact.whatsapp",
       "club.requestPrefix",
       "event.date",
       "event.doors",
