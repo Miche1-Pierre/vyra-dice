@@ -91,6 +91,8 @@ export function TableDetails({
   const leaveSeat = useExperience((s) => s.leaveSeat)
   const toggleCompare = useExperience((s) => s.toggleCompare)
   const setGuests = useExperience((s) => s.setGuests)
+  // the seat view needs the 3D
+  const scene = useExperience((s) => !s.fallback2d && !s.listMode)
   const guests = useGuests(table)
   const quote = quoteFor(table, guests)
   const supplement = supplementLabel(table)
@@ -251,19 +253,21 @@ export function TableDetails({
         </ul>
       </details>
 
-      <div className="grid grid-cols-2 gap-2 px-4 pt-3">
-        <Btn
-          size="md"
-          onClick={() => {
-            if (view === "seat") leaveSeat()
-            else {
-              viewFromSeat()
-              track("table_view_from_seat", { table_id: table.id })
-            }
-          }}
-        >
-          <ScanEye /> {view === "seat" ? "Vue d’ensemble" : "Vue de la table"}
-        </Btn>
+      <div className={cn("grid gap-2 px-4 pt-3", scene ? "grid-cols-2" : "grid-cols-1")}>
+        {scene ? (
+          <Btn
+            size="md"
+            onClick={() => {
+              if (view === "seat") leaveSeat()
+              else {
+                viewFromSeat()
+                track("table_view_from_seat", { table_id: table.id })
+              }
+            }}
+          >
+            <ScanEye /> {view === "seat" ? "Vue d’ensemble" : "Vue de la table"}
+          </Btn>
+        ) : null}
         <Btn
           size="md"
           onClick={() => toggleCompare(table.id, table.label)}
@@ -354,7 +358,7 @@ function Row({
   stacked?: boolean
 }) {
   return (
-    <div className="transition-colors focus-within:bg-white/[0.035]">
+    <div className="focus-within:ring-brand/60 transition-colors focus-within:bg-white/[0.035] focus-within:ring-2 focus-within:ring-inset">
       <div
         className={cn(
           "flex min-h-12 px-4",
@@ -371,7 +375,14 @@ function Row({
           {children}
         </div>
       </div>
-      {error ? <p className="text-caption -mt-1 px-4 pb-2.5 text-[#ff6961]">{error}</p> : null}
+      {error ? (
+        <p
+          id={id ? `${id}-error` : undefined}
+          className="text-caption -mt-1 px-4 pb-2.5 text-[#ff6961]"
+        >
+          {error}
+        </p>
+      ) : null}
     </div>
   )
 }
@@ -512,7 +523,15 @@ function RequestForm({
         </DialogPrimitive.Close>
       </div>
 
-      <div className="min-h-0 flex-1 space-y-6 overflow-y-auto overscroll-contain px-4 pb-5">
+      <div
+        className="min-h-0 flex-1 space-y-6 overflow-y-auto overscroll-contain px-4 pb-5"
+        // keep the focused field above the on-screen keyboard once it has opened
+        onFocusCapture={(e) => {
+          const field = e.target
+          if (!(field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement)) return
+          window.setTimeout(() => field.scrollIntoView({ block: "center" }), 320)
+        }}
+      >
         <div className="flex items-center gap-3.5 rounded-2xl bg-white/[0.05] p-3 shadow-[inset_0_0_0_1px_rgb(255_255_255/0.05)]">
           <ZoneTile tier={table.tier} icon={icon} className="size-12" />
           <div className="min-w-0 flex-1">
@@ -574,7 +593,7 @@ function RequestForm({
                         aria-checked={active}
                         onClick={() => field.onChange(t)}
                         className={cn(
-                          "num text-footnote h-8 rounded-full px-3.5 font-medium transition-[background-color,color,box-shadow] duration-150",
+                          "num text-footnote focus-visible:ring-brand/70 h-8 rounded-full px-3.5 font-medium transition-[background-color,color,box-shadow] duration-150 outline-none focus-visible:ring-2",
                           active
                             ? "bg-brand/[0.16] text-brand shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--brand)_55%,transparent)]"
                             : "text-label-2 hover:text-label bg-white/[0.07] hover:bg-white/[0.12]",
@@ -598,6 +617,7 @@ function RequestForm({
               placeholder="Prénom Nom"
               className={input}
               aria-invalid={Boolean(errors.fullName)}
+              aria-describedby={errors.fullName ? "fullName-error" : undefined}
               {...register("fullName")}
             />
           </Row>
@@ -610,6 +630,7 @@ function RequestForm({
               placeholder="06 12 34 56 78"
               className={input}
               aria-invalid={Boolean(errors.phone)}
+              aria-describedby={errors.phone ? "phone-error" : undefined}
               {...register("phone")}
             />
           </Row>
@@ -621,6 +642,7 @@ function RequestForm({
               placeholder="facultatif"
               className={input}
               aria-invalid={Boolean(errors.email)}
+              aria-describedby={errors.email ? "email-error" : undefined}
               {...register("email")}
             />
           </Row>
@@ -632,7 +654,7 @@ function RequestForm({
             aria-label="Message (facultatif)"
             rows={3}
             placeholder="Anniversaire, bouteilles souhaitées… (facultatif)"
-            className="text-ui text-label caret-brand placeholder:text-label-3 block w-full resize-none bg-transparent px-4 py-3 outline-none"
+            className="text-ui text-label caret-brand placeholder:text-label-3 focus-visible:ring-brand/60 block w-full resize-none bg-transparent px-4 py-3 outline-none focus-visible:ring-2 focus-visible:ring-inset"
             {...register("message")}
           />
         </Group>

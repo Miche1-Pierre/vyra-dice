@@ -19,8 +19,8 @@ export function LoadingScreen({
 }) {
   const { progress } = useProgress()
   const ready = useExperience((s) => s.sceneReady)
-  const fallback = useExperience((s) => s.fallback2d)
-  const visible = !ready && !fallback
+  const textOnly = useExperience((s) => s.fallback2d || s.listMode)
+  const visible = !ready && !textOnly
 
   return (
     <AnimatePresence>

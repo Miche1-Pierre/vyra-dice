@@ -44,6 +44,8 @@ interface ExperienceState {
   sceneReady: boolean
   /** WebGL unavailable or the scene failed: show the list fallback. */
   fallback2d: boolean
+  /** The buyer chose the list without the 3D (lighter, easier to read). */
+  listMode: boolean
   view: View
   levelFilter: LevelFilter
   focusedZoneId: string | null
@@ -65,6 +67,7 @@ interface ExperienceState {
 
   setSceneReady: () => void
   setFallback2d: () => void
+  setListMode: (on: boolean) => void
   finishIntro: () => void
   focusZone: (zoneId: string) => void
   selectTable: (tableId: string, opts?: { openPanel?: boolean; from?: "list" | "compare" }) => void
@@ -91,6 +94,7 @@ interface ExperienceState {
 export const useExperience = create<ExperienceState>()((set, get) => ({
   sceneReady: false,
   fallback2d: false,
+  listMode: false,
   view: "intro",
   levelFilter: "all",
   focusedZoneId: null,
@@ -109,6 +113,14 @@ export const useExperience = create<ExperienceState>()((set, get) => ({
 
   setSceneReady: () => set({ sceneReady: true }),
   setFallback2d: () => set({ fallback2d: true, view: "overview" }),
+  setListMode: (listMode) =>
+    set((s) => ({
+      listMode,
+      view: s.view === "seat" || s.view === "intro" ? "overview" : s.view,
+      panel: listMode ? "list" : s.panel,
+      // the 3D comes back without replaying the intro, behind its loading screen
+      sceneReady: listMode ? s.sceneReady : false,
+    })),
   finishIntro: () => {
     if (get().view === "intro") set({ view: "overview" })
   },

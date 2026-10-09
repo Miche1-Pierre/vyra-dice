@@ -37,6 +37,20 @@ describe("going back", () => {
   })
 })
 
+describe("list without the 3D", () => {
+  it("opens the list, and brings the 3D back behind its loading screen", () => {
+    store().setSceneReady()
+    store().selectTable("l1")
+    store().viewFromSeat()
+
+    store().setListMode(true)
+    expect(store()).toMatchObject({ listMode: true, panel: "list", view: "overview" })
+
+    store().setListMode(false)
+    expect(store()).toMatchObject({ listMode: false, sceneReady: false })
+  })
+})
+
 describe("request form", () => {
   it("keeps the typing until the request is sent", () => {
     store().saveDraft({ tableId: "l1", idempotencyKey: "key", fullName: "Camille" })
