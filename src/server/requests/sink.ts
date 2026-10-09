@@ -13,6 +13,8 @@ export type BookingRequestRecord = BookingRequestInput & {
   createdAt: string
   status: "received"
   transmission: RequestTransmission
+  /** Figures shown to the buyer for this group when the request was sent. */
+  quote: { minimumSpend: number | null; deposit: number | null }
 }
 
 export interface RequestSink {

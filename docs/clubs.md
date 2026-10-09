@@ -84,6 +84,19 @@ de photos, et partage le club par une pull request. À la main :
 | `pnpm test`, pour chaque club enregistré | bundle présent et versionné (empreintes) ; finitions ↔ matières du GLB, lightmaps ↔ nœuds ; couleurs fournies pour chaque FX du modèle ; cadrages caméra (vue d'ensemble, zones, tables, place assise) ; vue des offres ; démo étiquetée « Démo » |
 | `clubs/<slug>/<slug>.test.ts`            | ce qui est propre au club (ex. Naho : ordre des prix par tier, table vendue du lounge Gold)                                                                                                                                                       |
 
+## Référence — les tables de `content.json`
+
+| Champ                    | Rôle                                                                                                        |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------- |
+| `capacity.min` / `max`   | groupe accepté pour la table : bornes du sélecteur de personnes, vérifiées aussi à l'envoi de la demande    |
+| `minimumSpend`           | minimum de consommation de la table, en euros entiers ; `null` = prix sur demande (jamais `0`)              |
+| `surcharge` (facultatif) | `{ "includedGuests": 6, "perGuest": 150 }` : au-delà de 6 personnes, +150 € de minimum par personne ajoutée |
+| `deposit` (facultatif)   | acompte demandé à la confirmation, déduit du minimum : `{ "percent": 20 }` ou `{ "amount": 200 }`           |
+| `status`                 | `available`, `on_request` ou `sold`, déclaré par le club : jamais un stock en temps réel                    |
+
+Quand l'acheteur change le nombre de personnes, la fiche recalcule le minimum, la part par personne et
+l'acompte ; la demande enregistre les montants affichés. Une demande ne déclenche aucun paiement.
+
 ## Référence — `brand.json`
 
 | Champ                          | Rôle                                                                                         |

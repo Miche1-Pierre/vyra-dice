@@ -5,6 +5,7 @@ import { headers } from "next/headers"
 import { getVenueContent } from "@/lib/clubs/registry"
 import { createRequestId } from "@/lib/request-id"
 import { bookingRequestInputSchema, toFieldErrors, type SubmitResult } from "@/lib/schema"
+import { quoteFor } from "@/lib/venue/offers"
 import { demoSink } from "@/server/requests/demo-sink"
 import { createRateLimiter } from "@/server/requests/rate-limit"
 
@@ -27,13 +28,14 @@ export async function submitBookingRequest(input: unknown): Promise<SubmitResult
     const table = content?.tables.find((candidate) => candidate.id === request.tableId)
     if (!content || !table) return { ok: false, error: "unknown_table" }
     if (table.status === "sold") return { ok: false, error: "unavailable" }
-    // Only the maximum is enforced: a smaller group may still take the table and its minimum spend.
-    if (request.partySize > table.capacity.max) {
-      return {
-        ok: false,
-        error: "validation",
-        fieldErrors: { partySize: `Cette table accueille ${table.capacity.max} personnes maximum` },
-      }
+    // the bounds the club set for the table, as shown in the form
+    const { min, max } = table.capacity
+    if (request.partySize < min || request.partySize > max) {
+      const partySize =
+        min === max
+          ? `Cette table accueille ${max} personnes`
+          : `Cette table accueille de ${min} à ${max} personnes`
+      return { ok: false, error: "validation", fieldErrors: { partySize } }
     }
     if (!content.club.demo) {
       // A live club needs a sink that actually reaches it. Until one exists, fail so the buyer gets
@@ -45,12 +47,14 @@ export async function submitBookingRequest(input: unknown): Promise<SubmitResult
     const { allowed } = rateLimiter.check(`${content.club.slug}:${await clientIp()}`)
     if (!allowed) return { ok: false, error: "rate_limited" }
 
+    const quote = quoteFor(table, request.partySize)
     const { requestId, duplicate } = await demoSink.save({
       ...request,
       requestId: createRequestId(content.club.requestPrefix),
       createdAt: new Date().toISOString(),
       status: "received",
       transmission: "not_sent_demo",
+      quote: { minimumSpend: quote.minimumSpend, deposit: quote.deposit },
     })
     return { ok: true, requestId, demo: content.club.demo, duplicate }
   } catch (error) {

@@ -34,6 +34,8 @@ interface ExperienceState {
   focusedZoneId: string | null
   selectedTableId: string | null
   hoveredTableId: string | null
+  /** Group size chosen for the selected table; null until the buyer changes it. */
+  guests: number | null
   compareIds: string[]
   panel: Panel
   dialog: Dialog
@@ -51,6 +53,7 @@ interface ExperienceState {
   viewFromSeat: () => void
   leaveSeat: () => void
   hoverTable: (tableId: string | null) => void
+  setGuests: (guests: number) => void
   setLevelFilter: (level: LevelFilter) => void
   toggleCompare: (tableId: string, label?: string) => void
   clearCompare: () => void
@@ -74,6 +77,7 @@ export const useExperience = create<ExperienceState>()((set, get) => ({
   focusedZoneId: null,
   selectedTableId: null,
   hoveredTableId: null,
+  guests: null,
   compareIds: [],
   panel: null,
   dialog: null,
@@ -98,6 +102,8 @@ export const useExperience = create<ExperienceState>()((set, get) => ({
     set((s) => ({
       view: "table",
       selectedTableId: tableId,
+      // another table starts again from its own proposed group size
+      guests: tableId === s.selectedTableId ? s.guests : null,
       panel: opts?.openPanel === false ? s.panel : "table",
     })),
   viewFromSeat: () => {
@@ -107,6 +113,7 @@ export const useExperience = create<ExperienceState>()((set, get) => ({
     if (get().view === "seat") set({ view: "table" })
   },
   hoverTable: (tableId) => set({ hoveredTableId: tableId }),
+  setGuests: (guests) => set({ guests }),
   setLevelFilter: (levelFilter) => set({ levelFilter }),
   toggleCompare: (tableId, label = tableId.toUpperCase()) => {
     const s = get()

@@ -19,6 +19,14 @@ export function minimumFor(table: Omit<PricedTable, "deposit">, guests: number):
   return table.minimumSpend + extra * (table.surcharge?.perGuest ?? 0)
 }
 
+/**
+ * Group size proposed first: the guests included in the minimum when the table charges extra
+ * guests, a full table otherwise (the figures then match the list and the comparison).
+ */
+export function defaultGuests(table: Pick<TableContent, "capacity" | "surcharge">): number {
+  return table.surcharge?.includedGuests ?? table.capacity.max
+}
+
 /** What a group of `guests` is told before sending a request: never a payment, only figures. */
 export interface Quote {
   guests: number

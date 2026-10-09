@@ -1,8 +1,8 @@
 import type { TableMarkerData, ZoneMarkerData } from "@/components/scene/markers"
 import { formatEuro } from "@/lib/format"
-import type { VenueContent, ZoneIcon } from "@/lib/schema"
+import type { Deposit, Surcharge, VenueContent, ZoneIcon } from "@/lib/schema"
 import { tableLevel, type Level, type TableKind, type VenueLayout } from "@/lib/venue/layout"
-import { pricePerPerson } from "@/lib/venue/offers"
+import { pricePerPerson, type Quote } from "@/lib/venue/offers"
 import { TIERS, type TableStatus } from "@/lib/venue/tiers"
 
 export interface TableView {
@@ -14,7 +14,10 @@ export interface TableView {
   level: Level
   capacity: { min: number; max: number }
   minimumSpend: number | null
+  /** Share of the minimum for a full table. */
   perPerson: number | null
+  surcharge?: Surcharge
+  deposit?: Deposit
   status: TableStatus
   perks: string[]
   view: string
@@ -71,6 +74,24 @@ export function zonePriceLabel(zone: Pick<ZoneView, "fromMinimum" | "availabilit
   return zone.availability.tone === "sold" ? "complet" : "sur demande"
 }
 
+/** "Prévue pour 6 personnes, jusqu’à 2 de plus : +150 € de minimum par personne ajoutée." */
+export function supplementLabel(table: Pick<TableView, "capacity" | "surcharge">): string | null {
+  const surcharge = table.surcharge
+  if (!surcharge) return null
+  const more = table.capacity.max - surcharge.includedGuests
+  return `Prévue pour ${surcharge.includedGuests} personnes, jusqu’à ${more} de plus : +${formatEuro(surcharge.perGuest)} de minimum par personne ajoutée.`
+}
+
+/** Deposit announced for the group, or null: never presented as a payment due now. */
+export function depositLabel(table: Pick<TableView, "deposit">, quote: Quote): string | null {
+  if (!table.deposit || quote.deposit === null) return null
+  const share =
+    "percent" in table.deposit
+      ? `${table.deposit.percent} % (${formatEuro(quote.deposit)})`
+      : formatEuro(quote.deposit)
+  return `Si le club confirme, il demande un acompte de ${share}, déduit du minimum.`
+}
+
 /** "3/4 dispo", "Sur demande" (nothing bookable directly, but not sold out) or "Complet". */
 export function availabilityOf(tables: Pick<TableView, "status">[]): {
   label: string
@@ -104,6 +125,8 @@ export function buildViewModel(content: VenueContent, layout: VenueLayout): View
       capacity: t.capacity,
       minimumSpend: t.minimumSpend,
       perPerson: pricePerPerson(t),
+      surcharge: t.surcharge,
+      deposit: t.deposit,
       status: t.status,
       perks,
       view: t.view,
