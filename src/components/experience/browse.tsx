@@ -48,7 +48,7 @@ export function TableList({ zones }: { zones: ZoneView[] }) {
                 <li key={t.id}>
                   <button
                     type="button"
-                    onClick={() => selectTable(t.id)}
+                    onClick={() => selectTable(t.id, { from: "list" })}
                     // the same table lights up in the 3D, and a booth hovered there lights its row
                     onPointerEnter={() => hoverTable(t.id)}
                     onPointerLeave={() => hoverTable(null)}
@@ -189,7 +189,7 @@ export function CompareView({
             key={t.id}
             size="sm"
             disabled={t.status === "sold"}
-            onClick={() => selectTable(t.id)}
+            onClick={() => selectTable(t.id, { from: "compare" })}
           >
             Voir {t.label}
           </Btn>

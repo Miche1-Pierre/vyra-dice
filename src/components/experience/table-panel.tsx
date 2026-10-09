@@ -4,7 +4,7 @@ import { Dialog as DialogPrimitive } from "@base-ui/react/dialog"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Check, ChevronDown, Copy, GitCompareArrows, LoaderCircle, ScanEye, X } from "lucide-react"
 import { motion } from "motion/react"
-import { useMemo, useRef, useState, type ReactNode } from "react"
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 import { Controller, useForm, useWatch } from "react-hook-form"
 import type { z } from "zod"
 
@@ -394,11 +394,17 @@ function RequestForm({
 }) {
   const requestSent = useExperience((s) => s.requestSent)
   const setGuests = useExperience((s) => s.setGuests)
+  const saveDraft = useExperience((s) => s.saveDraft)
   const guests = useGuests(table)
   const [serverError, setServerError] = useState<string | null>(null)
   const started = useRef(false)
-  // one key per form instance: retries of the same request never create duplicates
-  const idempotencyKey = useMemo(() => crypto.randomUUID(), [])
+  // what was typed before the form was closed, for this buyer
+  const [draft] = useState(() => useExperience.getState().draft)
+  // one key per request: retries never create duplicates, reopening the same table keeps it
+  const idempotencyKey = useMemo(
+    () => (draft?.tableId === table.id ? draft.idempotencyKey : crypto.randomUUID()),
+    [draft, table.id],
+  )
 
   const { register, control, handleSubmit, formState, setError } = useForm<
     FormInput,
@@ -411,18 +417,34 @@ function RequestForm({
       clubSlug,
       eventSlug,
       tableId: table.id,
-      fullName: "",
-      phone: "",
-      email: "",
+      fullName: draft?.fullName ?? "",
+      phone: draft?.phone ?? "",
+      email: draft?.email ?? "",
       partySize: guests,
-      arrivalTime: arrivalTimes[0],
-      message: "",
+      arrivalTime: arrivalTimes.find((time) => time === draft?.arrivalTime) ?? arrivalTimes[0],
+      message: draft?.message ?? "",
+      consent: (draft?.consent ?? undefined) as true | undefined,
       idempotencyKey,
       attribution: getAttribution(),
     },
   })
   const errors = formState.errors
   const partySize = Number(useWatch({ control, name: "partySize" }))
+
+  // keep the typing when the form is closed (Esc, the cross, a tap outside)
+  const typed = useWatch({ control })
+  useEffect(() => {
+    saveDraft({
+      tableId: table.id,
+      idempotencyKey,
+      fullName: typed.fullName,
+      phone: typed.phone,
+      email: typed.email,
+      message: typed.message,
+      arrivalTime: typed.arrivalTime,
+      consent: typed.consent === true,
+    })
+  }, [typed, saveDraft, table.id, idempotencyKey])
   const quote = quoteFor(table, clampGuests(partySize, table.capacity))
   const deposit = depositLabel(table, quote)
 
