@@ -1,7 +1,7 @@
 "use client"
 
 import { Tooltip as TooltipPrimitive } from "@base-ui/react/tooltip"
-import { GitCompareArrows, MessageCircle, Rows3, Search, Ticket } from "lucide-react"
+import { Box, GitCompareArrows, MessageCircle, Rows3, Search, Ticket } from "lucide-react"
 import dynamic from "next/dynamic"
 import { useEffect, useMemo, useRef, type ReactNode } from "react"
 
@@ -22,17 +22,18 @@ import { Island } from "@/components/experience/island"
 import { IntroSkip, LoadingScreen } from "@/components/experience/loading-screen"
 import { Panel } from "@/components/experience/sheet"
 import { RequestDialog, TableDetails, TableFooter } from "@/components/experience/table-panel"
-import { Tile, ZoneTile } from "@/components/experience/ui"
+import { Btn, Tile, ZoneTile } from "@/components/experience/ui"
 import { useShortcuts } from "@/components/experience/use-shortcuts"
 import { buildViewModel, zonePriceLabel, type ViewModel } from "@/components/experience/view-model"
 import { track } from "@/lib/analytics/client"
 import { contactMessage, instagramUrl, whatsappUrl } from "@/lib/contact"
 import type { ClubBrand } from "@/lib/clubs/brand"
 import type { ClubDefinition } from "@/lib/clubs/club"
-import { formatDateFr } from "@/lib/format"
+import { formatDateFr, formatEuro } from "@/lib/format"
 import type { VenueContent } from "@/lib/schema"
 import { useExperience } from "@/lib/store"
 import { cn } from "@/lib/utils"
+import { STATUS } from "@/lib/venue/tiers"
 
 const VenueCanvas = dynamic(() => import("@/components/scene/venue-canvas"), { ssr: false })
 
@@ -83,6 +84,31 @@ function useAnalyticsBridge(vm: ViewModel, webgl: boolean | null) {
         }
       }),
     [vm],
+  )
+}
+
+/** Says what was just selected to screen readers (the 3D itself is silent). */
+function SelectionAnnouncer({ vm }: { vm: ViewModel }) {
+  const view = useExperience((s) => s.view)
+  const focusedZoneId = useExperience((s) => s.focusedZoneId)
+  const selectedTableId = useExperience((s) => s.selectedTableId)
+  const table = selectedTableId ? vm.tables[selectedTableId] : null
+  const zone = focusedZoneId ? vm.zones.find((z) => z.id === focusedZoneId) : null
+  let message = ""
+  if (table && (view === "table" || view === "seat")) {
+    const price =
+      table.minimumSpend !== null ? `minimum ${formatEuro(table.minimumSpend)}` : "prix sur demande"
+    message = `Table ${table.label}, ${table.zoneName}, ${STATUS[table.status].label}, ${price}`
+    if (view === "seat") message = `Vue depuis la table ${table.label}`
+  } else if (zone && view === "zone") {
+    message = `${zone.name} : ${zone.availability.label}, ${zonePriceLabel(zone)}`
+  } else if (view === "overview") {
+    message = "Vue d’ensemble du club"
+  }
+  return (
+    <p aria-live="polite" className="sr-only">
+      {message}
+    </p>
   )
 }
 
@@ -222,7 +248,11 @@ export function Experience({ club }: { club: ClubDefinition }) {
   const quality = useQuality()
   const webgl = useWebGLSupport()
   const fallback2d = useExperience((s) => s.fallback2d)
+  const listMode = useExperience((s) => s.listMode)
+  const setListMode = useExperience((s) => s.setListMode)
   const setFallback2d = useExperience((s) => s.setFallback2d)
+  // the list stands in for the 3D when it cannot run or when the buyer prefers it
+  const textOnly = fallback2d || listMode
   const panel = useExperience((s) => s.panel)
   const view = useExperience((s) => s.view)
   const selectedTableId = useExperience((s) => s.selectedTableId)
@@ -259,7 +289,7 @@ export function Experience({ club }: { club: ClubDefinition }) {
     <TooltipPrimitive.Provider delay={260}>
       <div className="bg-ink text-label relative h-dvh w-full overflow-hidden">
         <main className="absolute inset-0">
-          {!fallback2d && webgl && quality ? (
+          {!textOnly && webgl && quality ? (
             <VenueCanvas
               club={club.slug}
               assets={club.assets}
@@ -272,9 +302,16 @@ export function Experience({ club }: { club: ClubDefinition }) {
               onIntroSkipped={(atMs) => track("intro_skipped", { at_ms: atMs })}
             />
           ) : null}
-          {fallback2d ? (
-            <div className="text-ui text-label-3 absolute inset-x-0 top-1/3 px-8 text-center">
-              La visite 3D n’est pas disponible sur cet appareil. Toutes les tables sont listées.
+          {textOnly ? (
+            <div className="text-ui text-label-3 absolute inset-x-0 top-1/3 flex flex-col items-center gap-4 px-8 text-center">
+              {fallback2d
+                ? "La visite 3D n’est pas disponible sur cet appareil. Toutes les tables sont listées."
+                : "Visite 3D masquée. Toutes les tables sont listées."}
+              {!fallback2d ? (
+                <Btn size="md" onClick={() => setListMode(false)}>
+                  <Box /> Revenir à la visite 3D
+                </Btn>
+              ) : null}
             </div>
           ) : null}
         </main>
@@ -357,6 +394,13 @@ export function Experience({ club }: { club: ClubDefinition }) {
               </span>
             ) : undefined
           }
+          aside={
+            panel === "list" && !fallback2d ? (
+              <Btn size="sm" variant="plain" onClick={() => setListMode(!listMode)}>
+                {listMode ? "Voir en 3D" : "Sans 3D"}
+              </Btn>
+            ) : undefined
+          }
           footer={panel === "table" && table ? <TableFooter table={table} /> : undefined}
         >
           {panel === "list" ? <TableList zones={vm.zones} /> : null}
@@ -376,6 +420,7 @@ export function Experience({ club }: { club: ClubDefinition }) {
         <LoadingScreen name={content.club.name} brand={club.brand} eventLine={eventLine} />
         <IntroSkip isDesktop={isDesktop} />
         <Island />
+        <SelectionAnnouncer vm={vm} />
 
         <RequestDialog
           table={table}
