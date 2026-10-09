@@ -20,6 +20,7 @@ export interface ZoneMarkerData {
   tier: TableKind
   icon: ZoneIcon
   level: 0 | 1
+  /** "dès 350 €", "prix sur demande", or nothing when the availability already says it all. */
   fromLabel: string | null
   available: number
   total: number
@@ -232,7 +233,7 @@ function ZoneTag({
         ref={cardRef}
         type="button"
         onClick={onClick}
-        aria-label={`${zone.name}, ${tier.label}, ${zone.fromLabel ? `dès ${zone.fromLabel}, ` : ""}${zone.availability.label}`}
+        aria-label={`${zone.name}, ${tier.label}, ${zone.fromLabel ? `${zone.fromLabel}, ` : ""}${zone.availability.label}`}
         className={cn(
           chip,
           "flex items-center gap-2.5 rounded-full bg-[rgb(16_13_20/0.8)] py-1 pr-3.5 pl-1 shadow-[0_0_0_1px_rgb(255_255_255/0.11),inset_0_1px_0_rgb(255_255_255/0.08),0_10px_28px_rgb(0_0_0/0.55)] backdrop-blur-md hover:scale-[1.05] hover:bg-[rgb(26_22_32/0.9)]",
@@ -243,7 +244,7 @@ function ZoneTag({
           <span className="text-label block text-[13px] leading-4 font-semibold">{zone.name}</span>
           {/* very short screens (phones held sideways): name only, the price is in the dock */}
           <span className="num text-label-2 mt-px flex items-center gap-1.5 text-[11px] leading-[14px] [@media(max-height:499px)]:hidden">
-            {zone.fromLabel ? <span>dès {zone.fromLabel}</span> : null}
+            {zone.fromLabel ? <span>{zone.fromLabel}</span> : null}
             <span className="flex items-center gap-1 max-sm:hidden">
               <StatusIcon status={zone.availability.tone} className="size-[11px]" />
               {zone.availability.label}

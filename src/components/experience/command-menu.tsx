@@ -7,10 +7,14 @@ import type { ReactNode } from "react"
 
 import { ClubMark } from "@/components/experience/brand"
 import { Kbd, StatusIcon, Tile, ZoneTile } from "@/components/experience/ui"
-import type { TableView, ZoneView } from "@/components/experience/view-model"
+import {
+  minimumLabel,
+  zonePriceLabel,
+  type TableView,
+  type ZoneView,
+} from "@/components/experience/view-model"
 import { track } from "@/lib/analytics/client"
 import type { ClubBrand } from "@/lib/clubs/brand"
-import { formatEuro } from "@/lib/format"
 import type { VenueContent } from "@/lib/schema"
 import { useExperience } from "@/lib/store"
 import { cn } from "@/lib/utils"
@@ -118,7 +122,7 @@ export function CommandMenu({
                       z.level === 0 ? "rdc rez" : "mezzanine étage",
                     ]}
                     icon={<ZoneTile tier={z.tier} icon={z.icon} className="size-7 rounded-[8px]" />}
-                    aside={z.fromMinimum !== null ? `dès ${formatEuro(z.fromMinimum)}` : "complet"}
+                    aside={zonePriceLabel(z)}
                     onSelect={run(() => s().focusZone(z.id))}
                   >
                     <span className="text-label">{z.name}</span>
@@ -146,7 +150,7 @@ export function CommandMenu({
                           <StatusIcon status={t.status} />
                         </span>
                       }
-                      aside={`${t.capacity.min}–${t.capacity.max} p. · ${t.minimumSpend !== null ? formatEuro(t.minimumSpend) : "—"}`}
+                      aside={`${t.capacity.min}–${t.capacity.max} p. · ${minimumLabel(t.minimumSpend)}`}
                       onSelect={run(() => s().selectTable(t.id))}
                     >
                       <span className="text-label font-medium">{t.label}</span>

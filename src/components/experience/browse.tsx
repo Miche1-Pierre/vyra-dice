@@ -3,7 +3,12 @@
 import { ChevronRight, X } from "lucide-react"
 
 import { Btn, Eyebrow, StatusIcon, ZoneTile } from "@/components/experience/ui"
-import type { TableView, ZoneView } from "@/components/experience/view-model"
+import {
+  minimumLabel,
+  zonePriceLabel,
+  type TableView,
+  type ZoneView,
+} from "@/components/experience/view-model"
 import { formatEuro } from "@/lib/format"
 import { useExperience } from "@/lib/store"
 import { cn } from "@/lib/utils"
@@ -34,9 +39,7 @@ export function TableList({ zones }: { zones: ZoneView[] }) {
                   {TIERS[z.tier].label} · {z.level === 0 ? "Rez-de-chaussée" : "Mezzanine"}
                 </span>
               </span>
-              <span className="num text-footnote text-label-2 shrink-0">
-                {z.fromMinimum !== null ? `dès ${formatEuro(z.fromMinimum)}` : "complet"}
-              </span>
+              <span className="num text-footnote text-label-2 shrink-0">{zonePriceLabel(z)}</span>
             </button>
             <ul className="divide-y divide-white/[0.07] overflow-hidden rounded-2xl bg-white/[0.05] shadow-[inset_0_0_0_1px_rgb(255_255_255/0.05)]">
               {z.tables.map((t) => (
@@ -57,7 +60,7 @@ export function TableList({ zones }: { zones: ZoneView[] }) {
                         t.status === "sold" ? "text-label-3 line-through" : "text-label",
                       )}
                     >
-                      {t.minimumSpend !== null ? formatEuro(t.minimumSpend) : "—"}
+                      {minimumLabel(t.minimumSpend)}
                     </span>
                     <ChevronRight className="text-label-3 size-4 shrink-0" />
                   </button>
@@ -74,7 +77,7 @@ const ROWS: { label: string; render: (t: TableView) => React.ReactNode }[] = [
   { label: "Espace", render: (t) => t.zoneName },
   { label: "Niveau", render: (t) => (t.level === 0 ? "RDC" : "Mezzanine") },
   { label: "Personnes", render: (t) => `${t.capacity.min}–${t.capacity.max}` },
-  { label: "Minimum", render: (t) => (t.minimumSpend !== null ? formatEuro(t.minimumSpend) : "—") },
+  { label: "Minimum", render: (t) => minimumLabel(t.minimumSpend) },
   {
     label: "Par pers.",
     render: (t) => (t.perPerson !== null ? `≈ ${formatEuro(t.perPerson)}` : "—"),
