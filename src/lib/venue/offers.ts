@@ -7,14 +7,56 @@ export function tierRank(tier: Tier): number {
   return TIER_RANK[tier]
 }
 
+type PricedTable = Pick<TableContent, "minimumSpend" | "capacity" | "surcharge" | "deposit">
+
+/**
+ * Minimum spend for a group of `guests`: the table's minimum, plus the supplement for each guest
+ * above the included ones; `null` when the price is on request.
+ */
+export function minimumFor(table: Omit<PricedTable, "deposit">, guests: number): number | null {
+  if (table.minimumSpend === null) return null
+  const extra = table.surcharge ? Math.max(0, guests - table.surcharge.includedGuests) : 0
+  return table.minimumSpend + extra * (table.surcharge?.perGuest ?? 0)
+}
+
+/** What a group of `guests` is told before sending a request: never a payment, only figures. */
+export interface Quote {
+  guests: number
+  /** Guests above the included ones, each raising the minimum by the supplement. */
+  extraGuests: number
+  /** Minimum spend for the group; `null` when the price is on request. */
+  minimumSpend: number | null
+  /** That minimum shared by the group, rounded up to the euro; `null` when on request. */
+  perPerson: number | null
+  /** Deposit asked once the club confirms, deducted from the minimum; `null` without one. */
+  deposit: number | null
+}
+
+/** Amounts for a group of `guests` (expected within the table's capacity). */
+export function quoteFor(table: PricedTable, guests: number): Quote {
+  const minimumSpend = minimumFor(table, guests)
+  const { deposit } = table
+  let depositAmount: number | null = null
+  if (deposit && "amount" in deposit) depositAmount = deposit.amount
+  else if (deposit && minimumSpend !== null) {
+    depositAmount = Math.round((minimumSpend * deposit.percent) / 100)
+  }
+  return {
+    guests,
+    extraGuests: table.surcharge ? Math.max(0, guests - table.surcharge.includedGuests) : 0,
+    minimumSpend,
+    perPerson: minimumSpend === null ? null : Math.ceil(minimumSpend / Math.max(1, guests)),
+    deposit: depositAmount,
+  }
+}
+
 /**
  * Minimum spend shared by a full table, rounded up to the euro; `null` when the price is on
  * request.
  */
-export function pricePerPerson(
-  table: Pick<TableContent, "minimumSpend" | "capacity">,
-): number | null {
-  return table.minimumSpend === null ? null : Math.ceil(table.minimumSpend / table.capacity.max)
+export function pricePerPerson(table: Omit<PricedTable, "deposit">): number | null {
+  const minimum = minimumFor(table, table.capacity.max)
+  return minimum === null ? null : Math.ceil(minimum / table.capacity.max)
 }
 
 export interface ZoneSummary {

@@ -1,8 +1,16 @@
 import { describe, expect, it } from "vitest"
 
 import type { VenueContent } from "@/lib/schema"
-import { pricePerPerson, tierRank, zoneSummary } from "@/lib/venue/offers"
+import { minimumFor, pricePerPerson, quoteFor, tierRank, zoneSummary } from "@/lib/venue/offers"
 import { demoVenue } from "@/test/fixtures"
+
+/** A table for 6, up to 2 more at +150 € each, 20 % deposit (the reference audit's example). */
+const withSupplement = {
+  minimumSpend: 900,
+  capacity: { min: 6, max: 8 },
+  surcharge: { includedGuests: 6, perGuest: 150 },
+  deposit: { percent: 20 },
+}
 
 describe("pricePerPerson", () => {
   it("splits the minimum spend over a full table, rounded up", () => {
@@ -10,8 +18,61 @@ describe("pricePerPerson", () => {
     expect(pricePerPerson({ minimumSpend: 1000, capacity: { min: 6, max: 8 } })).toBe(125)
   })
 
+  it("counts the supplements of a full table", () => {
+    // 900 € + 2 × 150 € for 8 guests
+    expect(pricePerPerson(withSupplement)).toBe(150)
+  })
+
   it("is null when the price is on request", () => {
     expect(pricePerPerson({ minimumSpend: null, capacity: { min: 4, max: 6 } })).toBeNull()
+  })
+})
+
+describe("minimumFor", () => {
+  it("keeps the table's minimum without a supplement", () => {
+    expect(minimumFor({ minimumSpend: 350, capacity: { min: 4, max: 6 } }, 6)).toBe(350)
+  })
+
+  it("adds the supplement for each guest above the included ones", () => {
+    expect(minimumFor(withSupplement, 6)).toBe(900)
+    expect(minimumFor(withSupplement, 7)).toBe(1050)
+    expect(minimumFor(withSupplement, 8)).toBe(1200)
+  })
+
+  it("is null when the price is on request", () => {
+    expect(minimumFor({ minimumSpend: null, capacity: { min: 6, max: 8 } }, 7)).toBeNull()
+  })
+})
+
+describe("quoteFor", () => {
+  it("recomputes the minimum, the share and the deposit for the group", () => {
+    expect(quoteFor(withSupplement, 6)).toEqual({
+      guests: 6,
+      extraGuests: 0,
+      minimumSpend: 900,
+      perPerson: 150,
+      deposit: 180,
+    })
+    expect(quoteFor(withSupplement, 8)).toEqual({
+      guests: 8,
+      extraGuests: 2,
+      minimumSpend: 1200,
+      perPerson: 150,
+      deposit: 240,
+    })
+  })
+
+  it("shares the minimum over the actual group", () => {
+    const quote = quoteFor({ minimumSpend: 350, capacity: { min: 4, max: 6 } }, 4)
+    expect(quote).toMatchObject({ minimumSpend: 350, perPerson: 88, deposit: null })
+  })
+
+  it("keeps a fixed deposit even when the price is on request", () => {
+    const quote = quoteFor(
+      { minimumSpend: null, capacity: { min: 6, max: 8 }, deposit: { amount: 200 } },
+      6,
+    )
+    expect(quote).toMatchObject({ minimumSpend: null, perPerson: null, deposit: 200 })
   })
 })
 

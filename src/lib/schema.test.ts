@@ -237,6 +237,40 @@ describe("venueContentSchema", () => {
     expect(contentIssuePaths(content)).toEqual(["tables.0.capacity"])
   })
 
+  it("keeps an unknown price as null, never 0", () => {
+    const content = venueContent()
+    content.tables[0].minimumSpend = 0
+    expect(contentIssuePaths(content)).toEqual(["tables.0.minimumSpend"])
+    content.tables[0].minimumSpend = null
+    expect(venueContentSchema.safeParse(content).success).toBe(true)
+  })
+
+  it("accepts a supplement per extra guest and a deposit", () => {
+    const content = venueContent()
+    content.tables[0].surcharge = { includedGuests: 4, perGuest: 50 }
+    content.tables[0].deposit = { percent: 20 }
+    expect(venueContentSchema.safeParse(content).success).toBe(true)
+    content.tables[0].deposit = { amount: 100 }
+    expect(venueContentSchema.safeParse(content).success).toBe(true)
+  })
+
+  it("rejects supplements and deposits that cannot be computed", () => {
+    const content = venueContent()
+    // included guests must leave room for extra guests within the capacity (4–6)
+    content.tables[0].surcharge = { includedGuests: 6, perGuest: 50 }
+    content.tables[0].deposit = { amount: 500 } // more than the 300 € minimum
+    expect(contentIssuePaths(content).sort()).toEqual([
+      "tables.0.deposit.amount",
+      "tables.0.surcharge.includedGuests",
+    ])
+
+    const onRequest = venueContent()
+    onRequest.tables[0].minimumSpend = null
+    onRequest.tables[0].surcharge = { includedGuests: 4, perGuest: 50 }
+    onRequest.tables[0].deposit = { percent: 20 }
+    expect(contentIssuePaths(onRequest).sort()).toEqual(["tables.0.deposit", "tables.0.surcharge"])
+  })
+
   it("requires a disclaimer on demo clubs", () => {
     const content = venueContent()
     content.club.disclaimer = " "
