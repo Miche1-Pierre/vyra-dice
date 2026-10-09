@@ -202,3 +202,65 @@ export function zoneMarkerPosition(layout: VenueLayout, zoneId: string): Vec3 {
   }
   return toThree([cx, cy, floor + 2.6])
 }
+
+/** How far the buyer may look around a viewpoint: never a free flight through the venue. */
+export interface LookLimits {
+  /** Turn left or right of the viewpoint's direction, in degrees. */
+  azimuthDeg: number
+  /** Tilt up or down from it, in degrees; `null` keeps the rig's own range. */
+  polarDeg: number | null
+  /** Closest and farthest distance as a share of the viewpoint's; `null` keeps the rig's own. */
+  zoom: [number, number] | null
+}
+
+/** Limits per view: the overview turns the most, the seat looks around without moving. */
+export const LOOK_LIMITS = {
+  overview: { azimuthDeg: 60, polarDeg: 12, zoom: [0.6, 1.25] },
+  zone: { azimuthDeg: 45, polarDeg: 10, zoom: [0.65, 1.3] },
+  table: { azimuthDeg: 40, polarDeg: 10, zoom: [0.65, 1.35] },
+  seat: { azimuthDeg: 135, polarDeg: null, zoom: null },
+} satisfies Record<string, LookLimits>
+
+export type LookKind = keyof typeof LOOK_LIMITS
+
+/** Spherical bounds (radians, metres) for camera-controls around a viewpoint. */
+export interface LookBounds {
+  /** Direction of the viewpoint itself, `atan2(x, z)` in [-π, π]. */
+  azimuth: number
+  minAzimuth: number
+  maxAzimuth: number
+  minPolar: number | null
+  maxPolar: number | null
+  minDistance: number | null
+  maxDistance: number | null
+}
+
+/**
+ * Bounds around a camera pose, as camera-controls measures it: azimuth `atan2(x, z)` and polar
+ * angle from the zenith of the offset camera − target. The pose itself is always inside them;
+ * the polar range is also kept within `[minPolar, maxPolar]` of the rig when possible.
+ */
+export function lookBounds(
+  pose: Pick<CameraPose, "position" | "target">,
+  limits: LookLimits,
+  polarRange: [number, number] = [0, Math.PI],
+): LookBounds {
+  const dx = pose.position[0] - pose.target[0]
+  const dy = pose.position[1] - pose.target[1]
+  const dz = pose.position[2] - pose.target[2]
+  const distance = Math.hypot(dx, dy, dz)
+  const azimuth = Math.atan2(dx, dz)
+  const polar = Math.acos(Math.min(1, Math.max(-1, dy / (distance || 1))))
+  const rad = (deg: number) => (deg * Math.PI) / 180
+  const turn = rad(limits.azimuthDeg)
+  const tilt = limits.polarDeg === null ? null : rad(limits.polarDeg)
+  return {
+    azimuth,
+    minAzimuth: azimuth - turn,
+    maxAzimuth: azimuth + turn,
+    minPolar: tilt === null ? null : Math.min(polar, Math.max(polarRange[0], polar - tilt)),
+    maxPolar: tilt === null ? null : Math.max(polar, Math.min(polarRange[1], polar + tilt)),
+    minDistance: limits.zoom ? distance * limits.zoom[0] : null,
+    maxDistance: limits.zoom ? distance * limits.zoom[1] : null,
+  }
+}

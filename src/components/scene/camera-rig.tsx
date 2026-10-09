@@ -6,11 +6,22 @@ import { useEffect, useMemo, useRef } from "react"
 import * as THREE from "three"
 
 import { useExperience } from "@/lib/store"
-import { overviewPose, seatPose, tablePose, zonePose, type CameraPose } from "@/lib/venue/camera"
+import {
+  LOOK_LIMITS,
+  lookBounds,
+  overviewPose,
+  seatPose,
+  tablePose,
+  zonePose,
+  type CameraPose,
+  type LookKind,
+} from "@/lib/venue/camera"
 import { toThree, type VenueLayout } from "@/lib/venue/layout"
 
 const { ACTION } = CameraControlsImpl
 const INTRO_SECONDS = 8.5
+/** Tilt range of the orbit views, from the zenith: never under the floor, never straight down. */
+const ORBIT_POLAR: [number, number] = [0.12, Math.PI * 0.47]
 
 function easeInOut(t: number) {
   return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
@@ -18,7 +29,8 @@ function easeInOut(t: number) {
 
 /**
  * Owns the camera: scripted intro fly-through, then smooth transitions between the overview,
- * a zone, a table and the first-person "seat" view. User input is free in every state.
+ * a zone, a table and the first-person "seat" view. From each viewpoint the buyer looks around
+ * within limits (turn, tilt, a little zoom): no panning, no free flight through the venue.
  */
 export function CameraRig({
   layout,
@@ -70,22 +82,24 @@ export function CameraRig({
     return new THREE.Box3(new THREE.Vector3(...min), new THREE.Vector3(...max))
   }, [layout])
 
-  // free-orbit defaults (overview / zone / table)
+  // orbit around the viewpoint's target (overview / zone / table); limits are set per pose
   const configureOrbit = (c: CameraControlsImpl) => {
     c.minDistance = 1.5
     c.maxDistance = 110
-    c.minPolarAngle = 0.12
-    c.maxPolarAngle = Math.PI * 0.47
+    c.minPolarAngle = ORBIT_POLAR[0]
+    c.maxPolarAngle = ORBIT_POLAR[1]
     c.azimuthRotateSpeed = 0.9
     c.polarRotateSpeed = 0.9
     c.dollySpeed = 0.8
-    c.truckSpeed = 1.6
     c.smoothTime = 0.65
     c.draggingSmoothTime = 0.12
-    c.dollyToCursor = true
+    // zoom towards the subject, never pan: the buyer stays on the chosen viewpoint
+    c.dollyToCursor = false
     c.mouseButtons.wheel = ACTION.DOLLY
-    c.mouseButtons.right = ACTION.TRUCK
-    c.touches.two = ACTION.TOUCH_DOLLY_TRUCK
+    c.mouseButtons.right = ACTION.NONE
+    c.mouseButtons.middle = ACTION.NONE
+    c.touches.two = ACTION.TOUCH_DOLLY
+    c.touches.three = ACTION.NONE
     c.setBoundary(bounds)
   }
 
@@ -140,7 +154,7 @@ export function CameraRig({
     void c.setFocalOffset(ox, oy, 0, true)
   }
 
-  const apply = (pose: CameraPose, transition: boolean, lookDistance?: number) => {
+  const apply = (pose: CameraPose, transition: boolean, kind: LookKind, lookDistance?: number) => {
     const c = controls.current
     if (!c) return
     const [px, py, pz] = pose.position
@@ -154,6 +168,25 @@ export function CameraRig({
     fovTarget.current = pose.fov
     currentPose.current = pose
     void c.setLookAt(px, py, pz, tx, ty, tz, transition && !reducedMotion)
+    // look around this viewpoint only (bounds apply to the buyer's gestures, not to this move)
+    const look = lookBounds(
+      { position: [px, py, pz], target: [tx, ty, tz] },
+      LOOK_LIMITS[kind],
+      ORBIT_POLAR,
+    )
+    // the same direction, counted from where the camera faces now: moves never spin the long way
+    const shift = 2 * Math.PI * Math.round((c.azimuthAngle - look.azimuth) / (2 * Math.PI))
+    c.minAzimuthAngle = look.minAzimuth + shift
+    c.maxAzimuthAngle = look.maxAzimuth + shift
+    void c.rotateAzimuthTo(look.azimuth + shift, transition && !reducedMotion)
+    if (look.minPolar !== null && look.maxPolar !== null) {
+      c.minPolarAngle = look.minPolar
+      c.maxPolarAngle = look.maxPolar
+    }
+    if (look.minDistance !== null && look.maxDistance !== null) {
+      c.minDistance = look.minDistance
+      c.maxDistance = look.maxDistance
+    }
     if (reducedMotion) {
       camera.fov = pose.fov
       camera.updateProjectionMatrix()
@@ -219,14 +252,14 @@ export function CameraRig({
     c.enabled = true
     if (view === "seat" && selectedTableId) {
       configureSeat(c)
-      apply(seatPose(layout, selectedTableId, aspect), true, 0.05)
+      apply(seatPose(layout, selectedTableId, aspect), true, "seat", 0.05)
     } else {
       configureOrbit(c)
       if (view === "table" && selectedTableId)
-        apply(tablePose(layout, selectedTableId, aspect), true)
+        apply(tablePose(layout, selectedTableId, aspect), true, "table")
       else if (view === "zone" && focusedZoneId)
-        apply(zonePose(layout, focusedZoneId, aspect), true)
-      else apply(overviewPose(layout, aspect), true)
+        apply(zonePose(layout, focusedZoneId, aspect), true, "zone")
+      else apply(overviewPose(layout, aspect), true, "overview")
     }
     // aspect handled separately below
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -234,7 +267,7 @@ export function CameraRig({
 
   // re-frame the overview when the viewport changes shape (rotation, resize)
   useEffect(() => {
-    if (view === "overview") apply(overviewPose(layout, aspect), true)
+    if (view === "overview") apply(overviewPose(layout, aspect), true, "overview")
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [aspect < 0.8, aspect < 1.3, aspect >= 1.95])
 

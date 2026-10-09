@@ -3,6 +3,8 @@ import { describe, expect, it } from "vitest"
 import { listClubs } from "@/lib/clubs/registry"
 import {
   facingVector,
+  LOOK_LIMITS,
+  lookBounds,
   overviewPose,
   seatPose,
   tableMarkerPosition,
@@ -111,3 +113,39 @@ describe.each(listClubs().map((club) => [club.slug, club.layout] as const))(
     })
   },
 )
+
+describe("lookBounds", () => {
+  const deg = (rad: number) => (rad * 180) / Math.PI
+
+  it("lets the buyer turn and tilt around the viewpoint, not fly away", () => {
+    // camera 10 m south of the target and 10 m up: azimuth 0, polar 45°
+    const bounds = lookBounds({ position: [0, 10, 10], target: [0, 0, 0] }, LOOK_LIMITS.table)
+    expect(deg(bounds.minAzimuth)).toBeCloseTo(-40)
+    expect(deg(bounds.maxAzimuth)).toBeCloseTo(40)
+    expect(deg(bounds.minPolar!)).toBeCloseTo(35)
+    expect(deg(bounds.maxPolar!)).toBeCloseTo(55)
+    expect(bounds.minDistance).toBeCloseTo(Math.hypot(10, 10) * 0.65)
+    expect(bounds.maxDistance).toBeCloseTo(Math.hypot(10, 10) * 1.35)
+  })
+
+  it("always contains the viewpoint, even beyond the rig's tilt range", () => {
+    // nearly horizontal view under a low ceiling: polar ≈ 90°, rig limited to 84.6°
+    const bounds = lookBounds({ position: [0, 0.1, 10], target: [0, 0, 0] }, LOOK_LIMITS.zone, [
+      0.12,
+      Math.PI * 0.47,
+    ])
+    expect(bounds.maxPolar!).toBeGreaterThanOrEqual(Math.acos(0.1 / Math.hypot(0.1, 10)))
+    expect(bounds.minPolar!).toBeLessThanOrEqual(bounds.maxPolar!)
+  })
+
+  it("keeps the seat's own tilt and distance, and only bounds the turn", () => {
+    const bounds = lookBounds({ position: [0, 1.2, 0], target: [0, 1.2, -0.05] }, LOOK_LIMITS.seat)
+    expect(deg(bounds.maxAzimuth - bounds.minAzimuth)).toBeCloseTo(270)
+    expect(bounds).toMatchObject({
+      minPolar: null,
+      maxPolar: null,
+      minDistance: null,
+      maxDistance: null,
+    })
+  })
+})
