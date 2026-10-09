@@ -18,6 +18,7 @@ function record(idempotencyKey: string, requestId: string): BookingRequestRecord
     createdAt: "2026-10-10T21:00:00.000Z",
     status: "received",
     transmission: "not_sent_demo",
+    quote: { minimumSpend: 700, deposit: null },
   }
 }
 

@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Check, ChevronDown, Copy, GitCompareArrows, LoaderCircle, ScanEye, X } from "lucide-react"
 import { motion } from "motion/react"
 import { useMemo, useRef, useState, type ReactNode } from "react"
-import { Controller, useForm } from "react-hook-form"
+import { Controller, useForm, useWatch } from "react-hook-form"
 import type { z } from "zod"
 
 import { submitBookingRequest } from "@/app/[club]/[event]/actions"
@@ -21,9 +21,9 @@ import {
   SwitchTrack,
   ZoneTile,
 } from "@/components/experience/ui"
-import type { TableView } from "@/components/experience/view-model"
+import { depositLabel, supplementLabel, type TableView } from "@/components/experience/view-model"
 import { getAttribution, track } from "@/lib/analytics/client"
-import { formatEuro } from "@/lib/format"
+import { formatCapacity, formatEuro } from "@/lib/format"
 import {
   arrivalTimes,
   bookingRequestInputSchema,
@@ -32,9 +32,21 @@ import {
 } from "@/lib/schema"
 import { useExperience } from "@/lib/store"
 import { cn } from "@/lib/utils"
+import { defaultGuests, quoteFor } from "@/lib/venue/offers"
 import { STATUS, TIERS, tierColor, withAlpha } from "@/lib/venue/tiers"
 
 const levelLabel = (level: 0 | 1) => (level === 0 ? "Rez-de-chaussée" : "Mezzanine")
+
+/** Group size within the table's capacity. */
+function clampGuests(guests: number, { min, max }: TableView["capacity"]): number {
+  return Math.min(max, Math.max(min, guests))
+}
+
+/** Group size of the selected table: chosen by the buyer, or the one proposed first. */
+function useGuests(table: TableView): number {
+  const guests = useExperience((s) => s.guests)
+  return clampGuests(guests ?? defaultGuests(table), table.capacity)
+}
 
 export function StatusChip({
   status,
@@ -72,6 +84,11 @@ export function TableDetails({
   const viewFromSeat = useExperience((s) => s.viewFromSeat)
   const leaveSeat = useExperience((s) => s.leaveSeat)
   const toggleCompare = useExperience((s) => s.toggleCompare)
+  const setGuests = useExperience((s) => s.setGuests)
+  const guests = useGuests(table)
+  const quote = quoteFor(table, guests)
+  const supplement = supplementLabel(table)
+  const deposit = depositLabel(table, quote)
   const inCompare = compareIds.includes(table.id)
   const tier = TIERS[table.tier]
   const tint = tierColor(table.tier)
@@ -112,30 +129,52 @@ export function TableDetails({
         </div>
       </header>
 
-      <div className="grid grid-cols-3 gap-2 px-4">
-        <Stat
-          value={
-            table.capacity.min === table.capacity.max
-              ? table.capacity.max
-              : `${table.capacity.min}–${table.capacity.max}`
-          }
-          label="personnes"
-        />
-        <Stat
-          value={
-            table.minimumSpend !== null ? (
-              formatEuro(table.minimumSpend)
-            ) : (
-              <span className="text-[15px]">Sur demande</span>
-            )
-          }
-          label={table.minimumSpend !== null ? "minimum" : "prix"}
-          accent
-        />
-        <Stat
-          value={table.perPerson !== null ? `≈ ${formatEuro(table.perPerson)}` : "—"}
-          label="par personne"
-        />
+      <div className="px-4">
+        <div className="flex min-h-14 items-center justify-between gap-3 rounded-2xl bg-white/[0.045] py-2 pr-2 pl-4 shadow-[inset_0_0_0_1px_rgb(255_255_255/0.05)]">
+          <div>
+            <p className="text-ui text-label">Personnes</p>
+            <p className="text-caption text-label-3">{formatCapacity(table.capacity)}</p>
+          </div>
+          {table.capacity.min === table.capacity.max ? (
+            <p className="num text-ui text-label pr-2 font-medium">{guests}</p>
+          ) : (
+            <Stepper
+              label="Nombre de personnes"
+              value={guests}
+              min={table.capacity.min}
+              max={table.capacity.max}
+              onChange={setGuests}
+            />
+          )}
+        </div>
+        <div
+          className={cn("mt-2 grid gap-2", quote.deposit !== null ? "grid-cols-3" : "grid-cols-2")}
+        >
+          <Stat
+            value={
+              quote.minimumSpend !== null ? (
+                formatEuro(quote.minimumSpend)
+              ) : (
+                <span className="text-[15px]">Sur demande</span>
+              )
+            }
+            label={quote.minimumSpend !== null ? `minimum pour ${guests}` : "prix"}
+            accent
+          />
+          <Stat
+            value={quote.perPerson !== null ? `≈ ${formatEuro(quote.perPerson)}` : "—"}
+            label="par personne"
+          />
+          {quote.deposit !== null ? (
+            <Stat value={formatEuro(quote.deposit)} label="acompte" />
+          ) : null}
+        </div>
+        {supplement || deposit ? (
+          <div className="text-footnote text-label-2 mt-3 space-y-1 px-1">
+            {supplement ? <p>{supplement}</p> : null}
+            {deposit ? <p>{deposit}</p> : null}
+          </div>
+        ) : null}
       </div>
 
       <section className="px-5 pt-6">
@@ -316,6 +355,8 @@ function RequestForm({
   isDesktop: boolean
 }) {
   const requestSent = useExperience((s) => s.requestSent)
+  const setGuests = useExperience((s) => s.setGuests)
+  const guests = useGuests(table)
   const [serverError, setServerError] = useState<string | null>(null)
   const started = useRef(false)
   // one key per form instance: retries of the same request never create duplicates
@@ -335,7 +376,7 @@ function RequestForm({
       fullName: "",
       phone: "",
       email: "",
-      partySize: table.capacity.min,
+      partySize: guests,
       arrivalTime: arrivalTimes[0],
       message: "",
       idempotencyKey,
@@ -343,6 +384,9 @@ function RequestForm({
     },
   })
   const errors = formState.errors
+  const partySize = Number(useWatch({ control, name: "partySize" }))
+  const quote = quoteFor(table, clampGuests(partySize, table.capacity))
+  const deposit = depositLabel(table, quote)
 
   const onSubmit = handleSubmit(async (values) => {
     setServerError(null)
@@ -414,15 +458,16 @@ function RequestForm({
           </div>
           <div className="text-right">
             <p className="num text-headline text-foil">
-              {table.minimumSpend !== null ? formatEuro(table.minimumSpend) : "Sur demande"}
+              {quote.minimumSpend !== null ? formatEuro(quote.minimumSpend) : "Sur demande"}
             </p>
             <p className="text-caption text-label-3">
-              {table.minimumSpend !== null ? "minimum" : "prix"}
+              {quote.minimumSpend !== null ? `minimum pour ${quote.guests}` : "prix"}
             </p>
           </div>
         </div>
         <DialogPrimitive.Description className="text-footnote text-label-3 -mt-3 px-1">
           Le club confirme la table et le minimum, puis vous recontacte. Aucun paiement maintenant.
+          {deposit ? ` ${deposit}` : null}
         </DialogPrimitive.Description>
 
         <Group title="Votre soirée">
@@ -434,9 +479,12 @@ function RequestForm({
                 <Stepper
                   label="Nombre de personnes"
                   value={Number(field.value)}
-                  min={1}
+                  min={table.capacity.min}
                   max={table.capacity.max}
-                  onChange={field.onChange}
+                  onChange={(value) => {
+                    field.onChange(value)
+                    setGuests(value)
+                  }}
                 />
               )}
             />

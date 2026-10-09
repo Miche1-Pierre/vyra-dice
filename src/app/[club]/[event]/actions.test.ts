@@ -68,19 +68,27 @@ describe("submitBookingRequest", () => {
     })
   })
 
-  it("refuses a group larger than the table", async () => {
-    const result = await submitBookingRequest(request({ tableId: "v2", partySize: 9 }))
-    expect(result).toEqual({
-      ok: false,
-      error: "validation",
-      fieldErrors: { partySize: "Cette table accueille 8 personnes maximum" },
-    })
+  it("refuses a group outside the table's capacity", async () => {
+    const tooMany = { partySize: "Cette table accueille de 6 à 8 personnes" }
+    for (const partySize of [9, 2]) {
+      expect(await submitBookingRequest(request({ tableId: "v2", partySize }))).toEqual({
+        ok: false,
+        error: "validation",
+        fieldErrors: tooMany,
+      })
+    }
   })
 
-  it("accepts a group smaller than the table's minimum", async () => {
-    expect(await submitBookingRequest(request({ tableId: "v2", partySize: 2 }))).toMatchObject({
-      ok: true,
-    })
+  it("keeps the figures shown to the buyer with the request", async () => {
+    const save = vi.spyOn(demoSink, "save")
+    await submitBookingRequest(request({ tableId: "l1", partySize: 5 }))
+    expect(save).toHaveBeenCalledWith(
+      expect.objectContaining({ partySize: 5, quote: { minimumSpend: 350, deposit: null } }),
+    )
+    await submitBookingRequest(request({ tableId: "v2", partySize: 6 }))
+    expect(save).toHaveBeenLastCalledWith(
+      expect.objectContaining({ quote: { minimumSpend: null, deposit: null } }),
+    )
   })
 
   it("accepts a table on request", async () => {

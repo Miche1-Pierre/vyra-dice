@@ -1,7 +1,14 @@
 import { describe, expect, it } from "vitest"
 
 import type { VenueContent } from "@/lib/schema"
-import { minimumFor, pricePerPerson, quoteFor, tierRank, zoneSummary } from "@/lib/venue/offers"
+import {
+  defaultGuests,
+  minimumFor,
+  pricePerPerson,
+  quoteFor,
+  tierRank,
+  zoneSummary,
+} from "@/lib/venue/offers"
 import { demoVenue } from "@/test/fixtures"
 
 /** A table for 6, up to 2 more at +150 € each, 20 % deposit (the reference audit's example). */
@@ -41,6 +48,13 @@ describe("minimumFor", () => {
 
   it("is null when the price is on request", () => {
     expect(minimumFor({ minimumSpend: null, capacity: { min: 6, max: 8 } }, 7)).toBeNull()
+  })
+})
+
+describe("defaultGuests", () => {
+  it("proposes the included guests when extra guests are charged, a full table otherwise", () => {
+    expect(defaultGuests(withSupplement)).toBe(6)
+    expect(defaultGuests({ capacity: { min: 4, max: 6 } })).toBe(6)
   })
 })
 
