@@ -41,6 +41,11 @@ export function useViewport() {
   return { isDesktop, roomy, wide, shortLandscape }
 }
 
+/** The visitor asked their system for less motion. */
+export function usePrefersReducedMotion(): boolean {
+  return useMediaQuery("(prefers-reduced-motion: reduce)", false)
+}
+
 const noSubscription = () => () => {}
 
 function detectQuality(): Quality {

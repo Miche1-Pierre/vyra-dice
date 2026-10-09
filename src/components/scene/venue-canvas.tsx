@@ -39,6 +39,9 @@ class SceneErrorBoundary extends Component<
   }
 }
 
+/** Instant of the light show held when the visitor asked for less motion (as in captures). */
+const STILL_AT = 12
+
 export interface VenueCanvasProps {
   club: string
   assets: AssetManifest
@@ -49,6 +52,8 @@ export interface VenueCanvasProps {
   zoneMarkers: ZoneMarkerData[]
   tableMarkers: TableMarkerData[]
   quality: Quality
+  /** Less motion: no fly-through, cuts instead of camera moves, a still light show. */
+  reducedMotion?: boolean
   onIntroSkipped?: (atMs: number) => void
 }
 
@@ -61,11 +66,14 @@ export default function VenueCanvas({
   zoneMarkers,
   tableMarkers,
   quality,
+  reducedMotion = false,
   onIntroSkipped,
 }: VenueCanvasProps) {
   const setFallback2d = useExperience((s) => s.setFallback2d)
   // reproducible captures: same instant and same resolution on every load
   const [frozenAt] = useState(readFrozenTime)
+  // less motion: the light show, LED rain and beams hold one lit instant
+  const stillAt = frozenAt ?? (reducedMotion ? STILL_AT : null)
   const [dpr, setDpr] = useState(quality === "high" ? 1.75 : 1.25)
   const [effects, setEffects] = useState(true)
 
@@ -81,9 +89,8 @@ export default function VenueCanvas({
       >
         <color attach="background" args={["#060408"]} />
         <fogExp2 attach="fog" args={["#09050d", 0.0055]} />
-        {frozenAt !== null ? (
-          <FrozenClock at={frozenAt} />
-        ) : (
+        {stillAt !== null ? <FrozenClock at={stillAt} /> : null}
+        {frozenAt !== null ? null : (
           <PerformanceMonitor
             bounds={() => (quality === "high" ? [45, 60] : [28, 50])}
             onDecline={() => {
@@ -110,7 +117,7 @@ export default function VenueCanvas({
           <TableHotspots layout={layout} tiers={tiers} />
           <Markers layout={layout} zones={zoneMarkers} tables={tableMarkers} />
         </Suspense>
-        <CameraRig layout={layout} onIntroSkipped={onIntroSkipped} />
+        <CameraRig layout={layout} reducedMotion={reducedMotion} onIntroSkipped={onIntroSkipped} />
         {effects ? <Effects quality={quality} /> : null}
       </Canvas>
     </SceneErrorBoundary>
