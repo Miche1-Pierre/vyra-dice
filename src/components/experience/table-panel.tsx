@@ -18,6 +18,7 @@ import {
   Stat,
   StatusIcon,
   Stepper,
+  Steps,
   SwitchTrack,
   ZoneTile,
 } from "@/components/experience/ui"
@@ -283,6 +284,7 @@ export function TableFooter({ table }: { table: TableView }) {
   const sold = table.status === "sold"
   return (
     <div>
+      {!sold ? <Steps current={1} className="mb-3 justify-center" /> : null}
       <Btn
         variant="brand"
         size="lg"
@@ -491,9 +493,12 @@ function RequestForm({
       className="flex max-h-[inherit] min-h-0 flex-col"
     >
       <div className="flex h-16 shrink-0 items-center justify-between gap-3 pr-3 pl-5 max-lg:pt-2">
-        <DialogPrimitive.Title className="text-headline text-label">
-          Demande de table
-        </DialogPrimitive.Title>
+        <div className="min-w-0">
+          <DialogPrimitive.Title className="text-headline text-label">
+            Demande de table
+          </DialogPrimitive.Title>
+          <Steps current={2} className="mt-1" />
+        </div>
         <DialogPrimitive.Close
           render={
             <IconBtn
@@ -724,6 +729,7 @@ function RequestSuccess({
         </DialogPrimitive.Close>
       </div>
       <div className="flex flex-col items-center px-6 pb-6 text-center">
+        <Steps current={3} className="mb-5" />
         <motion.span
           initial={{ scale: 0.4, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}

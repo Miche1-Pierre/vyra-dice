@@ -3,6 +3,7 @@
 import { Tooltip as TooltipPrimitive } from "@base-ui/react/tooltip"
 import { cva, type VariantProps } from "class-variance-authority"
 import {
+  Check,
   Crown,
   Disc3,
   Gem,
@@ -429,6 +430,57 @@ export function SwitchTrack() {
     >
       <span className="absolute top-[2px] left-[2px] size-[27px] rounded-full bg-white shadow-[0_3px_8px_rgb(0_0_0/0.25),0_1px_1px_rgb(0_0_0/0.16)] transition-transform duration-200 ease-[cubic-bezier(0.3,1.4,0.5,1)]" />
     </span>
+  )
+}
+
+const STEPS = ["Table", "Coordonnées", "Envoi"] as const
+
+/**
+ * Where the buyer is in the request: choose a table, give contact details, send. Never mentions a
+ * payment, which does not happen here. Phones keep only the current step's name.
+ */
+export function Steps({ current, className }: { current: 1 | 2 | 3; className?: string }) {
+  return (
+    <ol aria-label="Étapes de la demande" className={cn("flex items-center gap-2", className)}>
+      {STEPS.map((label, index) => {
+        const step = index + 1
+        const state = step < current ? "done" : step === current ? "current" : "todo"
+        return (
+          <li
+            key={label}
+            aria-current={state === "current" ? "step" : undefined}
+            className="flex min-w-0 items-center gap-1.5"
+          >
+            <span
+              className={cn(
+                "num grid size-[18px] shrink-0 place-items-center rounded-full text-[10px] font-semibold [&_svg]:size-2.5",
+                state === "todo" && "text-label-3 shadow-[inset_0_0_0_1px_rgb(255_255_255/0.18)]",
+                state === "done" && "text-label bg-white/[0.14]",
+              )}
+              style={
+                state === "current"
+                  ? { background: "var(--brand)", color: "var(--brand-on)" }
+                  : undefined
+              }
+            >
+              {state === "done" ? <Check strokeWidth={3} aria-hidden /> : step}
+            </span>
+            <span
+              className={cn(
+                "text-caption truncate",
+                state === "current" ? "text-label font-medium" : "text-label-3 max-sm:sr-only",
+              )}
+            >
+              {label}
+              {state === "done" ? <span className="sr-only"> (fait)</span> : null}
+            </span>
+            {step < STEPS.length ? (
+              <span aria-hidden className="h-px w-3 shrink-0 bg-white/[0.16]" />
+            ) : null}
+          </li>
+        )
+      })}
+    </ol>
   )
 }
 
