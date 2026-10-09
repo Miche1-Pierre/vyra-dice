@@ -23,11 +23,11 @@ import { Panel } from "@/components/experience/sheet"
 import { RequestDialog, TableDetails, TableFooter } from "@/components/experience/table-panel"
 import { Tile, ZoneTile } from "@/components/experience/ui"
 import { useShortcuts } from "@/components/experience/use-shortcuts"
-import { buildViewModel, type ViewModel } from "@/components/experience/view-model"
+import { buildViewModel, zonePriceLabel, type ViewModel } from "@/components/experience/view-model"
 import { track } from "@/lib/analytics/client"
 import type { ClubBrand } from "@/lib/clubs/brand"
 import type { ClubDefinition } from "@/lib/clubs/club"
-import { formatDateFr, formatEuro } from "@/lib/format"
+import { formatDateFr } from "@/lib/format"
 import type { VenueContent } from "@/lib/schema"
 import { useExperience } from "@/lib/store"
 import { cn } from "@/lib/utils"
@@ -121,7 +121,7 @@ function useDockEntries(
         id: `zone-${z.id}`,
         label: z.name,
         short: z.shortName,
-        detail: z.fromMinimum !== null ? `dès ${formatEuro(z.fromMinimum)}` : "complet",
+        detail: zonePriceLabel(z),
         active: focusedZoneId === z.id && view !== "overview",
         tile: <ZoneTile tier={z.tier} icon={z.icon} />,
         onSelect: () => s().focusZone(z.id),

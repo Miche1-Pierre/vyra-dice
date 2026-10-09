@@ -122,8 +122,14 @@ export function TableDetails({
           label="personnes"
         />
         <Stat
-          value={table.minimumSpend !== null ? formatEuro(table.minimumSpend) : "—"}
-          label="minimum"
+          value={
+            table.minimumSpend !== null ? (
+              formatEuro(table.minimumSpend)
+            ) : (
+              <span className="text-[15px]">Sur demande</span>
+            )
+          }
+          label={table.minimumSpend !== null ? "minimum" : "prix"}
           accent
         />
         <Stat
@@ -408,9 +414,11 @@ function RequestForm({
           </div>
           <div className="text-right">
             <p className="num text-headline text-foil">
-              {table.minimumSpend !== null ? formatEuro(table.minimumSpend) : "—"}
+              {table.minimumSpend !== null ? formatEuro(table.minimumSpend) : "Sur demande"}
             </p>
-            <p className="text-caption text-label-3">minimum</p>
+            <p className="text-caption text-label-3">
+              {table.minimumSpend !== null ? "minimum" : "prix"}
+            </p>
           </div>
         </div>
         <DialogPrimitive.Description className="text-footnote text-label-3 -mt-3 px-1">

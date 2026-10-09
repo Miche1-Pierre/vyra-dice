@@ -57,6 +57,20 @@ const minOf = (values: (number | null)[]) => {
   return xs.length ? Math.min(...xs) : null
 }
 
+/** Minimum spend of a table, or "sur demande" when the club gives the price on request. */
+export function minimumLabel(minimumSpend: number | null): string {
+  return minimumSpend !== null ? formatEuro(minimumSpend) : "sur demande"
+}
+
+/**
+ * "dès 350 €", or why a zone has no "from" price: "sur demande" while some of its tables are still
+ * open without a price, "complet" once every table is sold.
+ */
+export function zonePriceLabel(zone: Pick<ZoneView, "fromMinimum" | "availability">): string {
+  if (zone.fromMinimum !== null) return `dès ${formatEuro(zone.fromMinimum)}`
+  return zone.availability.tone === "sold" ? "complet" : "sur demande"
+}
+
 /** "3/4 dispo", "Sur demande" (nothing bookable directly, but not sold out) or "Complet". */
 export function availabilityOf(tables: Pick<TableView, "status">[]): {
   label: string
@@ -129,7 +143,13 @@ export function buildViewModel(content: VenueContent, layout: VenueLayout): View
       tier: z.tier,
       icon: z.icon,
       level: z.level,
-      fromLabel: z.fromMinimum !== null ? formatEuro(z.fromMinimum) : null,
+      // the availability already says "Sur demande" / "Complet" when nothing is open
+      fromLabel:
+        z.fromMinimum !== null
+          ? `dès ${formatEuro(z.fromMinimum)}`
+          : z.availability.tone === "available"
+            ? "prix sur demande"
+            : null,
       available: z.available,
       total: z.total,
       availability: z.availability,

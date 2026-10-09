@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest"
 
-import { availabilityOf, buildViewModel } from "@/components/experience/view-model"
+import {
+  availabilityOf,
+  buildViewModel,
+  minimumLabel,
+  zonePriceLabel,
+} from "@/components/experience/view-model"
 import { listClubs } from "@/lib/clubs/registry"
 import { tableLevel } from "@/lib/venue/layout"
 import { tierRank } from "@/lib/venue/offers"
@@ -64,5 +69,28 @@ describe("availabilityOf", () => {
       tone: "on_request",
     })
     expect(availabilityOf([{ status: "sold" }])).toEqual({ label: "Complet", tone: "sold" })
+  })
+})
+
+describe("price labels", () => {
+  const open = { label: "2/3 dispo", tone: "available" as const }
+
+  it("shows the minimum, or 'sur demande' when the price is unknown", () => {
+    expect(minimumLabel(350)).toMatch(/^350\s€$/)
+    expect(minimumLabel(null)).toBe("sur demande")
+  })
+
+  it("never calls a zone sold out while some of its tables are open without a price", () => {
+    expect(zonePriceLabel({ fromMinimum: 350, availability: open })).toMatch(/^dès 350\s€$/)
+    expect(zonePriceLabel({ fromMinimum: null, availability: open })).toBe("sur demande")
+    expect(
+      zonePriceLabel({
+        fromMinimum: null,
+        availability: { label: "Sur demande", tone: "on_request" },
+      }),
+    ).toBe("sur demande")
+    expect(
+      zonePriceLabel({ fromMinimum: null, availability: { label: "Complet", tone: "sold" } }),
+    ).toBe("complet")
   })
 })
