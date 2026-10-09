@@ -18,6 +18,21 @@ export interface Notice {
   tone?: "brand" | "ok" | "neutral"
 }
 
+/**
+ * What the buyer typed in the request form, kept in memory while the form is closed and reopened
+ * (never stored on the device). The idempotency key belongs to the table it was created for.
+ */
+export interface RequestDraft {
+  tableId: string
+  idempotencyKey: string
+  fullName?: string
+  phone?: string
+  email?: string
+  message?: string
+  arrivalTime?: string
+  consent?: boolean
+}
+
 export interface LastRequest {
   requestId: string
   tableId: string
@@ -38,6 +53,9 @@ interface ExperienceState {
   guests: number | null
   compareIds: string[]
   panel: Panel
+  /** Panel to show again when the table card closes (the table was opened from it). */
+  returnTo: "list" | "compare" | null
+  draft: RequestDraft | null
   dialog: Dialog
   commandOpen: boolean
   lastRequest: LastRequest | null
@@ -49,7 +67,7 @@ interface ExperienceState {
   setFallback2d: () => void
   finishIntro: () => void
   focusZone: (zoneId: string) => void
-  selectTable: (tableId: string, opts?: { openPanel?: boolean }) => void
+  selectTable: (tableId: string, opts?: { openPanel?: boolean; from?: "list" | "compare" }) => void
   viewFromSeat: () => void
   leaveSeat: () => void
   hoverTable: (tableId: string | null) => void
@@ -60,6 +78,7 @@ interface ExperienceState {
   openPanel: (panel: Panel) => void
   closePanel: () => void
   openDialog: (dialog: Dialog) => void
+  saveDraft: (draft: RequestDraft) => void
   setCommandOpen: (open: boolean) => void
   requestSent: (request: LastRequest) => void
   resetView: () => void
@@ -80,6 +99,8 @@ export const useExperience = create<ExperienceState>()((set, get) => ({
   guests: null,
   compareIds: [],
   panel: null,
+  returnTo: null,
+  draft: null,
   dialog: null,
   commandOpen: false,
   lastRequest: null,
@@ -105,6 +126,8 @@ export const useExperience = create<ExperienceState>()((set, get) => ({
       // another table starts again from its own proposed group size
       guests: tableId === s.selectedTableId ? s.guests : null,
       panel: opts?.openPanel === false ? s.panel : "table",
+      // switching tables inside the card keeps the way back
+      returnTo: opts?.from ?? (s.panel === "table" ? s.returnTo : null),
     })),
   viewFromSeat: () => {
     if (get().selectedTableId) set({ view: "seat" })
@@ -141,14 +164,17 @@ export const useExperience = create<ExperienceState>()((set, get) => ({
     set((s) => {
       const leavingTable = s.view === "table" || s.view === "seat"
       return {
-        panel: null,
+        // a table opened from the list (or the comparison) goes back to it
+        panel: s.panel === "table" ? s.returnTo : null,
+        returnTo: null,
         view: leavingTable ? (s.focusedZoneId ? "zone" : "overview") : s.view,
         selectedTableId: leavingTable ? null : s.selectedTableId,
       }
     }),
   openDialog: (dialog) => set({ dialog }),
+  saveDraft: (draft) => set({ draft }),
   setCommandOpen: (commandOpen) => set({ commandOpen }),
-  requestSent: (lastRequest) => set({ lastRequest, dialog: "ack" }),
+  requestSent: (lastRequest) => set({ lastRequest, dialog: "ack", draft: null }),
   resetView: () =>
     set({
       view: "overview",

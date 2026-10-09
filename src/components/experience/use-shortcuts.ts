@@ -13,23 +13,24 @@ function typing(target: EventTarget | null): boolean {
 }
 
 /**
- * Keyboard layer (desktop): ⌘K / Ctrl K or / search · Esc back · L list · C compare ·
- * V view from the seat · R overview · ↵ request the selected table · 1 2 3 levels.
+ * Keyboard layer. Esc goes back one level on every screen (tablets and phones with a keyboard
+ * too). On desktops: ⌘K / Ctrl K or / search · L list · C compare · V view from the seat ·
+ * R overview · ↵ request the selected table · 1 2 3 levels.
  */
-export function useShortcuts(enabled: boolean) {
+export function useShortcuts(isDesktop: boolean) {
   useEffect(() => {
-    if (!enabled) return
     const onKey = (e: KeyboardEvent) => {
       const s = useExperience.getState()
+      if (e.key === "Escape") {
+        // dialogs and the palette handle their own Escape
+        if (!s.commandOpen && !s.dialog) s.back()
+        return
+      }
+      if (!isDesktop) return
       const mod = e.metaKey || e.ctrlKey
       if (mod && e.key.toLowerCase() === "k") {
         e.preventDefault()
         s.setCommandOpen(!s.commandOpen)
-        return
-      }
-      if (e.key === "Escape") {
-        // dialogs and the palette handle their own Escape
-        if (!s.commandOpen && !s.dialog) s.back()
         return
       }
       if (mod || e.altKey || typing(e.target) || s.commandOpen || s.dialog || s.view === "intro")
@@ -67,5 +68,5 @@ export function useShortcuts(enabled: boolean) {
     }
     window.addEventListener("keydown", onKey)
     return () => window.removeEventListener("keydown", onKey)
-  }, [enabled])
+  }, [isDesktop])
 }
