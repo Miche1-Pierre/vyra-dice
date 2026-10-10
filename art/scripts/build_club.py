@@ -377,8 +377,30 @@ def el_stairs(c: Ctx, el: dict) -> None:
                 strips.box(a - 0.012, a + 0.012, y0 + 0.06, y1 - 0.06, z - 0.035, z - 0.012, led)
             for yy in (y0 + 0.04, y1 - 0.04):
                 rail(rail_metal, rail_glass, (x0, yy, 0.0), (x1, yy, c.mz), h, metal, glass)
+        elif s["bottom"] == "north":  # climbs towards -y
+            run = (y1 - y0) / n
+            for i in range(n):
+                z, a, bb = (i + 1) * rise, y1 - (i + 1) * run, y1 - i * run
+                mb.floor(x0, x1, a, bb, z, mat)
+                mb.wall_y(bb, x0, x1, z - rise, z, mat, +1)
+                mb.wall_x(x0, a, bb, 0, z, mat, -1)
+                mb.wall_x(x1, a, bb, 0, z, mat, +1)
+                strips.box(x0 + 0.06, x1 - 0.06, bb - 0.012, bb + 0.012, z - 0.035, z - 0.012, led)
+            for xx in (x0 + 0.04, x1 - 0.04):
+                rail(rail_metal, rail_glass, (xx, y1, 0.0), (xx, y0, c.mz), h, metal, glass)
+        elif s["bottom"] == "east":  # climbs towards -x
+            run = (x1 - x0) / n
+            for i in range(n):
+                z, a, bb = (i + 1) * rise, x1 - (i + 1) * run, x1 - i * run
+                mb.floor(a, bb, y0, y1, z, mat)
+                mb.wall_x(bb, y0, y1, z - rise, z, mat, +1)
+                mb.wall_y(y0, a, bb, 0, z, mat, -1)
+                mb.wall_y(y1, a, bb, 0, z, mat, +1)
+                strips.box(bb - 0.012, bb + 0.012, y0 + 0.06, y1 - 0.06, z - 0.035, z - 0.012, led)
+            for yy in (y0 + 0.04, y1 - 0.04):
+                rail(rail_metal, rail_glass, (x1, yy, 0.0), (x0, yy, c.mz), h, metal, glass)
         else:
-            raise ValueError(f"stairs {s['id']}: bottom '{s['bottom']}' not supported yet (south, west)")
+            raise ValueError(f"stairs {s['id']}: unknown bottom '{s['bottom']}'")
     mb.finalize(c.C["ARCHI"], lightmap=el.get("lightmap", 1024))
 
 
