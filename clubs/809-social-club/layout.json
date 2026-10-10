@@ -1,5 +1,5 @@
 {
-  "$comment": "809 Social Club (La Garde) — plan reconstitué depuis le croquis de l'équipe (private/sources/croquis-rdc-etage.png, coupe-superposition-verticale.png) et les photos. AUCUNE cote mesurée : salle ≈ 37,5 × 30 m (agrandie ×1,5 à la demande de l'équipe), mezzanine à 3,5 m et plafond à 8 m estimés sur les photos (SUPPOSITIONS). Orientation du croquis conservée : nord en haut, entrée à l'est. Unités : mètres. Axes Blender : x = est, y = nord, z = haut (glTF/three : X = x, Y = z, Z = -y). Lounges sur estrades de 0,4 m (raised), cabine DJ à 0,8 m (heights.stage). Escaliers : 20 marches de 0,33 m (la longueur des volées n'est pas agrandie, la hauteur ne change pas). Le dernier poteau (-1,3 ; -1,6) est le pilier LED du bar central, du sol au plafond (Ø 0,9 m, construit dans scene.json). Écarts au schéma, lus seulement par scene.json : la cabine DJ est en biais (stage/dj = rectangles englobants, la brique stage n'est pas utilisée) ; screen = plage y (dans x) et z des écrans du mur ouest ; entrance = sas à l'est (x = profondeur du sas depuis le mur est, y = axe de la porte) ; ledRain = valeur de remplissage, aucune pluie de LED n'est construite.",
+  "$comment": "809 Social Club (La Garde) — plan reconstitué depuis le croquis de l'équipe (private/sources/croquis-rdc-etage.png, coupe-superposition-verticale.png) et les photos. AUCUNE cote mesurée : salle ≈ 37,5 × 30 m (agrandie ×1,5 à la demande de l'équipe), mezzanine à 3,5 m et plafond à 8 m estimés sur les photos (SUPPOSITIONS). Orientation du croquis conservée : nord en haut, entrée à l'est. Unités : mètres. Axes Blender : x = est, y = nord, z = haut (glTF/three : X = x, Y = z, Z = -y). Lounges sur estrades de 0,4 m (raised), cabine DJ et scène DJ à 0,9 m (heights.stage) : la scène prolonge la cabine jusqu'aux murs du coin sud-ouest (x ≤ -7,7, y ≤ -7,75), avec un écran principal autoportant en biais derrière le DJ (stage = rectangle englobant cabine + scène). Écrans-rubans sur les nez de mezzanine ouest et nord, boule à facettes au-dessus de la piste (-8 ; 0) et deux grappes d'enceintes suspendues (-11,6 ; -5,6) et (-7 ; -8,9) : construits dans scene.json, hors des faisceaux des caméras. Cinq lyres sur une barre au-dessus de la scène (5 derniers movingHeads). Escaliers : 20 marches de 0,33 m (la longueur des volées n'est pas agrandie, la hauteur ne change pas). Le dernier poteau (-1,3 ; -1,6) est le pilier LED du bar central, du sol au plafond (Ø 0,9 m, construit dans scene.json). Écarts au schéma, lus seulement par scene.json : la cabine DJ est en biais (stage/dj = rectangles englobants, la brique stage n'est pas utilisée) ; screen = valeur de remplissage (les écrans sont construits en mesh, aucun fx_screen) ; entrance = sas à l'est (x = profondeur du sas depuis le mur est, y = axe de la porte) ; ledRain = valeur de remplissage, aucune pluie de LED n'est construite.",
   "club": "809-social-club",
   "version": 1,
   "heights": {
@@ -7,7 +7,7 @@
     "slab": 0.4,
     "ceiling": 8.0,
     "railing": 1.05,
-    "stage": 0.8
+    "stage": 0.9
   },
   "building": { "minX": -18.75, "maxX": 18.75, "minY": -15.0, "maxY": 15.0, "wall": 0.3 },
   "groundFloor": { "x": [-18.75, 18.75], "y": [-15.0, 15.0] },
@@ -19,7 +19,8 @@
   "movingHeads": [
     [-10.451, -3.126, 7.2], [-9.602, -3.974, 7.2], [-8.754, -4.823, 7.2],
     [-7.905, -5.672, 7.2], [-7.056, -6.519, 7.2], [-6.209, -7.368, 7.2],
-    [-8.646, -1.746, 7.2], [-7.586, -2.808, 7.2], [-6.525, -3.869, 7.2], [-5.465, -4.929, 7.2]
+    [-8.646, -1.746, 7.2], [-7.586, -2.808, 7.2], [-6.525, -3.869, 7.2], [-5.465, -4.929, 7.2],
+    [-10.748, -11.314, 7.2], [-11.597, -10.465, 7.2], [-12.445, -9.617, 7.2], [-13.294, -8.768, 7.2], [-14.142, -7.92, 7.2]
   ],
   "void": [
     { "id": "nef", "x": [-14.4, 8.25], "y": [-10.8, 5.55] },
@@ -67,7 +68,7 @@
     { "id": "escalier-est", "x": [9.6, 12.3], "y": [-12.6, -6.0], "bottom": "north", "steps": 20 }
   ],
   "bar": { "x": [-1.8, 5.7], "y": [-2.1, 3.9], "height": 1.12, "chamfer": 1.35 },
-  "stage": { "x": [-13.96, -7.19], "y": [-11.81, -5.04] },
+  "stage": { "x": [-18.75, -7.19], "y": [-15.0, -5.04] },
   "dj": { "x": [-12.2, -7.7], "y": [-10.0, -5.6] },
   "screen": { "x": [-5.1, 5.7], "z": [4.6, 6.8] },
   "wc": { "x": [14.4, 18.75], "y": [11.4, 15.0] },
@@ -126,7 +127,7 @@
       { "position": [66.0, -81.0, 69.0], "target": [-0.75, 0.0, 0.0] },
       { "position": [24.0, -39.0, 22.5], "target": [-1.5, -1.5, 3.0] },
       { "position": [15.75, 4.5, 2.0], "target": [-6.0, 2.25, 3.5] },
-      { "position": [-2.7, 0.3, 3.0], "target": [-9.9, -7.8, 1.9] },
+      { "position": [-2.7, 0.3, 3.0], "target": [-11.2, -9.4, 2.4] },
       { "position": [22.5, -40.2, 48.75], "target": [-0.75, 0.0, 1.5] }
     ]
   }

@@ -1,0 +1,146 @@
+[18:08:11] Étape « auto » — 809-social-club
+[18:08:12] — research : déjà fait
+[18:08:12] — spec : déjà fait
+[18:08:12] — build : déjà fait
+[18:08:12] — review : déjà fait
+[18:08:12] ══ bake ══
+[18:08:12] ▶ Bake des lightmaps (final)
+[18:09:10]   [bake] device OPTIX: ['NVIDIA GeForce RTX 4070 Laptop GPU']
+[18:09:10]   [bake] ground_floor        2048px scale=4.1149   54.8s
+[18:09:35]   [bake] wall_west           2048px scale=6.6136   25.3s
+[18:10:36]   [bake] wall_east           2048px scale=4.3760   61.3s
+[18:10:44]   [bake] wall_north          1024px scale=6.2863    7.5s
+[18:10:51]   [bake] wall_south          1024px scale=5.5273    7.8s
+[18:10:56]   [bake] sas                  512px scale=1.5383    4.5s
+[18:11:14]   [bake] ceiling             1024px scale=1.0077   18.1s
+[18:11:18]   [bake] columns              512px scale=2.8170    4.2s
+[18:11:32]   [bake] stairs              1024px scale=8.2565   13.6s
+[18:11:42]   [bake] estrades            1024px scale=5.9525   10.1s
+[18:11:54]   [bake] bar                 1024px scale=10.7620   12.6s
+[18:11:57]   [bake] pilier_led           512px scale=6.6614    2.8s
+[18:12:09]   [bake] dj_booth            1024px scale=5.4890   11.7s
+[18:12:24]   [bake] scene_dj            1024px scale=4.9643   15.3s
+[18:12:29]   [bake] comptoir_nord        512px scale=0.7563    4.6s
+[18:12:33]   [bake] wc                   512px scale=0.1568    3.9s
+[18:13:35]   [bake] lvl1_slabs          2048px scale=5.0614   62.0s
+[18:13:38]   [bake] lvl1_bar_vip_retour   512px scale=1.9613    3.7s
+[18:14:05]   [bake] furniture           2048px scale=4.8324   26.8s
+[18:14:24]   [bake] lvl1_furniture      2048px scale=6.9063   19.2s
+[18:14:28]   [bake] done in 373.7s -> clubs\809-social-club\build\export
+[18:14:29] ✔ Bake des lightmaps (final) (376.6 s)
+[18:14:29] ▶ Optimisation web
+[18:14:33]   prune: Removed types... Accessor (296)
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[18:14:33]   prune: Removed types... Accessor (173)
+[18:14:33]   809-social-club.glb: 4750 KB -> 1517 KB
+[18:14:35]     lm ground_floor: 2685 KB -> 60 KB
+[18:14:36]     lm wall_west: 884 KB -> 23 KB
+[18:14:38]     lm wall_east: 2195 KB -> 35 KB
+[18:14:39]     lm wall_north: 218 KB -> 8 KB
+[18:14:39]     lm wall_south: 219 KB -> 7 KB
+[18:14:39]     lm sas: 113 KB -> 3 KB
+[18:14:40]     lm ceiling: 964 KB -> 40 KB
+[18:14:40]     lm columns: 219 KB -> 13 KB
+[18:14:41]     lm stairs: 738 KB -> 31 KB
+[18:14:41]     lm bar: 497 KB -> 15 KB
+[18:14:42]     lm dj_booth: 494 KB -> 13 KB
+[18:14:42]     lm comptoir_nord: 170 KB -> 7 KB
+[18:14:42]     lm wc: 225 KB -> 14 KB
+[18:14:44]     lm lvl1_slabs: 2654 KB -> 71 KB
+[18:14:44]     lm lvl1_bar_vip_retour: 101 KB -> 4 KB
+[18:14:46]     lm furniture: 2814 KB -> 204 KB
+[18:14:49]     lm lvl1_furniture: 3078 KB -> 307 KB
+[18:14:50]     lm estrades: 378 KB -> 18 KB
+[18:14:50]     lm pilier_led: 79 KB -> 4 KB
+[18:14:50]     lm scene_dj: 562 KB -> 12 KB
+[18:14:50]     lightmaps total: 889 KB
+[18:14:51]   club assets: 809-social-club, lumen-club, naho -> public\clubs
+[18:14:51] ✔ Optimisation web (21.8 s)
+[18:14:51] ══ preview ══
+[18:14:51] ▶ Enregistrement dans clubs/registry.ts
+[18:14:51] déjà enregistré
+[18:14:51] ✔ Enregistrement dans clubs/registry.ts (0.0 s)
+[18:14:51] ▶ Tests de contrat (tous les clubs)
+[18:15:02]    ✓ src/lib/clubs/brand.test.ts (5 tests) 92ms
+[18:15:02]    ✓ src/lib/venue/offers.test.ts (15 tests) 79ms
+[18:15:02]    ✓ src/lib/clubs/ambiance.test.ts (6 tests) 103ms
+[18:15:02]    ✓ src/components/experience/view-model.test.ts (19 tests) 97ms
+[18:15:02]    ✓ src/lib/clubs/club.test.ts (7 tests) 139ms
+[18:15:02]    ✓ src/lib/venue/layout.test.ts (21 tests) 145ms
+[18:15:02]    ✓ src/lib/clubs/registry.test.ts (21 tests) 163ms
+[18:15:02]    ✓ src/lib/venue/camera.test.ts (37 tests) 93ms
+[18:15:02]    Test Files  8 passed (8)
+[18:15:02]         Tests  131 passed (131)
+[18:15:02] ✔ Tests de contrat (tous les clubs) (11.4 s)
+[18:15:02] ▶ Viewer local
+[18:15:04] ✔ Viewer local (1.2 s)
+[18:15:04] ▶ Captures
+[18:15:35] ✔ Captures (31.9 s)
+[18:15:36] — lessons : déjà fait
+[18:15:36] Terminé.

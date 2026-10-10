@@ -5,121 +5,127 @@
   "lightmaps": {
     "ground_floor": {
       "file": "lm/ground_floor.webp",
-      "scale": 4.09855,
+      "scale": 4.11734,
       "size": 2048,
-      "hash": "26c2cec966"
+      "hash": "086d5817c8"
     },
     "wall_west": {
       "file": "lm/wall_west.webp",
-      "scale": 5.56466,
+      "scale": 5.44879,
       "size": 2048,
-      "hash": "e436cabb9d"
+      "hash": "206d79a317"
     },
     "wall_east": {
       "file": "lm/wall_east.webp",
-      "scale": 4.37351,
+      "scale": 4.37795,
       "size": 2048,
-      "hash": "ff54a04dad"
+      "hash": "31fec43646"
     },
     "wall_north": {
       "file": "lm/wall_north.webp",
-      "scale": 6.27773,
+      "scale": 6.28617,
       "size": 1024,
-      "hash": "5ff891c2db"
+      "hash": "1b0dd6fe15"
     },
     "wall_south": {
       "file": "lm/wall_south.webp",
-      "scale": 5.52555,
+      "scale": 5.53626,
       "size": 1024,
-      "hash": "066ec29180"
+      "hash": "7c19733951"
     },
     "sas": {
       "file": "lm/sas.webp",
-      "scale": 1.53789,
+      "scale": 1.53817,
       "size": 512,
-      "hash": "45b3b3d1fa"
+      "hash": "0c0f254ecc"
     },
     "ceiling": {
       "file": "lm/ceiling.webp",
-      "scale": 1.00657,
+      "scale": 1.00668,
       "size": 1024,
-      "hash": "c904ee0b10"
+      "hash": "4f84446468"
     },
     "columns": {
       "file": "lm/columns.webp",
-      "scale": 2.80522,
+      "scale": 2.78538,
       "size": 512,
-      "hash": "f7d9bae9d8"
+      "hash": "2c50312cac"
     },
     "stairs": {
       "file": "lm/stairs.webp",
-      "scale": 8.25537,
+      "scale": 8.23113,
       "size": 1024,
-      "hash": "15874bb54f"
+      "hash": "e67e13cee9"
     },
     "bar": {
       "file": "lm/bar.webp",
-      "scale": 11.82656,
+      "scale": 11.82648,
       "size": 1024,
-      "hash": "ade4ca0f6b"
+      "hash": "413af6e707"
     },
     "dj_booth": {
       "file": "lm/dj_booth.webp",
-      "scale": 5.19674,
+      "scale": 5.48324,
       "size": 1024,
-      "hash": "f040db9e2b"
+      "hash": "af1ca9352a"
     },
     "comptoir_nord": {
       "file": "lm/comptoir_nord.webp",
-      "scale": 0.75694,
+      "scale": 0.76472,
       "size": 512,
-      "hash": "2afe4c8659"
+      "hash": "cc31a0eb88"
     },
     "wc": {
       "file": "lm/wc.webp",
-      "scale": 0.156,
+      "scale": 0.16123,
       "size": 512,
-      "hash": "3829190edf"
+      "hash": "d91d76f2c1"
     },
     "lvl1_slabs": {
       "file": "lm/lvl1_slabs.webp",
-      "scale": 5.05875,
+      "scale": 5.05946,
       "size": 2048,
-      "hash": "9a387566da"
+      "hash": "3050184818"
     },
     "lvl1_bar_vip_retour": {
       "file": "lm/lvl1_bar_vip_retour.webp",
-      "scale": 1.95847,
+      "scale": 1.96137,
       "size": 512,
-      "hash": "3461b44adc"
+      "hash": "0701dcb1c2"
     },
     "furniture": {
       "file": "lm/furniture.webp",
-      "scale": 4.81314,
+      "scale": 4.82795,
       "size": 2048,
-      "hash": "3364a045c4"
+      "hash": "fde4abbadf"
     },
     "lvl1_furniture": {
       "file": "lm/lvl1_furniture.webp",
-      "scale": 6.90894,
+      "scale": 6.90656,
       "size": 2048,
-      "hash": "b6e3ba0958"
+      "hash": "139b7b15fb"
     },
     "estrades": {
       "file": "lm/estrades.webp",
-      "scale": 5.95589,
+      "scale": 5.95346,
       "size": 1024,
-      "hash": "68cc690fac"
+      "hash": "5453a40b0f"
     },
     "pilier_led": {
       "file": "lm/pilier_led.webp",
-      "scale": 6.65198,
+      "scale": 6.67967,
       "size": 512,
-      "hash": "cb4bac3a1b"
+      "hash": "972097af0b"
+    },
+    "scene_dj": {
+      "file": "lm/scene_dj.webp",
+      "scale": 4.95896,
+      "size": 1024,
+      "hash": "00b594e308"
     }
   },
   "model": {
     "file": "809-social-club.glb",
-    "hash": "1a4fba0fdf"
+    "hash": "2a55df7ff1"
   }
 }

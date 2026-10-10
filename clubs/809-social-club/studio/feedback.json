@@ -55,6 +55,22 @@
       "createdAt": "2026-10-10T11:45:00.000Z",
       "status": "addressed",
       "addressedIn": "20261010114549"
+    },
+    {
+      "id": "f8",
+      "text": "Derrière la cabine DJ, l'espace vide doit devenir une vraie scène DJ, entièrement surélevée (photos ig-cabine-dj-faisceaux-co2, fb-salle-rouge-cabine-escalier, fb-salle-ambre-mezzanine-escalier, ig-salle-rouge-mezzanine-ecrans). Une estrade d'environ 0,9 m prolonge la cabine jusqu'aux murs du coin sud-ouest. Derrière le DJ : un mur d'écrans LED (rectangles arrondis à liseré blanc) sur le mur du fond. L'équipement : table de mix avec platines et table de mixage, retours, deux colonnes d'enceintes de part et d'autre, une barre de lyres au-dessus et des jets de CO2 au bord de la scène. De l'espace debout derrière le DJ pour les artistes, MC et percussionnistes, avec un garde-corps en verre et un petit escalier d'accès sur le côté, hors du faisceau des caméras. La façade de la cabine (bandeaux LED) reste tournée vers la piste.",
+      "target": "dj",
+      "createdAt": "2026-10-10T15:40:00.000Z",
+      "status": "addressed",
+      "addressedIn": "20261010154839"
+    },
+    {
+      "id": "f9",
+      "text": "Écrans (nouvelles photos de l'équipe, décrites ici) : l'écran principal n'est pas collé au mur. Il est autoportant sur la scène, devant l'angle sud-ouest et parallèle à la façade de la cabine DJ (même biais), grand (≈ 6 × 3,4 m), le bas au-dessus de la tête du DJ, encadré de deux écrans verticaux étroits (≈ 1 × 3 m). Retire les écrans posés à plat sur le mur ouest. Deux longs écrans-rubans légèrement incurvés (≈ 10 × 1,2 m) suivent le nez de la mezzanine de part et d'autre de la piste, tournés vers elle, comme des bandeaux. Le nom de la soirée doit être bien plus visible : « RUDBOY » en grandes lettres lumineuses (brique text) sur l'écran principal et sur les deux rubans, lisible depuis la vue d'ensemble. Style des photos : boule à facettes au-dessus de la piste, grappes d'enceintes suspendues, néons.",
+      "target": "écrans",
+      "createdAt": "2026-10-10T16:20:00.000Z",
+      "status": "addressed",
+      "addressedIn": "20261010161759"
     }
   ]
 }

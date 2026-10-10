@@ -1,0 +1,25 @@
+{
+  "issues": [
+    "Le mur d'écrans en biais de la scène DJ est vu presque de profil en vue d'ensemble (≈ 80° de la caméra) : l'élément signature se lit mal et ressemble à une plaque verte posée de chant au bord du bâtiment.",
+    "Sur la vue de dessus, le haut du mur en biais déborde visuellement du mur ouest."
+  ],
+  "changes": [
+    "Mur d'écrans en biais supprimé de scene_dj.",
+    "Trois écrans arrondis à liseré blanc posés sur le mur ouest, au fond de la scène (y -14,67…-8,13, de 2,2 à 5,6 m) : un large vert derrière le DJ, deux étroits menthe, dans fx_sign_wall_e avec les autres écrans du mur ouest.",
+    "L'espace debout derrière la cabine va maintenant jusqu'au mur ouest (4 à 7 m) et le coin sud-ouest n'est plus un recoin fermé.",
+    "ambiance.json : reflet vert des écrans de la scène déplacé sur le mur ouest.",
+    "Commentaires de layout.json et scene.json, et README, mis à jour."
+  ],
+  "feedbackAddressed": [],
+  "remaining": [
+    "Vérifié sur les rendus : estrade, garde-corps, colonnes d'enceintes, escalier et tables inchangées (L1, V9) sans collision visible.",
+    "Lisibilité des écrans de la scène depuis la vue d'ensemble à confirmer au prochain rendu (ils regardent maintenant l'est, vers la caméra).",
+    "Puissance de wash_scene et fill_scene toujours à juger sur un bake complet.",
+    "Faisceau de la caméra de V6 au-dessus de l'extrémité sud-est de la cabine : à confirmer sur capture du site."
+  ],
+  "rebuilt": {
+    "objects": 32,
+    "triangles": 83653,
+    "at": "2026-10-10T16:05:37.479Z"
+  }
+}

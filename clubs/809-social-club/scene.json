@@ -1,5 +1,5 @@
 {
-  "$comment": "Scène Blender du 809 Social Club, lue par art/scripts/build_club.py avec layout.json : boîte noire double hauteur (≈ 37,5 × 30 m), mezzanines en anneau à garde-corps métal, cabine DJ en biais sur plateforme de 0,8 m (façade à bandeaux LED ambre, tubes rouge et bleu), lounges sur estrades de 0,4 m (nez de marche LED ambre, garde-corps en verre côté piste, deux marches à chaque extrémité), escaliers aux marches ambrées, pilier LED vert à l'angle sud-ouest du bar central (bandes verticales qui s'écartent au plafond), lignes LED au plafond, écrans du mur ouest, logo 809 rouge et RUDBOY en néon sur le mur nord. Ni globes ni pluie de LED (absents des photos). Sans brique dédiée : cabine en biais (beam), estrades et garde-corps des lounges (box, face, beam), pilier LED (cylinder + beam), écrans (wall_x, coins droits au lieu d'arrondis, non animés), retour du bar VIP le long du mur est (box). Dégagement des caméras du site : structures de lyres seulement au-dessus de la piste, devant la cabine (x + y entre -13,6 et -10,4) ; éventail du pilier à moins de 3,2 m de son axe, au-dessus de 6,8 m.",
+  "$comment": "Scène Blender du 809 Social Club, lue par art/scripts/build_club.py avec layout.json : boîte noire double hauteur (≈ 37,5 × 30 m), mezzanines en anneau à garde-corps métal, cabine DJ en biais sur plateforme de 0,9 m (façade à bandeaux LED ambre, tubes rouge et bleu) prolongée par une scène DJ à 0,9 m jusqu'aux murs du coin sud-ouest (écran principal autoportant en biais derrière le DJ, encadré de deux écrans étroits, colonnes d'enceintes, retours, jets de CO2, barre de lyres, garde-corps en verre, escalier d'accès contre le mur sud), lounges sur estrades de 0,4 m (nez de marche LED ambre, garde-corps en verre côté piste, deux marches à chaque extrémité), escaliers aux marches ambrées, pilier LED vert à l'angle sud-ouest du bar central (bandes verticales qui s'écartent au plafond), lignes LED au plafond, deux écrans-rubans incurvés sur les nez de mezzanine ouest et nord, RUDBOY sur l'écran principal et les deux rubans, boule à facettes au-dessus de la piste, deux grappes d'enceintes suspendues, logo 809 rouge et RUDBOY en néon sur le mur nord. Ni globes ni pluie de LED (absents des photos). Sans brique dédiée : cabine en biais (beam), estrades et garde-corps des lounges (box, face, beam), pilier LED (cylinder + beam), écrans (face, coins à 45° au lieu d'arrondis, non animés), rubans (segments plans), boule à facettes (troncs de cône à 12 facettes), retour du bar VIP le long du mur est (box). Dégagement des caméras du site : structures de lyres au-dessus de la piste, devant la cabine (x + y entre -13,6 et -10,4), et une barre au-dessus de la scène (x + y = -22,06) ; rien de haut au-dessus de l'extrémité sud-est de la cabine (faisceau de la caméra de V6, à 6,8–8 m) ; éventail du pilier à moins de 3,2 m de son axe, au-dessus de 6,8 m.",
   "version": 1,
   "fonts": {
     "medium": "jost-latin-500-normal.woff2",
@@ -63,6 +63,12 @@
       "color": "#8a8a90",
       "roughness": 0.35,
       "metallic": 0.8
+    },
+    "mirror": {
+      "name": "809_social_club_mirror",
+      "color": "#d6d8dc",
+      "roughness": 0.12,
+      "metallic": 1.0
     },
     "stone": {
       "name": "809_social_club_stone",
@@ -652,7 +658,7 @@
       ]
     },
     {
-      "$comment": "Cabine DJ en biais, tournée vers la piste (nord-est) : plateforme de 0,8 m (layout heights.stage), comptoir, platines.",
+      "$comment": "Cabine DJ en biais, tournée vers la piste (nord-est) : plateforme de 0,9 m (layout heights.stage), comptoir, platines.",
       "type": "mesh",
       "object": "dj_booth",
       "lightmap": 1024,
@@ -732,6 +738,302 @@
         ],
         ["cylinder", -11.643, -5.561, "stage", "stage + 1.6", 0.03, "led_red"],
         ["cylinder", -7.711, -9.493, "stage", "stage + 1.6", 0.03, "led_blue"]
+      ]
+    },
+    {
+      "$comment": "Scène DJ (retour f8) : estrade qui prolonge la cabine jusqu'aux murs du coin sud-ouest, 1 cm sous la plateforme de la cabine (pas de z-fighting), bord biais 5 cm derrière la façade de la cabine. Écrans de la scène : autoportants, plus bas dans ce fichier (retour f9). Espace debout de 4 à 7 m derrière la cabine. Escalier d'accès de 4 marches contre le mur sud, sous le balcon sud, hors des faisceaux des caméras.",
+      "type": "mesh",
+      "object": "scene_dj",
+      "lightmap": 1024,
+      "ops": [
+        [
+          "face",
+          [
+            ["minX", "minY", "stage - 0.01"],
+            [-7.7, "minY", "stage - 0.01"],
+            [-7.7, -9.25, "stage - 0.01"],
+            [-9.2, -7.75, "stage - 0.01"],
+            ["minX", -7.75, "stage - 0.01"]
+          ],
+          "stone"
+        ],
+        ["wall_y", -7.75, "minX", -13.3, 0, "stage - 0.01", "fascia", 1],
+        ["wall_x", -7.7, "minY", -10.2, 0, "stage - 0.01", "fascia", 1],
+        [
+          "box",
+          -6.95,
+          -6.7,
+          -14.95,
+          -13.95,
+          0,
+          "stage / 5",
+          "fascia",
+          { "skip": ["-z", "-x", "-y"] }
+        ],
+        [
+          "box",
+          -7.2,
+          -6.95,
+          -14.95,
+          -13.95,
+          0,
+          "stage * 2 / 5",
+          "fascia",
+          { "skip": ["-z", "-x", "-y"] }
+        ],
+        [
+          "box",
+          -7.45,
+          -7.2,
+          -14.95,
+          -13.95,
+          0,
+          "stage * 3 / 5",
+          "fascia",
+          { "skip": ["-z", "-x", "-y"] }
+        ],
+        [
+          "box",
+          -7.7,
+          -7.45,
+          -14.95,
+          -13.95,
+          0,
+          "stage * 4 / 5",
+          "fascia",
+          { "skip": ["-z", "-x", "-y"] }
+        ]
+      ]
+    },
+    {
+      "$comment": "Nez LED ambre de la scène et des marches, lentilles des jets de CO2.",
+      "type": "mesh",
+      "into": "strips",
+      "ops": [
+        ["box", "minX", -13.3, -7.762, -7.738, "stage - 0.045", "stage - 0.022", "led_amber"],
+        ["box", -7.712, -7.688, "minY", -10.2, "stage - 0.045", "stage - 0.022", "led_amber"],
+        [
+          "box",
+          -6.712,
+          -6.688,
+          -14.89,
+          -14.01,
+          "stage / 5 - 0.035",
+          "stage / 5 - 0.012",
+          "led_amber"
+        ],
+        [
+          "box",
+          -6.962,
+          -6.938,
+          -14.89,
+          -14.01,
+          "stage * 2 / 5 - 0.035",
+          "stage * 2 / 5 - 0.012",
+          "led_amber"
+        ],
+        [
+          "box",
+          -7.212,
+          -7.188,
+          -14.89,
+          -14.01,
+          "stage * 3 / 5 - 0.035",
+          "stage * 3 / 5 - 0.012",
+          "led_amber"
+        ],
+        [
+          "box",
+          -7.462,
+          -7.438,
+          -14.89,
+          -14.01,
+          "stage * 4 / 5 - 0.035",
+          "stage * 4 / 5 - 0.012",
+          "led_amber"
+        ],
+        ["cylinder", -11.795, -5.261, "stage + 0.32", "stage + 0.335", 0.06, "lens"],
+        ["cylinder", -7.41, -9.645, "stage + 0.32", "stage + 0.335", 0.06, "lens"],
+        ["cylinder", -14.0, -8.0, "stage + 0.32", "stage + 0.335", 0.06, "lens"],
+        ["cylinder", -7.95, -11.0, "stage + 0.32", "stage + 0.335", 0.06, "lens"]
+      ]
+    },
+    {
+      "$comment": "Garde-corps en verre de la scène (≈ 1 m) sur les bords en surplomb : extrémité nord-ouest de la cabine, bord nord de l'estrade, extrémité sud-est de la cabine, bord est (ouvert sur 1 m devant l'escalier).",
+      "type": "mesh",
+      "into": "glass",
+      "ops": [
+        [
+          "face",
+          [
+            [-11.84, -5.095, "stage + 0.08"],
+            [-13.934, -7.188, "stage + 0.08"],
+            [-13.934, -7.188, "stage + 0.94"],
+            [-11.84, -5.095, "stage + 0.94"]
+          ],
+          "glass"
+        ],
+        [
+          "face",
+          [
+            [-13.934, -7.188, "stage + 0.08"],
+            [-13.33, -7.79, "stage + 0.08"],
+            [-13.33, -7.79, "stage + 0.94"],
+            [-13.934, -7.188, "stage + 0.94"]
+          ],
+          "glass"
+        ],
+        [
+          "face",
+          [
+            [-13.33, -7.79, "stage + 0.08"],
+            [-18.71, -7.79, "stage + 0.08"],
+            [-18.71, -7.79, "stage + 0.94"],
+            [-13.33, -7.79, "stage + 0.94"]
+          ],
+          "glass"
+        ],
+        [
+          "face",
+          [
+            [-7.244, -9.691, "stage + 0.08"],
+            [-7.74, -10.187, "stage + 0.08"],
+            [-7.74, -10.187, "stage + 0.94"],
+            [-7.244, -9.691, "stage + 0.94"]
+          ],
+          "glass"
+        ],
+        [
+          "face",
+          [
+            [-7.74, -10.187, "stage + 0.08"],
+            [-7.74, -13.9, "stage + 0.08"],
+            [-7.74, -13.9, "stage + 0.94"],
+            [-7.74, -10.187, "stage + 0.94"]
+          ],
+          "glass"
+        ]
+      ]
+    },
+    {
+      "$comment": "Équipement de la scène en métal noir : mains courantes et montants, rampe de l'escalier, deux colonnes d'enceintes au sol de part et d'autre du DJ (caisson de basses + colonne, tournées vers la piste), deux retours sur les extrémités du pupitre, quatre jets de CO2 au bord de la scène.",
+      "type": "mesh",
+      "into": "rig",
+      "ops": [
+        [
+          "beam",
+          [-11.84, -5.095, "stage + 1.0"],
+          [-13.934, -7.188, "stage + 1.0"],
+          0.06,
+          0.05,
+          "black"
+        ],
+        [
+          "beam",
+          [-13.934, -7.188, "stage + 1.0"],
+          [-13.33, -7.79, "stage + 1.0"],
+          0.06,
+          0.05,
+          "black"
+        ],
+        [
+          "beam",
+          [-13.33, -7.79, "stage + 1.0"],
+          [-18.71, -7.79, "stage + 1.0"],
+          0.06,
+          0.05,
+          "black"
+        ],
+        [
+          "beam",
+          [-7.244, -9.691, "stage + 1.0"],
+          [-7.74, -10.187, "stage + 1.0"],
+          0.06,
+          0.05,
+          "black"
+        ],
+        [
+          "beam",
+          [-7.74, -10.187, "stage + 1.0"],
+          [-7.74, -13.9, "stage + 1.0"],
+          0.06,
+          0.05,
+          "black"
+        ],
+        ["box", -11.862, -11.818, -5.117, -5.073, "stage", "stage + 1.0", "black"],
+        ["box", -12.909, -12.865, -6.164, -6.12, "stage", "stage + 1.0", "black"],
+        ["box", -13.956, -13.912, -7.21, -7.166, "stage", "stage + 1.0", "black"],
+        ["box", -13.352, -13.308, -7.812, -7.768, "stage", "stage + 1.0", "black"],
+        ["box", -14.692, -14.648, -7.812, -7.768, "stage", "stage + 1.0", "black"],
+        ["box", -16.042, -15.998, -7.812, -7.768, "stage", "stage + 1.0", "black"],
+        ["box", -17.382, -17.338, -7.812, -7.768, "stage", "stage + 1.0", "black"],
+        ["box", -18.732, -18.688, -7.812, -7.768, "stage", "stage + 1.0", "black"],
+        ["box", -7.266, -7.222, -9.713, -9.669, "stage", "stage + 1.0", "black"],
+        ["box", -7.762, -7.718, -10.209, -10.165, "stage", "stage + 1.0", "black"],
+        ["box", -7.762, -7.718, -11.452, -11.408, "stage", "stage + 1.0", "black"],
+        ["box", -7.762, -7.718, -12.692, -12.648, "stage", "stage + 1.0", "black"],
+        ["box", -7.762, -7.718, -13.922, -13.878, "stage", "stage + 1.0", "black"],
+        ["box", -6.742, -6.698, -13.992, -13.948, "stage / 5", "stage / 5 + 0.9", "black"],
+        [
+          "beam",
+          [-6.72, -13.97, "stage / 5 + 0.9"],
+          [-7.72, -13.97, "stage + 0.9"],
+          0.05,
+          0.05,
+          "black"
+        ],
+        [
+          "beam",
+          [-15.6475, -8.5975, "stage + 0.35"],
+          [-15.1525, -8.1025, "stage + 0.35"],
+          0.8,
+          0.7,
+          "black"
+        ],
+        [
+          "beam",
+          [-15.5768, -8.5268, "stage + 1.7"],
+          [-15.2232, -8.1732, "stage + 1.7"],
+          0.55,
+          2.0,
+          "black"
+        ],
+        [
+          "beam",
+          [-10.7445, -13.4965, "stage + 0.35"],
+          [-10.2495, -13.0015, "stage + 0.35"],
+          0.8,
+          0.7,
+          "black"
+        ],
+        [
+          "beam",
+          [-10.6738, -13.4258, "stage + 1.7"],
+          [-10.3202, -13.0722, "stage + 1.7"],
+          0.55,
+          2.0,
+          "black"
+        ],
+        [
+          "beam",
+          [-8.492, -9.553, "stage + 1.315"],
+          [-8.174, -9.235, "stage + 1.315"],
+          0.55,
+          0.35,
+          "black"
+        ],
+        [
+          "beam",
+          [-11.674, -6.371, "stage + 1.315"],
+          [-11.356, -6.053, "stage + 1.315"],
+          0.55,
+          0.35,
+          "black"
+        ],
+        ["cylinder", -11.795, -5.261, "stage", "stage + 0.32", 0.09, "black"],
+        ["cylinder", -7.41, -9.645, "stage", "stage + 0.32", 0.09, "black"],
+        ["cylinder", -14.0, -8.0, "stage", "stage + 0.32", 0.09, "black"],
+        ["cylinder", -7.95, -11.0, "stage", "stage + 0.32", 0.09, "black"]
       ]
     },
     {
@@ -840,6 +1142,10 @@
         [
           [-9.071, -1.322, 7.55],
           [-5.04, -5.354, 7.55]
+        ],
+        [
+          [-10.465, -11.597, 7.55],
+          [-14.425, -7.637, 7.55]
         ]
       ]
     },
@@ -847,25 +1153,6 @@
       "type": "movingHeads",
       "material": "black",
       "lens": "lens"
-    },
-    {
-      "type": "speakers",
-      "material": "black",
-      "items": [
-        {
-          "x": -13.5,
-          "y": -5.4
-        },
-        {
-          "x": -8.4,
-          "y": -12.3
-        }
-      ],
-      "top": 7.2,
-      "count": 6,
-      "step": 0.31,
-      "tilt": 2.5,
-      "hang": 7.35
     },
     {
       "type": "mesh",
@@ -917,25 +1204,504 @@
       }
     },
     {
+      "$comment": "Écran principal autoportant (retour f9) : sur la scène, devant l'angle sud-ouest, parallèle à la façade de la cabine (même biais), 4,2 m derrière l'axe de la cabine (x + y = -24,95), tourné vers la piste (nord-est). Grand écran 6 × 3,4 m (z 3,2…6,6, au-dessus de la tête du DJ), encadré de deux écrans verticaux de 1 × 3 m (z 3,6…6,6, au-dessus des colonnes d'enceintes). Caissons et poteaux en métal noir (le dos noir masque le texte vu de derrière).",
       "type": "mesh",
-      "object": "fx_sign_wall_e",
-      "collection": "FX",
+      "into": "rig",
       "ops": [
-        ["wall_x", "minX + 0.05", -5.1, -3.3, 4.6, 6.8, "screen_mint", 1],
-        ["wall_x", "minX + 0.05", -2.4, -0.6, 4.6, 6.8, "screen", 1],
-        ["wall_x", "minX + 0.05", 0.3, 5.7, 4.6, 6.8, "screen", 1],
-        ["beam", ["minX + 0.08", -5.1, 4.6], ["minX + 0.08", -3.3, 4.6], 0.05, 0.05, "led_white"],
-        ["beam", ["minX + 0.08", -3.3, 4.6], ["minX + 0.08", -3.3, 6.8], 0.05, 0.05, "led_white"],
-        ["beam", ["minX + 0.08", -3.3, 6.8], ["minX + 0.08", -5.1, 6.8], 0.05, 0.05, "led_white"],
-        ["beam", ["minX + 0.08", -5.1, 6.8], ["minX + 0.08", -5.1, 4.6], 0.05, 0.05, "led_white"],
-        ["beam", ["minX + 0.08", -2.4, 4.6], ["minX + 0.08", -0.6, 4.6], 0.05, 0.05, "led_white"],
-        ["beam", ["minX + 0.08", -0.6, 4.6], ["minX + 0.08", -0.6, 6.8], 0.05, 0.05, "led_white"],
-        ["beam", ["minX + 0.08", -0.6, 6.8], ["minX + 0.08", -2.4, 6.8], 0.05, 0.05, "led_white"],
-        ["beam", ["minX + 0.08", -2.4, 6.8], ["minX + 0.08", -2.4, 4.6], 0.05, 0.05, "led_white"],
-        ["beam", ["minX + 0.08", 0.3, 4.6], ["minX + 0.08", 5.7, 4.6], 0.05, 0.05, "led_white"],
-        ["beam", ["minX + 0.08", 5.7, 4.6], ["minX + 0.08", 5.7, 6.8], 0.05, 0.05, "led_white"],
-        ["beam", ["minX + 0.08", 5.7, 6.8], ["minX + 0.08", 0.3, 6.8], 0.05, 0.05, "led_white"],
-        ["beam", ["minX + 0.08", 0.3, 6.8], ["minX + 0.08", 0.3, 4.6], 0.05, 0.05, "led_white"]
+        ["beam", [-11.308, -13.642, 4.9], [-15.692, -9.258, 4.9], 0.15, 3.6, "black"],
+        ["beam", [-15.798, -9.152, 5.1], [-16.576, -8.374, 5.1], 0.15, 3.2, "black"],
+        ["beam", [-10.424, -14.526, 5.1], [-11.202, -13.748, 5.1], 0.15, 3.2, "black"],
+        ["box", -15.116, -14.996, -9.954, -9.834, "stage", 3.1, "black"],
+        ["box", -12.004, -11.884, -13.066, -12.946, "stage", 3.1, "black"],
+        ["box", -16.247, -16.127, -8.823, -8.703, "stage", 3.5, "black"],
+        ["box", -10.873, -10.753, -14.197, -14.077, "stage", 3.5, "black"]
+      ]
+    },
+    {
+      "$comment": "Faces des écrans de la scène : rectangles arrondis (12 points, coins à 45°), liseré blanc puis image (vert pour le grand, menthe pour les étroits), 8 et 9 cm devant les caissons.",
+      "type": "mesh",
+      "into": "signs",
+      "ops": [
+        [
+          "face",
+          [
+            [-15.2444, -9.5882, 3.2],
+            [-15.4694, -9.3632, 3.3318],
+            [-15.5626, -9.27, 3.65],
+            [-15.5626, -9.27, 6.15],
+            [-15.4694, -9.3632, 6.4682],
+            [-15.2444, -9.5882, 6.6],
+            [-11.6382, -13.1944, 6.6],
+            [-11.4132, -13.4194, 6.4682],
+            [-11.32, -13.5126, 6.15],
+            [-11.32, -13.5126, 3.65],
+            [-11.4132, -13.4194, 3.3318],
+            [-11.6382, -13.1944, 3.2]
+          ],
+          "led_white"
+        ],
+        [
+          "face",
+          [
+            [-15.2254, -9.5974, 3.27],
+            [-15.4254, -9.3974, 3.3872],
+            [-15.5082, -9.3146, 3.67],
+            [-15.5082, -9.3146, 6.13],
+            [-15.4254, -9.3974, 6.4128],
+            [-15.2254, -9.5974, 6.53],
+            [-11.6474, -13.1754, 6.53],
+            [-11.4474, -13.3754, 6.4128],
+            [-11.3646, -13.4582, 6.13],
+            [-11.3646, -13.4582, 3.67],
+            [-11.4474, -13.3754, 3.3872],
+            [-11.6474, -13.1754, 3.27]
+          ],
+          "screen"
+        ],
+        [
+          "face",
+          [
+            [-16.2697, -8.5629, 3.6],
+            [-16.4197, -8.4129, 3.6879],
+            [-16.4819, -8.3507, 3.9],
+            [-16.4819, -8.3507, 6.3],
+            [-16.4197, -8.4129, 6.5121],
+            [-16.2697, -8.5629, 6.6],
+            [-15.9869, -8.8457, 6.6],
+            [-15.8369, -8.9957, 6.5121],
+            [-15.7747, -9.0579, 6.3],
+            [-15.7747, -9.0579, 3.9],
+            [-15.8369, -8.9957, 3.6879],
+            [-15.9869, -8.8457, 3.6]
+          ],
+          "led_white"
+        ],
+        [
+          "face",
+          [
+            [-16.2507, -8.5721, 3.66],
+            [-16.3806, -8.4422, 3.7362],
+            [-16.4345, -8.3883, 3.92],
+            [-16.4345, -8.3883, 6.28],
+            [-16.3806, -8.4422, 6.4638],
+            [-16.2507, -8.5721, 6.54],
+            [-15.9961, -8.8267, 6.54],
+            [-15.8662, -8.9566, 6.4638],
+            [-15.8123, -9.0105, 6.28],
+            [-15.8123, -9.0105, 3.92],
+            [-15.8662, -8.9566, 3.7362],
+            [-15.9961, -8.8267, 3.66]
+          ],
+          "screen_mint"
+        ],
+        [
+          "face",
+          [
+            [-10.8957, -13.9369, 3.6],
+            [-11.0457, -13.7869, 3.6879],
+            [-11.1079, -13.7247, 3.9],
+            [-11.1079, -13.7247, 6.3],
+            [-11.0457, -13.7869, 6.5121],
+            [-10.8957, -13.9369, 6.6],
+            [-10.6129, -14.2197, 6.6],
+            [-10.4629, -14.3697, 6.5121],
+            [-10.4007, -14.4319, 6.3],
+            [-10.4007, -14.4319, 3.9],
+            [-10.4629, -14.3697, 3.6879],
+            [-10.6129, -14.2197, 3.6]
+          ],
+          "led_white"
+        ],
+        [
+          "face",
+          [
+            [-10.8767, -13.9461, 3.66],
+            [-11.0066, -13.8162, 3.7362],
+            [-11.0605, -13.7623, 3.92],
+            [-11.0605, -13.7623, 6.28],
+            [-11.0066, -13.8162, 6.4638],
+            [-10.8767, -13.9461, 6.54],
+            [-10.6221, -14.2007, 6.54],
+            [-10.4922, -14.3306, 6.4638],
+            [-10.4383, -14.3845, 6.28],
+            [-10.4383, -14.3845, 3.92],
+            [-10.4922, -14.3306, 3.7362],
+            [-10.6221, -14.2007, 3.66]
+          ],
+          "screen_mint"
+        ]
+      ]
+    },
+    {
+      "type": "text",
+      "text": "RUDBOY",
+      "material": "neon_white",
+      "size": 1.15,
+      "extrude": 0.012,
+      "font": "bold",
+      "spacing": 1.08,
+      "at": [-13.408, -11.358, 4.9],
+      "x": [-0.7071, 0.7071, 0],
+      "y": [0, 0, 1]
+    },
+    {
+      "$comment": "Écrans-rubans (retour f9) : deux bandeaux de 10 × 1,2 m (z 3,0…4,2) qui suivent le nez de la mezzanine de part et d'autre de la piste et la regardent : nez ouest (x = -14,4, tourné vers l'est) et nez nord (y = 10,5, tourné vers le sud). Légèrement incurvés : six segments, flèche de 0,25 m vers la piste, caisson à 0,2 m du nez aux extrémités, trois consoles par ruban. Les deux nez sont choisis parce qu'ils font face aux vues d'ensemble (bureau et mobile) : RUDBOY s'y lit à l'endroit. Bas à 3,0 m, au-dessus des faisceaux des caméras des lounges sous dalle (≤ 3,05 m) ; haut à 4,2 m, sous les faisceaux des caméras des VIP d'étage (≥ 6,6 m au droit du nez).",
+      "type": "mesh",
+      "object": "lvl1_ecrans",
+      "collection": "LVL1",
+      "ops": [
+        ["beam", [-14.2, -5.0, 3.6], [-14.061, -3.333, 3.6], 0.1, 1.2, "black"],
+        ["beam", [-14.061, -3.333, 3.6], [-13.978, -1.667, 3.6], 0.1, 1.2, "black"],
+        ["beam", [-13.978, -1.667, 3.6], [-13.95, 0.0, 3.6], 0.1, 1.2, "black"],
+        ["beam", [-13.95, 0.0, 3.6], [-13.978, 1.667, 3.6], 0.1, 1.2, "black"],
+        ["beam", [-13.978, 1.667, 3.6], [-14.061, 3.333, 3.6], 0.1, 1.2, "black"],
+        ["beam", [-14.061, 3.333, 3.6], [-14.2, 5.0, 3.6], 0.1, 1.2, "black"],
+        ["beam", [-14.4, -3.333, 3.45], [-14.111, -3.333, 3.45], 0.06, 0.06, "black"],
+        ["beam", [-14.4, 0.0, 3.45], [-14.0, 0.0, 3.45], 0.06, 0.06, "black"],
+        ["beam", [-14.4, 3.333, 3.45], [-14.111, 3.333, 3.45], 0.06, 0.06, "black"],
+        ["beam", [-11.0, 10.3, 3.6], [-9.333, 10.161, 3.6], 0.1, 1.2, "black"],
+        ["beam", [-9.333, 10.161, 3.6], [-7.667, 10.078, 3.6], 0.1, 1.2, "black"],
+        ["beam", [-7.667, 10.078, 3.6], [-6.0, 10.05, 3.6], 0.1, 1.2, "black"],
+        ["beam", [-6.0, 10.05, 3.6], [-4.333, 10.078, 3.6], 0.1, 1.2, "black"],
+        ["beam", [-4.333, 10.078, 3.6], [-2.667, 10.161, 3.6], 0.1, 1.2, "black"],
+        ["beam", [-2.667, 10.161, 3.6], [-1.0, 10.3, 3.6], 0.1, 1.2, "black"],
+        ["beam", [-9.333, 10.5, 3.45], [-9.333, 10.211, 3.45], 0.06, 0.06, "black"],
+        ["beam", [-6.0, 10.5, 3.45], [-6.0, 10.1, 3.45], 0.06, 0.06, "black"],
+        ["beam", [-2.667, 10.5, 3.45], [-2.667, 10.211, 3.45], 0.06, 0.06, "black"]
+      ]
+    },
+    {
+      "$comment": "Faces des rubans : liseré blanc (z 3,0…4,2) puis image verte (z 3,05…4,15), 6 et 6,5 cm devant le caisson, segment par segment.",
+      "type": "mesh",
+      "into": "strips1",
+      "ops": [
+        [
+          "face",
+          [
+            [-14.142, -5.0, 3.0],
+            [-14.003, -3.333, 3.0],
+            [-14.003, -3.333, 4.2],
+            [-14.142, -5.0, 4.2]
+          ],
+          "led_white"
+        ],
+        [
+          "face",
+          [
+            [-14.003, -3.333, 3.0],
+            [-13.92, -1.667, 3.0],
+            [-13.92, -1.667, 4.2],
+            [-14.003, -3.333, 4.2]
+          ],
+          "led_white"
+        ],
+        [
+          "face",
+          [
+            [-13.92, -1.667, 3.0],
+            [-13.892, 0.0, 3.0],
+            [-13.892, 0.0, 4.2],
+            [-13.92, -1.667, 4.2]
+          ],
+          "led_white"
+        ],
+        [
+          "face",
+          [
+            [-13.892, 0.0, 3.0],
+            [-13.92, 1.667, 3.0],
+            [-13.92, 1.667, 4.2],
+            [-13.892, 0.0, 4.2]
+          ],
+          "led_white"
+        ],
+        [
+          "face",
+          [
+            [-13.92, 1.667, 3.0],
+            [-14.003, 3.333, 3.0],
+            [-14.003, 3.333, 4.2],
+            [-13.92, 1.667, 4.2]
+          ],
+          "led_white"
+        ],
+        [
+          "face",
+          [
+            [-14.003, 3.333, 3.0],
+            [-14.142, 5.0, 3.0],
+            [-14.142, 5.0, 4.2],
+            [-14.003, 3.333, 4.2]
+          ],
+          "led_white"
+        ],
+        [
+          "face",
+          [
+            [-14.13, -4.95, 3.05],
+            [-13.996, -3.333, 3.05],
+            [-13.996, -3.333, 4.15],
+            [-14.13, -4.95, 4.15]
+          ],
+          "screen"
+        ],
+        [
+          "face",
+          [
+            [-13.996, -3.333, 3.05],
+            [-13.913, -1.667, 3.05],
+            [-13.913, -1.667, 4.15],
+            [-13.996, -3.333, 4.15]
+          ],
+          "screen"
+        ],
+        [
+          "face",
+          [
+            [-13.913, -1.667, 3.05],
+            [-13.885, 0.0, 3.05],
+            [-13.885, 0.0, 4.15],
+            [-13.913, -1.667, 4.15]
+          ],
+          "screen"
+        ],
+        [
+          "face",
+          [
+            [-13.885, 0.0, 3.05],
+            [-13.913, 1.667, 3.05],
+            [-13.913, 1.667, 4.15],
+            [-13.885, 0.0, 4.15]
+          ],
+          "screen"
+        ],
+        [
+          "face",
+          [
+            [-13.913, 1.667, 3.05],
+            [-13.996, 3.333, 3.05],
+            [-13.996, 3.333, 4.15],
+            [-13.913, 1.667, 4.15]
+          ],
+          "screen"
+        ],
+        [
+          "face",
+          [
+            [-13.996, 3.333, 3.05],
+            [-14.13, 4.95, 3.05],
+            [-14.13, 4.95, 4.15],
+            [-13.996, 3.333, 4.15]
+          ],
+          "screen"
+        ],
+        [
+          "face",
+          [
+            [-11.0, 10.242, 3.0],
+            [-9.333, 10.103, 3.0],
+            [-9.333, 10.103, 4.2],
+            [-11.0, 10.242, 4.2]
+          ],
+          "led_white"
+        ],
+        [
+          "face",
+          [
+            [-9.333, 10.103, 3.0],
+            [-7.667, 10.02, 3.0],
+            [-7.667, 10.02, 4.2],
+            [-9.333, 10.103, 4.2]
+          ],
+          "led_white"
+        ],
+        [
+          "face",
+          [
+            [-7.667, 10.02, 3.0],
+            [-6.0, 9.992, 3.0],
+            [-6.0, 9.992, 4.2],
+            [-7.667, 10.02, 4.2]
+          ],
+          "led_white"
+        ],
+        [
+          "face",
+          [
+            [-6.0, 9.992, 3.0],
+            [-4.333, 10.02, 3.0],
+            [-4.333, 10.02, 4.2],
+            [-6.0, 9.992, 4.2]
+          ],
+          "led_white"
+        ],
+        [
+          "face",
+          [
+            [-4.333, 10.02, 3.0],
+            [-2.667, 10.103, 3.0],
+            [-2.667, 10.103, 4.2],
+            [-4.333, 10.02, 4.2]
+          ],
+          "led_white"
+        ],
+        [
+          "face",
+          [
+            [-2.667, 10.103, 3.0],
+            [-1.0, 10.242, 3.0],
+            [-1.0, 10.242, 4.2],
+            [-2.667, 10.103, 4.2]
+          ],
+          "led_white"
+        ],
+        [
+          "face",
+          [
+            [-10.95, 10.23, 3.05],
+            [-9.333, 10.096, 3.05],
+            [-9.333, 10.096, 4.15],
+            [-10.95, 10.23, 4.15]
+          ],
+          "screen"
+        ],
+        [
+          "face",
+          [
+            [-9.333, 10.096, 3.05],
+            [-7.667, 10.013, 3.05],
+            [-7.667, 10.013, 4.15],
+            [-9.333, 10.096, 4.15]
+          ],
+          "screen"
+        ],
+        [
+          "face",
+          [
+            [-7.667, 10.013, 3.05],
+            [-6.0, 9.985, 3.05],
+            [-6.0, 9.985, 4.15],
+            [-7.667, 10.013, 4.15]
+          ],
+          "screen"
+        ],
+        [
+          "face",
+          [
+            [-6.0, 9.985, 3.05],
+            [-4.333, 10.013, 3.05],
+            [-4.333, 10.013, 4.15],
+            [-6.0, 9.985, 4.15]
+          ],
+          "screen"
+        ],
+        [
+          "face",
+          [
+            [-4.333, 10.013, 3.05],
+            [-2.667, 10.096, 3.05],
+            [-2.667, 10.096, 4.15],
+            [-4.333, 10.013, 4.15]
+          ],
+          "screen"
+        ],
+        [
+          "face",
+          [
+            [-2.667, 10.096, 3.05],
+            [-1.05, 10.23, 3.05],
+            [-1.05, 10.23, 4.15],
+            [-2.667, 10.096, 4.15]
+          ],
+          "screen"
+        ]
+      ]
+    },
+    {
+      "type": "text",
+      "into": "strips1",
+      "text": "RUDBOY",
+      "material": "neon_white",
+      "size": 1.0,
+      "extrude": 0.01,
+      "font": "bold",
+      "spacing": 1.1,
+      "at": [-13.85, 0.0, 3.6],
+      "x": [0, 1, 0],
+      "y": [0, 0, 1]
+    },
+    {
+      "type": "text",
+      "into": "strips1",
+      "text": "RUDBOY",
+      "material": "neon_white",
+      "size": 1.0,
+      "extrude": 0.01,
+      "font": "bold",
+      "spacing": 1.1,
+      "at": [-6.0, 9.95, 3.6],
+      "x": [1, 0, 0],
+      "y": [0, 0, 1]
+    },
+    {
+      "$comment": "Grappes d'enceintes suspendues (retour f9) : deux line arrays de 6 caissons (z 5,1…6,9) de part et d'autre de la cabine, symétriques par rapport à son axe, devant ses extrémités. Hors des faisceaux des caméras : celle de V6 passe ≥ 1,3 m au-dessus de la grappe sud-est, les vues d'ensemble voient RUDBOY du ruban ouest à côté de la grappe nord-ouest.",
+      "type": "speakers",
+      "material": "black",
+      "items": [
+        { "x": -11.6, "y": -5.6 },
+        { "x": -7.0, "y": -8.9 }
+      ],
+      "top": 6.8,
+      "count": 6,
+      "hang": 6.94
+    },
+    {
+      "$comment": "Boule à facettes (retour f9) au-dessus de la piste, entre la cabine et le bar : rayon 0,45 m, centre à 6,2 m, quatre bandes à 12 facettes, câble jusqu'au plafond. Loin des tables et des faisceaux des caméras (≥ 1,7 m des structures de lyres).",
+      "type": "mesh",
+      "into": "rig",
+      "ops": [
+        [
+          "cylinder",
+          -8.0,
+          0.0,
+          5.81,
+          5.975,
+          0.225,
+          "mirror",
+          { "radius_top": 0.39, "sides": 12, "smooth": false, "cap_top": false, "cap_bottom": true }
+        ],
+        [
+          "cylinder",
+          -8.0,
+          0.0,
+          5.975,
+          6.2,
+          0.39,
+          "mirror",
+          { "radius_top": 0.45, "sides": 12, "smooth": false, "cap_top": false }
+        ],
+        [
+          "cylinder",
+          -8.0,
+          0.0,
+          6.2,
+          6.425,
+          0.45,
+          "mirror",
+          { "radius_top": 0.39, "sides": 12, "smooth": false, "cap_top": false }
+        ],
+        [
+          "cylinder",
+          -8.0,
+          0.0,
+          6.425,
+          6.59,
+          0.39,
+          "mirror",
+          { "radius_top": 0.225, "sides": 12, "smooth": false, "cap_top": true }
+        ],
+        ["cylinder", -8.0, 0.0, 6.59, 6.75, 0.05, "black"],
+        ["box", -8.006, -7.994, -0.006, 0.006, 6.75, "ceil", "black"]
       ]
     },
     {
@@ -1080,11 +1846,24 @@
           [-6.6, -7.2]
         ],
         "at": ["v0", "v1", 7.2],
-        "target": [-9.9, -7.8, 1.9],
+        "target": [-9.9, -7.8, 2.0],
         "energy": 520.0,
         "color": [1.0, 0.55, 0.22],
         "size": 36,
         "blend": 0.4
+      },
+      {
+        "name": "wash_scene",
+        "values": [
+          [-11.6, -10.5],
+          [-13.3, -8.8]
+        ],
+        "at": ["v0", "v1", 7.3],
+        "target": ["v0 - 1.0", "v1 - 0.9", "stage"],
+        "energy": 320.0,
+        "color": [1.0, 0.55, 0.22],
+        "size": 50,
+        "blend": 0.5
       }
     ],
     "areas": [
@@ -1106,6 +1885,14 @@
         "at": ["v0", "v1", "ceil - 0.3"],
         "energy": 1000.0,
         "color": [1.0, 0.6, 0.3],
+        "size": 5.0
+      },
+      {
+        "name": "fill_scene",
+        "values": [[-14.8, -11.6]],
+        "at": ["v0", "v1", "ceil - 0.3"],
+        "energy": 600.0,
+        "color": [1.0, 0.6, 0.32],
         "size": 5.0
       },
       {
