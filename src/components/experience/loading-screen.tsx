@@ -28,10 +28,10 @@ export function LoadingScreen({
         <motion.div
           key="loading"
           initial={{ opacity: 1 }}
+          // opacity and scale only: the compositor runs it, the first frames of the club stay smooth
           exit={{
             opacity: 0,
             scale: 1.04,
-            filter: "blur(8px)",
             transition: { duration: 0.9, ease: [0.16, 1, 0.3, 1] },
           }}
           className="bg-ink absolute inset-0 z-50 grid place-items-center"
@@ -63,11 +63,10 @@ export function LoadingScreen({
               {eventLine}
             </motion.p>
             <div className="mt-6 h-[2px] w-40 overflow-hidden rounded-full bg-white/[0.08]">
-              <motion.div
-                className="from-brand-deep via-brand h-full rounded-full bg-gradient-to-r to-(--foil-hi) shadow-[0_0_12px_color-mix(in_srgb,var(--brand)_70%,transparent)]"
-                initial={{ width: "0%" }}
-                animate={{ width: `${Math.max(3, progress)}%` }}
-                transition={{ ease: "easeOut", duration: 0.4 }}
+              {/* a transform transition: the compositor slides it even while the venue is parsed */}
+              <div
+                className="from-brand-deep via-brand h-full w-full rounded-full bg-gradient-to-r to-(--foil-hi) shadow-[0_0_12px_color-mix(in_srgb,var(--brand)_70%,transparent)] transition-transform duration-700 ease-out will-change-transform"
+                style={{ transform: `translateX(${Math.max(3, progress) - 100}%)` }}
               />
             </div>
             <p className="num text-caption text-label-3 mt-3">{Math.round(progress)} %</p>
