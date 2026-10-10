@@ -1,0 +1,42 @@
+{
+  "issues": [
+    "f8 : derrière la cabine DJ, le coin sud-ouest (≈ 11 × 7 m) était un sol vide et sombre, sans scène, sans écrans ni équipement (rendus overview et top).",
+    "La cabine était à 0,8 m alors que la scène demandée est à environ 0,9 m.",
+    "Les enceintes étaient suspendues ; celle du sud-est pendait au-dessus de la future scène, près du faisceau de la caméra de V6.",
+    "Écrans du mur ouest à coins droits (vue de zone Côté Cabine), alors que les photos et le brief montrent des rectangles arrondis."
+  ],
+  "changes": [
+    "Cabine et scène à 0,9 m (heights.stage).",
+    "Nouvel objet scene_dj : estrade de 0,9 m jusqu'aux murs du coin sud-ouest (x ≤ -7,7, y ≤ -7,75), 1 cm sous la cabine, bord en biais caché derrière la façade.",
+    "Mur d'écrans en biais derrière le DJ, parallèle à la façade (de 0,9 à 6,6 m), avec trois écrans arrondis à liseré blanc : un large vert au centre, deux étroits menthe.",
+    "Environ 3,9 m d'espace debout entre la cabine et le mur d'écrans pour les artistes, MC et percussionnistes.",
+    "Enceintes suspendues retirées ; deux colonnes au sol (caisson + colonne) de part et d'autre du DJ, tournées vers la piste.",
+    "Deux retours sur les extrémités du pupitre, hors des platines et de la table de mixage.",
+    "Quatre jets de CO2 au bord : deux sur le rebord de la cabine, deux aux bords nord et est de la scène.",
+    "Barre de lyres (structure + 5 lyres dans layout.movingHeads) au-dessus de l'espace debout, à x + y = -22,06.",
+    "Garde-corps en verre (1 m, main courante noire) sur les bords en surplomb : extrémités de la cabine, bords nord et est de la scène.",
+    "Escalier d'accès de 4 marches à nez LED ambre, contre le mur sud sous le balcon sud, avec un passage de 1,3 m devant les Alcôves.",
+    "Façade de la cabine inchangée : bandeaux LED ambre tournés vers la piste, tubes rouge et bleu.",
+    "Éclairage : deux spots ambre depuis la barre de lyres sur l'espace debout (320 W), un remplissage chaud au-dessus de la scène (600 W) et la cible du wash de la cabine remontée.",
+    "Écrans du mur ouest redessinés en rectangles arrondis à liseré blanc (polygones de 12 points).",
+    "ambiance.json : panneau de reflet vert pour le mur d'écrans de la scène ; reflet de la façade remonté à 0,9 m.",
+    "layout.stage = rectangle englobant cabine + scène ; 4e pose d'intro recadrée sur la scène.",
+    "README : scène DJ, briques approchées, jets de CO2 et forme de la scène ajoutés aux points à faire valider."
+  ],
+  "feedbackAddressed": [
+    "f8"
+  ],
+  "remaining": [
+    "Faisceaux vérifiés par le calcul seulement : la caméra de V6 passe à 6,8–8 m au-dessus de l'extrémité sud-est de la cabine ; rien de haut n'y est posé. À confirmer sur capture.",
+    "Coins arrondis calculés à la main (12 points, coins à 45°) : vérifier au rendu l'orientation des faces des écrans en biais (elles doivent regarder le nord-est).",
+    "Vue d'ensemble portrait : le mur d'écrans y est vu presque de profil, à confirmer.",
+    "Le mur d'écrans ferme le coin derrière lui (≈ 3,5 m, sans usage) : à raccourcir si l'équipe préfère des écrans plaqués sur les murs.",
+    "Pas de brique pour une scène en biais, un écran arrondi ou un panache de CO2 : approchés en mesh, proposés dans le README.",
+    "Puissance de wash_scene et fill_scene à juger sur le prochain bake (le pupitre doit rester lisible devant les écrans)."
+  ],
+  "rebuilt": {
+    "objects": 32,
+    "triangles": 83665,
+    "at": "2026-10-10T16:02:45.782Z"
+  }
+}

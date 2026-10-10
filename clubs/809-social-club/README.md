@@ -29,8 +29,20 @@ coupe de l'équipe). Rien n'en est copié.
 - Bar central 7,5 × 6 m chanfreiné. À son angle sud-ouest, un **pilier** Ø 0,9 m du sol au plafond, habillé de bandes
   LED vertes qui s'écartent au plafond (photo fb-salle-verte-arche-led-bar, précision de l'équipe) ; déclaré dans
   `layout.columns`.
-- Cabine DJ en biais au sud-ouest, tournée vers le nord-est, sur une plateforme de 0,8 m (6,6 m de long), sous le vide
+- Cabine DJ en biais au sud-ouest, tournée vers le nord-est, sur une plateforme de 0,9 m (6,6 m de long), sous le vide
   double hauteur (aucun plancher au-dessus).
+- **Scène DJ** (retour f8, photos ig-cabine-dj-faisceaux-co2, fb-salle-rouge-cabine-escalier,
+  fb-salle-ambre-mezzanine-escalier, ig-salle-rouge-mezzanine-ecrans) : une estrade de 0,9 m prolonge la cabine
+  jusqu'aux murs du coin sud-ouest (x ≤ −7,7, y ≤ −7,75). **Écrans** (retour f9, photos de l'équipe) : un grand écran
+  autoportant de 6 × 3,4 m sur la scène, parallèle à la façade de la cabine, 4,2 m derrière elle, le bas à 3,2 m
+  (au-dessus de la tête du DJ), encadré de deux écrans verticaux de 1 × 3 m ; deux écrans-rubans de 10 × 1,2 m,
+  légèrement incurvés, sur les nez de mezzanine ouest et nord, tournés vers la piste ; « RUDBOY » en grandes lettres
+  blanches sur les trois. Boule à facettes au-dessus de la piste et deux grappes d'enceintes suspendues de part et
+  d'autre de la cabine. Positions et tailles **supposées** (décrites par l'équipe, sans cotes) ; derrière la cabine, 4 à 7 m
+  d'espace debout pour les artistes, les MC et les percussionnistes. Colonnes d'enceintes au sol de part et d'autre, retours sur le pupitre, barre de cinq
+  lyres au-dessus, quatre jets de CO2 au bord, garde-corps en verre sur les bords en surplomb. Un escalier de quatre
+  marches contre le mur sud, sous le balcon sud, donne accès à la scène. Forme, profondeur et position de l'accès sont
+  **supposées**.
 - Lounges sur **estrades de 0,4 m** (`raised`), nez de marche LED ambre, garde-corps en verre clair d'environ 1 m côté
   piste, et une ouverture de 1,2 m avec deux marches à chaque extrémité (précisions de l'équipe).
 - Élément « table » au nord du rez-de-chaussée : modélisé en comptoir mange-debout de 6 m (`comptoir_nord`). **À
@@ -46,22 +58,34 @@ coupe de l'équipe). Rien n'en est copié.
 
 - **Cabine DJ en biais** : la brique `stage` ne pose qu'une estrade alignée contre un mur nord. La cabine est construite
   en `beam` (plateforme, pupitre, plateau, platines). La façade a quatre bandeaux LED ambre et les tubes rouge et bleu
-  sont aux deux extrémités. `layout.stage` / `layout.dj` ne sont que des rectangles englobants. Brique à proposer :
-  `stage` avec un `angle`.
+  sont aux deux extrémités. La scène DJ est construite en `mesh` (objet `scene_dj` : plateau polygonal, marches en `box` ;
+  écrans en `face` dans `fx_signs`, caissons et poteaux dans `rig`), son équipement va dans `rig` (enceintes, retours et jets de CO2 en `beam` / `cylinder`).
+  `layout.stage` / `layout.dj` ne sont que des rectangles englobants. Brique à proposer : `stage` avec un `angle` et une
+  emprise polygonale.
 - **Estrades des lounges** : construites en `mesh` (box, face, beam) dans l'objet `estrades`, le verre dans `glass`, la
   main courante dans `rig`. Brique à proposer : « estrade » lue depuis `raised` (plateau, nez LED, garde-corps et
   marches aux ouvertures).
 - **Pilier LED** : un `cylinder` et 32 `beam` verts (8 bandes verticales, puis un éventail de 3,2 m de rayon sous le
   plafond). Brique à proposer : « pilier LED » (rayon, nombre de bandes, éventail).
-- **Pas d'écran animé** : `fx_screen` n'existe qu'avec la brique `stage`. Les trois écrans du mur ouest sont des panneaux
-  émissifs fixes (vert, menthe) avec un liseré blanc, à **coins droits** au lieu d'arrondis. `ambiance.screen` est donc
-  omis. Brique à proposer : un « écran » posable sur n'importe quel mur, coins arrondis, animé par le site.
+- **Pas d'écran animé** : `fx_screen` n'existe qu'avec la brique `stage`. Les trois écrans de la scène sont des
+  panneaux émissifs fixes (vert, menthe) sur un liseré blanc, posés en biais sur un caisson noir ; leurs coins arrondis
+  sont approchés par des polygones de 12 points (`face`), coins à 45°, calculés à la main. Les rubans sont six
+  segments plans par ruban (objet `lvl1_ecrans` + `lvl1_fx_strips`, ils s'effacent avec l'étage). `ambiance.screen`
+  est donc omis. Brique à proposer : un « écran » posable n'importe où (centre, orientation, taille, rayon des coins,
+  courbure), animé par le site, avec un texte optionnel.
+- **Boule à facettes** : quatre troncs de cône à 12 facettes (matière `mirror`), sans reflets animés. Brique à
+  proposer : « boule à facettes » avec ses éclats de lumière animés par le site.
+- **Grappes d'enceintes** : brique `speakers`, caissons alignés sur l'axe x (la brique ne sait pas les orienter en
+  biais vers la piste).
 - **Lignes LED du plafond** : quatre lignes droites ambre à 7,75 m. Les arcs des photos ne sont pas reproduits.
-- **Bannières blanches verticales** et **jets de CO2** : non modélisés.
+- **Bannières blanches verticales** : non modélisées. **Jets de CO2** : buses fixes seulement, sans panache animé.
 - **Sans globes** ni pluie de LED (brief). `layout.ledRain` est une valeur de remplissage exigée par le schéma : rien
   n'est construit.
 - RUDBOY est en néon sur le mur nord, dans l'objet partagé `fx_signs` (la brique `text` n'a pas d'objet propre). Vu de
-  l'extérieur côté nord, il apparaîtra inversé ; le logo 809, lui, est dans `fx_sign_wall_s`.
+  l'extérieur côté nord, il apparaîtra inversé ; le logo 809, lui, est dans `fx_sign_wall_s`. Sur les écrans, RUDBOY
+  est posé devant un caisson noir : vu de dos, le caisson le cache. Les deux rubans sont sur les nez qui font face
+  aux vues d'ensemble (ouest et nord) pour que le nom s'y lise à l'endroit ; un ruban sur le nez sud aurait été vu de
+  dos.
 
 ## L'offre (démo)
 
@@ -87,7 +111,7 @@ reprises du Naho (arrivée avant 01h00, tenue, 18 ans) : à faire valider.
 | `layout.json`   | plan en mètres (mezzanines en anneau, bar central et pilier, cabine en biais, estrades, 2 escaliers) |
 | `brand.json`    | rouge 809, Jost, wordmark « 809. » redessiné et simplifié, niveaux vert / bleu / jaune               |
 | `ambiance.json` | faisceaux vert laser / menthe / blanc / rouge, reflets (pilier, cabine, estrades, bar), finitions    |
-| `scene.json`    | scène Blender : cabine en biais, estrades, pilier LED, écrans, logo 809 et RUDBOY, lyres, bake       |
+| `scene.json`    | scène Blender : cabine en biais, estrades, pilier LED, écrans, boule, RUDBOY, logo, lyres, bake      |
 
 ## À vérifier dans les rendus
 
@@ -99,6 +123,6 @@ reprises du Naho (arrivée avant 01h00, tenue, 18 ans) : à faire valider.
 ## À valider avec le club
 
 Dimensions et hauteurs, contour de chaque plateforme (le prestige passe-t-il au-dessus du bar ? la passerelle sud-est
-existe-t-elle ?), hauteur des estrades et de la cabine, nature de l'élément « table » au nord, nombre et position des
+existe-t-elle ?), hauteur des estrades et de la cabine, forme de la scène DJ et position de son accès, nature de l'élément « table » au nord, nombre et position des
 tables, capacités, minimums, prestations, couleur des banquettes, heure d'ouverture et conditions de la soirée,
 contact de secours affichable, accord écrit avant toute offre réelle.

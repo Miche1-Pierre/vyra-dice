@@ -35,5 +35,9 @@
       "M45 20.4a0.6 0.6 0 1 1 0 1.2 0.6 0.6 0 0 1 0-1.2"
     ]
   },
-  "tagline": "Social Club"
+  "tagline": "Social Club",
+  "ui": {
+    "tone": "sober",
+    "compare": false
+  }
 }

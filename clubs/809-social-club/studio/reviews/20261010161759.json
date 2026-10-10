@@ -1,0 +1,38 @@
+{
+  "issues": [
+    "Les écrans posés à plat sur le mur ouest flottent hors du bâtiment dans la vue d'ensemble (le mur ouest est coupé, l'écran reste).",
+    "L'écran principal de la scène était collé au mur ouest, pas autoportant en biais derrière le DJ comme sur les photos (f9).",
+    "RUDBOY n'existait qu'en petit néon sur le mur nord, illisible depuis la vue d'ensemble.",
+    "Pas d'écrans-rubans sur les nez de mezzanine, ni boule à facettes, ni enceintes suspendues (style des photos, f9).",
+    "Vues de table L1, L5, V1, V5 : banquettes lisibles, plateaux crème bien distincts des velours, rien ne masque les tables."
+  ],
+  "changes": [
+    "Retiré l'objet fx_sign_wall_e (les six écrans du mur ouest).",
+    "Écran principal autoportant de 6 × 3,4 m sur la scène, parallèle à la façade de la cabine, 4,2 m derrière elle, de 3,2 à 6,6 m de haut, sur caisson et poteaux noirs.",
+    "Deux écrans verticaux de 1 × 3 m de part et d'autre, de 3,6 à 6,6 m, au-dessus des colonnes d'enceintes.",
+    "Deux écrans-rubans de 10 × 1,2 m (z 3,0 à 4,2), incurvés de 0,25 m en six segments, sur les nez ouest et nord, tournés vers la piste (objets lvl1_ecrans et lvl1_fx_strips).",
+    "RUDBOY en lettres blanches pleines sur l'écran principal (1,15 m de corps) et sur les deux rubans (1,0 m), devant un caisson noir qui le cache quand on le voit de dos.",
+    "Boule à facettes (rayon 0,45 m, centre à 6,2 m) au-dessus de la piste en (-8 ; 0), matière mirror en satin-metal.",
+    "Deux grappes de six enceintes suspendues (z 5,1 à 6,9) en (-11,6 ; -5,6) et (-7 ; -8,9), symétriques par rapport à l'axe de la cabine.",
+    "Faisceaux des caméras vérifiés par le calcul : L1 à L3 et Côté Cabine passent sous les rubans (≤ 3,05 m), V1 à V5 et Galerie Nord au-dessus (≥ 6,6 m), V6 à au moins 1,3 m au-dessus de la grappe sud-est.",
+    "ambiance.json : reflets de l'écran principal et des deux rubans à leurs nouvelles positions, finition de la boule à facettes.",
+    "README et commentaires du plan et de la scène mis à jour, briques à proposer : écran posable avec texte, boule à facettes."
+  ],
+  "feedbackAddressed": [
+    "f9"
+  ],
+  "remaining": [
+    "Rubans placés sur les nez ouest et nord, qui font face aux vues d'ensemble : sur le nez sud, RUDBOY aurait été vu de dos. À valider par l'équipe.",
+    "L'écran principal, tourné vers le nord-est, est vu très en biais depuis la vue d'ensemble sur ordinateur et de dos sur mobile : son RUDBOY s'y lit mal. Ce sont les rubans qui portent le nom.",
+    "Largeur de RUDBOY estimée (≈ 4,5 m sur l'écran principal, ≈ 4,3 m sur les rubans) : vérifier sur le rendu qu'il ne déborde pas du liseré.",
+    "Écrans fixes, non animés (pas de fx_screen) ; boule sans éclats lumineux ; caissons d'enceintes alignés sur l'axe x (limite de la brique speakers).",
+    "Néons : seuls le logo 809 et le RUDBOY du mur nord existent, aucun néon supplémentaire ajouté.",
+    "Positions et tailles des écrans, de la boule et des enceintes supposées d'après la description de l'équipe, sans cotes.",
+    "Captures du site antérieures à ce build : à refaire pour confirmer la vue d'ensemble et les vues de zone."
+  ],
+  "rebuilt": {
+    "objects": 32,
+    "triangles": 98365,
+    "at": "2026-10-10T16:29:19.157Z"
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "id": "20261010154837-review",
+  "step": "review",
+  "state": "done",
+  "options": {
+    "iterations": 2
+  },
+  "createdAt": "2026-10-10T15:48:37.556Z",
+  "phases": [
+    {
+      "name": "Revue des rendus 1/2",
+      "startedAt": "2026-10-10T15:48:39.112Z",
+      "endedAt": "2026-10-10T16:01:44.407Z",
+      "ok": true
+    },
+    {
+      "name": "Validation et corrections",
+      "startedAt": "2026-10-10T16:01:44.419Z",
+      "endedAt": "2026-10-10T16:01:57.552Z",
+      "ok": true
+    },
+    {
+      "name": "Construction d'essai",
+      "startedAt": "2026-10-10T16:01:44.538Z",
+      "endedAt": "2026-10-10T16:01:57.066Z",
+      "ok": true
+    },
+    {
+      "name": "Vérification de la spécification",
+      "startedAt": "2026-10-10T16:01:57.556Z",
+      "endedAt": "2026-10-10T16:01:57.578Z",
+      "ok": true
+    },
+    {
+      "name": "Construction Blender et aperçus",
+      "startedAt": "2026-10-10T16:01:57.581Z",
+      "endedAt": "2026-10-10T16:02:44.939Z",
+      "ok": true
+    },
+    {
+      "name": "Revue des rendus 2/2",
+      "startedAt": "2026-10-10T16:02:45.785Z",
+      "endedAt": "2026-10-10T16:04:45.858Z",
+      "ok": true
+    },
+    {
+      "name": "Validation et corrections",
+      "startedAt": "2026-10-10T16:04:45.866Z",
+      "endedAt": "2026-10-10T16:04:50.054Z",
+      "ok": true
+    },
+    {
+      "name": "Construction d'essai",
+      "startedAt": "2026-10-10T16:04:45.880Z",
+      "endedAt": "2026-10-10T16:04:49.544Z",
+      "ok": true
+    },
+    {
+      "name": "Vérification de la spécification",
+      "startedAt": "2026-10-10T16:04:50.059Z",
+      "endedAt": "2026-10-10T16:04:50.088Z",
+      "ok": true
+    },
+    {
+      "name": "Construction Blender et aperçus",
+      "startedAt": "2026-10-10T16:04:50.092Z",
+      "endedAt": "2026-10-10T16:05:36.644Z",
+      "ok": true
+    }
+  ],
+  "pid": 42968,
+  "startedAt": "2026-10-10T15:48:39.090Z",
+  "result": {
+    "agentRuns": 2,
+    "turns": 94,
+    "costUsd": 8.66,
+    "sessions": [
+      "98b5b7da-3db0-4a08-9874-7c16d80e2941"
+    ],
+    "objects": 32,
+    "triangles": 83653,
+    "lights": 114
+  },
+  "endedAt": "2026-10-10T16:05:37.480Z"
+}

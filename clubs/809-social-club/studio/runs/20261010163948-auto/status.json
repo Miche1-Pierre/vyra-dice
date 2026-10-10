@@ -1,0 +1,52 @@
+{
+  "id": "20261010163948-auto",
+  "step": "auto",
+  "state": "done",
+  "options": {},
+  "createdAt": "2026-10-10T16:39:48.169Z",
+  "phases": [
+    {
+      "name": "Bake des lightmaps (final)",
+      "startedAt": "2026-10-10T16:39:50.493Z",
+      "endedAt": "2026-10-10T16:46:04.554Z",
+      "ok": true
+    },
+    {
+      "name": "Optimisation web",
+      "startedAt": "2026-10-10T16:46:04.557Z",
+      "endedAt": "2026-10-10T16:46:21.251Z",
+      "ok": true
+    },
+    {
+      "name": "Enregistrement dans clubs/registry.ts",
+      "startedAt": "2026-10-10T16:46:21.570Z",
+      "endedAt": "2026-10-10T16:46:21.597Z",
+      "ok": true
+    },
+    {
+      "name": "Tests de contrat (tous les clubs)",
+      "startedAt": "2026-10-10T16:46:21.615Z",
+      "endedAt": "2026-10-10T16:46:23.619Z",
+      "ok": true
+    },
+    {
+      "name": "Viewer local",
+      "startedAt": "2026-10-10T16:46:23.635Z",
+      "endedAt": "2026-10-10T16:46:25.094Z",
+      "ok": true
+    },
+    {
+      "name": "Captures",
+      "startedAt": "2026-10-10T16:46:25.130Z",
+      "endedAt": "2026-10-10T16:46:59.481Z",
+      "ok": true
+    }
+  ],
+  "pid": 56804,
+  "startedAt": "2026-10-10T16:39:49.515Z",
+  "result": {
+    "quality": "final",
+    "viewer": "http://localhost:3100/809-social-club/rudboy"
+  },
+  "endedAt": "2026-10-10T16:46:59.710Z"
+}

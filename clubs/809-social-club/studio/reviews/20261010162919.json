@@ -1,0 +1,24 @@
+{
+  "issues": [
+    "Aucun défaut bloquant sur ce build : 98 365 triangles, 32 objets, tous les contrôles du rapport au vert.",
+    "Vue d'ensemble : le ruban nord et son RUDBOY se lisent, à l'endroit, au-dessus de l'escalier ouest ; le ruban ouest se lit plus en biais.",
+    "L'écran principal est vu presque de profil depuis la vue d'ensemble (bande verte verticale près du coin sud-ouest) ; vu du dessus, il est bien en biais derrière la cabine, encadré des deux écrans étroits.",
+    "Vues de table L1, L7, V3, V9 : rien ne masque les tables ; ni les rubans, ni la boule, ni les grappes d'enceintes n'entrent dans le cadre.",
+    "Le RUDBOY en néon du mur nord, au-dessus du bar VIP, reste petit et peu lisible ; il est désormais secondaire face aux rubans."
+  ],
+  "changes": [
+    "Aucune modification : les corrections du retour f9 tiennent sur les rendus, et un nouveau changement risquerait de casser les faisceaux vérifiés."
+  ],
+  "feedbackAddressed": [],
+  "remaining": [
+    "Lisibilité du RUDBOY de l'écran principal depuis la vue d'ensemble : limitée par l'orientation demandée (nord-est). À juger par l'équipe sur une capture du site.",
+    "Vérifier sur une capture de la vue de zone Côté Cabine que le ruban ouest reste au-dessus du nez de la dalle sans gêner la lecture des tables.",
+    "Écrans fixes, boule sans éclats lumineux, caissons d'enceintes non orientés vers la piste : briques à proposer.",
+    "Positions et tailles des écrans, de la boule et des enceintes supposées, sans cotes."
+  ],
+  "rebuilt": {
+    "objects": 32,
+    "triangles": 98365,
+    "at": "2026-10-10T16:30:47.620Z"
+  }
+}
