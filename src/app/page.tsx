@@ -24,13 +24,14 @@ export default function Home() {
           leur prix, puis envoient une demande à votre équipe — qui confirme et encaisse comme
           d’habitude.
         </p>
-        {/* one block per demo club of the registry, in its own colours */}
+        {/* one block per demo club of the registry, in its own colours and tone */}
         <ul className="mt-12 grid gap-4 text-left sm:grid-cols-2">
           {demos.map(({ slug, content, brand }) => (
             <li
               key={slug}
               style={brandVars(brand) as CSSProperties}
-              className="glass glass-rim relative flex flex-col gap-6 rounded-[28px] p-6"
+              data-tone={brand.ui.tone}
+              className="glass glass-rim sober:rounded-[16px] relative flex flex-col gap-6 rounded-[28px] p-6"
             >
               <div className="flex items-start justify-between gap-4">
                 <div className="text-label flex min-h-10 flex-col items-start justify-center gap-2">
@@ -42,7 +43,7 @@ export default function Home() {
                   />
                   <Tagline text={brand.tagline} className="text-label-3" />
                 </div>
-                <span className="eyebrow text-brand shrink-0 rounded-full px-2 py-[3px] text-[9px] leading-3 tracking-[0.22em] shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--brand)_40%,transparent)]">
+                <span className="eyebrow text-brand sober:rounded-[4px] shrink-0 rounded-full px-2 py-[3px] text-[9px] leading-3 tracking-[0.22em] shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--brand)_40%,transparent)]">
                   Démo{isDraft(slug) ? " · brouillon" : ""}
                 </span>
               </div>
@@ -65,7 +66,7 @@ export default function Home() {
               ) : null}
               <Link
                 href={`/${slug}/${content.event.slug}`}
-                className="brand-pill text-callout mt-auto inline-flex h-12 items-center justify-center gap-2 rounded-full px-6 font-medium transition-[filter,transform] hover:brightness-105 active:scale-[0.98]"
+                className="brand-pill text-callout sober:rounded-[10px] mt-auto inline-flex h-12 items-center justify-center gap-2 rounded-full px-6 font-medium transition-[filter,transform] hover:brightness-105 active:scale-[0.98]"
               >
                 Voir la démo<span className="sr-only"> — {content.club.name}</span>
                 <ArrowRight aria-hidden className="size-4" />
