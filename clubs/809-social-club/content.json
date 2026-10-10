@@ -23,6 +23,11 @@
       "title": "NOKIA (Guisdx Remix)",
       "artist": "Drake"
     },
+    "screens": [
+      "screens/rudboy-ecran.mp4",
+      "screens/rudboy-ruban.mp4",
+      "screens/rudboy-pilier.mp4"
+    ],
     "date": "2026-10-10",
     "doors": "23:30",
     "offersValidatedAt": null

@@ -130,6 +130,7 @@
   },
   "intro": "neon",
   "night": {
-    "color": "#ff1a24"
+    "color": "#ff1a24",
+    "screens": ["809_social_club_screen", "809_social_club_screen_mint"]
   }
 }
