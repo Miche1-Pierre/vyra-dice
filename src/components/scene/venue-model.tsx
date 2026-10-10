@@ -18,6 +18,7 @@ import {
   GLOBE_FOCUS,
   type TimedMaterial,
 } from "@/components/scene/fx/materials"
+import { surfacesReady } from "@/components/scene/fx/surfaces"
 import { finishOf, type ClubAmbiance } from "@/lib/clubs/ambiance"
 import { assetUrl, modelUrl, type AssetManifest } from "@/lib/clubs/assets"
 import { useExperience } from "@/lib/store"
@@ -41,6 +42,58 @@ class LightmapLoader extends THREE.ImageBitmapLoader {
 }
 const LIGHTMAP_LOADER =
   typeof createImageBitmap === "function" ? LightmapLoader : THREE.TextureLoader
+
+/** Every texture with pixels that the scene's materials use (maps, lightmaps, uniforms). */
+function sceneTextures(scene: THREE.Object3D): THREE.Texture[] {
+  const found = new Set<THREE.Texture>()
+  const add = (value: unknown) => {
+    const tex = value as THREE.Texture | null | undefined
+    if (tex?.isTexture && tex.image && !tex.isRenderTargetTexture) found.add(tex)
+  }
+  scene.traverse((obj) => {
+    const material = (obj as THREE.Mesh).material as THREE.Material | THREE.Material[] | undefined
+    if (!material) return
+    for (const m of Array.isArray(material) ? material : [material]) {
+      Object.values(m).forEach(add)
+      const uniforms = (m as THREE.ShaderMaterial).uniforms
+      if (uniforms) Object.values(uniforms).forEach((u) => add(u?.value))
+    }
+  })
+  return [...found]
+}
+
+const texels = (tex: THREE.Texture) => {
+  const image = tex.image as { width?: number; height?: number }
+  return (image.width ?? 0) * (image.height ?? 0)
+}
+
+/**
+ * Compiles, in parallel (KHR_parallel_shader_compile), the shader variants the next frames draw
+ * with. Composited, the scene is drawn into a render target, whose variants are not the
+ * canvas' (linear output); under the neon intro's clipping plane, the variants without it are
+ * compiled as well, so that the end of the intro recompiles nothing.
+ */
+async function compileVariants(
+  gl: THREE.WebGLRenderer,
+  scene: THREE.Scene,
+  camera: THREE.Camera,
+  composited: boolean,
+) {
+  const target = composited ? new THREE.WebGLRenderTarget(1, 1) : null
+  const previous = gl.getRenderTarget()
+  const planes = gl.clippingPlanes
+  const runs: Promise<unknown>[] = []
+  gl.setRenderTarget(target)
+  runs.push(gl.compileAsync(scene, camera))
+  if (planes.length) {
+    gl.clippingPlanes = []
+    runs.push(gl.compileAsync(scene, camera))
+    gl.clippingPlanes = planes
+  }
+  gl.setRenderTarget(previous)
+  await Promise.all(runs).catch(() => undefined)
+  target?.dispose()
+}
 
 /** Global brightness of the baked lighting (artistic exposure, 1 = as baked). */
 const LIGHTMAP_EXPOSURE = 1.15
@@ -217,12 +270,15 @@ export function VenueModel({
   assets: manifest,
   ambiance,
   quality,
+  composited = true,
   neon,
 }: {
   club: string
   assets: AssetManifest
   ambiance: ClubAmbiance
   quality: Quality
+  /** Drawn through the effect composer (into its render target), not straight to the canvas. */
+  composited?: boolean
   /** Colour of the neon intro, when the club opens with it. */
   neon?: string
 }) {
@@ -238,7 +294,7 @@ export function VenueModel({
   const gltf = useGLTF(glbUrl, false, false, withMeshopt)
   const images = useLoader(LIGHTMAP_LOADER, urls) as (THREE.Texture | ImageBitmap)[]
 
-  const { prepared, lightmaps } = useMemo(() => {
+  const prepared = useMemo(() => {
     const byName: Record<string, THREE.Texture> = {}
     names.forEach((n, i) => {
       const image = images[i]
@@ -252,14 +308,12 @@ export function VenueModel({
       tex.needsUpdate = true
       byName[n] = tex
     })
-    return {
-      prepared: prepareVenue(gltf.scene, manifest, ambiance, byName, quality),
-      lightmaps: Object.values(byName),
-    }
+    return prepareVenue(gltf.scene, manifest, ambiance, byName, quality)
   }, [gltf.scene, manifest, ambiance, names, images, quality])
 
-  // before the club is shown: one lightmap to the GPU per frame, then the shaders compiled in
-  // parallel (KHR_parallel_shader_compile). No long frame freezes the loading screen.
+  // before the club is shown: its procedural surfaces generated (worker), the scene's textures
+  // sent to the GPU a few per frame, then the shaders it will draw with compiled in parallel. No
+  // long frame freezes the loading screen, and the first frames of the club compile nothing.
   const gl = useThree((s) => s.gl)
   const camera = useThree((s) => s.camera)
   const scene = useThree((s) => s.scene)
@@ -268,18 +322,20 @@ export function VenueModel({
     let cancelled = false
     const nextFrame = () => new Promise((resolve) => requestAnimationFrame(resolve))
     void (async () => {
-      for (const tex of lightmaps) {
+      await surfacesReady()
+      for (const tex of sceneTextures(scene)) {
         if (cancelled) return
         gl.initTexture(tex)
-        await nextFrame()
+        if (texels(tex) > 256 * 256) await nextFrame()
       }
-      await gl.compileAsync(prepared.root, camera, scene).catch(() => undefined)
+      if (cancelled) return
+      await compileVariants(gl, scene, camera, composited)
       if (!cancelled) setUploaded(prepared)
     })()
     return () => {
       cancelled = true
     }
-  }, [gl, camera, scene, prepared, lightmaps])
+  }, [gl, camera, scene, prepared, composited])
   const shown = uploaded === prepared
 
   // the neon intro's lines, computed in a worker while the loading screen is still up
@@ -334,13 +390,14 @@ export function VenueModel({
   return (
     <>
       <primitive object={prepared.root} visible={shown} dispose={null} />
-      {!opening ? (
+      {/* hidden, not unmounted, under the neon intro: its shaders compile with the club's */}
+      <group visible={!opening}>
         <GlobeGlow
           globes={prepared.globes}
           show={ambiance.show}
           intensity={quality === "high" ? 1 : 0.85}
         />
-      ) : null}
+      </group>
       {neon ? (
         <NeonIntro
           edges={edges?.venue === prepared ? edges.edges : null}
