@@ -1,0 +1,24 @@
+{
+  "issues": [
+    "Table L1 (sous la dalle ouest) nettement plus sombre que L5 et L7 à découvert : sol et mur presque noirs.",
+    "Cabine DJ terne en vue d'ensemble : la façade ambre se lit mal à côté du pilier vert."
+  ],
+  "changes": [
+    "Downlights sous la dalle ouest : 170 → 240 W.",
+    "Lèche-mur bas derrière Côté Cabine : 140 → 200 W.",
+    "Wash de la cabine DJ depuis les structures : 420 → 520 W."
+  ],
+  "feedbackAddressed": [],
+  "remaining": [
+    "Vérifié sur les rendus : pilier LED, estrades, verre et marches, escaliers dans le bon sens, P1–P3 le long du garde-corps, aucune collision visible.",
+    "Côté Cabine et les Alcôves sont cachés par les dalles en vue d'ensemble (choix f3) : le filtre « rez-de-chaussée » du site les montre.",
+    "V1 et V5 : la main courante de la bande nord passe devant la table sur l'aperçu Blender. La caméra du site, plus plongeante, devrait passer au-dessus : à confirmer sur capture.",
+    "Effet des nouvelles puissances sur L1 et la cabine à vérifier au prochain rendu.",
+    "La vue d'ensemble du site (distance fixe dans camera.ts) n'est pas encore vérifiée sur capture avec la salle agrandie."
+  ],
+  "rebuilt": {
+    "objects": 31,
+    "triangles": 82226,
+    "at": "2026-10-10T12:04:43.754Z"
+  }
+}

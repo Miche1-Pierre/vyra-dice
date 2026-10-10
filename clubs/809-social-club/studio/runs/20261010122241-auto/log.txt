@@ -1,0 +1,164 @@
+[14:22:42] Étape « auto » — 809-social-club
+[14:22:43] — research : déjà fait
+[14:22:43] — spec : déjà fait
+[14:22:43] — build : déjà fait
+[14:22:43] — review : déjà fait
+[14:22:43] ══ bake ══
+[14:22:43] ▶ Bake des lightmaps (final)
+[14:23:35]   [bake] device OPTIX: ['NVIDIA GeForce RTX 4070 Laptop GPU']
+[14:23:35]   [bake] ground_floor        2048px scale=4.0985   49.3s
+[14:23:55]   [bake] wall_west           2048px scale=5.5647   19.8s
+[14:24:45]   [bake] wall_east           2048px scale=4.3735   50.2s
+[14:24:50]   [bake] wall_north          1024px scale=6.2777    4.7s
+[14:24:54]   [bake] wall_south          1024px scale=5.5255    4.7s
+[14:24:57]   [bake] sas                  512px scale=1.5379    2.8s
+[14:25:10]   [bake] ceiling             1024px scale=1.0066   13.3s
+[14:25:13]   [bake] columns              512px scale=2.8052    3.1s
+[14:25:23]   [bake] stairs              1024px scale=8.2554    9.9s
+[14:25:30]   [bake] estrades            1024px scale=5.9559    6.8s
+[14:25:40]   [bake] bar                 1024px scale=11.8266   10.3s
+[14:25:43]   [bake] pilier_led           512px scale=6.6520    2.2s
+[14:25:52]   [bake] dj_booth            1024px scale=5.1967    9.1s
+[14:25:55]   [bake] comptoir_nord        512px scale=0.7569    3.2s
+[14:25:58]   [bake] wc                   512px scale=0.1560    2.8s
+[14:26:48]   [bake] lvl1_slabs          2048px scale=5.0588   50.6s
+[14:26:51]   [bake] lvl1_bar_vip_retour   512px scale=1.9585    2.5s
+[14:27:11]   [bake] furniture           2048px scale=4.8131   19.9s
+[14:27:24]   [bake] lvl1_furniture      2048px scale=6.9089   13.7s
+[14:27:25]   [bake] done in 279.7s -> clubs\809-social-club\build\export
+[14:27:25] ✔ Bake des lightmaps (final) (282.4 s)
+[14:27:25] ▶ Optimisation web
+[14:27:26]   prune: Removed types... Accessor (285)
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:27:26]   prune: Removed types... Accessor (167)
+[14:27:26]   809-social-club.glb: 4670 KB -> 1486 KB
+[14:27:27]     lm ground_floor: 2673 KB -> 60 KB
+[14:27:28]     lm wall_west: 914 KB -> 22 KB
+[14:27:28]     lm wall_east: 2200 KB -> 36 KB
+[14:27:29]     lm wall_north: 219 KB -> 8 KB
+[14:27:29]     lm wall_south: 215 KB -> 7 KB
+[14:27:29]     lm sas: 113 KB -> 3 KB
+[14:27:29]     lm ceiling: 962 KB -> 40 KB
+[14:27:29]     lm columns: 218 KB -> 13 KB
+[14:27:29]     lm stairs: 740 KB -> 31 KB
+[14:27:29]     lm bar: 491 KB -> 15 KB
+[14:27:30]     lm bar_round: 142 KB -> 5 KB
+[14:27:30]     lm dj_booth: 472 KB -> 12 KB
+[14:27:30]     lm comptoir_nord: 172 KB -> 7 KB
+[14:27:30]     lm wc: 225 KB -> 13 KB
+[14:27:31]     lm lvl1_slabs: 2674 KB -> 74 KB
+[14:27:31]     lm lvl1_bar_vip_retour: 101 KB -> 4 KB
+[14:27:32]     lm furniture: 2825 KB -> 205 KB
+[14:27:33]     lm lvl1_furniture: 3075 KB -> 307 KB
+[14:27:34]     lm estrades: 390 KB -> 19 KB
+[14:27:34]     lm pilier_led: 79 KB -> 4 KB
+[14:27:34]     lightmaps total: 885 KB
+[14:27:34]   club assets: 809-social-club, lumen-club, naho -> public\clubs
+[14:27:34] ✔ Optimisation web (8.5 s)
+[14:27:34] ══ preview ══
+[14:27:34] ▶ Enregistrement dans clubs/registry.ts
+[14:27:34] déjà enregistré
+[14:27:34] ✔ Enregistrement dans clubs/registry.ts (0.0 s)
+[14:27:34] ▶ Tests de contrat (tous les clubs)
+[14:27:36]    ✓ src/lib/clubs/brand.test.ts (3 tests) 18ms
+[14:27:36]    ✓ src/lib/clubs/ambiance.test.ts (5 tests) 19ms
+[14:27:36]    ✓ src/lib/venue/offers.test.ts (15 tests) 15ms
+[14:27:36]    ✓ src/components/experience/view-model.test.ts (19 tests) 19ms
+[14:27:36]    ✓ src/lib/clubs/club.test.ts (7 tests) 43ms
+[14:27:36]    ✓ src/lib/venue/layout.test.ts (20 tests) 39ms
+[14:27:36]      ✓ club registry (6)
+[14:27:36]        ✓ serves at least one club 3ms
+[14:27:36]        ✓ finds each venue night by club and event slug 1ms
+[14:27:36]        ✓ returns null for unknown clubs, including prototype keys 0ms
+[14:27:36]        ✓ serves drafts in development, tests and Vercel previews, never on the live site 0ms
+[14:27:36]        ✓ tells drafts from published clubs 0ms
+[14:27:36]        ✓ lists every venue night for the static routes 1ms
+[14:27:36]      ✓ club naho (5)
+[14:27:36]        ✓ lives in clubs/<slug>/ 1ms
+[14:27:36]        ✓ ships the model and every lightmap of its manifest 3ms
+[14:27:36]        ✓ matches its ambiance and its manifest to the model 5ms
+[14:27:36]        ✓ versions its bundle with content hashes 1ms
+[14:27:36]        ✓ labels demo data as such 0ms
+[14:27:36]      ✓ club lumen-club (5)
+[14:27:36]        ✓ lives in clubs/<slug>/ 0ms
+[14:27:36]        ✓ ships the model and every lightmap of its manifest 2ms
+[14:27:36]        ✓ matches its ambiance and its manifest to the model 2ms
+[14:27:36]        ✓ versions its bundle with content hashes 0ms
+[14:27:36]        ✓ labels demo data as such 0ms
+[14:27:36]        ✓ lives in clubs/<slug>/ 0ms
+[14:27:36]        ✓ ships the model and every lightmap of its manifest 3ms
+[14:27:36]        × matches its ambiance and its manifest to the model 17ms
+[14:27:36]        ✓ versions its bundle with content hashes 3ms
+[14:27:36]        ✓ labels demo data as such 0ms
+[14:27:36]    ✓ src/lib/venue/camera.test.ts (35 tests) 35ms
+[14:27:36]   ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+[14:27:36]    FAIL  src/lib/clubs/registry.test.ts > club 809-social-club > matches its ambiance and its manifest to the model
+[14:27:36]   AssertionError: lightmap of unknown node bar_round: expected false to be true // Object.is equality
+[14:27:36]    Test Files  1 failed | 7 passed (8)
+[14:27:36]         Tests  1 failed | 124 passed (125)
+[14:27:36] ✖ Tests de contrat (tous les clubs) (2.0 s)
+[14:27:36] Échec : node.exe a échoué (code 1)

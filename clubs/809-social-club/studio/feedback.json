@@ -1,0 +1,60 @@
+{
+  "items": [
+    {
+      "id": "f1",
+      "text": "Salle trop petite (choix de l'équipe : ×1,5). Agrandis tout d'environ 1,5 fois : environ 38 × 30 m d'emprise au lieu de 25 × 20. Remets à l'échelle bâtiment, salle, dalles, vides, zones, bar, cabine, escaliers, poteaux, garde-corps, décor, lumières et caméras. Les gabarits des banquettes ne changent pas : ajoute des tables là où la place le permet (lounges et VIP), sans les serrer. Les hauteurs ne changent pas, sauf si une photo le demande.",
+      "target": "overview",
+      "createdAt": "2026-10-10T11:45:00.000Z",
+      "status": "addressed",
+      "addressedIn": "20261010114549"
+    },
+    {
+      "id": "f2",
+      "text": "Le rond au coin sud-ouest du bar central est un pilier (Ø ≈ 0,9 m) du sol au plafond, habillé de bandes LED verticales vertes qui montent jusqu'au plafond et s'y écartent (photo fb-salle-verte-arche-led-bar). L'« arche verte » au-dessus de la piste, c'est ce pilier : remplace l'arche par lui. Déclare-le aussi dans layout.columns pour que les tables et les caméras l'évitent.",
+      "target": "bar",
+      "createdAt": "2026-10-10T11:45:00.000Z",
+      "status": "addressed",
+      "addressedIn": "20261010114549"
+    },
+    {
+      "id": "f3",
+      "text": "Finalement, le lounge Côté Cabine (ouest) n'est pas ouvert jusqu'au plafond (choix de l'équipe) : une dalle d'étage le couvre, sans tables (circulation, garde-corps côté piste). Le vide double hauteur reste au-dessus de la piste et de la cabine DJ (3,5 à 4 m libres au-dessus du DJ, aucun plancher).",
+      "target": "lounge-ouest",
+      "createdAt": "2026-10-10T11:45:00.000Z",
+      "status": "addressed",
+      "addressedIn": "20261010114549"
+    },
+    {
+      "id": "f4",
+      "text": "Les lounges verts sont sur des estrades légèrement plus hautes que la piste : `raised` ≈ 0,4 m sur leurs zones dans layout.json (nouveau champ : banquettes, lampes, étiquettes et vues suivent ; l'estrade elle-même se construit en `mesh`, avec des nez de marche LED ambre comme l'escalier). Un garde-corps en verre clair (≈ 1 m, main courante en métal noir) sépare de la piste chaque lounge qui la borde. On entre dans ces lounges par les côtés : une ouverture d'environ 1,2 m avec deux marches à chaque extrémité de l'estrade. Le verre : opérations `mesh` avec `\"into\": \"glass\"`.",
+      "target": "lounges",
+      "createdAt": "2026-10-10T11:45:00.000Z",
+      "status": "addressed",
+      "addressedIn": "20261010114549"
+    },
+    {
+      "id": "f5",
+      "text": "La cabine DJ est encore un peu plus haute que les estrades des lounges : plancher à environ 0,8 m au-dessus de la piste, toujours en biais et tournée vers la piste.",
+      "target": "dj",
+      "createdAt": "2026-10-10T11:45:00.000Z",
+      "status": "addressed",
+      "addressedIn": "20261010114549"
+    },
+    {
+      "id": "f6",
+      "text": "Les deux escaliers montent dans l'autre sens (les flèches du croquis indiquent le sens de montée) : l'escalier nord-ouest part de l'est et monte vers l'ouest (`bottom: east`), l'escalier est part du nord et monte vers le sud (`bottom: north`). La brique sait maintenant construire ces deux sens. Recale les paliers d'arrivée, les vides et les garde-corps en conséquence.",
+      "target": "escaliers",
+      "createdAt": "2026-10-10T11:45:00.000Z",
+      "status": "addressed",
+      "addressedIn": "20261010114549"
+    },
+    {
+      "id": "f7",
+      "text": "Le placement des tables prestige (or) est à revoir : P2 est coincée dans l'angle du L. Place-les le long du garde-corps, face au vide et à la piste, dos au bar VIP : au moins deux tables dans la branche nord (orientées sud) et une dans la branche est (orientée ouest), régulièrement espacées, aucune dans l'angle. Garde un passage d'au moins 1,2 m devant le bar VIP et aux arrivées d'escalier.",
+      "target": "prestige-carre",
+      "createdAt": "2026-10-10T11:45:00.000Z",
+      "status": "addressed",
+      "addressedIn": "20261010114549"
+    }
+  ]
+}

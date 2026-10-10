@@ -1,0 +1,116 @@
+[14:48:42] Étape « bake » — 809-social-club
+[14:48:42] ▶ Bake des lightmaps (final)
+[14:49:34]   [bake] device OPTIX: ['NVIDIA GeForce RTX 4070 Laptop GPU']
+[14:49:34]   [bake] ground_floor        2048px scale=4.0985   49.7s
+[14:49:54]   [bake] wall_west           2048px scale=5.5647   20.0s
+[14:50:45]   [bake] wall_east           2048px scale=4.3735   50.6s
+[14:50:50]   [bake] wall_north          1024px scale=6.2777    4.7s
+[14:50:54]   [bake] wall_south          1024px scale=5.5256    4.6s
+[14:50:57]   [bake] sas                  512px scale=1.5379    2.8s
+[14:51:10]   [bake] ceiling             1024px scale=1.0066   13.3s
+[14:51:13]   [bake] columns              512px scale=2.8052    3.0s
+[14:51:23]   [bake] stairs              1024px scale=8.2554   10.0s
+[14:51:30]   [bake] estrades            1024px scale=5.9559    6.9s
+[14:51:41]   [bake] bar                 1024px scale=11.8266   10.4s
+[14:51:43]   [bake] pilier_led           512px scale=6.6520    2.0s
+[14:51:52]   [bake] dj_booth            1024px scale=5.1967    9.1s
+[14:51:55]   [bake] comptoir_nord        512px scale=0.7569    3.2s
+[14:51:58]   [bake] wc                   512px scale=0.1560    2.8s
+[14:52:49]   [bake] lvl1_slabs          2048px scale=5.0588   51.1s
+[14:52:51]   [bake] lvl1_bar_vip_retour   512px scale=1.9585    2.4s
+[14:53:11]   [bake] furniture           2048px scale=4.8131   20.0s
+[14:53:25]   [bake] lvl1_furniture      2048px scale=6.9089   13.6s
+[14:53:26]   [bake] done in 281.4s -> clubs\809-social-club\build\export
+[14:53:26] ✔ Bake des lightmaps (final) (284.6 s)
+[14:53:26] ▶ Optimisation web
+[14:53:27]   prune: Removed types... Accessor (285)
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   quantize: Skipping TEXCOORD_0; out of [0,1] range.
+[14:53:27]   prune: Removed types... Accessor (167)
+[14:53:27]   809-social-club.glb: 4670 KB -> 1486 KB
+[14:53:28]     lm ground_floor: 2673 KB -> 60 KB
+[14:53:28]     lm wall_west: 914 KB -> 22 KB
+[14:53:29]     lm wall_east: 2200 KB -> 36 KB
+[14:53:29]     lm wall_north: 219 KB -> 8 KB
+[14:53:29]     lm wall_south: 215 KB -> 7 KB
+[14:53:30]     lm sas: 113 KB -> 3 KB
+[14:53:30]     lm ceiling: 962 KB -> 40 KB
+[14:53:30]     lm columns: 218 KB -> 13 KB
+[14:53:30]     lm stairs: 740 KB -> 31 KB
+[14:53:30]     lm bar: 491 KB -> 15 KB
+[14:53:30]     lm dj_booth: 472 KB -> 12 KB
+[14:53:31]     lm comptoir_nord: 172 KB -> 7 KB
+[14:53:31]     lm wc: 225 KB -> 13 KB
+[14:53:31]     lm lvl1_slabs: 2674 KB -> 74 KB
+[14:53:31]     lm lvl1_bar_vip_retour: 101 KB -> 4 KB
+[14:53:33]     lm furniture: 2826 KB -> 205 KB
+[14:53:34]     lm lvl1_furniture: 3075 KB -> 307 KB
+[14:53:34]     lm estrades: 390 KB -> 19 KB
+[14:53:34]     lm pilier_led: 79 KB -> 4 KB
+[14:53:34]     lightmaps total: 880 KB
+[14:53:34]   club assets: 809-social-club, lumen-club, naho -> public\clubs
+[14:53:34] ✔ Optimisation web (8.3 s)
+[14:53:34] Terminé.

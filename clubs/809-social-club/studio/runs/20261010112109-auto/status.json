@@ -1,0 +1,110 @@
+{
+  "id": "20261010112109-auto",
+  "step": "auto",
+  "state": "done",
+  "options": {},
+  "createdAt": "2026-10-10T11:21:09.190Z",
+  "phases": [
+    {
+      "name": "Vérification de la spécification",
+      "startedAt": "2026-10-10T11:21:10.274Z",
+      "endedAt": "2026-10-10T11:21:10.278Z",
+      "ok": true
+    },
+    {
+      "name": "Construction Blender et aperçus",
+      "startedAt": "2026-10-10T11:21:10.279Z",
+      "endedAt": "2026-10-10T11:21:48.708Z",
+      "ok": true
+    },
+    {
+      "name": "Revue des rendus 1/1",
+      "startedAt": "2026-10-10T11:21:49.271Z",
+      "endedAt": "2026-10-10T11:28:20.509Z",
+      "ok": true
+    },
+    {
+      "name": "Validation et corrections",
+      "startedAt": "2026-10-10T11:28:20.515Z",
+      "endedAt": "2026-10-10T11:28:23.921Z",
+      "ok": true
+    },
+    {
+      "name": "Construction d'essai",
+      "startedAt": "2026-10-10T11:28:20.532Z",
+      "endedAt": "2026-10-10T11:28:23.607Z",
+      "ok": true
+    },
+    {
+      "name": "Vérification de la spécification",
+      "startedAt": "2026-10-10T11:28:23.923Z",
+      "endedAt": "2026-10-10T11:28:23.934Z",
+      "ok": true
+    },
+    {
+      "name": "Construction Blender et aperçus",
+      "startedAt": "2026-10-10T11:28:23.936Z",
+      "endedAt": "2026-10-10T11:29:03.196Z",
+      "ok": true
+    },
+    {
+      "name": "Bake des lightmaps (final)",
+      "startedAt": "2026-10-10T11:29:03.755Z",
+      "endedAt": "2026-10-10T11:34:26.803Z",
+      "ok": true
+    },
+    {
+      "name": "Optimisation web",
+      "startedAt": "2026-10-10T11:34:26.805Z",
+      "endedAt": "2026-10-10T11:34:40.421Z",
+      "ok": true
+    },
+    {
+      "name": "Enregistrement dans clubs/registry.ts",
+      "startedAt": "2026-10-10T11:34:40.518Z",
+      "endedAt": "2026-10-10T11:34:40.530Z",
+      "ok": true
+    },
+    {
+      "name": "Tests de contrat (tous les clubs)",
+      "startedAt": "2026-10-10T11:34:40.533Z",
+      "endedAt": "2026-10-10T11:34:44.903Z",
+      "ok": true
+    },
+    {
+      "name": "Viewer local",
+      "startedAt": "2026-10-10T11:34:44.906Z",
+      "endedAt": "2026-10-10T11:34:54.191Z",
+      "ok": true
+    },
+    {
+      "name": "Captures",
+      "startedAt": "2026-10-10T11:34:54.199Z",
+      "endedAt": "2026-10-10T11:35:38.649Z",
+      "ok": true
+    },
+    {
+      "name": "Leçons pour le guide",
+      "startedAt": "2026-10-10T11:35:38.848Z",
+      "endedAt": "2026-10-10T11:37:03.359Z",
+      "ok": true
+    }
+  ],
+  "pid": 30644,
+  "startedAt": "2026-10-10T11:21:10.079Z",
+  "result": {
+    "objects": 30,
+    "triangles": 65030,
+    "lights": 84,
+    "agentRuns": 2,
+    "turns": 54,
+    "costUsd": 2.31,
+    "sessions": [
+      "78c966d5-afaf-4441-a782-4849d9d8ee6a",
+      "e140c7e9-1750-41c8-a24b-08099417acb2"
+    ],
+    "quality": "final",
+    "viewer": "http://localhost:3100/809-social-club/rudboy"
+  },
+  "endedAt": "2026-10-10T11:37:03.368Z"
+}

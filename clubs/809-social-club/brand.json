@@ -1,0 +1,39 @@
+{
+  "$comment": "Identité du 809 dans l'interface (ig-logo-809) : rouge 809 #DC1414 sur crème, teintes des niveaux reprises du croquis (vert = lounge, bleu = VIP, jaune = prestige), Jost (proche des capitales géométriques de « SOCIAL CLUB »). Wordmark « 809. » redessiné et SIMPLIFIÉ (8 en deux boucles, 0 rond, 9 à queue, point) : le logo réel est une boucle pleine continue, à valider. Pas d'emblème.",
+  "accent": {
+    "name": "rouge",
+    "color": "#dc1414",
+    "deep": "#8c0b0b",
+    "on": "#fff4ee",
+    "pill": ["#f0473c", "#a80f0f"],
+    "foil": ["#ffb0a6", "#e8392e", "#9c1010"]
+  },
+  "tiers": {
+    "lounge": {
+      "color": "#3ccf6e",
+      "deep": "#0f5a2c"
+    },
+    "vip": {
+      "color": "#3d8bff",
+      "deep": "#0f3a85"
+    },
+    "prestige": {
+      "color": "#f5c518",
+      "deep": "#7a5c06"
+    }
+  },
+  "font": "jost",
+  "wordmark": {
+    "viewBox": [48, 24],
+    "strokeWidth": 1.55,
+    "strokes": [
+      "M7 7a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7",
+      "M7 14a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7",
+      "M20.5 7a7 7 0 1 1 0 14 7 7 0 0 1 0-14",
+      "M35 3a5 5 0 1 1 0 10 5 5 0 0 1 0-10",
+      "M40 8v8a5 5 0 0 1-5 5",
+      "M45 20.4a0.6 0.6 0 1 1 0 1.2 0.6 0.6 0 0 1 0-1.2"
+    ]
+  },
+  "tagline": "Social Club"
+}

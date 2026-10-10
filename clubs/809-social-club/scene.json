@@ -1,0 +1,1137 @@
+{
+  "$comment": "Scène Blender du 809 Social Club, lue par art/scripts/build_club.py avec layout.json : boîte noire double hauteur (≈ 37,5 × 30 m), mezzanines en anneau à garde-corps métal, cabine DJ en biais sur plateforme de 0,8 m (façade à bandeaux LED ambre, tubes rouge et bleu), lounges sur estrades de 0,4 m (nez de marche LED ambre, garde-corps en verre côté piste, deux marches à chaque extrémité), escaliers aux marches ambrées, pilier LED vert à l'angle sud-ouest du bar central (bandes verticales qui s'écartent au plafond), lignes LED au plafond, écrans du mur ouest, logo 809 rouge et RUDBOY en néon sur le mur nord. Ni globes ni pluie de LED (absents des photos). Sans brique dédiée : cabine en biais (beam), estrades et garde-corps des lounges (box, face, beam), pilier LED (cylinder + beam), écrans (wall_x, coins droits au lieu d'arrondis, non animés), retour du bar VIP le long du mur est (box). Dégagement des caméras du site : structures de lyres seulement au-dessus de la piste, devant la cabine (x + y entre -13,6 et -10,4) ; éventail du pilier à moins de 3,2 m de son axe, au-dessus de 6,8 m.",
+  "version": 1,
+  "fonts": {
+    "medium": "jost-latin-500-normal.woff2",
+    "bold": "jost-latin-600-normal.woff2"
+  },
+  "logo": {
+    "$comment": "« 809. » comme dans l'interface (brand.json) : 8 en deux boucles, 0 rond, 9 à queue, point — grille 48 × 24, y vers le bas. Redessin simplifié, à valider.",
+    "capHeight": 18,
+    "center": [24.5, 12],
+    "strokes": [
+      { "circle": [7, 10.5, 3.5] },
+      { "circle": [7, 17.5, 3.5] },
+      { "circle": [20.5, 14, 7] },
+      { "circle": [35, 8, 5] },
+      [
+        [40, 8],
+        [40, 16],
+        [39.83, 17.29],
+        [39.33, 18.5],
+        [38.54, 19.54],
+        [37.5, 20.33],
+        [36.29, 20.83],
+        [35, 21]
+      ],
+      { "circle": [45, 21, 0.6] }
+    ]
+  },
+  "materials": {
+    "concrete": {
+      "name": "809_social_club_concrete",
+      "texture": {
+        "kind": "concrete",
+        "size": 1024
+      },
+      "roughness": 0.55,
+      "uvScale": 3.0
+    },
+    "wall": {
+      "name": "809_social_club_wall",
+      "color": "#47444b",
+      "roughness": 0.85
+    },
+    "ceiling": {
+      "name": "809_social_club_ceiling",
+      "color": "#121214",
+      "roughness": 0.95
+    },
+    "fascia": {
+      "name": "809_social_club_fascia",
+      "color": "#19191c",
+      "roughness": 0.5
+    },
+    "black": {
+      "name": "809_social_club_black_metal",
+      "color": "#151517",
+      "roughness": 0.45,
+      "metallic": 0.6
+    },
+    "steel": {
+      "name": "809_social_club_steel",
+      "color": "#8a8a90",
+      "roughness": 0.35,
+      "metallic": 0.8
+    },
+    "stone": {
+      "name": "809_social_club_stone",
+      "color": "#2a2a2e",
+      "roughness": 0.25
+    },
+    "tabletop": {
+      "name": "809_social_club_tabletop",
+      "color": "#d8d0c6",
+      "roughness": 0.3
+    },
+    "glass": {
+      "name": "809_social_club_glass",
+      "color": "#8f9aa0",
+      "roughness": 0.05,
+      "alpha": 0.06
+    },
+    "leather": {
+      "name": "809_social_club_leather",
+      "color": "#19171a",
+      "roughness": 0.5
+    },
+    "velvet_lounge": {
+      "name": "809_social_club_velvet_lounge",
+      "color": "#1b4a30",
+      "roughness": 0.9
+    },
+    "velvet_vip": {
+      "name": "809_social_club_velvet_vip",
+      "color": "#1e3c78",
+      "roughness": 0.9
+    },
+    "velvet_prestige": {
+      "name": "809_social_club_velvet_prestige",
+      "color": "#8a6512",
+      "roughness": 0.85
+    },
+    "led_amber": {
+      "name": "809_social_club_led_amber",
+      "color": "#f88808",
+      "emission": "#f88808",
+      "strength": 6.0
+    },
+    "led_green": {
+      "name": "809_social_club_led_green",
+      "color": "#0cb444",
+      "emission": "#0cb444",
+      "strength": 6.0
+    },
+    "led_red": {
+      "name": "809_social_club_led_red",
+      "color": "#dc1414",
+      "emission": "#dc1414",
+      "strength": 6.0
+    },
+    "led_blue": {
+      "name": "809_social_club_led_blue",
+      "color": "#2a4dff",
+      "emission": "#2a4dff",
+      "strength": 6.0
+    },
+    "led_white": {
+      "name": "809_social_club_led_white",
+      "color": "#fff1df",
+      "emission": "#fff1df",
+      "strength": 6.0
+    },
+    "screen": {
+      "name": "809_social_club_screen",
+      "color": "#1e9a4a",
+      "emission": "#1e9a4a",
+      "strength": 2.2
+    },
+    "screen_mint": {
+      "name": "809_social_club_screen_mint",
+      "color": "#3fa892",
+      "emission": "#3fa892",
+      "strength": 2.2
+    },
+    "neon_white": {
+      "name": "809_social_club_neon_white",
+      "color": "#ffffff",
+      "emission": "#ffffff",
+      "strength": 8.0
+    },
+    "neon_red": {
+      "name": "809_social_club_neon_red",
+      "color": "#dc1414",
+      "emission": "#dc1414",
+      "strength": 4.0
+    },
+    "bottle_amber": {
+      "name": "809_social_club_bottle_amber",
+      "color": "#b8682a",
+      "emission": "#c8742a",
+      "strength": 0.55
+    },
+    "bottle_green": {
+      "name": "809_social_club_bottle_green",
+      "color": "#3c6e3a",
+      "emission": "#3f7a3a",
+      "strength": 0.45
+    },
+    "bottle_clear": {
+      "name": "809_social_club_bottle_clear",
+      "color": "#9fb2c6",
+      "emission": "#b8c8d8",
+      "strength": 0.5
+    },
+    "lamp": {
+      "name": "809_social_club_lamp",
+      "color": "#ffcf96",
+      "emission": "#ffcf96",
+      "strength": 10.0
+    },
+    "glow": {
+      "name": "809_social_club_glow",
+      "color": "#ffb26a",
+      "emission": "#ffb26a",
+      "strength": 3.0
+    },
+    "lens": {
+      "name": "809_social_club_lens",
+      "color": "#ffffff",
+      "emission": "#ffffff",
+      "strength": 4.0
+    }
+  },
+  "elements": [
+    {
+      "type": "mesh",
+      "object": "ground_floor",
+      "lightmap": 2048,
+      "ops": [
+        ["floor", "gx0", "gx1", "gy0", "gy1", 0.0, "concrete"],
+        ["floor", "maxX", "entrance_x1", "entrance_y - 2.25", "entrance_y + 2.25", 0.0, "concrete"]
+      ]
+    },
+    {
+      "type": "mesh",
+      "object": "wall_west",
+      "lightmap": 2048,
+      "ops": [["wall_x", "minX", "minY", "maxY", 0, "ceil", "wall", 1]]
+    },
+    {
+      "type": "mesh",
+      "object": "wall_east",
+      "lightmap": 2048,
+      "ops": [
+        ["wall_x", "maxX", "minY", "entrance_y - 2.25", 0, "ceil", "wall", -1],
+        ["wall_x", "maxX", "entrance_y + 2.25", "maxY", 0, "ceil", "wall", -1],
+        ["wall_x", "maxX", "entrance_y - 2.25", "entrance_y + 2.25", 2.7, "ceil", "wall", -1]
+      ]
+    },
+    {
+      "type": "mesh",
+      "object": "wall_north",
+      "lightmap": 1024,
+      "ops": [["wall_y", "maxY", "minX", "maxX", 0, "ceil", "wall", -1]]
+    },
+    {
+      "type": "mesh",
+      "object": "wall_south",
+      "lightmap": 1024,
+      "ops": [["wall_y", "minY", "minX", "maxX", 0, "ceil", "wall", 1]]
+    },
+    {
+      "type": "mesh",
+      "object": "sas",
+      "lightmap": 512,
+      "ops": [
+        ["wall_y", "entrance_y - 2.25", "maxX", "entrance_x1", 0, 2.7, "wall", 1],
+        ["wall_y", "entrance_y + 2.25", "maxX", "entrance_x1", 0, 2.7, "wall", -1],
+        [
+          "floor",
+          "maxX",
+          "entrance_x1",
+          "entrance_y - 2.25",
+          "entrance_y + 2.25",
+          2.7,
+          "wall",
+          {
+            "up": false
+          }
+        ]
+      ]
+    },
+    {
+      "type": "mesh",
+      "object": "fx_entrance",
+      "collection": "FX",
+      "ops": [
+        [
+          "wall_x",
+          "entrance_x1 - 0.05",
+          "entrance_y - 2.25",
+          "entrance_y + 2.25",
+          0,
+          2.7,
+          "glow",
+          -1
+        ]
+      ]
+    },
+    {
+      "type": "mesh",
+      "object": "ceiling",
+      "lightmap": 1024,
+      "ops": [
+        [
+          "floor",
+          "minX",
+          "maxX",
+          "minY",
+          "maxY",
+          "ceil",
+          "ceiling",
+          {
+            "up": false
+          }
+        ]
+      ]
+    },
+    {
+      "type": "mezzanine",
+      "object": "lvl1_slabs",
+      "lightmap": 2048,
+      "top": "concrete",
+      "bottom": "fascia",
+      "edge": "fascia",
+      "led": "led_amber"
+    },
+    {
+      "type": "railings",
+      "object": "lvl1_railing",
+      "metal": "black",
+      "glass": "glass"
+    },
+    {
+      "type": "columns",
+      "object": "columns",
+      "material": "black",
+      "half": 0.15,
+      "lightmap": 512
+    },
+    {
+      "type": "stairs",
+      "object": "stairs",
+      "material": "fascia",
+      "lightmap": 1024,
+      "led": {
+        "escalier-ouest": "led_amber",
+        "escalier-est": "led_amber"
+      },
+      "rail": {
+        "metal": "black",
+        "glass": "glass",
+        "into": "rig",
+        "glassInto": "glass"
+      }
+    },
+    {
+      "$comment": "Estrades des lounges (0,4 m, layout raised) : ouest sous la dalle ouest, sud sous les Alcôves et le Bord de Piste. Deux marches à chaque extrémité du côté piste (ouvertures de 1,2 m) ; sur l'estrade sud, deux marches de plus sur chaque petit côté, dans l'allée entre Bord de Piste et Alcôves.",
+      "type": "mesh",
+      "object": "estrades",
+      "lightmap": 1024,
+      "ops": [
+        ["box", "minX", -15.0, -6.0, 6.0, 0, 0.4, "fascia", { "skip": ["-z", "+z", "-x"] }],
+        ["floor", "minX", -15.0, -6.0, 6.0, 0.4, "stone"],
+        ["box", -15.0, -14.7, 4.8, 6.0, 0, 0.267, "fascia", { "skip": ["-z", "-x"] }],
+        ["box", -14.7, -14.4, 4.8, 6.0, 0, 0.133, "fascia", { "skip": ["-z", "-x"] }],
+        ["box", -15.0, -14.7, -6.0, -4.8, 0, 0.267, "fascia", { "skip": ["-z", "-x"] }],
+        ["box", -14.7, -14.4, -6.0, -4.8, 0, 0.133, "fascia", { "skip": ["-z", "-x"] }],
+        ["box", -5.4, 8.25, "minY", -5.4, 0, 0.4, "fascia", { "skip": ["-z", "+z", "-y"] }],
+        ["floor", -5.4, 8.25, "minY", -5.4, 0.4, "stone"],
+        ["box", -5.4, -4.2, -5.4, -5.1, 0, 0.267, "fascia", { "skip": ["-z", "-y"] }],
+        ["box", -5.4, -4.2, -5.1, -4.8, 0, 0.133, "fascia", { "skip": ["-z", "-y"] }],
+        ["box", 7.05, 8.25, -5.4, -5.1, 0, 0.267, "fascia", { "skip": ["-z", "-y"] }],
+        ["box", 7.05, 8.25, -5.1, -4.8, 0, 0.133, "fascia", { "skip": ["-z", "-y"] }],
+        ["box", -5.7, -5.4, -10.2, -9.0, 0, 0.267, "fascia", { "skip": ["-z", "+x"] }],
+        ["box", -6.0, -5.7, -10.2, -9.0, 0, 0.133, "fascia", { "skip": ["-z", "+x"] }],
+        ["box", 8.25, 8.55, -10.2, -9.0, 0, 0.267, "fascia", { "skip": ["-z", "-x"] }],
+        ["box", 8.55, 8.85, -10.2, -9.0, 0, 0.133, "fascia", { "skip": ["-z", "-x"] }]
+      ]
+    },
+    {
+      "type": "mesh",
+      "into": "strips",
+      "ops": [
+        ["box", -15.012, -14.988, -6.0, 6.0, 0.365, 0.388, "led_amber"],
+        ["box", -14.712, -14.688, 4.86, 5.94, 0.232, 0.255, "led_amber"],
+        ["box", -14.412, -14.388, 4.86, 5.94, 0.098, 0.121, "led_amber"],
+        ["box", -14.712, -14.688, -5.94, -4.86, 0.232, 0.255, "led_amber"],
+        ["box", -14.412, -14.388, -5.94, -4.86, 0.098, 0.121, "led_amber"],
+        ["box", -5.4, 8.25, -5.412, -5.388, 0.365, 0.388, "led_amber"],
+        ["box", -5.412, -5.388, "minY", -5.4, 0.365, 0.388, "led_amber"],
+        ["box", 8.238, 8.262, "minY", -5.4, 0.365, 0.388, "led_amber"],
+        ["box", -5.34, -4.26, -5.112, -5.088, 0.232, 0.255, "led_amber"],
+        ["box", -5.34, -4.26, -4.812, -4.788, 0.098, 0.121, "led_amber"],
+        ["box", 7.11, 8.19, -5.112, -5.088, 0.232, 0.255, "led_amber"],
+        ["box", 7.11, 8.19, -4.812, -4.788, 0.098, 0.121, "led_amber"],
+        ["box", -5.712, -5.688, -10.14, -9.06, 0.232, 0.255, "led_amber"],
+        ["box", -6.012, -5.988, -10.14, -9.06, 0.098, 0.121, "led_amber"],
+        ["box", 8.538, 8.562, -10.14, -9.06, 0.232, 0.255, "led_amber"],
+        ["box", 8.838, 8.862, -10.14, -9.06, 0.098, 0.121, "led_amber"]
+      ]
+    },
+    {
+      "$comment": "Garde-corps en verre clair des estrades, côté piste (≈ 1 m au-dessus de l'estrade).",
+      "type": "mesh",
+      "into": "glass",
+      "ops": [
+        [
+          "face",
+          [
+            [-14.96, -4.8, 0.48],
+            [-14.96, 4.8, 0.48],
+            [-14.96, 4.8, 1.34],
+            [-14.96, -4.8, 1.34]
+          ],
+          "glass"
+        ],
+        [
+          "face",
+          [
+            [-4.2, -5.44, 0.48],
+            [7.05, -5.44, 0.48],
+            [7.05, -5.44, 1.34],
+            [-4.2, -5.44, 1.34]
+          ],
+          "glass"
+        ]
+      ]
+    },
+    {
+      "$comment": "Main courante et montants en métal noir des garde-corps des estrades.",
+      "type": "mesh",
+      "into": "rig",
+      "ops": [
+        ["beam", [-14.96, -4.8, 1.4], [-14.96, 4.8, 1.4], 0.06, 0.05, "black"],
+        ["box", -14.982, -14.938, -4.822, -4.778, 0.4, 1.4, "black"],
+        ["box", -14.982, -14.938, -3.222, -3.178, 0.4, 1.4, "black"],
+        ["box", -14.982, -14.938, -1.622, -1.578, 0.4, 1.4, "black"],
+        ["box", -14.982, -14.938, -0.022, 0.022, 0.4, 1.4, "black"],
+        ["box", -14.982, -14.938, 1.578, 1.622, 0.4, 1.4, "black"],
+        ["box", -14.982, -14.938, 3.178, 3.222, 0.4, 1.4, "black"],
+        ["box", -14.982, -14.938, 4.778, 4.822, 0.4, 1.4, "black"],
+        ["beam", [-4.2, -5.44, 1.4], [7.05, -5.44, 1.4], 0.06, 0.05, "black"],
+        ["box", -4.222, -4.178, -5.462, -5.418, 0.4, 1.4, "black"],
+        ["box", -2.615, -2.571, -5.462, -5.418, 0.4, 1.4, "black"],
+        ["box", -1.008, -0.964, -5.462, -5.418, 0.4, 1.4, "black"],
+        ["box", 0.599, 0.643, -5.462, -5.418, 0.4, 1.4, "black"],
+        ["box", 2.207, 2.251, -5.462, -5.418, 0.4, 1.4, "black"],
+        ["box", 3.814, 3.858, -5.462, -5.418, 0.4, 1.4, "black"],
+        ["box", 5.421, 5.465, -5.462, -5.418, 0.4, 1.4, "black"],
+        ["box", 7.028, 7.072, -5.462, -5.418, 0.4, 1.4, "black"]
+      ]
+    },
+    {
+      "type": "bar",
+      "object": "bar",
+      "lightmap": 1024,
+      "seed": 3,
+      "materials": {
+        "base": "black",
+        "body": "fascia",
+        "top": "stone",
+        "shelf": "led_amber",
+        "glowTop": "led_amber",
+        "glowKick": "led_red"
+      },
+      "emblems": null,
+      "bottles": ["bottle_amber", "bottle_green", "bottle_clear"]
+    },
+    {
+      "$comment": "Pilier Ø 0,9 m du sol au plafond à l'angle sud-ouest du bar (layout.columns), habillé de bandes LED vertes (photo fb-salle-verte-arche-led-bar).",
+      "type": "mesh",
+      "object": "pilier_led",
+      "lightmap": 512,
+      "ops": [["cylinder", -1.3, -1.6, 0, "ceil", 0.45, "fascia"]]
+    },
+    {
+      "$comment": "Bandes du pilier : 8 verticales, puis un éventail qui s'écarte au plafond (rayons 0,47 → 0,9 → 1,8 → 3,2 m). Les deux bandes côté bar partent au-dessus du comptoir.",
+      "type": "mesh",
+      "into": "strips",
+      "ops": [
+        ["beam", [-0.866, -1.42, 1.13], [-0.866, -1.42, "ceil - 1.2"], 0.04, 0.04, "led_green"],
+        [
+          "beam",
+          [-0.866, -1.42, "ceil - 1.2"],
+          [-0.469, -1.256, "ceil - 0.5"],
+          0.04,
+          0.04,
+          "led_green"
+        ],
+        [
+          "beam",
+          [-0.469, -1.256, "ceil - 0.5"],
+          [0.363, -0.911, "ceil - 0.18"],
+          0.04,
+          0.04,
+          "led_green"
+        ],
+        [
+          "beam",
+          [0.363, -0.911, "ceil - 0.18"],
+          [1.657, -0.375, "ceil - 0.15"],
+          0.04,
+          0.04,
+          "led_green"
+        ],
+        ["beam", [-1.12, -1.166, 1.13], [-1.12, -1.166, "ceil - 1.2"], 0.04, 0.04, "led_green"],
+        [
+          "beam",
+          [-1.12, -1.166, "ceil - 1.2"],
+          [-0.956, -0.769, "ceil - 0.5"],
+          0.04,
+          0.04,
+          "led_green"
+        ],
+        [
+          "beam",
+          [-0.956, -0.769, "ceil - 0.5"],
+          [-0.611, 0.063, "ceil - 0.18"],
+          0.04,
+          0.04,
+          "led_green"
+        ],
+        [
+          "beam",
+          [-0.611, 0.063, "ceil - 0.18"],
+          [-0.075, 1.357, "ceil - 0.15"],
+          0.04,
+          0.04,
+          "led_green"
+        ],
+        ["beam", [-1.48, -1.166, 0.05], [-1.48, -1.166, "ceil - 1.2"], 0.04, 0.04, "led_green"],
+        [
+          "beam",
+          [-1.48, -1.166, "ceil - 1.2"],
+          [-1.644, -0.769, "ceil - 0.5"],
+          0.04,
+          0.04,
+          "led_green"
+        ],
+        [
+          "beam",
+          [-1.644, -0.769, "ceil - 0.5"],
+          [-1.989, 0.063, "ceil - 0.18"],
+          0.04,
+          0.04,
+          "led_green"
+        ],
+        [
+          "beam",
+          [-1.989, 0.063, "ceil - 0.18"],
+          [-2.525, 1.357, "ceil - 0.15"],
+          0.04,
+          0.04,
+          "led_green"
+        ],
+        ["beam", [-1.734, -1.42, 0.05], [-1.734, -1.42, "ceil - 1.2"], 0.04, 0.04, "led_green"],
+        [
+          "beam",
+          [-1.734, -1.42, "ceil - 1.2"],
+          [-2.132, -1.256, "ceil - 0.5"],
+          0.04,
+          0.04,
+          "led_green"
+        ],
+        [
+          "beam",
+          [-2.132, -1.256, "ceil - 0.5"],
+          [-2.963, -0.911, "ceil - 0.18"],
+          0.04,
+          0.04,
+          "led_green"
+        ],
+        [
+          "beam",
+          [-2.963, -0.911, "ceil - 0.18"],
+          [-4.257, -0.375, "ceil - 0.15"],
+          0.04,
+          0.04,
+          "led_green"
+        ],
+        ["beam", [-1.734, -1.78, 0.05], [-1.734, -1.78, "ceil - 1.2"], 0.04, 0.04, "led_green"],
+        [
+          "beam",
+          [-1.734, -1.78, "ceil - 1.2"],
+          [-2.132, -1.944, "ceil - 0.5"],
+          0.04,
+          0.04,
+          "led_green"
+        ],
+        [
+          "beam",
+          [-2.132, -1.944, "ceil - 0.5"],
+          [-2.963, -2.289, "ceil - 0.18"],
+          0.04,
+          0.04,
+          "led_green"
+        ],
+        [
+          "beam",
+          [-2.963, -2.289, "ceil - 0.18"],
+          [-4.257, -2.825, "ceil - 0.15"],
+          0.04,
+          0.04,
+          "led_green"
+        ],
+        ["beam", [-1.48, -2.034, 0.05], [-1.48, -2.034, "ceil - 1.2"], 0.04, 0.04, "led_green"],
+        [
+          "beam",
+          [-1.48, -2.034, "ceil - 1.2"],
+          [-1.644, -2.432, "ceil - 0.5"],
+          0.04,
+          0.04,
+          "led_green"
+        ],
+        [
+          "beam",
+          [-1.644, -2.432, "ceil - 0.5"],
+          [-1.989, -3.263, "ceil - 0.18"],
+          0.04,
+          0.04,
+          "led_green"
+        ],
+        [
+          "beam",
+          [-1.989, -3.263, "ceil - 0.18"],
+          [-2.525, -4.557, "ceil - 0.15"],
+          0.04,
+          0.04,
+          "led_green"
+        ],
+        ["beam", [-1.12, -2.034, 0.05], [-1.12, -2.034, "ceil - 1.2"], 0.04, 0.04, "led_green"],
+        [
+          "beam",
+          [-1.12, -2.034, "ceil - 1.2"],
+          [-0.956, -2.432, "ceil - 0.5"],
+          0.04,
+          0.04,
+          "led_green"
+        ],
+        [
+          "beam",
+          [-0.956, -2.432, "ceil - 0.5"],
+          [-0.611, -3.263, "ceil - 0.18"],
+          0.04,
+          0.04,
+          "led_green"
+        ],
+        [
+          "beam",
+          [-0.611, -3.263, "ceil - 0.18"],
+          [-0.075, -4.557, "ceil - 0.15"],
+          0.04,
+          0.04,
+          "led_green"
+        ],
+        ["beam", [-0.866, -1.78, 0.05], [-0.866, -1.78, "ceil - 1.2"], 0.04, 0.04, "led_green"],
+        [
+          "beam",
+          [-0.866, -1.78, "ceil - 1.2"],
+          [-0.469, -1.944, "ceil - 0.5"],
+          0.04,
+          0.04,
+          "led_green"
+        ],
+        [
+          "beam",
+          [-0.469, -1.944, "ceil - 0.5"],
+          [0.363, -2.289, "ceil - 0.18"],
+          0.04,
+          0.04,
+          "led_green"
+        ],
+        [
+          "beam",
+          [0.363, -2.289, "ceil - 0.18"],
+          [1.657, -2.825, "ceil - 0.15"],
+          0.04,
+          0.04,
+          "led_green"
+        ]
+      ]
+    },
+    {
+      "$comment": "Cabine DJ en biais, tournée vers la piste (nord-est) : plateforme de 0,8 m (layout heights.stage), comptoir, platines.",
+      "type": "mesh",
+      "object": "dj_booth",
+      "lightmap": 1024,
+      "ops": [
+        ["beam", [-12.9, -6.1, "stage / 2"], [-8.25, -10.75, "stage / 2"], 3.0, "stage", "fascia"],
+        [
+          "beam",
+          [-11.891, -5.837, "stage + 0.55"],
+          [-7.987, -9.741, "stage + 0.55"],
+          0.7,
+          1.1,
+          "black"
+        ],
+        [
+          "beam",
+          [-11.891, -5.837, "stage + 1.12"],
+          [-7.987, -9.741, "stage + 1.12"],
+          0.8,
+          0.04,
+          "stone"
+        ],
+        [
+          "beam",
+          [-10.109, -7.619, "stage + 1.18"],
+          [-9.769, -7.959, "stage + 1.18"],
+          0.42,
+          0.08,
+          "black"
+        ],
+        ["cylinder", -10.575, -7.153, "stage + 1.14", "stage + 1.19", 0.17, "black"],
+        ["cylinder", -9.303, -8.425, "stage + 1.14", "stage + 1.19", 0.17, "black"]
+      ]
+    },
+    {
+      "type": "mesh",
+      "into": "strips",
+      "ops": [
+        [
+          "beam",
+          [-11.586, -5.618, "stage + 0.22"],
+          [-7.768, -9.436, "stage + 0.22"],
+          0.03,
+          0.04,
+          "led_amber"
+        ],
+        [
+          "beam",
+          [-11.586, -5.618, "stage + 0.44"],
+          [-7.768, -9.436, "stage + 0.44"],
+          0.03,
+          0.04,
+          "led_amber"
+        ],
+        [
+          "beam",
+          [-11.586, -5.618, "stage + 0.66"],
+          [-7.768, -9.436, "stage + 0.66"],
+          0.03,
+          0.04,
+          "led_amber"
+        ],
+        [
+          "beam",
+          [-11.586, -5.618, "stage + 0.88"],
+          [-7.768, -9.436, "stage + 0.88"],
+          0.03,
+          0.04,
+          "led_amber"
+        ],
+        [
+          "beam",
+          [-11.84, -5.038, "stage - 0.03"],
+          [-7.188, -9.69, "stage - 0.03"],
+          0.03,
+          0.03,
+          "led_amber"
+        ],
+        ["cylinder", -11.643, -5.561, "stage", "stage + 1.6", 0.03, "led_red"],
+        ["cylinder", -7.711, -9.493, "stage", "stage + 1.6", 0.03, "led_blue"]
+      ]
+    },
+    {
+      "type": "mesh",
+      "object": "comptoir_nord",
+      "lightmap": 512,
+      "ops": [
+        [
+          "box",
+          4.8,
+          10.8,
+          9.0,
+          9.6,
+          0,
+          1.05,
+          "fascia",
+          {
+            "skip": ["-z"]
+          }
+        ],
+        ["box", 4.74, 10.86, 8.94, 9.66, 1.05, 1.1, "stone"]
+      ]
+    },
+    {
+      "type": "mesh",
+      "object": "wc",
+      "lightmap": 512,
+      "ops": [
+        [
+          "box",
+          "wc_x0",
+          "wc_x1",
+          "wc_y0",
+          "wc_y1",
+          0,
+          2.9,
+          "fascia",
+          {
+            "skip": ["-z", "+x", "+y"]
+          }
+        ]
+      ]
+    },
+    {
+      "type": "text",
+      "text": "WC",
+      "material": "neon_white",
+      "size": 0.3,
+      "extrude": 0.01,
+      "font": "medium",
+      "at": ["(wc_x0 + wc_x1) / 2", "wc_y0 - 0.02", 2.4],
+      "x": [1, 0, 0],
+      "y": [0, 0, 1]
+    },
+    {
+      "type": "text",
+      "text": "ENTRÉE",
+      "material": "neon_white",
+      "size": 0.22,
+      "extrude": 0.01,
+      "font": "medium",
+      "spacing": 1.2,
+      "at": ["maxX - 0.03", "entrance_y", 2.95],
+      "x": [0, -1, 0],
+      "y": [0, 0, 1]
+    },
+    {
+      "type": "mesh",
+      "object": "lvl1_bar_vip_retour",
+      "collection": "LVL1",
+      "lightmap": 512,
+      "ops": [
+        [
+          "box",
+          16.65,
+          17.25,
+          3.6,
+          13.35,
+          "mz",
+          "mz + 1.05",
+          "fascia",
+          {
+            "skip": ["-z"]
+          }
+        ],
+        ["box", 16.59, 17.31, 3.54, 13.35, "mz + 1.05", "mz + 1.11", "stone"]
+      ]
+    },
+    {
+      "type": "mesh",
+      "into": "strips1",
+      "ops": [
+        ["box", "maxX - 0.24", "maxX - 0.02", 3.9, 14.5, "mz + 1.35", "mz + 1.375", "led_amber"],
+        ["box", "maxX - 0.24", "maxX - 0.02", 3.9, 14.5, "mz + 1.8", "mz + 1.825", "led_amber"],
+        ["box", "maxX - 0.24", "maxX - 0.02", 3.9, 14.5, "mz + 2.25", "mz + 2.275", "led_amber"]
+      ]
+    },
+    {
+      "type": "trusses",
+      "material": "black",
+      "segments": [
+        [
+          [-10.874, -2.702, 7.55],
+          [-5.784, -7.793, 7.55]
+        ],
+        [
+          [-9.071, -1.322, 7.55],
+          [-5.04, -5.354, 7.55]
+        ]
+      ]
+    },
+    {
+      "type": "movingHeads",
+      "material": "black",
+      "lens": "lens"
+    },
+    {
+      "type": "speakers",
+      "material": "black",
+      "items": [
+        {
+          "x": -13.5,
+          "y": -5.4
+        },
+        {
+          "x": -8.4,
+          "y": -12.3
+        }
+      ],
+      "top": 7.2,
+      "count": 6,
+      "step": 0.31,
+      "tilt": 2.5,
+      "hang": 7.35
+    },
+    {
+      "type": "mesh",
+      "into": "strips",
+      "ops": [
+        ["beam", [-14.0, -9.0, "ceil - 0.25"], [6.9, -9.0, "ceil - 0.25"], 0.03, 0.03, "led_amber"],
+        ["beam", [-14.0, -5.6, "ceil - 0.25"], [6.9, -5.6, "ceil - 0.25"], 0.03, 0.03, "led_amber"],
+        ["beam", [-14.0, 2.2, "ceil - 0.25"], [6.9, 2.2, "ceil - 0.25"], 0.03, 0.03, "led_amber"],
+        ["beam", [-14.0, 6.6, "ceil - 0.25"], [-1.0, 6.6, "ceil - 0.25"], 0.03, 0.03, "led_amber"]
+      ]
+    },
+    {
+      "type": "booths",
+      "materials": {
+        "plinth": "leather",
+        "velvet_lounge": "velvet_lounge",
+        "velvet_vip": "velvet_vip",
+        "velvet_prestige": "velvet_prestige",
+        "frame": "black",
+        "trim": "steel",
+        "top": "tabletop",
+        "lamp": "lamp",
+        "bottleGreen": "bottle_green",
+        "bottleClear": "bottle_clear",
+        "glass": "glass"
+      }
+    },
+    {
+      "type": "backBar",
+      "wallY": "maxY - 0.26",
+      "seed": 99,
+      "materials": {
+        "body": "fascia",
+        "top": "stone",
+        "shelf": "led_amber"
+      },
+      "bottles": ["bottle_amber", "bottle_green", "bottle_clear"]
+    },
+    {
+      "type": "decor",
+      "tableSeed": 200,
+      "plantSeed": 300,
+      "materials": {
+        "frame": "black",
+        "trim": "steel",
+        "top": "stone",
+        "seat": "leather",
+        "foliage": "leather"
+      }
+    },
+    {
+      "type": "mesh",
+      "object": "fx_sign_wall_e",
+      "collection": "FX",
+      "ops": [
+        ["wall_x", "minX + 0.05", -5.1, -3.3, 4.6, 6.8, "screen_mint", 1],
+        ["wall_x", "minX + 0.05", -2.4, -0.6, 4.6, 6.8, "screen", 1],
+        ["wall_x", "minX + 0.05", 0.3, 5.7, 4.6, 6.8, "screen", 1],
+        ["beam", ["minX + 0.08", -5.1, 4.6], ["minX + 0.08", -3.3, 4.6], 0.05, 0.05, "led_white"],
+        ["beam", ["minX + 0.08", -3.3, 4.6], ["minX + 0.08", -3.3, 6.8], 0.05, 0.05, "led_white"],
+        ["beam", ["minX + 0.08", -3.3, 6.8], ["minX + 0.08", -5.1, 6.8], 0.05, 0.05, "led_white"],
+        ["beam", ["minX + 0.08", -5.1, 6.8], ["minX + 0.08", -5.1, 4.6], 0.05, 0.05, "led_white"],
+        ["beam", ["minX + 0.08", -2.4, 4.6], ["minX + 0.08", -0.6, 4.6], 0.05, 0.05, "led_white"],
+        ["beam", ["minX + 0.08", -0.6, 4.6], ["minX + 0.08", -0.6, 6.8], 0.05, 0.05, "led_white"],
+        ["beam", ["minX + 0.08", -0.6, 6.8], ["minX + 0.08", -2.4, 6.8], 0.05, 0.05, "led_white"],
+        ["beam", ["minX + 0.08", -2.4, 6.8], ["minX + 0.08", -2.4, 4.6], 0.05, 0.05, "led_white"],
+        ["beam", ["minX + 0.08", 0.3, 4.6], ["minX + 0.08", 5.7, 4.6], 0.05, 0.05, "led_white"],
+        ["beam", ["minX + 0.08", 5.7, 4.6], ["minX + 0.08", 5.7, 6.8], 0.05, 0.05, "led_white"],
+        ["beam", ["minX + 0.08", 5.7, 6.8], ["minX + 0.08", 0.3, 6.8], 0.05, 0.05, "led_white"],
+        ["beam", ["minX + 0.08", 0.3, 6.8], ["minX + 0.08", 0.3, 4.6], 0.05, 0.05, "led_white"]
+      ]
+    },
+    {
+      "type": "logo",
+      "object": "fx_sign_wall_s",
+      "collection": "FX",
+      "material": "neon_red",
+      "height": 1.6,
+      "tube": 0.035,
+      "at": [-9.0, "maxY - 0.06", 6.1],
+      "x": [1, 0, 0],
+      "y": [0, 0, 1]
+    },
+    {
+      "type": "text",
+      "text": "RUDBOY",
+      "material": "neon_white",
+      "size": 0.8,
+      "font": "bold",
+      "outline": 0.014,
+      "spacing": 1.08,
+      "at": [11.1, "maxY - 0.05", 6.75],
+      "x": [1, 0, 0],
+      "y": [0, 0, 1]
+    }
+  ],
+  "lights": {
+    "lamps": {
+      "energy": 18.0,
+      "color": [1.0, 0.64, 0.36],
+      "radius": 0.08
+    },
+    "pins": {
+      "energy": 26.0,
+      "color": [1.0, 0.82, 0.62],
+      "size": 34,
+      "blend": 0.55
+    },
+    "spots": [
+      {
+        "name": "dl_alcoves",
+        "values": [-2.175, 1.425, 5.025],
+        "at": ["v", -12.2, "under - 0.05"],
+        "target": ["v", -12.6, 0.4],
+        "energy": 200.0,
+        "color": [1.0, 0.62, 0.34],
+        "size": 85
+      },
+      {
+        "name": "dl_ouest",
+        "values": [-4.95, -1.65, 1.65, 4.95],
+        "at": [-15.7, "v", "under - 0.05"],
+        "target": [-16.2, "v", 0.4],
+        "energy": 240.0,
+        "color": [1.0, 0.62, 0.34],
+        "size": 85
+      },
+      {
+        "name": "wall_ouest_bas",
+        "values": [-4.95, -1.65, 1.65, 4.95],
+        "at": ["minX + 0.5", "v", "under - 0.05"],
+        "target": ["minX + 0.02", "v", 1.0],
+        "energy": 200.0,
+        "color": [1.0, 0.58, 0.3],
+        "size": 60,
+        "blend": 0.75
+      },
+      {
+        "name": "dl_est",
+        "values": [-12.0, -7.5, -3.0, 1.5, 6.0, 9.0],
+        "at": [15.6, "v", "under - 0.05"],
+        "target": [15.6, "v", 0],
+        "energy": 150.0,
+        "color": [1.0, 0.64, 0.36],
+        "size": 85
+      },
+      {
+        "name": "dl_nord",
+        "values": [-15.0, -9.0, -3.0, 3.0, 9.0],
+        "at": ["v", 12.75, "under - 0.05"],
+        "target": ["v", 12.75, 0],
+        "energy": 150.0,
+        "color": [1.0, 0.64, 0.36],
+        "size": 85
+      },
+      {
+        "name": "dl_prestige",
+        "values": [
+          [2.0, 8.0],
+          [7.0, 8.0],
+          [11.4, 3.0],
+          [11.4, 8.0]
+        ],
+        "at": ["v0", "v1", "under - 0.05"],
+        "target": ["v0", "v1", 0],
+        "energy": 150.0,
+        "color": [1.0, 0.64, 0.36],
+        "size": 85
+      },
+      {
+        "name": "up_north",
+        "count": 5,
+        "at": ["-16.5 + 4.2 * i", "maxY - 0.1", "mz + 1.25"],
+        "target": ["-16.5 + 4.2 * i", "maxY - 0.02", "ceil"],
+        "energy": 280.0,
+        "color": [1.0, 0.58, 0.3],
+        "size": 52,
+        "blend": 0.75
+      },
+      {
+        "name": "wash_west",
+        "values": [-4.2, 0.3, 4.8],
+        "at": ["minX + 0.6", "v", "ceil - 0.3"],
+        "target": ["minX + 0.02", "v", 4.8],
+        "energy": 260.0,
+        "color": [1.0, 0.6, 0.32],
+        "size": 60,
+        "blend": 0.8
+      },
+      {
+        "name": "dl_escalier_ouest",
+        "values": [-14.5, -11.3],
+        "at": ["v", 8.95, "ceil - 0.3"],
+        "target": ["v", 8.95, 1.75],
+        "energy": 260.0,
+        "color": [1.0, 0.64, 0.36],
+        "size": 50
+      },
+      {
+        "name": "dl_escalier_est",
+        "values": [-11.0, -7.6],
+        "at": [10.95, "v", "ceil - 0.3"],
+        "target": [10.95, "v", 1.75],
+        "energy": 260.0,
+        "color": [1.0, 0.64, 0.36],
+        "size": 50
+      },
+      {
+        "name": "wash_dj",
+        "values": [
+          [-10.5, -3.3],
+          [-6.6, -7.2]
+        ],
+        "at": ["v0", "v1", 7.2],
+        "target": [-9.9, -7.8, 1.9],
+        "energy": 520.0,
+        "color": [1.0, 0.55, 0.22],
+        "size": 36,
+        "blend": 0.4
+      }
+    ],
+    "areas": [
+      {
+        "name": "fill_piste",
+        "values": [
+          [-8.25, 0.0],
+          [-3.0, -4.5],
+          [3.75, -3.75]
+        ],
+        "at": ["v0", "v1", "ceil - 0.3"],
+        "energy": 1300.0,
+        "color": [0.25, 1.0, 0.5],
+        "size": 5.5
+      },
+      {
+        "name": "fill_bar",
+        "values": [[1.95, 0.9]],
+        "at": ["v0", "v1", "ceil - 0.3"],
+        "energy": 1000.0,
+        "color": [1.0, 0.6, 0.3],
+        "size": 5.0
+      },
+      {
+        "name": "fill_mezz",
+        "values": [
+          [-13.0, 13.2],
+          [-5.0, 13.2],
+          [1.0, 13.2],
+          [-3.5, -13.2],
+          [4.1, -13.2],
+          [14.85, -10.2],
+          [14.85, -3.0],
+          [2.1, 8.1],
+          [7.3, 8.1],
+          [12.75, 3.1],
+          [11.0, 13.6],
+          [-16.5, 0.0]
+        ],
+        "at": ["v0", "v1", "ceil - 0.3"],
+        "energy": 750.0,
+        "color": [1.0, 0.62, 0.4],
+        "size": 4.5
+      }
+    ]
+  },
+  "world": {
+    "color": [0.003, 0.005, 0.004]
+  }
+}

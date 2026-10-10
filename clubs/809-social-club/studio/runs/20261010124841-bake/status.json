@@ -1,0 +1,29 @@
+{
+  "id": "20261010124841-bake",
+  "step": "bake",
+  "state": "done",
+  "options": {
+    "quality": "final"
+  },
+  "createdAt": "2026-10-10T12:48:41.173Z",
+  "phases": [
+    {
+      "name": "Bake des lightmaps (final)",
+      "startedAt": "2026-10-10T12:48:42.018Z",
+      "endedAt": "2026-10-10T12:53:26.582Z",
+      "ok": true
+    },
+    {
+      "name": "Optimisation web",
+      "startedAt": "2026-10-10T12:53:26.584Z",
+      "endedAt": "2026-10-10T12:53:34.919Z",
+      "ok": true
+    }
+  ],
+  "pid": 59100,
+  "startedAt": "2026-10-10T12:48:42.000Z",
+  "result": {
+    "quality": "final"
+  },
+  "endedAt": "2026-10-10T12:53:34.922Z"
+}

@@ -1,0 +1,41 @@
+{
+  "id": "20261010122241-auto",
+  "step": "auto",
+  "state": "failed",
+  "options": {},
+  "createdAt": "2026-10-10T12:22:41.990Z",
+  "phases": [
+    {
+      "name": "Bake des lightmaps (final)",
+      "startedAt": "2026-10-10T12:22:43.469Z",
+      "endedAt": "2026-10-10T12:27:25.894Z",
+      "ok": true
+    },
+    {
+      "name": "Optimisation web",
+      "startedAt": "2026-10-10T12:27:25.896Z",
+      "endedAt": "2026-10-10T12:27:34.369Z",
+      "ok": true
+    },
+    {
+      "name": "Enregistrement dans clubs/registry.ts",
+      "startedAt": "2026-10-10T12:27:34.486Z",
+      "endedAt": "2026-10-10T12:27:34.492Z",
+      "ok": true
+    },
+    {
+      "name": "Tests de contrat (tous les clubs)",
+      "startedAt": "2026-10-10T12:27:34.494Z",
+      "endedAt": "2026-10-10T12:27:36.493Z",
+      "ok": false
+    }
+  ],
+  "pid": 3876,
+  "startedAt": "2026-10-10T12:22:42.988Z",
+  "current": "preview",
+  "result": {
+    "quality": "final"
+  },
+  "endedAt": "2026-10-10T12:27:36.495Z",
+  "error": "node.exe a échoué (code 1)"
+}
