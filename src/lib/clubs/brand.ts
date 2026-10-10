@@ -61,12 +61,12 @@ export const brandSchema = z.object({
 export type ClubBrand = z.infer<typeof brandSchema>
 
 /**
- * CSS custom properties of a brand, for `:root`. Every value went through `brandSchema`
- * (hex colours, known font keys), so the rule is safe to inline in the page.
+ * CSS custom properties of a brand. Every value went through `brandSchema` (hex colours, known
+ * font keys), so they are safe to inline in the page, on `:root` or on one element.
  */
-export function brandCss(brand: ClubBrand): string {
+export function brandVars(brand: ClubBrand): Record<`--${string}`, string> {
   const { accent, tiers } = brand
-  const vars: [string, string][] = [
+  const vars: [`--${string}`, string][] = [
     ["--brand", accent.color],
     ["--brand-deep", accent.deep],
     ["--brand-on", accent.on],
@@ -76,10 +76,16 @@ export function brandCss(brand: ClubBrand): string {
     ["--foil", accent.foil[1]],
     ["--foil-lo", accent.foil[2]],
     ["--club-font", `var(--font-${brand.font})`],
-    ...tierSchema.options.flatMap((tier): [string, string][] => [
+    ...tierSchema.options.flatMap((tier): [`--${string}`, string][] => [
       [`--${tier}`, tiers[tier].color],
       [`--${tier}-deep`, tiers[tier].deep],
     ]),
   ]
+  return Object.fromEntries(vars)
+}
+
+/** The brand's custom properties as a `:root` rule, for the club's pages. */
+export function brandCss(brand: ClubBrand): string {
+  const vars = Object.entries(brandVars(brand))
   return `:root{${vars.map(([name, value]) => `${name}:${value}`).join(";")}}`
 }

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { brandCss, brandSchema, type ClubBrand } from "@/lib/clubs/brand"
+import { brandCss, brandSchema, brandVars, type ClubBrand } from "@/lib/clubs/brand"
 
 const brand = (): ClubBrand => ({
   accent: {
@@ -60,5 +60,15 @@ describe("brandCss", () => {
     ]) {
       expect(css).toContain(declaration)
     }
+  })
+})
+
+describe("brandVars", () => {
+  it("gives the same custom properties to style one element", () => {
+    const vars = brandVars(brand())
+    expect(vars["--brand"]).toBe("#c9ced6")
+    expect(vars["--vip"]).toBe("#ff375f")
+    const declarations = Object.entries(vars).map(([name, value]) => `${name}:${value}`)
+    expect(brandCss(brand())).toBe(`:root{${declarations.join(";")}}`)
   })
 })
