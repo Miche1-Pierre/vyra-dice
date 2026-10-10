@@ -322,6 +322,10 @@ export function Experience({ club }: { club: ClubDefinition }) {
     const m = content.event.music
     return m ? { url: assetUrl(club.slug, m.src), title: m.title, artist: m.artist } : null
   }, [club.slug, content.event.music])
+  const screenVideos = useMemo(
+    () => content.event.screens?.map((src) => assetUrl(club.slug, src)),
+    [club.slug, content.event.screens],
+  )
   const table = selectedTableId ? vm.tables[selectedTableId] : null
   const tableIcon = table ? (vm.zones.find((z) => z.id === table.zoneId)?.icon ?? "sofa") : "sofa"
   const ticket = focusedTicketId ? (vm.tickets.find((t) => t.id === focusedTicketId) ?? null) : null
@@ -352,6 +356,7 @@ export function Experience({ club }: { club: ClubDefinition }) {
                   ambiance={club.ambiance}
                   tiers={club.brand.tiers}
                   tone={club.brand.ui.tone}
+                  screenVideos={screenVideos}
                   layout={layout}
                   zoneMarkers={vm.zoneMarkers}
                   tableMarkers={vm.tableMarkers}
