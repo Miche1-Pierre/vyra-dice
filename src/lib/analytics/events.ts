@@ -23,6 +23,7 @@ export type AnalyticsEvents = {
   request_failed: { table_id: string; reason: string }
   fallback_contact_clicked: { channel: string; context: string }
   ticket_viewed: { ticket_id: string }
+  night_mode_toggled: { on: boolean }
   ticket_link_clicked: { url: string }
 }
 

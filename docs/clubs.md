@@ -145,6 +145,7 @@ l'interface ne lit que ces jetons. Ajouter une police : la charger dans `src/app
 | `environment`               | reflets : fond et panneaux lumineux (`form` rect / ring / circle, `color`, `intensity`, `position`, `target`, `scale`)      |
 | `finishes`                  | finition par nom de matière Blender : un préréglage, ou `{ "preset", "tint", "roughness", "metalness", "envMapIntensity" }` |
 | `intro` (facultatif)        | ouverture : `flight` (défaut, vol de caméra sur `cameras.intro`) ou `neon` (le club se dessine en néon, puis se construit)  |
+| `night` (facultatif)        | `{ "color" }` : propose l'ambiance de nuit (salle sombre, toutes les lumières dans cette couleur, fumée) ; colore le néon   |
 
 Les panneaux de reflets sont en espace three.js (mètres, y vers le haut) et regardent `target` (l'origine par défaut).
 Ils ne servent qu'aux reflets et au brillant ; la lumière diffuse vient du bake.

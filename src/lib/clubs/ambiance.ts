@@ -98,6 +98,11 @@ export const ambianceSchema = z.object({
    * in glowing lines from the overview, then builds it up from the floor.
    */
   intro: z.enum(["flight", "neon"]).default("flight"),
+  /**
+   * Night mode, offered when present: the room falls dark, every light turns to `color`, haze
+   * and smoke drift over the dance floor. `color` also draws the neon intro.
+   */
+  night: z.object({ color: hexColorSchema }).optional(),
 })
 export type ClubAmbiance = z.infer<typeof ambianceSchema>
 

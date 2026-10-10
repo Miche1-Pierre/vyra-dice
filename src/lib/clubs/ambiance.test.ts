@@ -56,13 +56,15 @@ describe("ambianceSchema", () => {
     expect(bad((a) => (a.show.palette = [[1, 1, 1]]))).toBe(false)
   })
 
-  it("opens with the flight unless the club asks for the neon", () => {
+  it("opens with the flight and offers no night mode unless the club asks", () => {
     const { show, beams, environment, finishes } = ambiance()
     const plain = { show, beams, environment, finishes }
     const parsed = ambianceSchema.parse(plain)
     expect(parsed.intro).toBe("flight")
-    const neon = ambianceSchema.parse({ ...plain, intro: "neon" })
-    expect(neon).toMatchObject({ intro: "neon" })
+    expect(parsed.night).toBeUndefined()
+    const neon = ambianceSchema.parse({ ...plain, intro: "neon", night: { color: "#ff1a2a" } })
+    expect(neon).toMatchObject({ intro: "neon", night: { color: "#ff1a2a" } })
+    expect(ambianceSchema.safeParse({ ...plain, night: { color: "red" } }).success).toBe(false)
   })
 })
 
