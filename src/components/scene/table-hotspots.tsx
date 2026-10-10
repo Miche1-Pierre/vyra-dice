@@ -8,7 +8,7 @@ import { createHaloMaterial } from "@/components/scene/fx/materials"
 import type { ClubBrand } from "@/lib/clubs/brand"
 import { useExperience } from "@/lib/store"
 import {
-  levelHeight,
+  tableFloor,
   tableFootprint,
   tableLevel,
   toThree,
@@ -29,7 +29,7 @@ export function TableHotspots({
     () =>
       layout.tables.map((t) => {
         const level = tableLevel(layout, t)
-        const floor = levelHeight(layout, level)
+        const floor = tableFloor(layout, t)
         const { width, depth } = tableFootprint(layout, t)
         const zone = layout.zones.find((z) => z.id === t.zone)
         const halo = createHaloMaterial()

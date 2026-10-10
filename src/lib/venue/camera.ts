@@ -1,8 +1,10 @@
 import {
   levelHeight,
+  tableFloor,
   tableFootprint,
   tableLevel,
   toThree,
+  zoneFloor,
   type LayoutTable,
   type VenueLayout,
 } from "@/lib/venue/layout"
@@ -109,7 +111,7 @@ export function zonePose(layout: VenueLayout, zoneId: string, aspect: number): C
   if (!zone) return overviewPose(layout, aspect)
   const cx = (zone.x[0] + zone.x[1]) / 2
   const cy = (zone.y[0] + zone.y[1]) / 2
-  const floor = levelHeight(layout, zone.level)
+  const floor = zoneFloor(layout, zone)
   const target = toThree([cx, cy, floor + 0.6])
   const facing = zoneFacing(layout, zoneId)
   const w = zone.x[1] - zone.x[0]
@@ -140,8 +142,7 @@ export function zonePose(layout: VenueLayout, zoneId: string, aspect: number): C
 }
 
 function tableAnchor(layout: VenueLayout, table: LayoutTable): Vec3 {
-  const floor = levelHeight(layout, tableLevel(layout, table))
-  return toThree([table.x, table.y, floor])
+  return toThree([table.x, table.y, tableFloor(layout, table)])
 }
 
 export function tablePose(layout: VenueLayout, tableId: string, aspect: number): CameraPose {
@@ -215,7 +216,7 @@ export function tableMarkerPosition(layout: VenueLayout, table: LayoutTable): Ve
 export function zoneMarkerPosition(layout: VenueLayout, zoneId: string): Vec3 {
   const zone = layout.zones.find((z) => z.id === zoneId)
   if (!zone) return venueCenter(layout)
-  const floor = levelHeight(layout, zone.level)
+  const floor = zoneFloor(layout, zone)
   const cx = (zone.x[0] + zone.x[1]) / 2
   const cy = (zone.y[0] + zone.y[1]) / 2
   if (zone.level === 0 && isUnderSlab(layout, cx, cy)) {

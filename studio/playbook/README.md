@@ -37,9 +37,10 @@ et te renvoie les erreurs : corrige ce qu'il signale, rien de plus.
 - `building` : emprise extérieure ; `groundFloor` : la salle du rez-de-chaussée.
 - Niveaux : 0 = rez-de-chaussée, 1 = mezzanine/étage (`heights.mezzanine` = hauteur du plancher).
 - `mezzanine` : dalles de l'étage (rectangles nommés) ; `void` : zones double hauteur (sans dalle au-dessus).
-- `zones` : `tier` `lounge` | `vip` | `prestige`, `level`, rectangle. `tables` : `id`, `zone`, `kind` (= tier de la
-  zone), centre `x`/`y`, `facing` en degrés (0 = est, 90 = nord) = la direction que regardent les clients assis,
-  donc vers la piste ou la scène.
+- `zones` : `tier` `lounge` | `vip` | `prestige`, `level`, rectangle, et `raised` (m) pour une zone sur estrade : ses
+  banquettes, son étiquette et ses vues montent d'autant (l'estrade elle-même se construit en `mesh`). `tables` :
+  `id`, `zone`, `kind` (= tier de la zone), centre `x`/`y`, `facing` en degrés (0 = est, 90 = nord) = la direction que
+  regardent les clients assis, donc vers la piste ou la scène.
 - `stairs` : volées droites, `bottom` = côté du départ (`north`, `south`, `east` ou `west`), on monte vers l'opposé.
 - Ids : zones en slug lisible (`vip-balcon`), tables `l1…` (lounge), `v1…` (VIP), `p1…` (prestige), uniques.
 - Une table doit tenir dans sa zone avec son gabarit (`furniture[kind]`), sans chevaucher sa voisine

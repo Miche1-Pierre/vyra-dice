@@ -12,9 +12,10 @@ import {
   tableMarkerPosition,
   tablePose,
   venueCenter,
+  zoneMarkerPosition,
   zonePose,
 } from "@/lib/venue/camera"
-import { levelHeight, tableLevel, type LayoutZone, type VenueLayout } from "@/lib/venue/layout"
+import { tableFloor, type LayoutZone, type VenueLayout } from "@/lib/venue/layout"
 
 const PORTRAIT = 0.46
 const LANDSCAPE = 1.6
@@ -101,7 +102,7 @@ describe.each(listClubs().map((club) => [club.slug, club.layout] as const))(
     it("puts the eye at seated height on the booth, looking down at the room", () => {
       for (const t of layout.tables) {
         const pose = seatPose(layout, t.id, LANDSCAPE)
-        const floor = levelHeight(layout, tableLevel(layout, t))
+        const floor = tableFloor(layout, t)
         expect(pose.position[1], t.id).toBeCloseTo(floor + 1.18, 1)
         expect(pose.target[1], t.id).toBeLessThan(pose.position[1])
       }
@@ -109,7 +110,7 @@ describe.each(listClubs().map((club) => [club.slug, club.layout] as const))(
 
     it("places markers above the tables", () => {
       for (const t of layout.tables) {
-        const floor = levelHeight(layout, tableLevel(layout, t))
+        const floor = tableFloor(layout, t)
         expect(tableMarkerPosition(layout, t)[1], t.id).toBeGreaterThan(floor + 1)
       }
     })
@@ -168,5 +169,26 @@ describe("standingPose", () => {
   it("falls back to the overview for an unknown area", () => {
     const { layout } = listClubs()[0]
     expect(standingPose(layout, "nowhere", 1.6)).toEqual(overviewPose(layout, 1.6))
+  })
+})
+
+describe("raised zones", () => {
+  it("lifts the tables' views, seats and markers with their platform", () => {
+    const layout = structuredClone(listClubs()[0].layout)
+    const zone = layout.zones.find((z) => z.level === 0)
+    const table = layout.tables.find((t) => t.zone === zone?.id)
+    if (!zone || !table) throw new Error("the first club needs a ground-floor table")
+    const flat = {
+      table: tablePose(layout, table.id, LANDSCAPE).target[1],
+      seat: seatPose(layout, table.id, LANDSCAPE).position[1],
+      marker: tableMarkerPosition(layout, table)[1],
+      zone: zoneMarkerPosition(layout, zone.id)[1],
+    }
+
+    zone.raised = 0.4
+    expect(tablePose(layout, table.id, LANDSCAPE).target[1]).toBeCloseTo(flat.table + 0.4)
+    expect(seatPose(layout, table.id, LANDSCAPE).position[1]).toBeCloseTo(flat.seat + 0.4)
+    expect(tableMarkerPosition(layout, table)[1]).toBeCloseTo(flat.marker + 0.4)
+    expect(zoneMarkerPosition(layout, zone.id)[1]).toBeCloseTo(flat.zone + 0.4)
   })
 })

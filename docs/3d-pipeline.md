@@ -64,8 +64,8 @@ Depuis Claude Code, le MCP `blender` permet de lancer l'étape 1 dans le Blender
 
 Axes Blender : x = est, y = nord, z = haut, en mètres (three.js : `(x, z, -y)`, voir `toThree`). Contient le bâtiment,
 les vides double hauteur, les dalles de mezzanine, garde-corps, poteaux, escaliers, bar, scène, écran, WC, entrée,
-pluie de LED, lyres, décor, **zones** (tier `lounge` / `vip` / `prestige`, niveau 0/1), **tables** (id, zone, type,
-position, orientation `facing`), gabarits de mobilier et caméras (vue d'ensemble, intro).
+pluie de LED, lyres, décor, **zones** (tier `lounge` / `vip` / `prestige`, niveau 0/1, estrade `raised` en mètres),
+**tables** (id, zone, type, position, orientation `facing`), gabarits de mobilier et caméras (vue d'ensemble, intro).
 
 Le web lit ce même fichier (`src/lib/venue/layout.ts`, validé par zod) pour placer marqueurs, zones cliquables,
 halos et points de vue. Le contenu commercial (prix, capacités, statuts) vit à part : `clubs/<club>/content.json`.
