@@ -218,6 +218,12 @@ export function standingMarkerPosition(layout: VenueLayout, areaId: string): Vec
   return toThree([(area.x[0] + area.x[1]) / 2, (area.y[0] + area.y[1]) / 2, floor + 2.4])
 }
 
+/** Anchor of the DJ marker (three.js space): over the middle of the booth, above the DJ's head. */
+export function djMarkerPosition(layout: VenueLayout): Vec3 {
+  const { dj } = layout
+  return toThree([(dj.x[0] + dj.x[1]) / 2, (dj.y[0] + dj.y[1]) / 2, layout.heights.stage + 2.3])
+}
+
 /** Anchor of a table's price marker (three.js space). */
 export function tableMarkerPosition(layout: VenueLayout, table: LayoutTable): Vec3 {
   return add(tableAnchor(layout, table), [0, 1.55, 0])

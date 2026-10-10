@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest"
 
 import { listClubs } from "@/lib/clubs/registry"
 import {
+  djMarkerPosition,
   facingVector,
   LOOK_LIMITS,
   lookBounds,
@@ -219,6 +220,18 @@ describe("zoneMarkerPosition", () => {
     const [x, , z] = zoneMarkerPosition(layout, "l")
     // centre of slab a (40 m², against 24 m² for b), in Blender axes
     expect([x, 0 - z]).toEqual([5, 2])
+  })
+})
+
+describe("djMarkerPosition", () => {
+  it("marks the DJ over the middle of the booth, above the DJ's head", () => {
+    const layout = structuredClone(listClubs()[0].layout)
+    layout.dj = { x: [-12, -8], y: [-10, -6] }
+    layout.heights.stage = 0.9
+    const [x, y, z] = djMarkerPosition(layout)
+    // Blender axes: x, then y = -z; height over the stage's floor
+    expect([x, 0 - z]).toEqual([-10, -8])
+    expect(y).toBeCloseTo(3.2)
   })
 })
 
