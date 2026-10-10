@@ -57,6 +57,18 @@ export const brandSchema = z.object({
       shapes: z.array(z.object({ d: pathSchema, stroke: z.number().positive().optional() })).min(1),
     })
     .optional(),
+  /** How the interface speaks for this club. */
+  ui: z
+    .object({
+      /**
+       * `vivid` (default): glossy tiles in the tier colours, pill shapes. `sober`: flat graphite
+       * tiles with a tier dot, tighter corners, a flat primary button.
+       */
+      tone: z.enum(["vivid", "sober"]).default("vivid"),
+      /** Offer the side-by-side comparison of tables (default). */
+      compare: z.boolean().default(true),
+    })
+    .default({ tone: "vivid", compare: true }),
 })
 export type ClubBrand = z.infer<typeof brandSchema>
 

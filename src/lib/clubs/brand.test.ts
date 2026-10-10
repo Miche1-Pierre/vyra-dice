@@ -17,11 +17,23 @@ const brand = (): ClubBrand => ({
     prestige: { color: "#ffd60a", deep: "#6b5600" },
   },
   font: "jost",
+  ui: { tone: "vivid", compare: true },
 })
 
 describe("brandSchema", () => {
   it("accepts a club without drawn wordmark nor emblem", () => {
     expect(brandSchema.safeParse(brand()).success).toBe(true)
+  })
+
+  it("speaks in the vivid tone and offers the comparison unless the club says otherwise", () => {
+    const { accent, tiers, font } = brand()
+    const plain = { accent, tiers, font }
+    expect(brandSchema.parse(plain).ui).toEqual({ tone: "vivid", compare: true })
+    expect(brandSchema.parse({ ...plain, ui: { tone: "sober", compare: false } }).ui).toEqual({
+      tone: "sober",
+      compare: false,
+    })
+    expect(brandSchema.safeParse({ ...plain, ui: { tone: "loud" } }).success).toBe(false)
   })
 
   it("only accepts #rrggbb colours, known fonts and plain path data", () => {

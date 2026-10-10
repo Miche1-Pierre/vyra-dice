@@ -14,10 +14,10 @@ function typing(target: EventTarget | null): boolean {
 
 /**
  * Keyboard layer. Esc goes back one level on every screen (tablets and phones with a keyboard
- * too). On desktops: ⌘K / Ctrl K or / search · L list · C compare · V view from the seat ·
- * R overview · ↵ request the selected table · 1 2 3 levels.
+ * too). On desktops: ⌘K / Ctrl K or / search · L list · C compare (when the club offers it) ·
+ * V view from the seat · R overview · ↵ request the selected table · 1 2 3 levels.
  */
-export function useShortcuts(isDesktop: boolean) {
+export function useShortcuts(isDesktop: boolean, compare = true) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const s = useExperience.getState()
@@ -50,7 +50,7 @@ export function useShortcuts(isDesktop: boolean) {
           s.viewFromSeat()
           track("table_view_from_seat", { table_id: s.selectedTableId })
         }
-      } else if (key === "c") {
+      } else if (key === "c" && compare) {
         if (s.selectedTableId && s.panel === "table") s.toggleCompare(s.selectedTableId)
         else if (s.compareIds.length > 0) s.openPanel(s.panel === "compare" ? null : "compare")
       } else if (
@@ -68,5 +68,5 @@ export function useShortcuts(isDesktop: boolean) {
     }
     window.addEventListener("keydown", onKey)
     return () => window.removeEventListener("keydown", onKey)
-  }, [isDesktop])
+  }, [isDesktop, compare])
 }

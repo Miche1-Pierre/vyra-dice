@@ -33,7 +33,9 @@ export function LevelSwitch({ className, size }: { className?: string; size?: "s
   const level = useExperience((s) => s.levelFilter)
   const setLevel = useExperience((s) => s.setLevelFilter)
   return (
-    <div className={cn("glass glass-rim relative rounded-full p-1", className)}>
+    <div
+      className={cn("glass glass-rim sober:rounded-[11px] relative rounded-full p-1", className)}
+    >
       <Segmented
         label="Niveau affiché"
         value={level}
@@ -175,7 +177,7 @@ export function BrandBar({
         layout
         transition={SOFT_SPRING}
         className={cn(
-          "glass glass-rim relative flex min-w-0 items-center rounded-full",
+          "glass glass-rim sober:rounded-[11px] relative flex min-w-0 items-center rounded-full",
           isDesktop ? "h-10 gap-3 pr-3 pl-4" : "h-9 gap-2.5 pr-3 pl-3.5",
         )}
       >
@@ -183,7 +185,7 @@ export function BrandBar({
           type="button"
           onClick={resetView}
           aria-label={`${content.club.name} — vue d’ensemble`}
-          className="text-label focus-visible:ring-brand/70 flex shrink-0 items-center gap-2 rounded-full outline-none focus-visible:ring-2"
+          className="text-label focus-visible:ring-brand/70 sober:rounded-[8px] flex shrink-0 items-center gap-2 rounded-full outline-none focus-visible:ring-2"
         >
           <Emblem emblem={brand.emblem} className={isDesktop ? "h-[13px]" : "h-3"} />
           <Wordmark
@@ -205,7 +207,7 @@ export function BrandBar({
         {content.club.demo && isDesktop ? (
           <span
             title={content.club.disclaimer}
-            className="eyebrow text-brand ml-1 shrink-0 rounded-full px-2 py-[3px] text-[9px] leading-3 tracking-[0.22em] shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--brand)_40%,transparent)]"
+            className="eyebrow text-brand sober:rounded-[4px] ml-1 shrink-0 rounded-full px-2 py-[3px] text-[9px] leading-3 tracking-[0.22em] shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--brand)_40%,transparent)]"
           >
             Démo
           </span>
@@ -235,7 +237,7 @@ export function StatusLegend({ className }: { className?: string }) {
   return (
     <ul
       className={cn(
-        "glass glass-rim text-caption text-label-2 relative flex h-9 items-center gap-3.5 rounded-full px-4",
+        "glass glass-rim text-caption text-label-2 sober:rounded-[10px] relative flex h-9 items-center gap-3.5 rounded-full px-4",
         className,
       )}
     >
@@ -341,7 +343,7 @@ export function WhatsAppButton({
         rel="noreferrer"
         aria-label={label}
         onClick={() => track("fallback_contact_clicked", { channel: "whatsapp", context })}
-        className="glass glass-rim text-label focus-visible:ring-brand/70 relative grid size-9 shrink-0 place-items-center rounded-full transition-[transform,background-color] duration-200 outline-none hover:bg-white/[0.12] focus-visible:ring-2 active:scale-95 [&_svg]:size-4"
+        className="glass glass-rim text-label focus-visible:ring-brand/70 sober:rounded-[10px] relative grid size-9 shrink-0 place-items-center rounded-full transition-[transform,background-color] duration-200 outline-none hover:bg-white/[0.12] focus-visible:ring-2 active:scale-95 [&_svg]:size-4"
       >
         <MessageCircle />
       </a>
@@ -375,7 +377,7 @@ export function SeatOverlay({
               initial={{ y: -12, scale: 0.96 }}
               animate={{ y: 0, scale: 1 }}
               transition={SOFT_SPRING}
-              className="glass glass-rim text-footnote pointer-events-auto relative flex h-11 items-center gap-3 rounded-full pr-1.5 pl-4"
+              className="glass glass-rim text-footnote sober:rounded-[12px] pointer-events-auto relative flex h-11 items-center gap-3 rounded-full pr-1.5 pl-4"
             >
               <ScanEye className="text-brand size-4" />
               <span className="text-label truncate">

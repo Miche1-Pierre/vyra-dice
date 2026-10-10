@@ -38,7 +38,7 @@ export function Island() {
             animate={{ opacity: 1, scale: 1, width: "auto", filter: "blur(0px)" }}
             exit={{ opacity: 0, scale: 0.7, width: 120, filter: "blur(4px)" }}
             transition={{ type: "spring", stiffness: 380, damping: 30 }}
-            className="flex max-w-[min(440px,calc(100vw-1.5rem))] items-center gap-3 overflow-hidden rounded-[22px] bg-black py-2 pr-4 pl-2 shadow-[0_0_0_1px_rgb(255_255_255/0.07),0_14px_40px_rgb(0_0_0/0.6)]"
+            className="sober:rounded-[12px] flex max-w-[min(440px,calc(100vw-1.5rem))] items-center gap-3 overflow-hidden rounded-[22px] bg-black py-2 pr-4 pl-2 shadow-[0_0_0_1px_rgb(255_255_255/0.07),0_14px_40px_rgb(0_0_0/0.6)]"
           >
             <span
               className={cn(

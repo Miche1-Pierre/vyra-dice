@@ -81,7 +81,7 @@ export function CommandMenu({
 }) {
   const open = useExperience((s) => s.commandOpen)
   const setOpen = useExperience((s) => s.setCommandOpen)
-  const compareCount = useExperience((s) => s.compareIds.length)
+  const compareCount = useExperience((s) => (brand.ui.compare ? s.compareIds.length : 0))
   const run = (fn: () => void) => () => {
     setOpen(false)
     fn()
@@ -95,7 +95,7 @@ export function CommandMenu({
         <DialogPrimitive.Backdrop className="fixed inset-0 z-[70] bg-black/30 backdrop-blur-[3px] transition-opacity duration-200 data-[ending-style]:opacity-0 data-[starting-style]:opacity-0" />
         <DialogPrimitive.Popup
           className={cn(
-            "glass-thick glass-rim fixed left-1/2 z-[71] w-[min(680px,calc(100vw-1.25rem))] -translate-x-1/2 overflow-hidden rounded-[26px] transition-[opacity,transform] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] outline-none data-[ending-style]:scale-[0.97] data-[ending-style]:opacity-0 data-[starting-style]:scale-[0.97] data-[starting-style]:opacity-0",
+            "glass-thick glass-rim sober:rounded-[16px] fixed left-1/2 z-[71] w-[min(680px,calc(100vw-1.25rem))] -translate-x-1/2 overflow-hidden rounded-[26px] transition-[opacity,transform] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] outline-none data-[ending-style]:scale-[0.97] data-[ending-style]:opacity-0 data-[starting-style]:scale-[0.97] data-[starting-style]:opacity-0",
             isDesktop ? "top-[16vh]" : "top-[max(0.625rem,env(safe-area-inset-top))]",
           )}
         >

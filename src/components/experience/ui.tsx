@@ -18,6 +18,7 @@ import {
 import { motion } from "motion/react"
 import { useId, type ComponentProps, type CSSProperties, type ReactNode } from "react"
 
+import { useClubUi } from "@/components/experience/club-ui"
 import type { ZoneIcon } from "@/lib/schema"
 import { cn } from "@/lib/utils"
 import type { TableKind } from "@/lib/venue/layout"
@@ -32,7 +33,7 @@ export const SPRING = { type: "spring", stiffness: 420, damping: 36 } as const
 export const SOFT_SPRING = { type: "spring", stiffness: 260, damping: 30 } as const
 
 export const btn = cva(
-  "relative inline-flex shrink-0 items-center justify-center gap-2 rounded-full font-medium whitespace-nowrap transition-[background-color,color,box-shadow,transform,filter] duration-200 outline-none select-none focus-visible:ring-2 focus-visible:ring-brand/70 active:scale-[0.97] disabled:pointer-events-none disabled:opacity-40 [&_svg]:shrink-0",
+  "relative inline-flex shrink-0 items-center justify-center gap-2 rounded-full font-medium sober:rounded-[10px] whitespace-nowrap transition-[background-color,color,box-shadow,transform,filter] duration-200 outline-none select-none focus-visible:ring-2 focus-visible:ring-brand/70 active:scale-[0.97] disabled:pointer-events-none disabled:opacity-40 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
@@ -90,7 +91,7 @@ export function Hint({
       <TooltipPrimitive.Trigger render={children} />
       <TooltipPrimitive.Portal>
         <TooltipPrimitive.Positioner side={side} sideOffset={10} className="z-[80]">
-          <TooltipPrimitive.Popup className="glass text-footnote text-label flex items-center gap-2 rounded-full py-1.5 pr-2 pl-3 transition-[opacity,transform] duration-150 data-[ending-style]:scale-95 data-[ending-style]:opacity-0 data-[starting-style]:scale-95 data-[starting-style]:opacity-0">
+          <TooltipPrimitive.Popup className="glass text-footnote text-label sober:rounded-[8px] flex items-center gap-2 rounded-full py-1.5 pr-2 pl-3 transition-[opacity,transform] duration-150 data-[ending-style]:scale-95 data-[ending-style]:opacity-0 data-[starting-style]:scale-95 data-[starting-style]:opacity-0">
             {label}
             {keys?.length ? (
               <span className="flex gap-0.5">
@@ -132,7 +133,7 @@ export function RoundBtn({
         aria-label={label}
         aria-pressed={active}
         className={cn(
-          "glass glass-rim text-label focus-visible:ring-brand/70 relative grid shrink-0 place-items-center rounded-full transition-[transform,background-color] duration-200 outline-none hover:bg-white/[0.12] focus-visible:ring-2 active:scale-95",
+          "glass glass-rim text-label focus-visible:ring-brand/70 sober:rounded-[10px] relative grid shrink-0 place-items-center rounded-full transition-[transform,background-color] duration-200 outline-none hover:bg-white/[0.12] focus-visible:ring-2 active:scale-95",
           size === "md" ? "size-10 [&_svg]:size-[18px]" : "size-8 [&_svg]:size-4",
           active && "bg-white/[0.16]",
           className,
@@ -161,7 +162,7 @@ export function IconBtn({
         aria-label={label}
         aria-pressed={active}
         className={cn(
-          "text-label-2 hover:bg-fill hover:text-label focus-visible:ring-brand/70 grid size-8 shrink-0 place-items-center rounded-full transition-colors duration-150 outline-none focus-visible:ring-2 [&_svg]:size-4",
+          "text-label-2 hover:bg-fill hover:text-label focus-visible:ring-brand/70 sober:rounded-[8px] grid size-8 shrink-0 place-items-center rounded-full transition-colors duration-150 outline-none focus-visible:ring-2 [&_svg]:size-4",
           active && "bg-fill text-label",
           className,
         )}
@@ -240,6 +241,29 @@ export function Tile({
   style?: CSSProperties
   children: ReactNode
 }) {
+  const ui = useClubUi()
+  if (ui.tone === "sober") {
+    // flat graphite, tight corners; the tier is only a dot
+    return (
+      <span
+        className={cn(
+          "relative grid shrink-0 place-items-center overflow-hidden rounded-[9px] bg-[#1c1b20] text-white shadow-[inset_0_0_0_1px_rgb(255_255_255/0.09)] [&_svg]:size-[44%]",
+          tone === "ink" && "bg-[#0c0b0e]",
+          className,
+        )}
+        style={style}
+      >
+        {tier ? (
+          <span
+            aria-hidden
+            className="absolute top-[14%] right-[14%] size-[11%] min-h-1 min-w-1 rounded-full"
+            style={{ background: tierColor(tier) }}
+          />
+        ) : null}
+        {children}
+      </span>
+    )
+  }
   const background = tier
     ? `radial-gradient(120% 90% at 30% 0%, ${tierColor(tier)} 0%, ${tierDeep(tier)} 78%)`
     : tone === "ink"
@@ -331,7 +355,7 @@ export function Segmented<T extends string | number>({
       role="radiogroup"
       aria-label={label}
       className={cn(
-        "flex items-center rounded-full bg-black/25 p-[3px] shadow-[inset_0_1px_2px_rgb(0_0_0/0.4)]",
+        "sober:rounded-[10px] flex items-center rounded-full bg-black/25 p-[3px] shadow-[inset_0_1px_2px_rgb(0_0_0/0.4)]",
         size === "md" ? "h-9" : "h-8",
         className,
       )}
@@ -346,7 +370,7 @@ export function Segmented<T extends string | number>({
             aria-checked={active}
             onClick={() => onChange(o.value)}
             className={cn(
-              "focus-visible:ring-brand/70 relative isolate h-full rounded-full px-3.5 font-medium whitespace-nowrap transition-colors duration-200 outline-none focus-visible:ring-2",
+              "focus-visible:ring-brand/70 sober:rounded-[8px] relative isolate h-full rounded-full px-3.5 font-medium whitespace-nowrap transition-colors duration-200 outline-none focus-visible:ring-2",
               size === "md" ? "text-footnote" : "text-caption",
               active ? "text-label" : "text-label-2 hover:text-label",
             )}
@@ -355,7 +379,7 @@ export function Segmented<T extends string | number>({
               <motion.span
                 layoutId={`thumb-${id}`}
                 transition={SPRING}
-                className="absolute inset-0 -z-10 rounded-full bg-white/[0.17] shadow-[inset_0_1px_0_rgb(255_255_255/0.22),0_3px_10px_rgb(0_0_0/0.35)]"
+                className="sober:rounded-[8px] absolute inset-0 -z-10 rounded-full bg-white/[0.17] shadow-[inset_0_1px_0_rgb(255_255_255/0.22),0_3px_10px_rgb(0_0_0/0.35)]"
               />
             ) : null}
             {o.short ? (
@@ -394,14 +418,14 @@ export function Stepper({
     <div
       role="group"
       aria-label={label}
-      className="flex h-9 items-center rounded-full bg-black/25 p-[3px] shadow-[inset_0_1px_2px_rgb(0_0_0/0.4)]"
+      className="sober:rounded-[10px] flex h-9 items-center rounded-full bg-black/25 p-[3px] shadow-[inset_0_1px_2px_rgb(0_0_0/0.4)]"
     >
       <button
         type="button"
         aria-label="Moins"
         disabled={value <= min}
         onClick={() => step(-1)}
-        className="text-label grid size-[30px] place-items-center rounded-full bg-white/[0.12] transition-[background-color,opacity] hover:bg-white/[0.2] disabled:opacity-30 [&_svg]:size-3.5"
+        className="text-label sober:rounded-[8px] grid size-[30px] place-items-center rounded-full bg-white/[0.12] transition-[background-color,opacity] hover:bg-white/[0.2] disabled:opacity-30 [&_svg]:size-3.5"
       >
         <Minus strokeWidth={2.25} />
       </button>
@@ -413,7 +437,7 @@ export function Stepper({
         aria-label="Plus"
         disabled={value >= max}
         onClick={() => step(1)}
-        className="text-label grid size-[30px] place-items-center rounded-full bg-white/[0.12] transition-[background-color,opacity] hover:bg-white/[0.2] disabled:opacity-30 [&_svg]:size-3.5"
+        className="text-label sober:rounded-[8px] grid size-[30px] place-items-center rounded-full bg-white/[0.12] transition-[background-color,opacity] hover:bg-white/[0.2] disabled:opacity-30 [&_svg]:size-3.5"
       >
         <Plus strokeWidth={2.25} />
       </button>
@@ -495,7 +519,7 @@ export function Stat({
   accent?: boolean
 }) {
   return (
-    <div className="rounded-2xl bg-white/[0.045] px-3 py-2.5 shadow-[inset_0_0_0_1px_rgb(255_255_255/0.05)]">
+    <div className="sober:rounded-[10px] rounded-2xl bg-white/[0.045] px-3 py-2.5 shadow-[inset_0_0_0_1px_rgb(255_255_255/0.05)]">
       <p
         className={cn(
           "num text-[19px] leading-6 font-semibold tracking-[-0.01em]",
