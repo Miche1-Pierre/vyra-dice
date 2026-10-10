@@ -810,9 +810,12 @@ def el_booths(c: Ctx, el: dict) -> None:
     M = {k: c.mat(r) for k, r in el["materials"].items()}
     F = c.L["furniture"]
     for t in c.L["tables"]:
-        level = c.zones[t["zone"]]["level"]
+        zone = c.zones[t["zone"]]
+        level = zone["level"]
         glass = c.shared["glass1" if level == 1 else "glass"]
-        booth(c.furn(level), c, M, t, F[t["kind"]], c.level_z(level), glass)
+        # a raised zone (lounge on a platform) lifts its booths with it
+        z = c.level_z(level) + zone.get("raised", 0.0)
+        booth(c.furn(level), c, M, t, F[t["kind"]], z, glass)
 
 
 def high_table(mb: MeshBuilder, M: dict, x: float, y: float, z: float, seed: int) -> None:
@@ -948,7 +951,7 @@ def build_lights(c: Ctx) -> None:
     # a pinspot per table: the tables are the product, they must read from afar
     pin = spec["pins"]
     for tid, p in c.table_points.items():
-        zl = under - 0.05 if p.z < 1.0 and c.under_slab(p.x, p.y) else ch - 0.3
+        zl = under - 0.05 if p.z < under and c.under_slab(p.x, p.y) else ch - 0.3
         dist = zl - p.z
         spot(f"pin_{tid}", (p.x, p.y, zl), tuple(p), pin["energy"] * dist * dist, tuple(pin["color"]), pin["size"],
              pin["blend"])  # fmt: skip

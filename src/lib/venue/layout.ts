@@ -32,6 +32,8 @@ export const layoutZoneSchema = z.object({
   level: levelSchema,
   x: rangeSchema,
   y: rangeSchema,
+  /** Platform under the zone's tables, in metres above its level's floor (a raised lounge). */
+  raised: z.number().nonnegative().max(1.5).optional(),
 })
 
 /**
@@ -180,16 +182,30 @@ export function toThree([x, y, z]: readonly [number, number, number]): [number, 
   return [x, z, 0 - y]
 }
 
-/** Level of a table, read from its zone. */
-export function tableLevel(layout: VenueLayout, table: LayoutTable): Level {
+function tableZone(layout: VenueLayout, table: LayoutTable): LayoutZone {
   const zone = layout.zones.find((candidate) => candidate.id === table.zone)
   if (!zone) throw new Error(`Table "${table.id}" references unknown zone "${table.zone}"`)
-  return zone.level
+  return zone
+}
+
+/** Level of a table, read from its zone. */
+export function tableLevel(layout: VenueLayout, table: LayoutTable): Level {
+  return tableZone(layout, table).level
 }
 
 /** Floor height of a level, in metres. */
 export function levelHeight(layout: VenueLayout, level: Level): number {
   return level === 0 ? 0 : layout.heights.mezzanine
+}
+
+/** Floor height of a zone, in metres: its level's, plus its platform when it is raised. */
+export function zoneFloor(layout: VenueLayout, zone: LayoutZone): number {
+  return levelHeight(layout, zone.level) + (zone.raised ?? 0)
+}
+
+/** Floor height under a table, in metres (its zone's floor). */
+export function tableFloor(layout: VenueLayout, table: LayoutTable): number {
+  return zoneFloor(layout, tableZone(layout, table))
 }
 
 /** Footprint of a table's booth in its own frame (`width` along the seat, `depth` front to back). */

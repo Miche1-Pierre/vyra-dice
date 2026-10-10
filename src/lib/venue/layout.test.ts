@@ -38,6 +38,14 @@ describe("parseLayout", () => {
     expect(() => parseLayout(json)).toThrow(/Duplicate area id/)
   })
 
+  it("accepts a raised zone, but not a sunken one", () => {
+    const json = valid()
+    json.zones[0].raised = 0.4
+    expect(parseLayout(json).zones[0].raised).toBe(0.4)
+    json.zones[0].raised = -0.2
+    expect(() => parseLayout(json)).toThrow(/Invalid venue layout/)
+  })
+
   it("rejects malformed geometry", () => {
     expect(() => parseLayout({ ...valid(), tables: [] })).toThrow(/Invalid venue layout/)
     expect(() => parseLayout(null)).toThrow(/Invalid venue layout/)

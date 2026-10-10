@@ -7,7 +7,7 @@ import * as THREE from "three"
 import { createZoneMaterial } from "@/components/scene/fx/materials"
 import type { ClubBrand } from "@/lib/clubs/brand"
 import { useExperience } from "@/lib/store"
-import { levelHeight, toThree, type VenueLayout } from "@/lib/venue/layout"
+import { toThree, zoneFloor, type VenueLayout } from "@/lib/venue/layout"
 
 /** Tier-coloured floor overlays: faint on the overview (reads like the club sketch), bright on focus. */
 export function ZoneOverlays({
@@ -25,7 +25,7 @@ export function ZoneOverlays({
         const center = toThree([
           (z.x[0] + z.x[1]) / 2,
           (z.y[0] + z.y[1]) / 2,
-          levelHeight(layout, z.level) + 0.035,
+          zoneFloor(layout, z) + 0.035,
         ])
         const material = createZoneMaterial(tiers[z.tier].color)
         material.uniforms.uSize.value.set(w, d)
