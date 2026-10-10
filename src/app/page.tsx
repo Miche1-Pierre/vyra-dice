@@ -49,9 +49,20 @@ export default function Home() {
               <div>
                 <h2 className="text-headline text-label">{content.club.name}</h2>
                 <p className="text-footnote text-label-2 mt-1">
-                  {content.club.city} · {content.event.name}
+                  {content.event.subtitle
+                    ? content.club.city
+                    : `${content.club.city} · ${content.event.name}`}
                 </p>
               </div>
+              {/* a billed night (DJ, artist): its name in large capitals, like its poster */}
+              {content.event.subtitle ? (
+                <div>
+                  <p className="text-label text-[30px] leading-none font-semibold tracking-[0.06em] uppercase">
+                    {content.event.name}
+                  </p>
+                  <p className="eyebrow text-brand mt-2">{content.event.subtitle}</p>
+                </div>
+              ) : null}
               <Link
                 href={`/${slug}/${content.event.slug}`}
                 className="brand-pill text-callout mt-auto inline-flex h-12 items-center justify-center gap-2 rounded-full px-6 font-medium transition-[filter,transform] hover:brightness-105 active:scale-[0.98]"

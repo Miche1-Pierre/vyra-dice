@@ -167,6 +167,11 @@ export type Club = z.infer<typeof clubSchema>
 export const eventSchema = z.object({
   slug: slugSchema,
   name: textSchema,
+  /**
+   * Billing under the night's name (« DJ guest »): the night is then billed like its poster, its
+   * name in large letters on the loading screen, the overview and the home page.
+   */
+  subtitle: z.string().min(1).max(40).optional(),
   /** Calendar date of the night (yyyy-mm-dd), even when it ends after midnight. */
   date: z.iso.date(),
   /** Opening time, "HH:MM". */

@@ -97,6 +97,9 @@ de photos, et partage le club par une pull request. À la main :
 Quand l'acheteur change le nombre de personnes, la fiche recalcule le minimum, la part par personne et
 l'acompte ; la demande enregistre les montants affichés. Une demande ne déclenche aucun paiement.
 
+Une soirée à l'affiche (un DJ, un artiste) prend un sous-titre, `event.subtitle` (« DJ guest », 40 caractères au plus) :
+son nom (`event.name`) passe alors en grandes capitales à l'ouverture, sur la vue d'ensemble et sur la page d'accueil.
+
 ## Référence — espaces debout et billets
 
 Un club qui vend des entrées par zone (fosse, front row…) les montre dans la visite sans les vendre : chaque espace

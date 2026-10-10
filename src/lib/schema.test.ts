@@ -243,6 +243,14 @@ describe("venueContentSchema", () => {
     expect(contentIssuePaths(content).sort()).toEqual(["tickets.1.fromPrice", "tickets.1.id"])
   })
 
+  it("bills a night with a short subtitle (« DJ guest »)", () => {
+    const content = venueContent()
+    content.event.subtitle = "DJ guest"
+    expect(venueContentSchema.safeParse(content).success).toBe(true)
+    content.event.subtitle = "x".repeat(41)
+    expect(contentIssuePaths(content)).toEqual(["event.subtitle"])
+  })
+
   it("accepts a WhatsApp number in international format", () => {
     const content = venueContent()
     content.club.contact = { whatsapp: "+33 6 12 34 56 78" }
