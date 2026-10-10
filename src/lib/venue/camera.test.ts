@@ -15,7 +15,13 @@ import {
   zoneMarkerPosition,
   zonePose,
 } from "@/lib/venue/camera"
-import { tableFloor, type LayoutZone, type VenueLayout } from "@/lib/venue/layout"
+import {
+  tableFloor,
+  tableLevel,
+  type LayoutTable,
+  type LayoutZone,
+  type VenueLayout,
+} from "@/lib/venue/layout"
 
 const PORTRAIT = 0.46
 const LANDSCAPE = 1.6
@@ -27,6 +33,15 @@ function underSlab(layout: VenueLayout, zone: LayoutZone): boolean {
   const y = (zone.y[0] + zone.y[1]) / 2
   return (
     zone.level === 0 &&
+    layout.mezzanine.some((r) => r.x[0] < x && x < r.x[1] && r.y[0] < y && y < r.y[1])
+  )
+}
+
+/** A ground-floor table whose centre sits under a mezzanine slab. */
+function tableUnderSlab(layout: VenueLayout, table: LayoutTable): boolean {
+  const { x, y } = table
+  return (
+    tableLevel(layout, table) === 0 &&
     layout.mezzanine.some((r) => r.x[0] < x && x < r.x[1] && r.y[0] < y && y < r.y[1])
   )
 }
@@ -66,6 +81,14 @@ describe.each(listClubs().map((club) => [club.slug, club.layout] as const))(
       for (const zone of layout.zones.filter((z) => underSlab(layout, z))) {
         for (const aspect of [PORTRAIT, LANDSCAPE]) {
           expect(zonePose(layout, zone.id, aspect).position[1], zone.id).toBeLessThan(slabUnderside)
+        }
+      }
+    })
+
+    it("keeps the camera under the slab for ground-floor tables below the mezzanine", () => {
+      for (const t of layout.tables.filter((t) => tableUnderSlab(layout, t))) {
+        for (const aspect of [PORTRAIT, LANDSCAPE]) {
+          expect(tablePose(layout, t.id, aspect).position[1], t.id).toBeLessThan(slabUnderside)
         }
       }
     })
@@ -190,5 +213,14 @@ describe("raised zones", () => {
     expect(seatPose(layout, table.id, LANDSCAPE).position[1]).toBeCloseTo(flat.seat + 0.4)
     expect(tableMarkerPosition(layout, table)[1]).toBeCloseTo(flat.marker + 0.4)
     expect(zoneMarkerPosition(layout, zone.id)[1]).toBeCloseTo(flat.zone + 0.4)
+  })
+
+  it("keeps a camera under a low slab below its underside", () => {
+    const layout = structuredClone(listClubs()[0].layout)
+    const table = layout.tables.find((t) => tableUnderSlab(layout, t))
+    if (!table) throw new Error("the first club needs a table under its mezzanine")
+    layout.heights.mezzanine = 3.3
+    const underside = layout.heights.mezzanine - layout.heights.slab
+    expect(tablePose(layout, table.id, LANDSCAPE).position[1]).toBeLessThan(underside)
   })
 })
