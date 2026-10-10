@@ -11,6 +11,7 @@ import { standingMarkerPosition, tableMarkerPosition, zoneMarkerPosition } from 
 import type { VenueLayout } from "@/lib/venue/layout"
 import { Ticket } from "lucide-react"
 
+import type { ClubUi } from "@/components/experience/club-ui"
 import { StatusIcon, Tile, ZoneTile } from "@/components/experience/ui"
 import type { ZoneIcon } from "@/lib/schema"
 import { STATUS, TIERS, tierColor, withAlpha, type TableStatus } from "@/lib/venue/tiers"
@@ -48,18 +49,21 @@ export interface TicketMarkerData {
 
 /**
  * Price tags floating in the scene: one per zone and per standing area on the overview, one per
- * table inside a zone.
+ * table inside a zone. In the sober tone the zones are pinned cards (name, price, availability)
+ * and no tag ever moves up or down.
  */
 export function Markers({
   layout,
   zones,
   tables,
   tickets = [],
+  tone = "vivid",
 }: {
   layout: VenueLayout
   zones: ZoneMarkerData[]
   tables: TableMarkerData[]
   tickets?: TicketMarkerData[]
+  tone?: ClubUi["tone"]
 }) {
   const focusTicket = useExperience((s) => s.focusTicket)
   const view = useExperience((s) => s.view)
@@ -89,7 +93,10 @@ export function Markers({
 
   // Screen-space layout of the cards, every frame:
   // 1. slide a card horizontally to keep it on screen (its stem stays on the anchor);
-  // 2. if two cards overlap, lift the farther one and stretch its stem.
+  // 2. vivid tone: if two cards overlap, lift the farther one and stretch its stem.
+  //    Sober tone: no card ever moves up or down. A zone card that would cover a nearer card
+  //    slides sideways while its stem still meets it, else only its pin stays.
+  const stack = tone !== "sober"
   const cards = useRef(new Map<string, HTMLElement>())
   const camera = useThree((s) => s.camera)
   const size = useThree((s) => s.size)
@@ -97,6 +104,7 @@ export function Markers({
   useFrame(() => {
     const items: {
       el: HTMLElement
+      kind: string
       left: number
       right: number
       bottom: number
@@ -104,6 +112,7 @@ export function Markers({
       z: number
       shift: number
       lift: number
+      hidden: boolean
     }[] = []
     for (const [key, el] of cards.current) {
       const [kind, id] = key.split(":")
@@ -122,9 +131,10 @@ export function Markers({
       let shift = 0
       if (x - half < EDGE) shift = EDGE - (x - half)
       else if (x + half > size.width - EDGE) shift = size.width - EDGE - (x + half)
-      const stem = kind === "table" ? TABLE_STEM : ZONE_STEM
+      const stem = kind === "table" ? TABLE_STEM : stack ? ZONE_STEM : PIN_STEM
       items.push({
         el,
+        kind,
         left: x - half + shift,
         right: x + half + shift,
         bottom: y - stem,
@@ -132,10 +142,11 @@ export function Markers({
         z: projected.z,
         shift,
         lift: 0,
+        hidden: false,
       })
     }
     items.sort((a, b) => a.z - b.z) // the nearest card keeps its place
-    for (let i = 1; i < items.length; i++) {
+    for (let i = 1; stack && i < items.length; i++) {
       const a = items[i]
       for (let pass = 0; pass < 2; pass++) {
         for (let j = 0; j < i; j++) {
@@ -149,9 +160,38 @@ export function Markers({
         }
       }
     }
+    if (!stack) {
+      const taken: Box[] = []
+      for (const it of items) {
+        const box = (d: number) => ({
+          left: it.left + d,
+          right: it.right + d,
+          top: it.bottom - it.h,
+          bottom: it.bottom,
+        })
+        if (it.kind === "table") {
+          taken.push(box(0))
+          continue
+        }
+        // the stem must still meet the card: slide at most to a few pixels from its edge
+        const reach = (it.right - it.left) / 2 - 14
+        const d = SLIDES.find(
+          (dx) => Math.abs(dx) <= reach && !taken.some((t) => overlaps(t, box(dx))),
+        )
+        if (d === undefined) it.hidden = true
+        else {
+          it.shift += d
+          taken.push(box(d))
+        }
+      }
+    }
     for (const it of items) {
       it.el.style.left = `${Math.round(it.shift)}px`
       it.el.parentElement?.style.setProperty("--lift", `${Math.max(0, Math.round(it.lift))}px`)
+      if (!stack) {
+        it.el.style.opacity = it.hidden ? "0" : ""
+        it.el.style.pointerEvents = it.hidden ? "none" : ""
+      }
     }
   })
   const register = (key: string) => (el: HTMLElement | null) => {
@@ -186,11 +226,19 @@ export function Markers({
             zIndexRange={[30, 10]}
             style={wrapper(shown)}
           >
-            <ZoneTag
-              zone={z}
-              onClick={() => focusZone(z.id)}
-              cardRef={shown ? register(`zone:${z.id}`) : null}
-            />
+            {tone === "sober" ? (
+              <PinnedZoneCard
+                zone={z}
+                onClick={() => focusZone(z.id)}
+                cardRef={shown ? register(`zone:${z.id}`) : null}
+              />
+            ) : (
+              <ZoneTag
+                zone={z}
+                onClick={() => focusZone(z.id)}
+                cardRef={shown ? register(`zone:${z.id}`) : null}
+              />
+            )}
           </Html>
         )
       })}
@@ -238,7 +286,23 @@ export function Markers({
 const EDGE = 12
 const GAP = 6
 const ZONE_STEM = 30 // 22 px line + 8 px pin
+const PIN_STEM = 40 // sober zone cards: 30 px line + 10 px pin
 const TABLE_STEM = 12
+/** Sideways offsets tried for a sober zone card, nearest first (px). */
+const SLIDES = [0, ...Array.from({ length: 12 }, (_, i) => [(i + 1) * 8, -(i + 1) * 8]).flat()]
+
+interface Box {
+  left: number
+  right: number
+  top: number
+  bottom: number
+}
+
+const overlaps = (a: Box, b: Box) =>
+  a.left < b.right + GAP &&
+  b.left < a.right + GAP &&
+  a.top < b.bottom + GAP &&
+  b.top < a.bottom + GAP
 
 function Stem({ color, height }: { color: string; height: number }) {
   return (
@@ -301,6 +365,63 @@ function ZoneTag({
         </span>
       </button>
       <Stem color={tierColor(zone.tier)} height={22} />
+    </div>
+  )
+}
+
+/** "dès 350 €" → "Dès 350 €", "prix sur demande" → "Sur demande". */
+function capitalised(label: string): string {
+  const text = label === "prix sur demande" ? "sur demande" : label
+  return text.charAt(0).toUpperCase() + text.slice(1)
+}
+
+/**
+ * A zone as Artefact pins it: the name in small capitals, the price, the availability, on a
+ * stem of fixed length ending in a dot of the availability's colour.
+ */
+function PinnedZoneCard({
+  zone,
+  onClick,
+  cardRef,
+}: {
+  zone: ZoneMarkerData
+  onClick: () => void
+  cardRef: Ref<HTMLButtonElement>
+}) {
+  const status = STATUS[zone.availability.tone]
+  return (
+    <div className="pointer-events-none flex -translate-x-1/2 -translate-y-full flex-col items-center">
+      <button
+        ref={cardRef}
+        type="button"
+        onClick={onClick}
+        aria-label={`${zone.name}, ${zone.fromLabel ? `${zone.fromLabel}, ` : ""}${zone.availability.label}`}
+        className={cn(
+          chip,
+          "group min-w-[112px] rounded-[8px] bg-[rgb(12_11_14/0.9)] px-2.5 pt-1.5 pb-2 shadow-[0_0_0_1px_rgb(255_255_255/0.1),0_12px_30px_rgb(0_0_0/0.55)] backdrop-blur-md transition-[opacity,background-color,box-shadow] hover:bg-(--brand) hover:shadow-[0_0_0_1px_color-mix(in_srgb,var(--brand)_80%,white),0_12px_30px_rgb(0_0_0/0.55)] sm:min-w-[128px] sm:px-3 sm:pt-2 sm:pb-2.5",
+        )}
+      >
+        <span className="eyebrow text-label-2 block text-[9.5px] leading-3 tracking-[0.22em] group-hover:text-white/85">
+          {zone.name}
+        </span>
+        {zone.fromLabel ? (
+          <span className="num text-label mt-0.5 block text-[13px] leading-[18px] font-semibold sm:mt-1 sm:text-[15px] sm:leading-5">
+            {capitalised(zone.fromLabel)}
+          </span>
+        ) : null}
+        <span className="num text-label-2 mt-0.5 flex items-center gap-1.5 text-[10.5px] leading-4 group-hover:text-white/85 sm:text-[11.5px] [@media(max-height:499px)]:hidden">
+          <span className="size-[7px] rounded-full" style={{ backgroundColor: status.color }} />
+          {zone.availability.label}
+        </span>
+      </button>
+      <div className="h-[30px] w-px bg-white/75" />
+      <div
+        className="size-2.5 rounded-full ring-[1.5px] ring-black/70"
+        style={{
+          backgroundColor: status.color,
+          boxShadow: `0 0 10px 2px ${withAlpha(status.color, 0xaa / 255)}`,
+        }}
+      />
     </div>
   )
 }

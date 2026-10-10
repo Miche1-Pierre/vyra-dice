@@ -345,6 +345,7 @@ export function Experience({ club }: { club: ClubDefinition }) {
                   assets={club.assets}
                   ambiance={club.ambiance}
                   tiers={club.brand.tiers}
+                  tone={club.brand.ui.tone}
                   layout={layout}
                   zoneMarkers={vm.zoneMarkers}
                   tableMarkers={vm.tableMarkers}

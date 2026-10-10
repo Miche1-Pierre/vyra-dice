@@ -56,6 +56,8 @@ export interface VenueCanvasProps {
   ambiance: ClubAmbiance
   /** Tier hues of the club (floor overlays, table halos). */
   tiers: ClubBrand["tiers"]
+  /** The club's interface tone: sober clubs pin their zones as Artefact does. */
+  tone?: ClubBrand["ui"]["tone"]
   layout: VenueLayout
   zoneMarkers: ZoneMarkerData[]
   tableMarkers: TableMarkerData[]
@@ -71,6 +73,7 @@ export default function VenueCanvas({
   assets,
   ambiance,
   tiers,
+  tone = "vivid",
   layout,
   zoneMarkers,
   tableMarkers,
@@ -152,6 +155,7 @@ export default function VenueCanvas({
             zones={zoneMarkers}
             tables={tableMarkers}
             tickets={ticketMarkers}
+            tone={tone}
           />
         </Suspense>
         <CameraRig
