@@ -7,7 +7,9 @@ import {
   tableFootprint,
   tableLevel,
   toThree,
+  zoneParts,
   type LayoutTable,
+  type LayoutZone,
 } from "@/lib/venue/layout"
 
 /** A valid plan to break: the first registered club's. */
@@ -49,6 +51,22 @@ describe("parseLayout", () => {
   it("rejects malformed geometry", () => {
     expect(() => parseLayout({ ...valid(), tables: [] })).toThrow(/Invalid venue layout/)
     expect(() => parseLayout(null)).toThrow(/Invalid venue layout/)
+  })
+})
+
+describe("zoneParts", () => {
+  it("keeps a mezzanine zone on its slabs, and a ground-floor zone whole", () => {
+    const layout = valid()
+    layout.mezzanine = [
+      { id: "a", x: [0, 10], y: [0, 4] },
+      { id: "b", x: [6, 10], y: [4, 10] },
+    ]
+    const zone: LayoutZone = { id: "l", tier: "prestige", level: 1, x: [0, 10], y: [0, 10] }
+    expect(zoneParts(layout, zone)).toEqual([
+      { x: [0, 10], y: [0, 4] },
+      { x: [6, 10], y: [4, 10] },
+    ])
+    expect(zoneParts(layout, { ...zone, level: 0 })).toEqual([{ x: [0, 10], y: [0, 10] }])
   })
 })
 
