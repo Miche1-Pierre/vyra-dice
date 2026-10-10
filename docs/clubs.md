@@ -103,8 +103,10 @@ son nom (`event.name`) passe alors en grandes capitales à l'ouverture, sur la v
 La musique de la soirée, `event.music` (`src`, `title`, `artist` facultatif), accompagne l'immersion des clubs qui
 proposent l'ambiance de nuit : un fichier audio du bundle du club (`clubs/<slug>/public/<src>`), joué seulement si le
 visiteur choisit « Avec le son ». Les lumières battent alors sur ses basses. Le dossier `public/audio/` est ignoré par
-git : un morceau sous droits reste sur le poste et ne part ni sur GitHub (public) ni en production, où l'immersion
-reste muette tant qu'aucun morceau libre de droits n'est commité.
+git : un morceau sous droits reste sur le poste et ne part ni sur GitHub (public) ni en production. Pour le montrer à
+l'artiste ou au club sans le diffuser, on le scelle (`node scripts/seal-audio.mjs <morceau> <club>/public/audio/<nom>.mp3.enc
+<club>/private/<clé>.txt`) : seul le fichier chiffré `.enc` est commité, et il ne se joue que depuis un lien privé qui
+porte la clé (`…/<club>/<soirée>#son=<clé>`). Sans ce lien, l'immersion reste muette.
 
 Les boucles de la soirée, `event.screens` (vidéos MP4 ou WebM du bundle, muettes), passent sur les écrans du club en
 mode nuit, quand son ambiance les déclare (`night.screens`). Chaque écran joue la boucle dont la forme est la plus

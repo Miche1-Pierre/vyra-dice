@@ -255,6 +255,9 @@ describe("venueContentSchema", () => {
     const content = venueContent()
     content.event.music = { src: "audio/night.mp3", title: "Mix de la soirée", artist: "Rudboy" }
     expect(venueContentSchema.safeParse(content).success).toBe(true)
+    // sealed for a private demo link
+    content.event.music = { src: "audio/night.mp3.enc", title: "Mix" }
+    expect(venueContentSchema.safeParse(content).success).toBe(true)
     content.event.music = { src: "../naho/audio/night.mp3", title: "Mix" }
     expect(contentIssuePaths(content)).toEqual(["event.music.src"])
     content.event.music = { src: "audio/cover.png", title: "Mix" }
