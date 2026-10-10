@@ -8,6 +8,7 @@ import { useEffect, useMemo, useRef, type ReactNode } from "react"
 
 import { ClubMark } from "@/components/experience/brand"
 import { CompareView, TableList } from "@/components/experience/browse"
+import { ClubUiProvider } from "@/components/experience/club-ui"
 import { CommandMenu } from "@/components/experience/command-menu"
 import { Dock, type DockEntry } from "@/components/experience/dock"
 import {
@@ -196,7 +197,7 @@ function useDockEntries(
         },
       },
     ]
-    if (compareCount > 0) {
+    if (brand.ui.compare && compareCount > 0) {
       entries.push({
         kind: "item",
         id: "compare",
@@ -308,7 +309,7 @@ export function Experience({ club }: { club: ClubDefinition }) {
   }, [fallback2d, openPanel])
 
   useAnalyticsBridge(vm, webgl)
-  useShortcuts(isDesktop)
+  useShortcuts(isDesktop, club.brand.ui.compare)
   const dockEntries = useDockEntries(vm, content, club.brand, isDesktop)
 
   const dateLabel = formatDateFr(content.event.date)
@@ -329,178 +330,184 @@ export function Experience({ club }: { club: ClubDefinition }) {
   return (
     // interface animations follow the system's "reduce motion" setting
     <MotionConfig reducedMotion="user">
-      <TooltipPrimitive.Provider delay={260}>
-        <div className="bg-ink text-label relative h-dvh w-full overflow-hidden">
-          <main className="absolute inset-0">
-            {!textOnly && webgl && quality ? (
-              <VenueCanvas
-                club={club.slug}
-                assets={club.assets}
-                ambiance={club.ambiance}
-                tiers={club.brand.tiers}
-                layout={layout}
-                zoneMarkers={vm.zoneMarkers}
-                tableMarkers={vm.tableMarkers}
-                ticketMarkers={vm.ticketMarkers}
-                quality={quality}
-                reducedMotion={reducedMotion}
-                onIntroSkipped={(atMs) => track("intro_skipped", { at_ms: atMs })}
-              />
-            ) : null}
-            {textOnly ? (
-              <div className="text-ui text-label-3 absolute inset-x-0 top-1/3 flex flex-col items-center gap-4 px-8 text-center">
-                {fallback2d
-                  ? "La visite 3D n’est pas disponible sur cet appareil. Toutes les tables sont listées."
-                  : "Visite 3D masquée. Toutes les tables sont listées."}
-                {!fallback2d ? (
-                  <Btn size="md" onClick={() => setListMode(false)}>
-                    <Box /> Revenir à la visite 3D
-                  </Btn>
-                ) : null}
-              </div>
-            ) : null}
-          </main>
-
-          {/* top bar: identity + context on the left, level and status on the right */}
+      <ClubUiProvider value={club.brand.ui}>
+        <TooltipPrimitive.Provider delay={260}>
           <div
-            className={cn(
-              "pointer-events-none absolute inset-x-0 top-0 z-30 flex items-start justify-between gap-3 transition-opacity duration-500",
-              isDesktop
-                ? "p-4"
-                : "px-3 pt-[max(0.75rem,env(safe-area-inset-top))] pl-[max(0.75rem,env(safe-area-inset-left))]",
-              intro && "opacity-0",
-            )}
+            data-tone={club.brand.ui.tone}
+            className="bg-ink text-label relative h-dvh w-full overflow-hidden"
           >
-            <div
-              className={cn(
-                "pointer-events-auto flex min-w-0",
-                sidePanel ? "items-center gap-2.5" : "flex-1 flex-col items-start gap-2",
-              )}
-            >
-              <BrandBar
-                content={content}
-                brand={club.brand}
-                zones={vm.zones}
-                table={table}
-                ticket={ticket}
-                dateLabel={dateLabel}
-                isDesktop={isDesktop}
-                compact={!roomy}
-              />
-              {/* next to an open card only when there is room for both */}
-              {!intro && view !== "seat" && (!panelOpen || roomy) ? (
-                <LevelSwitch size={isDesktop ? "md" : "sm"} />
-              ) : null}
-            </div>
-            <div className="pointer-events-auto flex shrink-0 items-center gap-2">
-              {isDesktop && !panelOpen && view !== "seat" ? <StatusLegend /> : null}
-              {!isDesktop ? (
-                <WhatsAppButton
-                  club={content.club}
-                  eventName={content.event.name}
-                  tableLabel={table?.label}
-                  context="hud"
+            <main className="absolute inset-0">
+              {!textOnly && webgl && quality ? (
+                <VenueCanvas
+                  club={club.slug}
+                  assets={club.assets}
+                  ambiance={club.ambiance}
+                  tiers={club.brand.tiers}
+                  layout={layout}
+                  zoneMarkers={vm.zoneMarkers}
+                  tableMarkers={vm.tableMarkers}
+                  ticketMarkers={vm.ticketMarkers}
+                  quality={quality}
+                  reducedMotion={reducedMotion}
+                  onIntroSkipped={(atMs) => track("intro_skipped", { at_ms: atMs })}
                 />
               ) : null}
-              {!isDesktop ? <SearchButton isDesktop={false} /> : null}
+              {textOnly ? (
+                <div className="text-ui text-label-3 absolute inset-x-0 top-1/3 flex flex-col items-center gap-4 px-8 text-center">
+                  {fallback2d
+                    ? "La visite 3D n’est pas disponible sur cet appareil. Toutes les tables sont listées."
+                    : "Visite 3D masquée. Toutes les tables sont listées."}
+                  {!fallback2d ? (
+                    <Btn size="md" onClick={() => setListMode(false)}>
+                      <Box /> Revenir à la visite 3D
+                    </Btn>
+                  ) : null}
+                </div>
+              ) : null}
+            </main>
+
+            {/* top bar: identity + context on the left, level and status on the right */}
+            <div
+              className={cn(
+                "pointer-events-none absolute inset-x-0 top-0 z-30 flex items-start justify-between gap-3 transition-opacity duration-500",
+                isDesktop
+                  ? "p-4"
+                  : "px-3 pt-[max(0.75rem,env(safe-area-inset-top))] pl-[max(0.75rem,env(safe-area-inset-left))]",
+                intro && "opacity-0",
+              )}
+            >
+              <div
+                className={cn(
+                  "pointer-events-auto flex min-w-0",
+                  sidePanel ? "items-center gap-2.5" : "flex-1 flex-col items-start gap-2",
+                )}
+              >
+                <BrandBar
+                  content={content}
+                  brand={club.brand}
+                  zones={vm.zones}
+                  table={table}
+                  ticket={ticket}
+                  dateLabel={dateLabel}
+                  isDesktop={isDesktop}
+                  compact={!roomy}
+                />
+                {/* next to an open card only when there is room for both */}
+                {!intro && view !== "seat" && (!panelOpen || roomy) ? (
+                  <LevelSwitch size={isDesktop ? "md" : "sm"} />
+                ) : null}
+              </div>
+              <div className="pointer-events-auto flex shrink-0 items-center gap-2">
+                {isDesktop && !panelOpen && view !== "seat" ? <StatusLegend /> : null}
+                {!isDesktop ? (
+                  <WhatsAppButton
+                    club={content.club}
+                    eventName={content.event.name}
+                    tableLabel={table?.label}
+                    context="hud"
+                  />
+                ) : null}
+                {!isDesktop ? <SearchButton isDesktop={false} /> : null}
+              </div>
             </div>
+
+            <SeatOverlay
+              table={table}
+              canRequest={!isDesktop && table !== null && table.status !== "sold"}
+            />
+            <Dock
+              entries={dockEntries}
+              hidden={dockHidden}
+              isDesktop={isDesktop}
+              dense={shortLandscape}
+            />
+
+            <Panel
+              open={panelOpen}
+              onClose={closePanel}
+              isDesktop={sidePanel}
+              compact={shortLandscape}
+              label={
+                panel === "table" && table
+                  ? `Table ${table.label}`
+                  : panel === "ticket" && ticket
+                    ? ticket.name
+                    : panel === "compare"
+                      ? "Comparatif"
+                      : "Toutes les tables"
+              }
+              title={
+                panel === "list" ? (
+                  <span>
+                    Toutes les tables{" "}
+                    <span className="num text-label-3 font-normal">{tableCount}</span>
+                  </span>
+                ) : panel === "compare" ? (
+                  <span>
+                    Comparatif{" "}
+                    <span className="num text-label-3 font-normal">{compareCount}/3</span>
+                  </span>
+                ) : undefined
+              }
+              aside={
+                panel === "list" && !fallback2d ? (
+                  <Btn size="sm" variant="plain" onClick={() => setListMode(!listMode)}>
+                    {listMode ? "Voir en 3D" : "Sans 3D"}
+                  </Btn>
+                ) : undefined
+              }
+              footer={
+                panel === "table" && table ? (
+                  <TableFooter table={table} />
+                ) : panel === "ticket" && ticket ? (
+                  <TicketFooter ticket={ticket} />
+                ) : undefined
+              }
+            >
+              {panel === "list" ? <TableList zones={vm.zones} /> : null}
+              {panel === "ticket" && ticket ? <TicketDetails ticket={ticket} /> : null}
+              {panel === "compare" ? (
+                <CompareView
+                  tables={vm.tables}
+                  zones={vm.zones}
+                  accentName={club.brand.accent.name}
+                />
+              ) : null}
+              {panel === "table" && table ? (
+                <TableDetails
+                  table={table}
+                  siblings={vm.zones.find((z) => z.id === table.zoneId)?.tables ?? [table]}
+                  icon={tableIcon}
+                  content={content}
+                />
+              ) : null}
+            </Panel>
+
+            <LoadingScreen name={content.club.name} brand={club.brand} eventLine={eventLine} />
+            <IntroSkip isDesktop={isDesktop} />
+            <Island />
+            <SelectionAnnouncer vm={vm} />
+
+            <RequestDialog
+              table={table}
+              icon={tableIcon}
+              content={content}
+              clubSlug={club.slug}
+              eventSlug={content.event.slug}
+              isDesktop={isDesktop}
+              centered={wide}
+            />
+            <CommandMenu
+              content={content}
+              brand={club.brand}
+              zones={vm.zones}
+              tables={vm.tables}
+              tickets={vm.tickets}
+              isDesktop={isDesktop}
+            />
           </div>
-
-          <SeatOverlay
-            table={table}
-            canRequest={!isDesktop && table !== null && table.status !== "sold"}
-          />
-          <Dock
-            entries={dockEntries}
-            hidden={dockHidden}
-            isDesktop={isDesktop}
-            dense={shortLandscape}
-          />
-
-          <Panel
-            open={panelOpen}
-            onClose={closePanel}
-            isDesktop={sidePanel}
-            compact={shortLandscape}
-            label={
-              panel === "table" && table
-                ? `Table ${table.label}`
-                : panel === "ticket" && ticket
-                  ? ticket.name
-                  : panel === "compare"
-                    ? "Comparatif"
-                    : "Toutes les tables"
-            }
-            title={
-              panel === "list" ? (
-                <span>
-                  Toutes les tables{" "}
-                  <span className="num text-label-3 font-normal">{tableCount}</span>
-                </span>
-              ) : panel === "compare" ? (
-                <span>
-                  Comparatif <span className="num text-label-3 font-normal">{compareCount}/3</span>
-                </span>
-              ) : undefined
-            }
-            aside={
-              panel === "list" && !fallback2d ? (
-                <Btn size="sm" variant="plain" onClick={() => setListMode(!listMode)}>
-                  {listMode ? "Voir en 3D" : "Sans 3D"}
-                </Btn>
-              ) : undefined
-            }
-            footer={
-              panel === "table" && table ? (
-                <TableFooter table={table} />
-              ) : panel === "ticket" && ticket ? (
-                <TicketFooter ticket={ticket} />
-              ) : undefined
-            }
-          >
-            {panel === "list" ? <TableList zones={vm.zones} /> : null}
-            {panel === "ticket" && ticket ? <TicketDetails ticket={ticket} /> : null}
-            {panel === "compare" ? (
-              <CompareView
-                tables={vm.tables}
-                zones={vm.zones}
-                accentName={club.brand.accent.name}
-              />
-            ) : null}
-            {panel === "table" && table ? (
-              <TableDetails
-                table={table}
-                siblings={vm.zones.find((z) => z.id === table.zoneId)?.tables ?? [table]}
-                icon={tableIcon}
-                content={content}
-              />
-            ) : null}
-          </Panel>
-
-          <LoadingScreen name={content.club.name} brand={club.brand} eventLine={eventLine} />
-          <IntroSkip isDesktop={isDesktop} />
-          <Island />
-          <SelectionAnnouncer vm={vm} />
-
-          <RequestDialog
-            table={table}
-            icon={tableIcon}
-            content={content}
-            clubSlug={club.slug}
-            eventSlug={content.event.slug}
-            isDesktop={isDesktop}
-            centered={wide}
-          />
-          <CommandMenu
-            content={content}
-            brand={club.brand}
-            zones={vm.zones}
-            tables={vm.tables}
-            tickets={vm.tickets}
-            isDesktop={isDesktop}
-          />
-        </div>
-      </TooltipPrimitive.Provider>
+        </TooltipPrimitive.Provider>
+      </ClubUiProvider>
     </MotionConfig>
   )
 }

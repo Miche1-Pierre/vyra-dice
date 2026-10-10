@@ -68,7 +68,7 @@ export function Dock({
             transition={SOFT_SPRING}
             onMouseMove={(e) => mouseX.set(e.clientX)}
             onMouseLeave={() => mouseX.set(Number.POSITIVE_INFINITY)}
-            className="glass glass-rim absolute bottom-3.5 left-1/2 z-40 flex h-[68px] -translate-x-1/2 items-end gap-2 rounded-[26px] px-2.5 pb-[9px]"
+            className="glass glass-rim sober:rounded-[14px] absolute bottom-3.5 left-1/2 z-40 flex h-[68px] -translate-x-1/2 items-end gap-2 rounded-[26px] px-2.5 pb-[9px]"
           >
             <AnimatePresence initial={false}>
               {entries.map((e) =>
@@ -93,7 +93,7 @@ export function Dock({
             exit={{ y: 120, opacity: 0 }}
             transition={SOFT_SPRING}
             className={cn(
-              "glass glass-rim absolute inset-x-2.5 bottom-[max(0.625rem,env(safe-area-inset-bottom))] z-40 flex items-start rounded-[28px] px-1.5 sm:inset-x-0 sm:mx-auto sm:w-fit sm:max-w-[calc(100%-1.25rem)]",
+              "glass glass-rim sober:rounded-[16px] absolute inset-x-2.5 bottom-[max(0.625rem,env(safe-area-inset-bottom))] z-40 flex items-start rounded-[28px] px-1.5 sm:inset-x-0 sm:mx-auto sm:w-fit sm:max-w-[calc(100%-1.25rem)]",
               dense ? "py-1.5" : "pt-2 pb-1.5",
             )}
           >
@@ -135,7 +135,7 @@ function DockIcon({
     onFocus: () => setHover(true),
     onBlur: () => setHover(false),
     className: cn(
-      "relative block size-full rounded-[23%] outline-none focus-visible:ring-2 focus-visible:ring-brand/80 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent",
+      "relative block size-full rounded-[23%] outline-none sober:rounded-[9px] focus-visible:ring-2 focus-visible:ring-brand/80 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent",
       entry.disabled && "pointer-events-none opacity-40",
     ),
   }
@@ -156,7 +156,7 @@ function DockIcon({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 2, scale: 0.98 }}
             transition={{ duration: 0.14 }}
-            className="glass text-footnote text-label pointer-events-none absolute bottom-[calc(100%+14px)] flex items-center gap-2 rounded-full py-1.5 pr-2.5 pl-3.5 whitespace-nowrap"
+            className="glass text-footnote text-label sober:rounded-[8px] pointer-events-none absolute bottom-[calc(100%+14px)] flex items-center gap-2 rounded-full py-1.5 pr-2.5 pl-3.5 whitespace-nowrap"
           >
             <span className="font-medium">{entry.label}</span>
             {entry.detail ? <span className="num text-label-2">{entry.detail}</span> : null}

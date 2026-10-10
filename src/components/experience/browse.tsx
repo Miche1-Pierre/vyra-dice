@@ -43,7 +43,7 @@ export function TableList({ zones }: { zones: ZoneView[] }) {
               </span>
               <span className="num text-footnote text-label-2 shrink-0">{zonePriceLabel(z)}</span>
             </button>
-            <ul className="divide-y divide-white/[0.07] overflow-hidden rounded-2xl bg-white/[0.05] shadow-[inset_0_0_0_1px_rgb(255_255_255/0.05)]">
+            <ul className="sober:rounded-[10px] divide-y divide-white/[0.07] overflow-hidden rounded-2xl bg-white/[0.05] shadow-[inset_0_0_0_1px_rgb(255_255_255/0.05)]">
               {z.tables.map((t) => (
                 <li key={t.id}>
                   <button
@@ -153,7 +153,7 @@ export function CompareView({
         ))}
       </div>
 
-      <div className="mt-3 divide-y divide-white/[0.07] overflow-hidden rounded-2xl bg-white/[0.05] shadow-[inset_0_0_0_1px_rgb(255_255_255/0.05)]">
+      <div className="sober:rounded-[10px] mt-3 divide-y divide-white/[0.07] overflow-hidden rounded-2xl bg-white/[0.05] shadow-[inset_0_0_0_1px_rgb(255_255_255/0.05)]">
         {ROWS.map((row) => (
           <div key={row.label} className="px-4 py-2.5">
             <Eyebrow className="text-[10px]">{row.label}</Eyebrow>

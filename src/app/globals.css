@@ -3,6 +3,8 @@
 @import "shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
+/* clubs whose brand asks for a sober interface (`brand.json` → ui.tone) */
+@custom-variant sober (&:where([data-tone="sober"], [data-tone="sober"] *));
 
 @theme inline {
   /* the club's typeface (brand.json "font"), Jost by default */
@@ -231,6 +233,13 @@
     mask-composite: exclude;
     pointer-events: none;
   }
+}
+
+/* sober tone: the primary action keeps the accent, flat, without gloss or glow */
+[data-tone="sober"] .brand-pill {
+  background-image: none;
+  background-color: var(--brand);
+  box-shadow: none;
 }
 
 /** The club's accent, poured: the single primary action. */

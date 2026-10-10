@@ -9,6 +9,7 @@ import { Controller, useForm, useWatch } from "react-hook-form"
 import type { z } from "zod"
 
 import { submitBookingRequest } from "@/app/[club]/[event]/actions"
+import { useClubUi } from "@/components/experience/club-ui"
 import { FallbackContact } from "@/components/experience/hud"
 import {
   Btn,
@@ -60,7 +61,7 @@ export function StatusChip({
   return (
     <span
       className={cn(
-        "text-caption inline-flex h-6 items-center gap-1.5 rounded-full px-2.5 font-medium",
+        "text-caption sober:rounded-[6px] inline-flex h-6 items-center gap-1.5 rounded-full px-2.5 font-medium",
         className,
       )}
       style={{ color, background: `${color}1f`, boxShadow: `inset 0 0 0 1px ${color}33` }}
@@ -91,13 +92,14 @@ export function TableDetails({
   const leaveSeat = useExperience((s) => s.leaveSeat)
   const toggleCompare = useExperience((s) => s.toggleCompare)
   const setGuests = useExperience((s) => s.setGuests)
+  const ui = useClubUi()
   // the seat view needs the 3D
   const scene = useExperience((s) => !s.fallback2d && !s.listMode)
   const guests = useGuests(table)
   const quote = quoteFor(table, guests)
   const supplement = supplementLabel(table)
   const deposit = depositLabel(table, quote)
-  const inCompare = compareIds.includes(table.id)
+  const inCompare = ui.compare && compareIds.includes(table.id)
   const tier = TIERS[table.tier]
   const tint = tierColor(table.tier)
 
@@ -105,9 +107,13 @@ export function TableDetails({
     <div className="pb-4">
       <header
         className="relative px-5 pt-5 pb-5"
-        style={{
-          background: `radial-gradient(130% 100% at 0% 0%, ${withAlpha(tint, 0x3d / 255)} 0%, ${withAlpha(tint, 0x0f / 255)} 45%, transparent 75%)`,
-        }}
+        style={
+          ui.tone === "sober"
+            ? undefined
+            : {
+                background: `radial-gradient(130% 100% at 0% 0%, ${withAlpha(tint, 0x3d / 255)} 0%, ${withAlpha(tint, 0x0f / 255)} 45%, transparent 75%)`,
+              }
+        }
       >
         <div className="flex items-center gap-3 pr-10">
           <ZoneTile tier={table.tier} icon={icon} className="size-11" />
@@ -138,7 +144,7 @@ export function TableDetails({
       </header>
 
       <div className="px-4">
-        <div className="flex min-h-14 items-center justify-between gap-3 rounded-2xl bg-white/[0.045] py-2 pr-2 pl-4 shadow-[inset_0_0_0_1px_rgb(255_255_255/0.05)]">
+        <div className="sober:rounded-[10px] flex min-h-14 items-center justify-between gap-3 rounded-2xl bg-white/[0.045] py-2 pr-2 pl-4 shadow-[inset_0_0_0_1px_rgb(255_255_255/0.05)]">
           <div>
             <p className="text-ui text-label">Personnes</p>
             <p className="text-caption text-label-3">{formatCapacity(table.capacity)}</p>
@@ -203,7 +209,7 @@ export function TableDetails({
                   onFocus={() => hoverTable(t.id)}
                   onBlur={() => hoverTable(null)}
                   className={cn(
-                    "text-footnote focus-visible:ring-brand/70 inline-flex h-8 items-center gap-1.5 rounded-full px-3 font-medium transition-colors outline-none focus-visible:ring-2",
+                    "text-footnote focus-visible:ring-brand/70 sober:rounded-[8px] inline-flex h-8 items-center gap-1.5 rounded-full px-3 font-medium transition-colors outline-none focus-visible:ring-2",
                     current
                       ? "text-label bg-white/[0.16] shadow-[inset_0_0_0_1px_rgb(255_255_255/0.18)]"
                       : "text-label-2 hover:text-label bg-white/[0.06] hover:bg-white/[0.1]",
@@ -239,7 +245,7 @@ export function TableDetails({
         </section>
       ) : null}
 
-      <details className="group mx-4 mt-6 rounded-2xl bg-white/[0.04] shadow-[inset_0_0_0_1px_rgb(255_255_255/0.05)]">
+      <details className="group sober:rounded-[10px] mx-4 mt-6 rounded-2xl bg-white/[0.04] shadow-[inset_0_0_0_1px_rgb(255_255_255/0.05)]">
         <summary className="text-footnote text-label-2 hover:text-label flex h-11 cursor-pointer list-none items-center justify-between px-4 font-medium transition-colors">
           Conditions de la soirée
           <ChevronDown className="text-label-3 size-4 transition-transform duration-200 group-open:rotate-180" />
@@ -253,7 +259,9 @@ export function TableDetails({
         </ul>
       </details>
 
-      <div className={cn("grid gap-2 px-4 pt-3", scene ? "grid-cols-2" : "grid-cols-1")}>
+      <div
+        className={cn("grid gap-2 px-4 pt-3", scene && ui.compare ? "grid-cols-2" : "grid-cols-1")}
+      >
         {scene ? (
           <Btn
             size="md"
@@ -268,16 +276,18 @@ export function TableDetails({
             <ScanEye /> {view === "seat" ? "Vue d’ensemble" : "Vue de la table"}
           </Btn>
         ) : null}
-        <Btn
-          size="md"
-          onClick={() => toggleCompare(table.id, table.label)}
-          className={cn(
-            inCompare &&
-              "text-brand shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--brand)_45%,transparent)]",
-          )}
-        >
-          <GitCompareArrows /> {inCompare ? "Comparée" : "Comparer"}
-        </Btn>
+        {ui.compare ? (
+          <Btn
+            size="md"
+            onClick={() => toggleCompare(table.id, table.label)}
+            className={cn(
+              inCompare &&
+                "text-brand shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--brand)_45%,transparent)]",
+            )}
+          >
+            <GitCompareArrows /> {inCompare ? "Comparée" : "Comparer"}
+          </Btn>
+        ) : null}
       </div>
     </div>
   )
@@ -336,7 +346,7 @@ function Group({
   return (
     <section>
       {title ? <Eyebrow className="mb-2 px-1">{title}</Eyebrow> : null}
-      <div className="divide-y divide-white/[0.07] overflow-hidden rounded-2xl bg-white/[0.05] shadow-[inset_0_0_0_1px_rgb(255_255_255/0.05)]">
+      <div className="sober:rounded-[10px] divide-y divide-white/[0.07] overflow-hidden rounded-2xl bg-white/[0.05] shadow-[inset_0_0_0_1px_rgb(255_255_255/0.05)]">
         {children}
       </div>
       {footer ? <div className="mt-1.5 px-1">{footer}</div> : null}
@@ -532,7 +542,7 @@ function RequestForm({
           window.setTimeout(() => field.scrollIntoView({ block: "center" }), 320)
         }}
       >
-        <div className="flex items-center gap-3.5 rounded-2xl bg-white/[0.05] p-3 shadow-[inset_0_0_0_1px_rgb(255_255_255/0.05)]">
+        <div className="sober:rounded-[10px] flex items-center gap-3.5 rounded-2xl bg-white/[0.05] p-3 shadow-[inset_0_0_0_1px_rgb(255_255_255/0.05)]">
           <ZoneTile tier={table.tier} icon={icon} className="size-12" />
           <div className="min-w-0 flex-1">
             <p className="text-headline text-label">Table {table.label}</p>
@@ -593,7 +603,7 @@ function RequestForm({
                         aria-checked={active}
                         onClick={() => field.onChange(t)}
                         className={cn(
-                          "num text-footnote focus-visible:ring-brand/70 h-8 rounded-full px-3.5 font-medium transition-[background-color,color,box-shadow] duration-150 outline-none focus-visible:ring-2",
+                          "num text-footnote focus-visible:ring-brand/70 sober:rounded-[8px] h-8 rounded-full px-3.5 font-medium transition-[background-color,color,box-shadow] duration-150 outline-none focus-visible:ring-2",
                           active
                             ? "bg-brand/[0.16] text-brand shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--brand)_55%,transparent)]"
                             : "text-label-2 hover:text-label bg-white/[0.07] hover:bg-white/[0.12]",
@@ -784,7 +794,7 @@ function RequestSuccess({
             void navigator.clipboard?.writeText(last.requestId)
             notify({ title: "Référence copiée", detail: last.requestId, tone: "ok" })
           }}
-          className="group mt-5 flex h-11 items-center gap-3 rounded-full bg-white/[0.06] pr-2 pl-4 shadow-[inset_0_0_0_1px_rgb(255_255_255/0.07)] transition-colors hover:bg-white/[0.1]"
+          className="group sober:rounded-[10px] mt-5 flex h-11 items-center gap-3 rounded-full bg-white/[0.06] pr-2 pl-4 shadow-[inset_0_0_0_1px_rgb(255_255_255/0.07)] transition-colors hover:bg-white/[0.1]"
         >
           <span className="eyebrow text-label-3">Réf.</span>
           <span className="num text-callout text-label font-medium tracking-[0.08em]">
@@ -849,7 +859,7 @@ export function RequestDialog(props: {
           className={cn(
             "glass-thick glass-rim text-label fixed z-[61] flex flex-col overflow-hidden transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] outline-none data-[ending-style]:opacity-0 data-[starting-style]:opacity-0",
             centered
-              ? "top-1/2 left-1/2 max-h-[min(88vh,calc(100dvh-1.5rem))] w-[min(540px,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2 rounded-[32px] data-[ending-style]:scale-[0.96] data-[starting-style]:scale-[0.96]"
+              ? "sober:rounded-[18px] top-1/2 left-1/2 max-h-[min(88vh,calc(100dvh-1.5rem))] w-[min(540px,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2 rounded-[32px] data-[ending-style]:scale-[0.96] data-[starting-style]:scale-[0.96]"
               : "inset-x-0 bottom-0 max-h-[94dvh] rounded-t-[32px] data-[ending-style]:translate-y-full data-[starting-style]:translate-y-full",
           )}
         >

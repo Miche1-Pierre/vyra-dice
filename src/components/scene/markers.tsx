@@ -280,10 +280,14 @@ function ZoneTag({
         aria-label={`${zone.name}, ${tier.label}, ${zone.fromLabel ? `${zone.fromLabel}, ` : ""}${zone.availability.label}`}
         className={cn(
           chip,
-          "flex items-center gap-2.5 rounded-full bg-[rgb(16_13_20/0.8)] py-1 pr-3.5 pl-1 shadow-[0_0_0_1px_rgb(255_255_255/0.11),inset_0_1px_0_rgb(255_255_255/0.08),0_10px_28px_rgb(0_0_0/0.55)] backdrop-blur-md hover:scale-[1.05] hover:bg-[rgb(26_22_32/0.9)]",
+          "sober:rounded-[10px] flex items-center gap-2.5 rounded-full bg-[rgb(16_13_20/0.8)] py-1 pr-3.5 pl-1 shadow-[0_0_0_1px_rgb(255_255_255/0.11),inset_0_1px_0_rgb(255_255_255/0.08),0_10px_28px_rgb(0_0_0/0.55)] backdrop-blur-md hover:scale-[1.05] hover:bg-[rgb(26_22_32/0.9)]",
         )}
       >
-        <ZoneTile tier={zone.tier} icon={zone.icon} className="size-7 rounded-full" />
+        <ZoneTile
+          tier={zone.tier}
+          icon={zone.icon}
+          className="sober:rounded-[7px] size-7 rounded-full"
+        />
         <span className="leading-tight">
           <span className="text-label block text-[13px] leading-4 font-semibold">{zone.name}</span>
           {/* very short screens (phones held sideways): name only, the price is in the dock */}
@@ -319,10 +323,10 @@ function TicketTag({
         aria-label={`${ticket.name}, billet sans table, ${ticket.priceLabel} par personne`}
         className={cn(
           chip,
-          "flex items-center gap-2.5 rounded-full bg-[rgb(16_13_20/0.8)] py-1 pr-3.5 pl-1 shadow-[0_0_0_1px_rgb(255_255_255/0.11),inset_0_1px_0_rgb(255_255_255/0.08),0_10px_28px_rgb(0_0_0/0.55)] backdrop-blur-md hover:scale-[1.05] hover:bg-[rgb(26_22_32/0.9)]",
+          "sober:rounded-[10px] flex items-center gap-2.5 rounded-full bg-[rgb(16_13_20/0.8)] py-1 pr-3.5 pl-1 shadow-[0_0_0_1px_rgb(255_255_255/0.11),inset_0_1px_0_rgb(255_255_255/0.08),0_10px_28px_rgb(0_0_0/0.55)] backdrop-blur-md hover:scale-[1.05] hover:bg-[rgb(26_22_32/0.9)]",
         )}
       >
-        <Tile tone="graphite" className="size-7 rounded-full">
+        <Tile tone="graphite" className="sober:rounded-[7px] size-7 rounded-full">
           <Ticket />
         </Tile>
         <span className="leading-tight">
@@ -366,7 +370,7 @@ function TableTag({
         aria-label={`Table ${table.label}, ${status.label}${table.priceLabel ? `, minimum ${table.priceLabel}` : ""}`}
         className={cn(
           chip,
-          "flex h-7 items-center gap-1.5 rounded-full bg-[rgb(16_13_20/0.86)] pr-3 pl-1 text-[12px]",
+          "sober:rounded-[8px] flex h-7 items-center gap-1.5 rounded-full bg-[rgb(16_13_20/0.86)] pr-3 pl-1 text-[12px]",
           active
             ? "scale-[1.08] shadow-[0_0_0_1.5px_var(--brand),0_0_22px_color-mix(in_srgb,var(--brand)_45%,transparent),0_8px_22px_rgb(0_0_0/0.55)]"
             : "shadow-[0_0_0_1px_rgb(255_255_255/0.12),0_8px_22px_rgb(0_0_0/0.5)] hover:scale-[1.06]",

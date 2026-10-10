@@ -67,6 +67,8 @@ et te renvoie les erreurs : corrige ce qu'il signale, rien de plus.
 - `wordmark` : le nom dessiné en traits (viewBox, chemins SVG simples M/L/H/V/A, épaisseur ~1,5) — seulement si tu
   peux le faire proprement ; sinon omets-le (le site écrit le nom en capitales espacées). `emblem` : idem, facultatif.
 - `font` : `jost` (seule police disponible pour l'instant).
+- `ui` (facultatif) : `{ "tone": "sober", "compare": false }` pour une interface plus sobre (tuiles graphite, angles
+  droits) sans comparatif de tables, si le brief le demande ; sinon omets-le.
 
 ## L'ambiance 3D (`ambiance.json`)
 

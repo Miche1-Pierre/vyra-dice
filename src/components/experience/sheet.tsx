@@ -90,8 +90,8 @@ export function Panel({
             className={cn(
               "glass-thick glass-rim absolute z-40 flex origin-right flex-col overflow-hidden",
               compact
-                ? "top-2 right-[max(0.5rem,env(safe-area-inset-right))] bottom-2 w-[340px] rounded-[26px]"
-                : "top-4 right-4 bottom-[100px] w-[400px] rounded-[30px]",
+                ? "sober:rounded-[16px] top-2 right-[max(0.5rem,env(safe-area-inset-right))] bottom-2 w-[340px] rounded-[26px]"
+                : "sober:rounded-[16px] top-4 right-4 bottom-[100px] w-[400px] rounded-[30px]",
               className,
             )}
           >
@@ -115,7 +115,7 @@ export function Panel({
               if (info.offset.y > 110 || info.velocity.y > 600) onClose()
             }}
             className={cn(
-              "glass-thick glass-rim absolute inset-x-2 bottom-2 z-40 flex max-h-[64dvh] flex-col overflow-hidden rounded-[30px] sm:inset-x-0 sm:mx-auto sm:w-[min(560px,calc(100%-1rem))]",
+              "glass-thick glass-rim sober:rounded-[18px] absolute inset-x-2 bottom-2 z-40 flex max-h-[64dvh] flex-col overflow-hidden rounded-[30px] sm:inset-x-0 sm:mx-auto sm:w-[min(560px,calc(100%-1rem))]",
               className,
             )}
           >

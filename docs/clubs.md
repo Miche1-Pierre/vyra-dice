@@ -114,17 +114,20 @@ qu'un espace a son billet.
 
 ## Référence — `brand.json`
 
-| Champ                          | Rôle                                                                                         |
-| ------------------------------ | -------------------------------------------------------------------------------------------- |
-| `accent.color` / `deep` / `on` | accent (action principale, prix, focus), son extrémité sombre, texte posé dessus             |
-| `accent.pill`                  | haut et bas du dégradé du bouton principal (l'accent au milieu)                              |
-| `accent.foil`                  | dorure (clair, milieu, sombre) des prix, du logo et de l'emblème                             |
-| `accent.name`                  | nom français de la couleur, pour les textes (« le meilleur est **en or** »)                  |
-| `tiers.<tier>.color` / `deep`  | teinte de chaque niveau d'offre : pastilles, tuiles de zone, sol des zones, halos des tables |
-| `font`                         | police de l'interface parmi celles de `src/app/fonts.ts` (`jost`)                            |
-| `wordmark` (facultatif)        | nom dessiné : `viewBox`, `strokeWidth`, tracés SVG — sinon le nom en capitales espacées      |
-| `tagline` (facultatif)         | petites capitales sous le logo à l'ouverture (« C L U B »)                                   |
-| `emblem` (facultatif)          | emblème : formes pleines (montent) et traits `stroke` (se dessinent) — sinon l'initiale      |
+| Champ                          | Rôle                                                                                           |
+| ------------------------------ | ---------------------------------------------------------------------------------------------- |
+| `accent.color` / `deep` / `on` | accent (action principale, prix, focus), son extrémité sombre, texte posé dessus               |
+| `accent.pill`                  | haut et bas du dégradé du bouton principal (l'accent au milieu)                                |
+| `accent.foil`                  | dorure (clair, milieu, sombre) des prix, du logo et de l'emblème                               |
+| `accent.name`                  | nom français de la couleur, pour les textes (« le meilleur est **en or** »)                    |
+| `tiers.<tier>.color` / `deep`  | teinte de chaque niveau d'offre : pastilles, tuiles de zone, sol des zones, halos des tables   |
+| `font`                         | police de l'interface parmi celles de `src/app/fonts.ts` (`jost`)                              |
+| `wordmark` (facultatif)        | nom dessiné : `viewBox`, `strokeWidth`, tracés SVG — sinon le nom en capitales espacées        |
+| `tagline` (facultatif)         | petites capitales sous le logo à l'ouverture (« C L U B »)                                     |
+| `emblem` (facultatif)          | emblème : formes pleines (montent) et traits `stroke` (se dessinent) — sinon l'initiale        |
+| `ui.tone` (facultatif)         | `vivid` (défaut) : tuiles brillantes aux couleurs des niveaux ; `sober` : tuiles graphite      |
+|                                | avec un point de couleur, angles plus droits, bouton principal sans brillance                  |
+| `ui.compare` (facultatif)      | `true` (défaut) : comparatif des tables ; `false` le retire (fiche, dock, recherche, touche C) |
 
 La page du club pose ces valeurs en propriétés CSS sur `:root` (`--brand`, `--brand-deep`, `--brand-on`,
 `--brand-hi`, `--brand-lo`, `--foil-hi`, `--foil`, `--foil-lo`, `--lounge`, `--lounge-deep`…, `--club-font`) ;
