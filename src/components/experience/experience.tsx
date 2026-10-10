@@ -320,7 +320,14 @@ export function Experience({ club }: { club: ClubDefinition }) {
   // the night's music, for the immersion (a file of the club's bundle)
   const music = useMemo(() => {
     const m = content.event.music
-    return m ? { url: assetUrl(club.slug, m.src), title: m.title, artist: m.artist } : null
+    return m
+      ? {
+          url: assetUrl(club.slug, m.src),
+          title: m.title,
+          artist: m.artist,
+          sealed: m.src.endsWith(".enc"),
+        }
+      : null
   }, [club.slug, content.event.music])
   const screenVideos = useMemo(
     () => content.event.screens?.map((src) => assetUrl(club.slug, src)),

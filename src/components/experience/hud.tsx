@@ -13,7 +13,7 @@ import {
   VolumeX,
 } from "lucide-react"
 import { AnimatePresence, motion } from "motion/react"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState, useSyncExternalStore } from "react"
 
 import { Emblem, Wordmark } from "@/components/experience/brand"
 import {
@@ -29,7 +29,7 @@ import {
 import type { TableView, TicketView, ZoneView } from "@/components/experience/view-model"
 import { track } from "@/lib/analytics/client"
 import { contactMessage, instagramUrl, phoneUrl, whatsappUrl } from "@/lib/contact"
-import { pauseMusic, playMusic } from "@/lib/music"
+import { musicKey, pauseMusic, playMusic, unsealMusic } from "@/lib/music"
 import type { ClubBrand } from "@/lib/clubs/brand"
 import type { VenueContent } from "@/lib/schema"
 import { useExperience, type LevelFilter } from "@/lib/store"
@@ -315,6 +315,14 @@ export interface NightMusic {
   url: string
   title: string
   artist?: string
+  /** Sealed (`.enc`): it plays only from a private demo link carrying its key. */
+  sealed?: boolean
+}
+
+/** The private demo link's key can arrive after the page: `#son=…` added to its address. */
+function onHashChange(changed: () => void) {
+  window.addEventListener("hashchange", changed)
+  return () => window.removeEventListener("hashchange", changed)
 }
 
 /** Three bars that dance while the music plays (still when motion is reduced). */
@@ -344,18 +352,23 @@ export function Immersion({ isDesktop, music }: { isDesktop: boolean; music: Nig
   const setSound = useExperience((s) => s.setSound)
   const notify = useExperience((s) => s.notify)
   const [asking, setAsking] = useState(false)
-  // the music is offered only when its file is there: a demo may ship without it
-  const [available, setAvailable] = useState(false)
+  // the music is offered only when it can play: its file is there and, sealed, the private
+  // demo link carries its key (opened ahead, so that the click starts it at once)
+  const [playable, setPlayable] = useState<string | null>(null)
+  const linkKey = useSyncExternalStore(onHashChange, musicKey, () => null)
   useEffect(() => {
     if (!music) return
+    const key = music.sealed ? linkKey : null
+    if (music.sealed && !key) return
     let live = true
-    fetch(music.url, { method: "HEAD" })
-      .then((res) => live && setAvailable(res.ok))
-      .catch(() => undefined)
+    const ready = key
+      ? unsealMusic(music.url, key)
+      : fetch(music.url, { method: "HEAD" }).then((res) => (res.ok ? music.url : null))
+    ready.then((url) => live && setPlayable(url)).catch(() => undefined)
     return () => {
       live = false
     }
-  }, [music])
+  }, [music, linkKey])
   // leaving the visit stops the music
   useEffect(() => () => pauseMusic(), [])
   const box = useRef<HTMLDivElement>(null)
@@ -375,7 +388,7 @@ export function Immersion({ isDesktop, music }: { isDesktop: boolean; music: Nig
     }
   }, [asking])
 
-  const offered = music && available ? music : null
+  const offered = music && playable ? { ...music, url: playable } : null
   const credit = offered ? `${offered.title}${offered.artist ? ` — ${offered.artist}` : ""}` : null
 
   // started inside the click: the browser plays sound only after a gesture

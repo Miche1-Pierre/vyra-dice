@@ -175,13 +175,15 @@ export const eventSchema = z.object({
   /**
    * The night's music for the immersion (night mode with sound): a file of the club's bundle
    * (`clubs/<slug>/public/<src>`), played only when the visitor asks for it. Without the file, the
-   * immersion stays silent.
+   * immersion stays silent. A sealed file (`….mp3.enc`, scripts/seal-audio.mjs) plays only from a
+   * private demo link carrying its key (`#son=<key>`): for a track only cleared to be shown to the
+   * artist or the club, never to the public.
    */
   music: z
     .object({
-      src: z
-        .string()
-        .regex(/^(?!.*\.\.)[\w./-]+\.(mp3|m4a|ogg)$/, { error: "Expected an audio file path" }),
+      src: z.string().regex(/^(?!.*\.\.)[\w./-]+\.(mp3|m4a|ogg)(\.enc)?$/, {
+        error: "Expected an audio file path",
+      }),
       title: z.string().min(1).max(80),
       artist: z.string().min(1).max(60).optional(),
     })

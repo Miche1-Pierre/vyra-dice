@@ -2,9 +2,10 @@
  * The night's music for the immersion, and what the light show reads from it.
  *
  * One audio element for the visit, started only on the visitor's explicit choice (browsers refuse
- * sound without a gesture anyway). Its signal goes through an analyser: once per frame,
- * `sampleMusic` turns the bass into a level and beats, written into `pulse`, a plain object the
- * scene reads in useFrame (no React state, no re-render).
+ * sound without a gesture anyway); a sealed track opens only with the key of a private demo link.
+ * Its signal goes through an analyser: once per frame, `sampleMusic` turns the bass into a level
+ * and beats, written into `pulse`, a plain object the scene reads in useFrame (no React state, no
+ * re-render).
  */
 
 /** 0–1: the bass level, smoothed; a beat that jumps to 1 on each kick and decays. */
@@ -20,6 +21,33 @@ let sinceBeat = 1
 let stopTimer: number | null = null
 
 const FADE_S = 0.6
+
+/** The key of a private demo link (`#son=<key>`, never sent to the server), if any. */
+export function musicKey(): string | null {
+  if (typeof window === "undefined") return null
+  return new URLSearchParams(window.location.hash.slice(1)).get("son")
+}
+
+/** Opens a sealed track (scripts/seal-audio.mjs: IV, then AES-GCM ciphertext and tag). */
+export async function unseal(data: Uint8Array<ArrayBuffer>, key: string): Promise<ArrayBuffer> {
+  const raw = Uint8Array.from(atob(key.replace(/-/g, "+").replace(/_/g, "/")), (c) =>
+    c.charCodeAt(0),
+  )
+  const secret = await crypto.subtle.importKey("raw", raw, "AES-GCM", false, ["decrypt"])
+  return crypto.subtle.decrypt(
+    { name: "AES-GCM", iv: data.subarray(0, 12) },
+    secret,
+    data.subarray(12),
+  )
+}
+
+/** A sealed track, fetched and opened with the private link's key, as a URL the audio can play. */
+export async function unsealMusic(url: string, key: string): Promise<string> {
+  const res = await fetch(url)
+  if (!res.ok) throw new Error(`${res.status} ${url}`)
+  const plain = await unseal(new Uint8Array(await res.arrayBuffer()), key)
+  return URL.createObjectURL(new Blob([plain], { type: "audio/mpeg" }))
+}
 
 function graph(src: string): HTMLAudioElement {
   if (audio && audio.dataset.src === src) return audio
