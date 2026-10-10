@@ -15,7 +15,7 @@ import { MeshoptEncoder, MeshoptDecoder } from "meshoptimizer"
 import { createHash } from "node:crypto"
 import { execFileSync } from "node:child_process"
 import { existsSync } from "node:fs"
-import { mkdir, readdir, readFile, stat, writeFile } from "node:fs/promises"
+import { mkdir, readdir, readFile, rm, stat, writeFile } from "node:fs/promises"
 import { join } from "node:path"
 import sharp from "sharp"
 
@@ -68,6 +68,11 @@ async function optimizeClub(club) {
   }
   await writeFile(join(outDir, "lightmaps.json"), `${JSON.stringify(manifest, null, 2)}\n`)
   console.log(`  lightmaps total: ${(total / 1024).toFixed(0)} KB`)
+  // the bundle ships only the manifest's lightmaps: drop those of removed objects
+  const kept = new Set(Object.values(manifest.lightmaps).map((entry) => entry.file))
+  for (const file of await readdir(join(outDir, "lm"))) {
+    if (!kept.has(`lm/${file}`)) await rm(join(outDir, "lm", file))
+  }
 }
 
 const only = process.argv[2]

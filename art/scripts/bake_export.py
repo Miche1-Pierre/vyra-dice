@@ -212,6 +212,9 @@ def main() -> None:
         o.hide_render = False
     objs = exportables(root)
     targets = [o for o in objs if o.get("vyra_lm")]
+    # an object removed from the scene since the last bake takes its lightmap with it
+    names = {o.name for o in targets}
+    manifest["lightmaps"] = {k: v for k, v in manifest["lightmaps"].items() if k in names}
     t0 = time.time()
     if opts["bake"]:
         setup_cycles(opts["samples"])
