@@ -242,22 +242,28 @@ export function zoneMarkerPosition(layout: VenueLayout, zoneId: string): Vec3 {
   return toThree([cx, cy, floor + 2.6])
 }
 
-/** How far the buyer may look around a viewpoint: never a free flight through the venue. */
+/** How far the buyer may look around a viewpoint. */
 export interface LookLimits {
-  /** Turn left or right of the viewpoint's direction, in degrees. */
-  azimuthDeg: number
+  /** Turn left or right of the viewpoint's direction, in degrees; `null` = all the way round. */
+  azimuthDeg: number | null
   /** Tilt up or down from it, in degrees; `null` keeps the rig's own range. */
   polarDeg: number | null
   /** Closest and farthest distance as a share of the viewpoint's; `null` keeps the rig's own. */
   zoom: [number, number] | null
+  /** Move the point looked at, within the building (two fingers, right button). */
+  pan: boolean
 }
 
-/** Limits per view: the overview turns the most, the seat looks around without moving. */
+/**
+ * Limits per view. The overview is the free view: all the way round, close up, panning across
+ * the whole club. A zone or a table is looked around from where it is shown, the seat without
+ * moving.
+ */
 export const LOOK_LIMITS = {
-  overview: { azimuthDeg: 60, polarDeg: 12, zoom: [0.6, 1.25] },
-  zone: { azimuthDeg: 45, polarDeg: 10, zoom: [0.65, 1.3] },
-  table: { azimuthDeg: 40, polarDeg: 10, zoom: [0.65, 1.35] },
-  seat: { azimuthDeg: 135, polarDeg: null, zoom: null },
+  overview: { azimuthDeg: null, polarDeg: null, zoom: [0.15, 1.4], pan: true },
+  zone: { azimuthDeg: 45, polarDeg: 10, zoom: [0.65, 1.3], pan: false },
+  table: { azimuthDeg: 40, polarDeg: 10, zoom: [0.65, 1.35], pan: false },
+  seat: { azimuthDeg: 135, polarDeg: null, zoom: null, pan: false },
 } satisfies Record<string, LookLimits>
 
 export type LookKind = keyof typeof LOOK_LIMITS
@@ -291,7 +297,7 @@ export function lookBounds(
   const azimuth = Math.atan2(dx, dz)
   const polar = Math.acos(Math.min(1, Math.max(-1, dy / (distance || 1))))
   const rad = (deg: number) => (deg * Math.PI) / 180
-  const turn = rad(limits.azimuthDeg)
+  const turn = limits.azimuthDeg === null ? Number.POSITIVE_INFINITY : rad(limits.azimuthDeg)
   const tilt = limits.polarDeg === null ? null : rad(limits.polarDeg)
   return {
     azimuth,

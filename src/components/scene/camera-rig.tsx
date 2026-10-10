@@ -30,8 +30,9 @@ function easeInOut(t: number) {
 
 /**
  * Owns the camera: scripted intro fly-through, then smooth transitions between the overview,
- * a zone, a table and the first-person "seat" view. From each viewpoint the buyer looks around
- * within limits (turn, tilt, a little zoom): no panning, no free flight through the venue.
+ * a zone, a table and the first-person "seat" view. The overview is free: the buyer turns all
+ * the way round, zooms in and pans across the club. From a zone or a table they look around
+ * within limits (turn, tilt, a little zoom), without panning.
  */
 export function CameraRig({
   layout,
@@ -84,8 +85,10 @@ export function CameraRig({
     return new THREE.Box3(new THREE.Vector3(...min), new THREE.Vector3(...max))
   }, [layout])
 
-  // orbit around the viewpoint's target (overview / zone / table); limits are set per pose
-  const configureOrbit = (c: CameraControlsImpl) => {
+  // orbit around the viewpoint's target (overview / zone / table); limits are set per pose.
+  // `pan` (the overview, see LOOK_LIMITS): two fingers or the right button move across the club
+  // and the wheel zooms where the pointer is
+  const configureOrbit = (c: CameraControlsImpl, pan = false) => {
     c.minDistance = 1.5
     c.maxDistance = 110
     c.minPolarAngle = ORBIT_POLAR[0]
@@ -95,13 +98,14 @@ export function CameraRig({
     c.dollySpeed = 0.8
     c.smoothTime = 0.65
     c.draggingSmoothTime = 0.12
-    // zoom towards the subject, never pan: the buyer stays on the chosen viewpoint
-    c.dollyToCursor = false
+    // a zone or a table: zoom towards the subject, never pan away from it
+    c.dollyToCursor = pan
     c.mouseButtons.wheel = ACTION.DOLLY
-    c.mouseButtons.right = ACTION.NONE
-    c.mouseButtons.middle = ACTION.NONE
-    c.touches.two = ACTION.TOUCH_DOLLY
-    c.touches.three = ACTION.NONE
+    c.mouseButtons.right = pan ? ACTION.TRUCK : ACTION.NONE
+    c.mouseButtons.middle = pan ? ACTION.TRUCK : ACTION.NONE
+    c.touches.two = pan ? ACTION.TOUCH_DOLLY_TRUCK : ACTION.TOUCH_DOLLY
+    c.touches.three = pan ? ACTION.TOUCH_TRUCK : ACTION.NONE
+    // the point looked at stays in the building
     c.setBoundary(bounds)
   }
 
@@ -260,12 +264,14 @@ export function CameraRig({
       configureSeat(c)
       apply(standingPose(layout, focusedTicketId, aspect), true, "seat", 0.05)
     } else {
-      configureOrbit(c)
-      if (view === "table" && selectedTableId)
-        apply(tablePose(layout, selectedTableId, aspect), true, "table")
-      else if (view === "zone" && focusedZoneId)
-        apply(zonePose(layout, focusedZoneId, aspect), true, "zone")
-      else apply(overviewPose(layout, aspect), true, "overview")
+      const [pose, kind]: [CameraPose, LookKind] =
+        view === "table" && selectedTableId
+          ? [tablePose(layout, selectedTableId, aspect), "table"]
+          : view === "zone" && focusedZoneId
+            ? [zonePose(layout, focusedZoneId, aspect), "zone"]
+            : [overviewPose(layout, aspect), "overview"]
+      configureOrbit(c, LOOK_LIMITS[kind].pan)
+      apply(pose, true, kind)
     }
     // aspect handled separately below
     // eslint-disable-next-line react-hooks/exhaustive-deps

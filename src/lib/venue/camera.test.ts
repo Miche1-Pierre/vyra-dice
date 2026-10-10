@@ -164,6 +164,16 @@ describe("lookBounds", () => {
     expect(bounds.minPolar!).toBeLessThanOrEqual(bounds.maxPolar!)
   })
 
+  it("lets the overview turn all the way round, from close up to far away", () => {
+    const bounds = lookBounds({ position: [0, 10, 10], target: [0, 0, 0] }, LOOK_LIMITS.overview)
+    expect(bounds.minAzimuth).toBe(Number.NEGATIVE_INFINITY)
+    expect(bounds.maxAzimuth).toBe(Number.POSITIVE_INFINITY)
+    expect(bounds).toMatchObject({ minPolar: null, maxPolar: null })
+    expect(bounds.minDistance).toBeCloseTo(Math.hypot(10, 10) * 0.15)
+    expect(LOOK_LIMITS.overview.pan).toBe(true)
+    expect(LOOK_LIMITS.zone.pan || LOOK_LIMITS.table.pan || LOOK_LIMITS.seat.pan).toBe(false)
+  })
+
   it("keeps the seat's own tilt and distance, and only bounds the turn", () => {
     const bounds = lookBounds({ position: [0, 1.2, 0], target: [0, 1.2, -0.05] }, LOOK_LIMITS.seat)
     expect(deg(bounds.maxAzimuth - bounds.minAzimuth)).toBeCloseTo(270)
