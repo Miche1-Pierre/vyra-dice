@@ -20,6 +20,7 @@ import {
 import {
   BrandBar,
   LevelSwitch,
+  NightToggle,
   SearchButton,
   SeatOverlay,
   StatusLegend,
@@ -398,6 +399,9 @@ export function Experience({ club }: { club: ClubDefinition }) {
                 ) : null}
               </div>
               <div className="pointer-events-auto flex shrink-0 items-center gap-2">
+                {club.ambiance.night && !textOnly && view !== "seat" ? (
+                  <NightToggle isDesktop={isDesktop} />
+                ) : null}
                 {isDesktop && !panelOpen && view !== "seat" ? <StatusLegend /> : null}
                 {!isDesktop ? (
                   <WhatsAppButton

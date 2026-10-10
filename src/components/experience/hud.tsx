@@ -1,6 +1,15 @@
 "use client"
 
-import { ChevronLeft, Mail, MessageCircle, Phone, ScanEye, Search, Ticket } from "lucide-react"
+import {
+  ChevronLeft,
+  Mail,
+  MessageCircle,
+  Moon,
+  Phone,
+  ScanEye,
+  Search,
+  Ticket,
+} from "lucide-react"
 import { AnimatePresence, motion } from "motion/react"
 
 import { Emblem, Wordmark } from "@/components/experience/brand"
@@ -229,6 +238,27 @@ export function SearchButton({ isDesktop }: { isDesktop: boolean }) {
       onClick={() => setCommandOpen(true)}
     >
       <Search />
+    </RoundBtn>
+  )
+}
+
+/** Night mode switch, for clubs whose ambiance offers it: dark room, one light colour, smoke. */
+export function NightToggle({ isDesktop }: { isDesktop: boolean }) {
+  const night = useExperience((s) => s.night)
+  const setNight = useExperience((s) => s.setNight)
+  return (
+    <RoundBtn
+      label={night ? "Revenir à l’ambiance normale" : "Ambiance de nuit"}
+      side="bottom"
+      size={isDesktop ? "md" : "sm"}
+      active={night}
+      className={cn(isDesktop ? "" : "size-9", night && "text-brand")}
+      onClick={() => {
+        setNight(!night)
+        track("night_mode_toggled", { on: !night })
+      }}
+    >
+      <Moon />
     </RoundBtn>
   )
 }

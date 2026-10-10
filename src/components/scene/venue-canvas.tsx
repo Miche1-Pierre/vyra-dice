@@ -9,6 +9,7 @@ import { Effects, type Quality } from "@/components/scene/effects"
 import { Backdrop } from "@/components/scene/fx/backdrop"
 import { Beams } from "@/components/scene/fx/beams"
 import { FloorGloss } from "@/components/scene/fx/floor-gloss"
+import { Smoke } from "@/components/scene/fx/smoke"
 import { FrozenClock, readFrozenTime } from "@/components/scene/frozen-clock"
 import { CameraRig } from "@/components/scene/camera-rig"
 import {
@@ -46,7 +47,7 @@ class SceneErrorBoundary extends Component<
 
 /** Instant of the light show held when the visitor asked for less motion (as in captures). */
 const STILL_AT = 12
-/** Colour of the neon intro. */
+/** Neon of the intro when the club gives no night colour. */
 const NEON = "#ff2a3a"
 
 export interface VenueCanvasProps {
@@ -88,6 +89,8 @@ export default function VenueCanvas({
   // the neon intro draws the club in the dark: no beams nor reflections until it is built
   const neon = ambiance.intro === "neon" && !reducedMotion
   const opening = useExperience((s) => neon && s.view === "intro")
+  // night mode, when the club offers it: dark room in one colour, smoke over the floor
+  const night = useExperience((s) => (ambiance.night && s.night ? ambiance.night.color : null))
 
   return (
     <SceneErrorBoundary onError={setFallback2d}>
@@ -122,7 +125,7 @@ export default function VenueCanvas({
             assets={assets}
             ambiance={ambiance}
             quality={quality}
-            neon={neon ? NEON : undefined}
+            neon={neon ? (ambiance.night?.color ?? NEON) : undefined}
           />
           {quality === "high" && effects && !opening ? <FloorGloss layout={layout} /> : null}
           <Backdrop center={venueCenter(layout)} />
@@ -132,6 +135,9 @@ export default function VenueCanvas({
               palettes={ambiance.beams.palettes}
               intensity={quality === "high" ? 1 : 0.8}
             />
+          ) : null}
+          {ambiance.night ? (
+            <Smoke layout={layout} on={night !== null} count={quality === "high" ? 34 : 20} />
           ) : null}
           <ZoneOverlays layout={layout} tiers={tiers} />
           <TableHotspots layout={layout} tiers={tiers} />
@@ -148,7 +154,7 @@ export default function VenueCanvas({
           reducedMotion={reducedMotion}
           onIntroSkipped={onIntroSkipped}
         />
-        {effects ? <Effects quality={quality} /> : null}
+        {effects || night ? <Effects quality={quality} night={night} lite={!effects} /> : null}
       </Canvas>
     </SceneErrorBoundary>
   )

@@ -66,8 +66,11 @@ interface ExperienceState {
   notice: Notice | null
   /** Bumped to ask the camera to go back to the overview even if the view didn't change. */
   resetNonce: number
+  /** Night mode (clubs whose ambiance offers it): dark room, one light colour, smoke. */
+  night: boolean
 
   setSceneReady: () => void
+  setNight: (on: boolean) => void
   setFallback2d: () => void
   setListMode: (on: boolean) => void
   finishIntro: () => void
@@ -114,8 +117,10 @@ export const useExperience = create<ExperienceState>()((set, get) => ({
   lastRequest: null,
   notice: null,
   resetNonce: 0,
+  night: false,
 
   setSceneReady: () => set({ sceneReady: true }),
+  setNight: (night) => set({ night }),
   setFallback2d: () => set({ fallback2d: true, view: "overview" }),
   setListMode: (listMode) =>
     set((s) => ({
