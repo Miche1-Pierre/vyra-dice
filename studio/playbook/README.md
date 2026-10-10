@@ -40,6 +40,7 @@ et te renvoie les erreurs : corrige ce qu'il signale, rien de plus.
 - `zones` : `tier` `lounge` | `vip` | `prestige`, `level`, rectangle. `tables` : `id`, `zone`, `kind` (= tier de la
   zone), centre `x`/`y`, `facing` en degrés (0 = est, 90 = nord) = la direction que regardent les clients assis,
   donc vers la piste ou la scène.
+- `stairs` : volées droites, `bottom` = côté du départ (`north`, `south`, `east` ou `west`), on monte vers l'opposé.
 - Ids : zones en slug lisible (`vip-balcon`), tables `l1…` (lounge), `v1…` (VIP), `p1…` (prestige), uniques.
 - Une table doit tenir dans sa zone avec son gabarit (`furniture[kind]`), sans chevaucher sa voisine
   (espacement ≥ largeur + 0,3 m) ni un poteau, un escalier ou un garde-corps.
