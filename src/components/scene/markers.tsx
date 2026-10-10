@@ -7,7 +7,12 @@ import * as THREE from "three"
 
 import { cn } from "@/lib/utils"
 import { useExperience } from "@/lib/store"
-import { standingMarkerPosition, tableMarkerPosition, zoneMarkerPosition } from "@/lib/venue/camera"
+import {
+  djMarkerPosition,
+  standingMarkerPosition,
+  tableMarkerPosition,
+  zoneMarkerPosition,
+} from "@/lib/venue/camera"
 import type { VenueLayout } from "@/lib/venue/layout"
 import { Ticket } from "lucide-react"
 
@@ -49,8 +54,8 @@ export interface TicketMarkerData {
 
 /**
  * Price tags floating in the scene: one per zone and per standing area on the overview, one per
- * table inside a zone. In the sober tone the zones are pinned cards (name, price, availability)
- * and no tag ever moves up or down.
+ * table inside a zone, and the DJ's place in every view. In the sober tone the zones are pinned
+ * cards (name, price, availability) and no tag ever moves up or down.
  */
 export function Markers({
   layout,
@@ -88,6 +93,7 @@ export function Markers({
       Object.fromEntries(layout.tables.map((t) => [t.id, tableMarkerPosition(layout, t)] as const)),
     [layout],
   )
+  const djPosition = useMemo(() => djMarkerPosition(layout), [layout])
 
   const levelVisible = (level: 0 | 1) => levelFilter === "all" || levelFilter === level
 
@@ -95,7 +101,7 @@ export function Markers({
   // 1. slide a card horizontally to keep it on screen (its stem stays on the anchor);
   // 2. vivid tone: if two cards overlap, lift the farther one and stretch its stem.
   //    Sober tone: no card ever moves up or down. A zone card that would cover a nearer card
-  //    slides sideways while its stem still meets it, else only its pin stays.
+  //    (or the DJ) slides sideways while its stem still meets it, else only its pin stays.
   const stack = tone !== "sober"
   const cards = useRef(new Map<string, HTMLElement>())
   const camera = useThree((s) => s.camera)
@@ -162,6 +168,13 @@ export function Markers({
     }
     if (!stack) {
       const taken: Box[] = []
+      if (view !== "intro") {
+        const [x, y, z] = djPosition
+        projected.set(x, y, z).project(camera)
+        const cx = ((projected.x + 1) / 2) * size.width
+        const cy = ((1 - projected.y) / 2) * size.height
+        taken.push({ left: cx - 18, right: cx + 18, top: cy - 18, bottom: cy + 18 })
+      }
       for (const it of items) {
         const box = (d: number) => ({
           left: it.left + d,
@@ -242,6 +255,9 @@ export function Markers({
           </Html>
         )
       })}
+      <Html position={djPosition} zIndexRange={[30, 10]} style={wrapper(view !== "intro")}>
+        <DjBadge />
+      </Html>
       {tickets.map((t) => {
         const shown = view === "overview" && levelVisible(t.level)
         return (
@@ -422,6 +438,21 @@ function PinnedZoneCard({
           boxShadow: `0 0 10px 2px ${withAlpha(status.color, 0xaa / 255)}`,
         }}
       />
+    </div>
+  )
+}
+
+/** Where the DJ plays: a round badge over the booth, in every view. */
+function DjBadge() {
+  return (
+    <div className="pointer-events-none -translate-x-1/2 -translate-y-1/2">
+      <div
+        role="img"
+        aria-label="Cabine du DJ"
+        className="grid size-8 place-items-center rounded-full bg-(--brand) text-[10px] font-bold tracking-[0.06em] text-(--brand-on) shadow-[0_0_0_2px_rgb(0_0_0/0.45),0_0_20px_color-mix(in_srgb,var(--brand)_65%,transparent)]"
+      >
+        DJ
+      </div>
     </div>
   )
 }
