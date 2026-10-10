@@ -93,6 +93,11 @@ export const ambianceSchema = z.object({
   }),
   /** Finish of each Blender material, by material name. Others keep the plain baked look. */
   finishes: z.record(z.string().min(1), finishSchema),
+  /**
+   * Opening of the visit: `flight` (default) flies the authored keyframes; `neon` draws the club
+   * in glowing lines from the overview, then builds it up from the floor.
+   */
+  intro: z.enum(["flight", "neon"]).default("flight"),
 })
 export type ClubAmbiance = z.infer<typeof ambianceSchema>
 

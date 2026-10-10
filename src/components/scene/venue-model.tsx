@@ -9,6 +9,8 @@ import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module.j
 import type { Quality } from "@/components/scene/effects"
 import { finishFor, isMetal } from "@/components/scene/fx/finishes"
 import { extractGlobes, GlobeGlow, type Globe } from "@/components/scene/fx/globes"
+import type { NeonEdges } from "@/components/scene/fx/neon-edges"
+import { NeonIntro, neonRequest, requestNeonEdges } from "@/components/scene/fx/neon-intro"
 import {
   createLedRainMaterial,
   createScreenMaterial,
@@ -215,11 +217,14 @@ export function VenueModel({
   assets: manifest,
   ambiance,
   quality,
+  neon,
 }: {
   club: string
   assets: AssetManifest
   ambiance: ClubAmbiance
   quality: Quality
+  /** Colour of the neon intro, when the club opens with it. */
+  neon?: string
 }) {
   const names = useMemo(() => Object.keys(manifest.lightmaps), [manifest])
   const urls = useMemo(
@@ -277,6 +282,17 @@ export function VenueModel({
   }, [gl, camera, scene, prepared, lightmaps])
   const shown = uploaded === prepared
 
+  // the neon intro's lines, computed in a worker while the loading screen is still up
+  const [edges, setEdges] = useState<{ venue: PreparedVenue; edges: NeonEdges } | null>(null)
+  useEffect(() => {
+    if (!neon) return
+    return requestNeonEdges(neonRequest(prepared.root), (e) =>
+      setEdges({ venue: prepared, edges: e }),
+    )
+  }, [neon, prepared])
+  const height = useMemo(() => new THREE.Box3().setFromObject(prepared.root).max.y, [prepared])
+
+  const opening = useExperience((s) => Boolean(neon) && s.view === "intro")
   const setSceneReady = useExperience((s) => s.setSceneReady)
   useEffect(() => {
     if (!shown) return
@@ -300,7 +316,12 @@ export function VenueModel({
       sign.object.visible =
         toCamera.subVectors(state.camera.position, sign.anchor).dot(sign.normal) > 0
     }
-    for (const m of prepared.timed) m.uniforms.uTime.value = t
+    // the neon intro draws the club in the dark: its animated FX wait until it is built
+    const hidden = Boolean(neon) && view === "intro"
+    for (const m of prepared.timed) {
+      m.uniforms.uTime.value = t
+      m.visible = !hidden
+    }
     const wanted = useExperience.getState().levelFilter === 0 ? 0.07 : 1
     const cur = upperOpacity.current
     if (cur !== wanted) {
@@ -313,11 +334,20 @@ export function VenueModel({
   return (
     <>
       <primitive object={prepared.root} visible={shown} dispose={null} />
-      <GlobeGlow
-        globes={prepared.globes}
-        show={ambiance.show}
-        intensity={quality === "high" ? 1 : 0.85}
-      />
+      {!opening ? (
+        <GlobeGlow
+          globes={prepared.globes}
+          show={ambiance.show}
+          intensity={quality === "high" ? 1 : 0.85}
+        />
+      ) : null}
+      {neon ? (
+        <NeonIntro
+          edges={edges?.venue === prepared ? edges.edges : null}
+          color={neon}
+          height={height}
+        />
+      ) : null}
     </>
   )
 }

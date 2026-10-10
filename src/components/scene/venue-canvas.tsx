@@ -46,6 +46,8 @@ class SceneErrorBoundary extends Component<
 
 /** Instant of the light show held when the visitor asked for less motion (as in captures). */
 const STILL_AT = 12
+/** Colour of the neon intro. */
+const NEON = "#ff2a3a"
 
 export interface VenueCanvasProps {
   club: string
@@ -83,6 +85,9 @@ export default function VenueCanvas({
   const stillAt = frozenAt ?? (reducedMotion ? STILL_AT : null)
   const [dpr, setDpr] = useState(quality === "high" ? 1.75 : 1.25)
   const [effects, setEffects] = useState(true)
+  // the neon intro draws the club in the dark: no beams nor reflections until it is built
+  const neon = ambiance.intro === "neon" && !reducedMotion
+  const opening = useExperience((s) => neon && s.view === "intro")
 
   return (
     <SceneErrorBoundary onError={setFallback2d}>
@@ -112,14 +117,22 @@ export default function VenueCanvas({
             environment={ambiance.environment}
             intensity={quality === "high" ? 1 : 0.85}
           />
-          <VenueModel club={club} assets={assets} ambiance={ambiance} quality={quality} />
-          {quality === "high" && effects ? <FloorGloss layout={layout} /> : null}
-          <Backdrop center={venueCenter(layout)} />
-          <Beams
-            layout={layout}
-            palettes={ambiance.beams.palettes}
-            intensity={quality === "high" ? 1 : 0.8}
+          <VenueModel
+            club={club}
+            assets={assets}
+            ambiance={ambiance}
+            quality={quality}
+            neon={neon ? NEON : undefined}
           />
+          {quality === "high" && effects && !opening ? <FloorGloss layout={layout} /> : null}
+          <Backdrop center={venueCenter(layout)} />
+          {!opening ? (
+            <Beams
+              layout={layout}
+              palettes={ambiance.beams.palettes}
+              intensity={quality === "high" ? 1 : 0.8}
+            />
+          ) : null}
           <ZoneOverlays layout={layout} tiers={tiers} />
           <TableHotspots layout={layout} tiers={tiers} />
           <Markers
@@ -129,7 +142,12 @@ export default function VenueCanvas({
             tickets={ticketMarkers}
           />
         </Suspense>
-        <CameraRig layout={layout} reducedMotion={reducedMotion} onIntroSkipped={onIntroSkipped} />
+        <CameraRig
+          layout={layout}
+          introStyle={neon ? "neon" : "flight"}
+          reducedMotion={reducedMotion}
+          onIntroSkipped={onIntroSkipped}
+        />
         {effects ? <Effects quality={quality} /> : null}
       </Canvas>
     </SceneErrorBoundary>

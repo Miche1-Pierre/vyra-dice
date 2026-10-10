@@ -144,6 +144,7 @@ l'interface ne lit que ces jetons. Ajouter une police : la charger dans `src/app
 | `screen` (si `fx_screen`)   | mur LED : barres de `low` à `high`, fond `backdrop` (gauche, droite), en HDR linéaire                                       |
 | `environment`               | reflets : fond et panneaux lumineux (`form` rect / ring / circle, `color`, `intensity`, `position`, `target`, `scale`)      |
 | `finishes`                  | finition par nom de matière Blender : un préréglage, ou `{ "preset", "tint", "roughness", "metalness", "envMapIntensity" }` |
+| `intro` (facultatif)        | ouverture : `flight` (défaut, vol de caméra sur `cameras.intro`) ou `neon` (le club se dessine en néon, puis se construit)  |
 
 Les panneaux de reflets sont en espace three.js (mètres, y vers le haut) et regardent `target` (l'origine par défaut).
 Ils ne servent qu'aux reflets et au brillant ; la lumière diffuse vient du bake.
