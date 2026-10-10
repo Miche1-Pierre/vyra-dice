@@ -85,20 +85,21 @@ describe("registerClub", () => {
   })
 
   it("adds a generated club to the drafts: one import, in slug order, only once", () => {
-    const once = registerClub("809-social-club", registry)
-    expect(once).toContain(`import club809SocialClub from "./809-social-club"`)
-    expect(once.indexOf("./809-social-club")).toBeLessThan(once.indexOf("./naho"))
-    expect(once).toMatch(/drafts: readonly ClubDefinition\[\] = \[[^\]]*club809SocialClub\]/)
-    expect(registrationOf("809-social-club", once)).toBe("draft")
-    expect(registerClub("809-social-club", once)).toBe(once)
+    // a club the Studio has just generated: no real club will ever have this slug
+    const once = registerClub("999-test-club", registry)
+    expect(once).toContain(`import club999TestClub from "./999-test-club"`)
+    expect(once.indexOf("./999-test-club")).toBeLessThan(once.indexOf("./naho"))
+    expect(once).toMatch(/drafts: readonly ClubDefinition\[\] = \[[^\]]*club999TestClub\]/)
+    expect(registrationOf("999-test-club", once)).toBe("draft")
+    expect(registerClub("999-test-club", once)).toBe(once)
   })
 
   it("publishes a draft by moving it to the served clubs, only once", () => {
-    const published = publishClub("809-social-club", registerClub("809-social-club", registry))
-    expect(registrationOf("809-social-club", published)).toBe("published")
-    expect(published).toMatch(/clubs: readonly ClubDefinition\[\] = \[[^\]]*club809SocialClub\]/)
-    expect(published).not.toMatch(/drafts: readonly ClubDefinition\[\] = \[[^\]]*club809Social/)
-    expect(publishClub("809-social-club", published)).toBe(published)
+    const published = publishClub("999-test-club", registerClub("999-test-club", registry))
+    expect(registrationOf("999-test-club", published)).toBe("published")
+    expect(published).toMatch(/clubs: readonly ClubDefinition\[\] = \[[^\]]*club999TestClub\]/)
+    expect(published).not.toMatch(/drafts: readonly ClubDefinition\[\] = \[[^\]]*club999Test/)
+    expect(publishClub("999-test-club", published)).toBe(published)
   })
 
   it("leaves a published club where it is", () => {
