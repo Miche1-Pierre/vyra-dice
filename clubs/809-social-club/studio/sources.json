@@ -1,0 +1,56 @@
+[
+  {
+    "file": "croquis-rdc-etage.png",
+    "bytes": 427783,
+    "sha256": "6c53014d32b7623f8e270785cd4e70cad8bb692c7dcc62f83037829a5de1b603",
+    "addedAt": "2026-10-10T10:19:46.196Z"
+  },
+  {
+    "file": "coupe-superposition-verticale.png",
+    "bytes": 54167,
+    "sha256": "4d2c35478d1533d30166056c914a2747c35bfb6cb5afc8c728588eb82bb6d6ed",
+    "addedAt": "2026-10-10T10:19:46.197Z"
+  },
+  {
+    "file": "ig-logo-809.png",
+    "bytes": 506998,
+    "sha256": "852cd9e11edac34e0f2481e6561459edc55f602b73a1d1d476c0b77c72fd92c2",
+    "addedAt": "2026-10-10T10:19:46.199Z"
+  },
+  {
+    "file": "flyer-rudboy-10-10.png",
+    "bytes": 1368487,
+    "sha256": "ff3c77948c0d0a9f34079891117d69375433ba6bf30276a51e54373199422984",
+    "addedAt": "2026-10-10T10:19:46.204Z"
+  },
+  {
+    "file": "ig-salle-rouge-mezzanine-ecrans.png",
+    "bytes": 988722,
+    "sha256": "edaeebb566fcb79c06f072406161983bf189fa353b6d68275c6942a04980ff38",
+    "addedAt": "2026-10-10T10:19:46.208Z"
+  },
+  {
+    "file": "ig-cabine-dj-faisceaux-co2.png",
+    "bytes": 1459517,
+    "sha256": "476b3f9d451199c803c66422132687e5dd4073cb6c98733d29e1b79c31860e42",
+    "addedAt": "2026-10-10T10:19:46.212Z"
+  },
+  {
+    "file": "fb-salle-rouge-cabine-escalier.png",
+    "bytes": 3098476,
+    "sha256": "0f529d5db54ccb8c790b471718850899e6b8a10e31f3dfbaf6c501054b99d4a9",
+    "addedAt": "2026-10-10T10:19:46.217Z"
+  },
+  {
+    "file": "fb-salle-ambre-mezzanine-escalier.png",
+    "bytes": 3337245,
+    "sha256": "37c699247ca281f43878952651b302a87de351f2fb1fb0c2e6b8b829f600c884",
+    "addedAt": "2026-10-10T10:19:46.222Z"
+  },
+  {
+    "file": "fb-salle-verte-arche-led-bar.png",
+    "bytes": 2516008,
+    "sha256": "a6a752702ded0923401f43b297ae3804e586a529f0a49f1717f76878088ed90f",
+    "addedAt": "2026-10-10T10:19:46.227Z"
+  }
+]

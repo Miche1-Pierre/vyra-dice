@@ -1,0 +1,362 @@
+{
+  "$comment": "809 Social Club (La Garde) — démo de prospection pour la soirée Rudboy. Tables, prix, statuts, prestations, conditions et heure d'ouverture PROVISOIRES, non validés par le club : ne jamais les présenter comme des offres réelles (VYR-15). Contacts = ceux de l'équipe VYRA (brief), pas du club. Les ids de zones et de tables sont ceux de layout.json.",
+  "club": {
+    "slug": "809-social-club",
+    "name": "809 Social Club",
+    "city": "La Garde",
+    "address": "151 avenue Alphonse Lavallée, 83130 La Garde",
+    "requestPrefix": "SCL",
+    "contact": {
+      "email": "jonathan.naal@techguys.consulting",
+      "whatsapp": "+1 805 259 0503",
+      "instagram": "809_club"
+    },
+    "demo": true,
+    "disclaimer": "Démo — plan, tables et prix provisoires, non validés par le 809 Social Club."
+  },
+  "event": {
+    "slug": "rudboy",
+    "name": "Rudboy",
+    "date": "2026-10-10",
+    "doors": "23:30",
+    "offersValidatedAt": null
+  },
+  "zones": [
+    {
+      "id": "lounge-ouest",
+      "tier": "lounge",
+      "name": "Côté Cabine",
+      "shortName": "Cabine",
+      "description": "Sur estrade le long du mur ouest, sous la galerie, à deux pas de la cabine DJ.",
+      "perks": ["Service à table", "Softs et glaçons inclus"],
+      "icon": "disc"
+    },
+    {
+      "id": "lounge-piste",
+      "tier": "lounge",
+      "name": "Bord de Piste",
+      "shortName": "Piste",
+      "description": "Sur estrade en première ligne, face à la piste et au bar.",
+      "perks": ["Service à table", "Softs et glaçons inclus"],
+      "icon": "martini"
+    },
+    {
+      "id": "lounge-alcoves",
+      "tier": "lounge",
+      "name": "Les Alcôves",
+      "shortName": "Alcôves",
+      "description": "Sur l'estrade, sous la mezzanine, en retrait du bord de piste.",
+      "perks": ["Service à table", "Softs et glaçons inclus"],
+      "icon": "sofa"
+    },
+    {
+      "id": "vip-nord",
+      "tier": "vip",
+      "name": "Galerie Nord",
+      "shortName": "Nord",
+      "description": "À l'étage le long du mur nord, vue plongeante sur la piste et la cabine.",
+      "perks": ["Service à table dédié", "Softs et glaçons inclus", "Accès coupe-file"],
+      "icon": "gem"
+    },
+    {
+      "id": "vip-sud",
+      "tier": "vip",
+      "name": "Balcon Sud",
+      "shortName": "Balcon",
+      "description": "Au-dessus des alcôves, face à toute la salle.",
+      "perks": ["Service à table dédié", "Softs et glaçons inclus", "Accès coupe-file"],
+      "icon": "sofa"
+    },
+    {
+      "id": "vip-est",
+      "tier": "vip",
+      "name": "Galerie Est",
+      "shortName": "Est",
+      "description": "Le long du garde-corps est, au-dessus de l'escalier, face à la piste et à la cabine.",
+      "perks": ["Service à table dédié", "Softs et glaçons inclus", "Accès coupe-file"],
+      "icon": "sunrise"
+    },
+    {
+      "id": "prestige-carre",
+      "tier": "prestige",
+      "name": "Carré 809",
+      "shortName": "Carré 809",
+      "description": "Trois carrés le long du garde-corps, face à la piste, dos au bar VIP.",
+      "perks": [
+        "Hôte dédié",
+        "Accès coupe-file",
+        "Softs, glaçons et finger food inclus",
+        "Show bouteille"
+      ],
+      "icon": "crown"
+    }
+  ],
+  "tables": [
+    {
+      "id": "l1",
+      "label": "L1",
+      "zoneId": "lounge-ouest",
+      "capacity": { "min": 4, "max": 6 },
+      "minimumSpend": 300,
+      "status": "available",
+      "perks": [],
+      "view": "Près de la cabine, face à la piste"
+    },
+    {
+      "id": "l2",
+      "label": "L2",
+      "zoneId": "lounge-ouest",
+      "capacity": { "min": 4, "max": 6 },
+      "minimumSpend": 350,
+      "status": "sold",
+      "perks": [],
+      "view": "Face à la piste et au pilier LED"
+    },
+    {
+      "id": "l3",
+      "label": "L3",
+      "zoneId": "lounge-ouest",
+      "capacity": { "min": 4, "max": 6 },
+      "minimumSpend": 300,
+      "status": "available",
+      "perks": [],
+      "view": "Près de l'escalier, face au bar"
+    },
+    {
+      "id": "l4",
+      "label": "L4",
+      "zoneId": "lounge-piste",
+      "capacity": { "min": 4, "max": 6 },
+      "minimumSpend": 400,
+      "status": "available",
+      "perks": [],
+      "view": "À côté de la cabine DJ, bord de piste"
+    },
+    {
+      "id": "l5",
+      "label": "L5",
+      "zoneId": "lounge-piste",
+      "capacity": { "min": 4, "max": 6 },
+      "minimumSpend": 450,
+      "status": "available",
+      "perks": [],
+      "view": "Face au pilier LED et au bar"
+    },
+    {
+      "id": "l6",
+      "label": "L6",
+      "zoneId": "lounge-piste",
+      "capacity": { "min": 4, "max": 6 },
+      "minimumSpend": 400,
+      "status": "sold",
+      "perks": [],
+      "view": "Au centre du bord de piste, face au bar"
+    },
+    {
+      "id": "l7",
+      "label": "L7",
+      "zoneId": "lounge-piste",
+      "capacity": { "min": 4, "max": 6 },
+      "minimumSpend": 350,
+      "status": "available",
+      "perks": [],
+      "view": "Près de l'escalier est, face au bar"
+    },
+    {
+      "id": "l8",
+      "label": "L8",
+      "zoneId": "lounge-alcoves",
+      "capacity": { "min": 4, "max": 6 },
+      "minimumSpend": 300,
+      "status": "available",
+      "perks": [],
+      "view": "Alcôve côté cabine, sous la mezzanine"
+    },
+    {
+      "id": "l9",
+      "label": "L9",
+      "zoneId": "lounge-alcoves",
+      "capacity": { "min": 4, "max": 6 },
+      "minimumSpend": 300,
+      "status": "available",
+      "perks": [],
+      "view": "Alcôve centrale, au calme"
+    },
+    {
+      "id": "l10",
+      "label": "L10",
+      "zoneId": "lounge-alcoves",
+      "capacity": { "min": 4, "max": 6 },
+      "minimumSpend": 300,
+      "status": "available",
+      "perks": [],
+      "view": "Alcôve côté escalier, au calme"
+    },
+    {
+      "id": "v1",
+      "label": "V1",
+      "zoneId": "vip-nord",
+      "capacity": { "min": 6, "max": 8 },
+      "minimumSpend": 700,
+      "status": "available",
+      "perks": [],
+      "view": "En haut de l'escalier, vue sur la cabine"
+    },
+    {
+      "id": "v2",
+      "label": "V2",
+      "zoneId": "vip-nord",
+      "capacity": { "min": 6, "max": 8 },
+      "minimumSpend": 800,
+      "status": "sold",
+      "perks": [],
+      "view": "Vue plongeante sur la cabine DJ"
+    },
+    {
+      "id": "v3",
+      "label": "V3",
+      "zoneId": "vip-nord",
+      "capacity": { "min": 6, "max": 8 },
+      "minimumSpend": 800,
+      "status": "available",
+      "perks": [],
+      "view": "Vue plongeante sur la piste"
+    },
+    {
+      "id": "v4",
+      "label": "V4",
+      "zoneId": "vip-nord",
+      "capacity": { "min": 6, "max": 8 },
+      "minimumSpend": 750,
+      "status": "available",
+      "perks": [],
+      "view": "Face au pilier LED et au bar"
+    },
+    {
+      "id": "v5",
+      "label": "V5",
+      "zoneId": "vip-nord",
+      "capacity": { "min": 6, "max": 8 },
+      "minimumSpend": 700,
+      "status": "available",
+      "perks": [],
+      "view": "Près du bar VIP, vue sur le bar"
+    },
+    {
+      "id": "v6",
+      "label": "V6",
+      "zoneId": "vip-sud",
+      "capacity": { "min": 6, "max": 8 },
+      "minimumSpend": 700,
+      "status": "available",
+      "perks": [],
+      "view": "Côté cabine, vue sur la piste"
+    },
+    {
+      "id": "v7",
+      "label": "V7",
+      "zoneId": "vip-sud",
+      "capacity": { "min": 6, "max": 8 },
+      "minimumSpend": 750,
+      "status": "available",
+      "perks": [],
+      "view": "Face au pilier LED, vue sur la piste"
+    },
+    {
+      "id": "v8",
+      "label": "V8",
+      "zoneId": "vip-sud",
+      "capacity": { "min": 6, "max": 8 },
+      "minimumSpend": 750,
+      "status": "available",
+      "perks": [],
+      "view": "Face au bar, vue sur toute la salle"
+    },
+    {
+      "id": "v9",
+      "label": "V9",
+      "zoneId": "vip-sud",
+      "capacity": { "min": 6, "max": 8 },
+      "minimumSpend": 650,
+      "status": "available",
+      "perks": [],
+      "view": "Près de l'escalier est, face à la salle"
+    },
+    {
+      "id": "v10",
+      "label": "V10",
+      "zoneId": "vip-est",
+      "capacity": { "min": 6, "max": 8 },
+      "minimumSpend": 700,
+      "status": "on_request",
+      "perks": [],
+      "view": "Angle sud-est, vue sur la cabine"
+    },
+    {
+      "id": "v11",
+      "label": "V11",
+      "zoneId": "vip-est",
+      "capacity": { "min": 6, "max": 8 },
+      "minimumSpend": 750,
+      "status": "available",
+      "perks": [],
+      "view": "Au-dessus de l'escalier, face à la piste"
+    },
+    {
+      "id": "v12",
+      "label": "V12",
+      "zoneId": "vip-est",
+      "capacity": { "min": 6, "max": 8 },
+      "minimumSpend": 750,
+      "status": "available",
+      "perks": [],
+      "view": "Face à la piste et à la cabine"
+    },
+    {
+      "id": "v13",
+      "label": "V13",
+      "zoneId": "vip-est",
+      "capacity": { "min": 6, "max": 8 },
+      "minimumSpend": 700,
+      "status": "available",
+      "perks": [],
+      "view": "Face au bar et aux écrans"
+    },
+    {
+      "id": "p1",
+      "label": "P1",
+      "zoneId": "prestige-carre",
+      "capacity": { "min": 10, "max": 14 },
+      "minimumSpend": 2500,
+      "status": "on_request",
+      "perks": [],
+      "view": "Au-dessus du bar, face à la piste et à la cabine"
+    },
+    {
+      "id": "p2",
+      "label": "P2",
+      "zoneId": "prestige-carre",
+      "capacity": { "min": 8, "max": 12 },
+      "minimumSpend": 2000,
+      "status": "available",
+      "perks": [],
+      "view": "Face au bar et à toute la salle"
+    },
+    {
+      "id": "p3",
+      "label": "P3",
+      "zoneId": "prestige-carre",
+      "capacity": { "min": 8, "max": 12 },
+      "minimumSpend": 1800,
+      "status": "available",
+      "perks": [],
+      "view": "Face au bar, aux écrans et à la cabine"
+    }
+  ],
+  "conditions": [
+    "Une demande n'est pas une réservation : la table n'est réservée qu'après confirmation par le club.",
+    "Le minimum de consommation s'entend par table, sur la carte bouteilles.",
+    "Arrivée avant 01h00 ; au-delà, la table peut être réattribuée.",
+    "Tenue correcte exigée, 18 ans minimum."
+  ]
+}

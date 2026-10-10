@@ -1,0 +1,29 @@
+{
+  "proposals": [
+    {
+      "id": "l1",
+      "title": "Rangées sous une dalle et zones superposées : penser à la vue d'ensemble dès le plan",
+      "text": "Au 809, la zone « Les Alcôves » (rez-de-chaussée, L6–L8) occupe exactement le même rectangle que « Balcon Sud » à l'étage (x −5…5,5, y −10…−7,2). Les tables de « Bord de Piste » (L3–L5) étaient aussi placées en retrait sous l'arête de cette dalle. Résultat en vue d'ensemble : les tables du bas sont cachées par la dalle, et les deux étiquettes de zone s'empilent au même endroit, surtout en portrait. Règles : (1) une rangée du rez-de-chaussée voisine d'une dalle doit avoir l'avant de ses banquettes à au moins 1 m hors de l'aplomb de la dalle (L3–L5 ont été avancés de y −5,6 à −4,7) ; (2) si deux zones se superposent, placer `cameras.overview` du côté où la rangée sous dalle est ouverte, décaler si possible les centres de tables de l'étage par rapport à ceux du rez-de-chaussée, et écrire dans le README du club que ces tables ne se voient qu'avec le filtre « Rez-de-chaussée » ; (3) la vue d'ensemble du site plonge à environ 45° : régler la caméra `overview` de Blender sur la même plongée, sinon le rendu de revue montre des tables que le site cache. Le centre de L3–L5 reste masqué en paysage malgré la correction : à confirmer sur le prochain club à mezzanine en anneau."
+    },
+    {
+      "id": "l2",
+      "title": "Couleur d'un niveau identique à la dominante de la soirée : assombrir le velours, pas l'éclairage",
+      "text": "Au 809, la légende du club donne le vert aux lounges, et la soirée Rudboy est elle aussi verte (faisceaux, arche LED, palette du light show). Sur les captures, les lounges se fondent dans l'éclairage : velours, contour de zone et faisceaux sont du même vert, et le velours à forte saturation sortait vert « jouet » en vue table. Il a fallu l'assombrir à `#1b4a30`. Règles : garder des velours de niveau profonds et peu lumineux (de l'ordre de `#1b4a30` pour un vert), puisque l'interface porte déjà la teinte vive du niveau (contours, pastilles). Si une teinte de la soirée recoupe celle d'un niveau, vérifier ces tables dans les rendus de revue et, au besoin, garder cette teinte pour les éléments loin des tables (arche, écran, lyres de piste) plutôt que pour les sources qui les éclairent directement. Les couleurs des niveaux suivent la légende du club, ne pas les changer pour la soirée."
+    },
+    {
+      "id": "l3",
+      "title": "Faisceaux des lyres au premier plan des vues de zone",
+      "text": "Sur la capture de la zone « Côté Cabine » (`studio/captures/desktop-zone.jpg`), cinq faisceaux blancs et verts des lyres et les bandes de l'arche LED traversent la moitié gauche et le bord droit de l'image, devant L1 et L2. La leçon Lumen sur le dégagement des caméras ne visait que la géométrie (escaliers, fermes, globes), mais les faisceaux volumétriques du site (`beams`) masquent aussi les tables. Règle : poser les barres de lyres (`movingHeads`) au-dessus de la piste et orienter leurs faisceaux vers le centre de la piste, pas vers les rangées de tables. Avant la revue, vérifier que les cônes de faisceaux ne coupent pas le segment caméra de zone → table (positions de `src/lib/venue/camera.ts`). Constaté sur une seule capture : à confirmer, et à ajouter au contrôle automatique des faisceaux caméra déjà proposé."
+    },
+    {
+      "id": "l4",
+      "title": "Salle « boîte noire » à mezzanines : où placer les lumières des murs",
+      "text": "Un club tout noir (murs, plafond, dalles) se lit mal une fois cuit, si les murs ne reçoivent pas de lumière. Au 809, les murs ouest et nord sortaient presque noirs, et les écrans, le logo et le néon RUDBOY semblaient flotter. Trois corrections ont suffi, à reprendre d'emblée : (1) un noir neutre à l'albédo `#47444b` au moins (et non `#3b393e`), l'équivalent neutre du repère chaud du Lumen ; (2) sur un mur bordé d'une mezzanine, poser les wall-washers au-dessus des dossiers de l'étage (plancher + 1,25 m environ) et hors du linéaire d'un bar, sinon ils éclairent le dos des banquettes et pas le mur ; un mur à double hauteur sans mezzanine reçoit des projecteurs rasants depuis le plafond ; (3) chaque escalier reçoit ses propres douches (deux au-dessus de la volée), car des nez de marche lumineux seuls ne le rendent pas lisible."
+    },
+    {
+      "id": "l5",
+      "title": "Contourner une brique, c'est perdre ce qu'elle fournit : le recréer explicitement",
+      "text": "La cabine DJ du 809 est en biais : elle a été modélisée en `mesh` (`dj_booth`) plutôt qu'avec la brique `stage`, qui ne pose qu'une estrade alignée sur les axes. Cette cabine reste peu visible en vue d'ensemble, et la question de l'objet `fx_screen` (créé seulement par `stage`) s'est posée dès la recherche. De même, le contrôle « expected objects » du Studio a échoué au premier build, parce qu'il attendait des globes que ce club n'a pas (corrigé depuis dans le Studio). Règle : quand un élément signature sort d'une brique, lister ce que la brique fournissait (objets `fx_*` attendus par le site, wash de scène, façade émissive, lumières) et recréer chaque point à la main dans `scene.json` : façade en `beam` émissifs, wash dédié, écran posé ailleurs. Noter ces écarts dans le README du club. Briques à proposer, demandées par ce club : option `angle` pour `stage`, « arche / arc LED » (au 809, l'arche approchée en `beam` commence à 4,4 m et ne descend pas au sol), « écran à coins arrondis »."
+    }
+  ]
+}

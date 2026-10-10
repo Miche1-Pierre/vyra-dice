@@ -1,0 +1,39 @@
+{
+  "id": "20261010132408-auto",
+  "step": "auto",
+  "state": "done",
+  "options": {},
+  "createdAt": "2026-10-10T13:24:08.032Z",
+  "phases": [
+    {
+      "name": "Enregistrement dans clubs/registry.ts",
+      "startedAt": "2026-10-10T13:24:09.453Z",
+      "endedAt": "2026-10-10T13:24:09.458Z",
+      "ok": true
+    },
+    {
+      "name": "Tests de contrat (tous les clubs)",
+      "startedAt": "2026-10-10T13:24:09.459Z",
+      "endedAt": "2026-10-10T13:24:10.870Z",
+      "ok": true
+    },
+    {
+      "name": "Viewer local",
+      "startedAt": "2026-10-10T13:24:10.872Z",
+      "endedAt": "2026-10-10T13:24:11.311Z",
+      "ok": true
+    },
+    {
+      "name": "Captures",
+      "startedAt": "2026-10-10T13:24:11.317Z",
+      "endedAt": "2026-10-10T13:24:38.782Z",
+      "ok": true
+    }
+  ],
+  "pid": 17744,
+  "startedAt": "2026-10-10T13:24:08.878Z",
+  "result": {
+    "viewer": "http://localhost:3100/809-social-club/rudboy"
+  },
+  "endedAt": "2026-10-10T13:24:38.855Z"
+}

@@ -1,0 +1,28 @@
+[15:24:08] Étape « auto » — 809-social-club
+[15:24:09] — research : déjà fait
+[15:24:09] — spec : déjà fait
+[15:24:09] — build : déjà fait
+[15:24:09] — review : déjà fait
+[15:24:09] — bake : déjà fait
+[15:24:09] ══ preview ══
+[15:24:09] ▶ Enregistrement dans clubs/registry.ts
+[15:24:09] déjà enregistré
+[15:24:09] ✔ Enregistrement dans clubs/registry.ts (0.0 s)
+[15:24:09] ▶ Tests de contrat (tous les clubs)
+[15:24:10]    ✓ src/lib/clubs/brand.test.ts (3 tests) 9ms
+[15:24:10]    ✓ src/lib/venue/offers.test.ts (15 tests) 10ms
+[15:24:10]    ✓ src/lib/clubs/ambiance.test.ts (5 tests) 13ms
+[15:24:10]    ✓ src/components/experience/view-model.test.ts (19 tests) 12ms
+[15:24:10]    ✓ src/lib/venue/layout.test.ts (20 tests) 25ms
+[15:24:10]    ✓ src/lib/clubs/registry.test.ts (21 tests) 24ms
+[15:24:10]    ✓ src/lib/clubs/club.test.ts (7 tests) 34ms
+[15:24:10]    ✓ src/lib/venue/camera.test.ts (35 tests) 18ms
+[15:24:10]    Test Files  8 passed (8)
+[15:24:10]         Tests  125 passed (125)
+[15:24:10] ✔ Tests de contrat (tous les clubs) (1.4 s)
+[15:24:10] ▶ Viewer local
+[15:24:11] ✔ Viewer local (0.4 s)
+[15:24:11] ▶ Captures
+[15:24:38] ✔ Captures (27.5 s)
+[15:24:38] — lessons : déjà fait
+[15:24:38] Terminé.

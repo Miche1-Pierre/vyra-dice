@@ -1,0 +1,133 @@
+{
+  "$comment": "809 Social Club (La Garde) — plan reconstitué depuis le croquis de l'équipe (private/sources/croquis-rdc-etage.png, coupe-superposition-verticale.png) et les photos. AUCUNE cote mesurée : salle ≈ 37,5 × 30 m (agrandie ×1,5 à la demande de l'équipe), mezzanine à 3,5 m et plafond à 8 m estimés sur les photos (SUPPOSITIONS). Orientation du croquis conservée : nord en haut, entrée à l'est. Unités : mètres. Axes Blender : x = est, y = nord, z = haut (glTF/three : X = x, Y = z, Z = -y). Lounges sur estrades de 0,4 m (raised), cabine DJ à 0,8 m (heights.stage). Escaliers : 20 marches de 0,33 m (la longueur des volées n'est pas agrandie, la hauteur ne change pas). Le dernier poteau (-1,3 ; -1,6) est le pilier LED du bar central, du sol au plafond (Ø 0,9 m, construit dans scene.json). Écarts au schéma, lus seulement par scene.json : la cabine DJ est en biais (stage/dj = rectangles englobants, la brique stage n'est pas utilisée) ; screen = plage y (dans x) et z des écrans du mur ouest ; entrance = sas à l'est (x = profondeur du sas depuis le mur est, y = axe de la porte) ; ledRain = valeur de remplissage, aucune pluie de LED n'est construite.",
+  "club": "809-social-club",
+  "version": 1,
+  "heights": {
+    "mezzanine": 3.5,
+    "slab": 0.4,
+    "ceiling": 8.0,
+    "railing": 1.05,
+    "stage": 0.8
+  },
+  "building": { "minX": -18.75, "maxX": 18.75, "minY": -15.0, "maxY": 15.0, "wall": 0.3 },
+  "groundFloor": { "x": [-18.75, 18.75], "y": [-15.0, 15.0] },
+  "furniture": {
+    "lounge": { "width": 2.7, "depth": 1.9, "seatDepth": 0.62 },
+    "vip": { "width": 3.1, "depth": 2.1, "seatDepth": 0.65 },
+    "prestige": { "width": 4.4, "depth": 2.7, "seatDepth": 0.7 }
+  },
+  "movingHeads": [
+    [-10.451, -3.126, 7.2], [-9.602, -3.974, 7.2], [-8.754, -4.823, 7.2],
+    [-7.905, -5.672, 7.2], [-7.056, -6.519, 7.2], [-6.209, -7.368, 7.2],
+    [-8.646, -1.746, 7.2], [-7.586, -2.808, 7.2], [-6.525, -3.869, 7.2], [-5.465, -4.929, 7.2]
+  ],
+  "void": [
+    { "id": "nef", "x": [-14.4, 8.25], "y": [-10.8, 5.55] },
+    { "id": "nef-nord", "x": [-14.4, -0.6], "y": [5.55, 7.5] },
+    { "id": "nef-est", "x": [8.25, 10.2], "y": [0.6, 5.55] },
+    { "id": "escalier-ouest", "x": [-16.2, -0.6], "y": [7.5, 10.5] },
+    { "id": "vide-dj", "x": [-18.75, -7.5], "y": [-15.0, -7.5] },
+    { "id": "escalier-est", "x": [8.25, 12.6], "y": [-12.6, 0.6] }
+  ],
+  "mezzanine": [
+    { "id": "nord", "x": [-18.75, 18.75], "y": [10.5, 15.0] },
+    { "id": "palier-ouest", "x": [-18.75, -16.2], "y": [7.5, 10.5] },
+    { "id": "ouest", "x": [-18.75, -14.4], "y": [-7.5, 7.5] },
+    { "id": "prestige", "x": [-0.6, 12.6], "y": [5.55, 10.5] },
+    { "id": "prestige-est", "x": [10.2, 12.6], "y": [0.6, 5.55] },
+    { "id": "est", "x": [12.6, 18.75], "y": [-15.0, 10.5] },
+    { "id": "passerelle-sud", "x": [8.25, 12.6], "y": [-15.0, -12.6] },
+    { "id": "sud", "x": [-7.5, 8.25], "y": [-15.0, -10.8] }
+  ],
+  "railings": [
+    { "from": [-16.2, 10.5], "to": [-0.6, 10.5] },
+    { "from": [-0.6, 10.5], "to": [-0.6, 5.55] },
+    { "from": [-0.6, 5.55], "to": [10.2, 5.55] },
+    { "from": [10.2, 5.55], "to": [10.2, 0.6] },
+    { "from": [10.2, 0.6], "to": [12.6, 0.6] },
+    { "from": [12.6, 0.6], "to": [12.6, -12.6] },
+    { "from": [9.6, -12.6], "to": [8.25, -12.6] },
+    { "from": [8.25, -12.6], "to": [8.25, -10.8] },
+    { "from": [8.25, -10.8], "to": [-7.5, -10.8] },
+    { "from": [-7.5, -10.8], "to": [-7.5, -15.0] },
+    { "from": [-18.75, -7.5], "to": [-14.4, -7.5] },
+    { "from": [-14.4, -7.5], "to": [-14.4, 7.5] },
+    { "from": [-14.4, 7.5], "to": [-16.2, 7.5] }
+  ],
+  "columns": [
+    [-7.5, -10.8], [-4.4, -10.8], [-0.6, -10.8], [3.0, -10.8], [8.25, -10.8],
+    [12.6, -12.6], [12.6, -6.0], [12.6, 0.6],
+    [10.2, 0.6], [10.2, 5.55], [4.7, 5.55], [-0.6, 5.55], [-0.6, 10.5],
+    [-5.0, 10.5], [-11.6, 10.5],
+    [-14.4, -7.5], [-14.4, -1.5], [-14.4, 2.1], [-14.4, 7.35],
+    [-1.3, -1.6]
+  ],
+  "stairs": [
+    { "id": "escalier-ouest", "x": [-16.2, -9.6], "y": [7.7, 10.2], "bottom": "east", "steps": 20 },
+    { "id": "escalier-est", "x": [9.6, 12.3], "y": [-12.6, -6.0], "bottom": "north", "steps": 20 }
+  ],
+  "bar": { "x": [-1.8, 5.7], "y": [-2.1, 3.9], "height": 1.12, "chamfer": 1.35 },
+  "stage": { "x": [-13.96, -7.19], "y": [-11.81, -5.04] },
+  "dj": { "x": [-12.2, -7.7], "y": [-10.0, -5.6] },
+  "screen": { "x": [-5.1, 5.7], "z": [4.6, 6.8] },
+  "wc": { "x": [14.4, 18.75], "y": [11.4, 15.0] },
+  "entrance": { "x": [18.75, 23.25], "y": 4.5 },
+  "ledRain": { "x": [-1.5, 1.5], "y": [-1.5, 1.5], "z": 7.0, "spacing": 0.35, "length": [0.8, 1.2] },
+  "decor": {
+    "vipBar": { "x": [5.4, 16.65], "y": [12.75, 13.35], "level": 1 },
+    "highTables": [
+      { "x": 15.6, "y": -9.0, "level": 0 },
+      { "x": 15.6, "y": -3.9, "level": 0 },
+      { "x": 15.6, "y": 0.9, "level": 0 },
+      { "x": 16.5, "y": 8.7, "level": 0 }
+    ],
+    "plants": []
+  },
+  "zones": [
+    { "id": "lounge-ouest", "tier": "lounge", "level": 0, "x": [-18.75, -15.0], "y": [-6.0, 6.0], "raised": 0.4 },
+    { "id": "lounge-piste", "tier": "lounge", "level": 0, "x": [-5.4, 8.25], "y": [-10.8, -5.4], "raised": 0.4 },
+    { "id": "lounge-alcoves", "tier": "lounge", "level": 0, "x": [-5.4, 8.25], "y": [-15.0, -10.8], "raised": 0.4 },
+    { "id": "vip-nord", "tier": "vip", "level": 1, "x": [-16.8, 2.8], "y": [10.5, 15.0] },
+    { "id": "vip-sud", "tier": "vip", "level": 1, "x": [-7.5, 8.25], "y": [-15.0, -10.8] },
+    { "id": "vip-est", "tier": "vip", "level": 1, "x": [12.6, 18.75], "y": [-15.0, 0.6] },
+    { "id": "prestige-carre", "tier": "prestige", "level": 1, "x": [-0.6, 14.4], "y": [0.6, 10.5] }
+  ],
+  "tables": [
+    { "id": "l1", "zone": "lounge-ouest", "kind": "lounge", "x": -17.4, "y": -3.3, "facing": 0 },
+    { "id": "l2", "zone": "lounge-ouest", "kind": "lounge", "x": -17.4, "y": 0.0, "facing": 0 },
+    { "id": "l3", "zone": "lounge-ouest", "kind": "lounge", "x": -17.4, "y": 3.3, "facing": 0 },
+    { "id": "l4", "zone": "lounge-piste", "kind": "lounge", "x": -3.375, "y": -7.6, "facing": 90 },
+    { "id": "l5", "zone": "lounge-piste", "kind": "lounge", "x": -0.175, "y": -7.6, "facing": 90 },
+    { "id": "l6", "zone": "lounge-piste", "kind": "lounge", "x": 3.025, "y": -7.6, "facing": 90 },
+    { "id": "l7", "zone": "lounge-piste", "kind": "lounge", "x": 6.225, "y": -7.6, "facing": 90 },
+    { "id": "l8", "zone": "lounge-alcoves", "kind": "lounge", "x": -2.175, "y": -13.6, "facing": 90 },
+    { "id": "l9", "zone": "lounge-alcoves", "kind": "lounge", "x": 1.425, "y": -13.6, "facing": 90 },
+    { "id": "l10", "zone": "lounge-alcoves", "kind": "lounge", "x": 5.025, "y": -13.6, "facing": 90 },
+    { "id": "v1", "zone": "vip-nord", "kind": "vip", "x": -15.0, "y": 13.75, "facing": 270 },
+    { "id": "v2", "zone": "vip-nord", "kind": "vip", "x": -11.0, "y": 13.75, "facing": 270 },
+    { "id": "v3", "zone": "vip-nord", "kind": "vip", "x": -7.0, "y": 13.75, "facing": 270 },
+    { "id": "v4", "zone": "vip-nord", "kind": "vip", "x": -3.0, "y": 13.75, "facing": 270 },
+    { "id": "v5", "zone": "vip-nord", "kind": "vip", "x": 1.0, "y": 13.75, "facing": 270 },
+    { "id": "v6", "zone": "vip-sud", "kind": "vip", "x": -5.35, "y": -13.7, "facing": 90 },
+    { "id": "v7", "zone": "vip-sud", "kind": "vip", "x": -1.55, "y": -13.7, "facing": 90 },
+    { "id": "v8", "zone": "vip-sud", "kind": "vip", "x": 2.25, "y": -13.7, "facing": 90 },
+    { "id": "v9", "zone": "vip-sud", "kind": "vip", "x": 6.05, "y": -13.7, "facing": 90 },
+    { "id": "v10", "zone": "vip-est", "kind": "vip", "x": 14.85, "y": -12.0, "facing": 180 },
+    { "id": "v11", "zone": "vip-est", "kind": "vip", "x": 14.85, "y": -8.4, "facing": 180 },
+    { "id": "v12", "zone": "vip-est", "kind": "vip", "x": 14.85, "y": -4.8, "facing": 180 },
+    { "id": "v13", "zone": "vip-est", "kind": "vip", "x": 14.85, "y": -1.2, "facing": 180 },
+    { "id": "p1", "zone": "prestige-carre", "kind": "prestige", "x": 2.1, "y": 8.1, "facing": 270 },
+    { "id": "p2", "zone": "prestige-carre", "kind": "prestige", "x": 7.3, "y": 8.1, "facing": 270 },
+    { "id": "p3", "zone": "prestige-carre", "kind": "prestige", "x": 12.75, "y": 3.1, "facing": 180 }
+  ],
+  "cameras": {
+    "overview": { "position": [22.5, -40.2, 48.75], "target": [-0.75, 0.0, 1.5] },
+    "intro": [
+      { "position": [66.0, -81.0, 69.0], "target": [-0.75, 0.0, 0.0] },
+      { "position": [24.0, -39.0, 22.5], "target": [-1.5, -1.5, 3.0] },
+      { "position": [15.75, 4.5, 2.0], "target": [-6.0, 2.25, 3.5] },
+      { "position": [-2.7, 0.3, 3.0], "target": [-9.9, -7.8, 1.9] },
+      { "position": [22.5, -40.2, 48.75], "target": [-0.75, 0.0, 1.5] }
+    ]
+  }
+}

@@ -1,0 +1,111 @@
+{
+  "$comment": "Ambiance 3D du 809 pour la soirée Rudboy (flyer) : vert forêt et vert laser, faisceaux menthe, blanc, rappel du rouge 809 ; lumières fixes chaudes (cabine, marches et estrades en ambre, bar) ; pilier LED vert du bar. Ni globes ni pluie de LED ni écran animé (fx_screen) : show.palette ne sert qu'au schéma. Panneaux des reflets en espace three.js (y vers le haut, mètres).",
+  "show": {
+    "bpm": 122,
+    "palette": [
+      [0.08, 0.85, 0.3],
+      [0.47, 0.78, 0.72],
+      [1, 0.96, 0.9],
+      [0.86, 0.08, 0.08],
+      [0.04, 0.45, 0.16]
+    ]
+  },
+  "beams": {
+    "palettes": [
+      ["#2bff6a", "#78c8b8"],
+      ["#ffffff", "#2bff6a"],
+      ["#78c8b8", "#ffffff"],
+      ["#dc1414", "#2bff6a"]
+    ]
+  },
+  "environment": {
+    "background": "#030504",
+    "lightformers": [
+      {
+        "label": "Pilier LED vert à l'angle sud-ouest du bar",
+        "form": "rect",
+        "color": "#0cb444",
+        "intensity": 2.4,
+        "position": [-1.3, 4.0, 1.6],
+        "scale": [1.4, 8, 1]
+      },
+      {
+        "label": "Façade LED ambre de la cabine DJ",
+        "form": "rect",
+        "color": "#f88808",
+        "intensity": 2.0,
+        "position": [-9.68, 1.35, 7.53],
+        "scale": [5.5, 1, 1]
+      },
+      {
+        "label": "Nez de marche ambre des estrades des lounges",
+        "form": "rect",
+        "color": "#f88808",
+        "intensity": 1.2,
+        "position": [1.4, 0.4, 5.4],
+        "scale": [13.6, 0.3, 1]
+      },
+      {
+        "label": "Bar central, éclairage chaud",
+        "form": "rect",
+        "color": "#ffae58",
+        "intensity": 2.2,
+        "position": [1.95, 2.4, -0.9],
+        "scale": [7.5, 2, 1]
+      },
+      {
+        "label": "Écrans du mur ouest",
+        "form": "rect",
+        "color": "#1e9a4a",
+        "intensity": 1.6,
+        "position": [-18.45, 5.7, -0.3],
+        "scale": [10.8, 2.2, 1]
+      },
+      {
+        "label": "Lignes LED ambre du plafond",
+        "form": "rect",
+        "color": "#f88808",
+        "intensity": 1.8,
+        "position": [-3.55, 7.75, 1.45],
+        "scale": [21, 0.6, 1]
+      },
+      {
+        "label": "Enseigne 809, mur nord",
+        "form": "rect",
+        "color": "#dc1414",
+        "intensity": 1.6,
+        "position": [-9, 6.1, -14.85],
+        "scale": [4, 1.6, 1]
+      },
+      {
+        "label": "Faisceaux menthe des lyres, devant la cabine",
+        "form": "rect",
+        "color": "#78c8b8",
+        "intensity": 2.0,
+        "position": [-7.7, 7.3, 4.3],
+        "scale": [7.5, 0.6, 1]
+      },
+      {
+        "label": "Rebond sombre du sol (les métaux ne virent jamais au noir)",
+        "form": "rect",
+        "color": "#0e1a14",
+        "intensity": 0.6,
+        "position": [0, -6, 0],
+        "scale": [60, 60, 1]
+      }
+    ]
+  },
+  "finishes": {
+    "809_social_club_concrete": "concrete",
+    "809_social_club_wall": "concrete",
+    "809_social_club_black_metal": "brushed-metal",
+    "809_social_club_steel": "satin-metal",
+    "809_social_club_stone": "marble",
+    "809_social_club_tabletop": "marble",
+    "809_social_club_leather": "leather",
+    "809_social_club_velvet_lounge": "velvet",
+    "809_social_club_velvet_vip": "velvet",
+    "809_social_club_velvet_prestige": "velvet",
+    "809_social_club_glass": "glass"
+  }
+}

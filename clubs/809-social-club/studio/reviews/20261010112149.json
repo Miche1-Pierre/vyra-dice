@@ -1,0 +1,34 @@
+{
+  "issues": [
+    "Vue d'ensemble : L3–L5 (Bord de Piste) sont cachés par la dalle de la mezzanine sud.",
+    "L3 était à moins de 0,3 m de l'arête de la cabine DJ en biais, et l'arrière de la rangée à 0,65 m des poteaux de la dalle sud.",
+    "Murs ouest et nord presque noirs en vue d'ensemble : les écrans, le logo 809 et RUDBOY semblent flotter.",
+    "Les projecteurs du mur nord étaient posés au niveau du sol de la mezzanine, derrière les dossiers de V1–V3 : aucune lumière sur le mur.",
+    "L'escalier ouest est peu lisible : aucune lumière dessus, hormis les nez de marche.",
+    "Les lignes LED du plafond passent par-dessus l'escalier est et coupent le faisceau de la caméra de V8 (x ≈ 6,5, z ≈ 7,6).",
+    "Le velours vert des lounges rend un vert vif, presque « jouet », sur les vues rapprochées de L1 et L5."
+  ],
+  "changes": [
+    "L3–L5 avancés de y −5,6 à y −4,7 (zone Bord de Piste jusqu'à y −3,6) : à 0,9 m de la cabine, passage de 1,5 m devant les poteaux, avant des tables visible en vue d'ensemble portrait.",
+    "Caméra overview (et dernière pose d'intro) plus plongeante (≈ 45°), comme celle du site : on voit davantage le bord de piste.",
+    "Murs en #47444b au lieu de #3b393e.",
+    "Mur ouest : trois projecteurs chauds rasants depuis le plafond (wash_west).",
+    "Mur nord : projecteurs remontés au-dessus des dossiers (mz + 1,25) et limités à la partie hors bar VIP (5 au lieu de 8).",
+    "Deux douches chaudes au-dessus de l'escalier ouest (dl_escalier_ouest).",
+    "Lignes LED du plafond raccourcies à x ≤ 4,6 (au-dessus de la nef seulement) ; panneau de reflet recalé dans ambiance.json.",
+    "Velours lounge assombri (#1b4a30) : vert toujours lisible, moins criard."
+  ],
+  "feedbackAddressed": [],
+  "remaining": [
+    "Même plus en avant, le centre des tables L3–L5 reste masqué par la dalle sud en vue d'ensemble (paysage surtout). Le filtre « rez-de-chaussée » du site les montre. L6–L8 seraient cachés par toute vue venant du nord.",
+    "Arche verte : ses arcs commencent à 4,4 m et ne descendent pas jusqu'au sol (brique « arche LED » à proposer).",
+    "Écrans à coins droits et non animés (brique « écran arrondi » à proposer).",
+    "Cabine DJ peu visible en vue d'ensemble : à revoir sur le prochain rendu.",
+    "Faisceaux des caméras de table et de zone vérifiés par le calcul seulement, à confirmer sur les rendus."
+  ],
+  "rebuilt": {
+    "objects": 30,
+    "triangles": 65030,
+    "at": "2026-10-10T11:29:03.670Z"
+  }
+}

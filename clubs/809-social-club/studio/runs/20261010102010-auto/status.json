@@ -1,0 +1,62 @@
+{
+  "id": "20261010102010-auto",
+  "step": "auto",
+  "state": "failed",
+  "options": {},
+  "createdAt": "2026-10-10T10:20:10.733Z",
+  "phases": [
+    {
+      "name": "Lecture des sources et note de recherche",
+      "startedAt": "2026-10-10T10:20:13.512Z",
+      "endedAt": "2026-10-10T10:23:23.905Z",
+      "ok": true
+    },
+    {
+      "name": "Écriture de la spécification",
+      "startedAt": "2026-10-10T10:23:23.950Z",
+      "endedAt": "2026-10-10T10:38:14.741Z",
+      "ok": true
+    },
+    {
+      "name": "Validation et corrections",
+      "startedAt": "2026-10-10T10:38:14.750Z",
+      "endedAt": "2026-10-10T10:38:18.598Z",
+      "ok": true
+    },
+    {
+      "name": "Construction d'essai",
+      "startedAt": "2026-10-10T10:38:14.828Z",
+      "endedAt": "2026-10-10T10:38:18.205Z",
+      "ok": true
+    },
+    {
+      "name": "Vérification de la spécification",
+      "startedAt": "2026-10-10T10:38:18.679Z",
+      "endedAt": "2026-10-10T10:38:18.695Z",
+      "ok": true
+    },
+    {
+      "name": "Construction Blender et aperçus",
+      "startedAt": "2026-10-10T10:38:18.697Z",
+      "endedAt": "2026-10-10T10:38:57.580Z",
+      "ok": true
+    }
+  ],
+  "pid": 54044,
+  "startedAt": "2026-10-10T10:20:13.444Z",
+  "current": "build",
+  "result": {
+    "agentRuns": 2,
+    "turns": 76,
+    "costUsd": 5.25,
+    "sessions": [
+      "175b4a7c-ecf3-4405-8d68-ea776c900169",
+      "2634cbde-7f42-4618-b545-495e1a47685f"
+    ],
+    "objects": 30,
+    "triangles": 65030,
+    "lights": 82
+  },
+  "endedAt": "2026-10-10T10:38:58.100Z",
+  "error": "Contrôles en échec : expected objects"
+}
