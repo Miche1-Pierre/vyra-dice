@@ -125,17 +125,23 @@ export default function VenueCanvas({
             assets={assets}
             ambiance={ambiance}
             quality={quality}
+            composited={effects || night !== null}
             neon={neon ? (ambiance.night?.color ?? NEON) : undefined}
           />
-          {quality === "high" && effects && !opening ? <FloorGloss layout={layout} /> : null}
+          {/* hidden, not unmounted, under the neon intro: their shaders compile with the club's */}
+          {quality === "high" && effects ? (
+            <group visible={!opening}>
+              <FloorGloss layout={layout} />
+            </group>
+          ) : null}
           <Backdrop center={venueCenter(layout)} />
-          {!opening ? (
+          <group visible={!opening}>
             <Beams
               layout={layout}
               palettes={ambiance.beams.palettes}
               intensity={quality === "high" ? 1 : 0.8}
             />
-          ) : null}
+          </group>
           {ambiance.night ? (
             <Smoke layout={layout} on={night !== null} count={quality === "high" ? 34 : 20} />
           ) : null}
