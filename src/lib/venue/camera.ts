@@ -5,7 +5,9 @@ import {
   tableLevel,
   toThree,
   zoneFloor,
+  zoneParts,
   type LayoutTable,
+  type Rect,
   type VenueLayout,
 } from "@/lib/venue/layout"
 
@@ -38,6 +40,8 @@ export function venueCenter(layout: VenueLayout): Vec3 {
 function isUnderSlab(layout: VenueLayout, x: number, y: number): boolean {
   return layout.mezzanine.some((r) => r.x[0] < x && x < r.x[1] && r.y[0] < y && y < r.y[1])
 }
+
+const area = (r: Rect) => (r.x[1] - r.x[0]) * (r.y[1] - r.y[0])
 
 /** Highest a camera may go under the mezzanine: just below the slab's underside. */
 function underSlabCeiling(layout: VenueLayout): number {
@@ -224,8 +228,10 @@ export function zoneMarkerPosition(layout: VenueLayout, zoneId: string): Vec3 {
   const zone = layout.zones.find((z) => z.id === zoneId)
   if (!zone) return venueCenter(layout)
   const floor = zoneFloor(layout, zone)
-  const cx = (zone.x[0] + zone.x[1]) / 2
-  const cy = (zone.y[0] + zone.y[1]) / 2
+  // over the zone's largest piece of floor (an L-shaped mezzanine zone is not tagged over the void)
+  const part = zoneParts(layout, zone).reduce((a, b) => (area(b) > area(a) ? b : a))
+  const cx = (part.x[0] + part.x[1]) / 2
+  const cy = (part.y[0] + part.y[1]) / 2
   if (zone.level === 0 && isUnderSlab(layout, cx, cy)) {
     // under the mezzanine: pin the tag against the back wall so it doesn't sit on the slab's tag
     const f = zoneFacing(layout, zoneId)

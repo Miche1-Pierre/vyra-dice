@@ -195,6 +195,23 @@ describe("standingPose", () => {
   })
 })
 
+describe("zoneMarkerPosition", () => {
+  it("tags an L-shaped mezzanine zone over its largest slab, not over the void", () => {
+    const layout = structuredClone(listClubs()[0].layout)
+    layout.mezzanine = [
+      { id: "a", x: [0, 10], y: [0, 4] },
+      { id: "b", x: [6, 10], y: [4, 10] },
+    ]
+    layout.zones = [
+      ...layout.zones,
+      { id: "l", tier: "prestige", level: 1, x: [0, 10], y: [0, 10] },
+    ]
+    const [x, , z] = zoneMarkerPosition(layout, "l")
+    // centre of slab a (40 m², against 24 m² for b), in Blender axes
+    expect([x, 0 - z]).toEqual([5, 2])
+  })
+})
+
 describe("raised zones", () => {
   it("lifts the tables' views, seats and markers with their platform", () => {
     const layout = structuredClone(listClubs()[0].layout)

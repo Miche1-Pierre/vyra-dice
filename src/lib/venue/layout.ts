@@ -203,6 +203,29 @@ export function zoneFloor(layout: VenueLayout, zone: LayoutZone): number {
   return levelHeight(layout, zone.level) + (zone.raised ?? 0)
 }
 
+/** An axis-aligned rectangle of the plan, in metres. */
+export interface Rect {
+  x: [number, number]
+  y: [number, number]
+}
+
+/**
+ * Where a zone has a floor: its rectangle on the ground floor; on the mezzanine, the parts of
+ * it that lie on a slab (an L-shaped zone drawn as one rectangle has no floor over the void).
+ */
+export function zoneParts(layout: VenueLayout, zone: LayoutZone): Rect[] {
+  if (zone.level === 0) return [{ x: zone.x, y: zone.y }]
+  const parts: Rect[] = []
+  for (const slab of layout.mezzanine) {
+    const x: [number, number] = [Math.max(zone.x[0], slab.x[0]), Math.min(zone.x[1], slab.x[1])]
+    const y: [number, number] = [Math.max(zone.y[0], slab.y[0]), Math.min(zone.y[1], slab.y[1])]
+    // a sliver along a slab's edge is not floor
+    if (x[1] - x[0] > 0.2 && y[1] - y[0] > 0.2) parts.push({ x, y })
+  }
+  // a zone drawn off every slab still shows where it is
+  return parts.length ? parts : [{ x: zone.x, y: zone.y }]
+}
+
 /** Floor height under a table, in metres (its zone's floor). */
 export function tableFloor(layout: VenueLayout, table: LayoutTable): number {
   return zoneFloor(layout, tableZone(layout, table))
