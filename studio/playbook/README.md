@@ -75,6 +75,7 @@ et te renvoie les erreurs : corrige ce qu'il signale, rien de plus.
 - `show.palette` : 4 à 6 couleurs HDR linéaires du light show des globes, dans l'esprit du club ; `bpm` 118–128.
 - `beams.palettes` : paires de couleurs `#rrggbb` des lyres.
 - `ledRain` / `screen` : obligatoires si la scène contient une pluie de LED / un écran.
+- `intro` : `neon` si le brief demande que le club se dessine à l'ouverture, sinon omets-le (vol de caméra).
 - `environment.lightformers` : panneaux placés comme les sources du club (espace three.js : y vers le haut ; un point
   `(x, y, z)` du plan devient `(x, z, -y)`), chacun regarde `target` (l'origine par défaut).
 - `finishes` : pour chaque matière Blender qui le mérite (nom = `materials.*.name` de `scene.json`), un préréglage :

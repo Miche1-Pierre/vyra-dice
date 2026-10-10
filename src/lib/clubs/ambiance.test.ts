@@ -38,6 +38,7 @@ describe("ambianceSchema", () => {
       ],
     },
     finishes: structuredClone(finishes),
+    intro: "flight",
   })
 
   it("accepts a club without LED rain nor screen", () => {
@@ -53,6 +54,15 @@ describe("ambianceSchema", () => {
     expect(bad((a) => (a.finishes.floor = "chrome" as never))).toBe(false)
     expect(bad((a) => (a.environment.background = "black"))).toBe(false)
     expect(bad((a) => (a.show.palette = [[1, 1, 1]]))).toBe(false)
+  })
+
+  it("opens with the flight unless the club asks for the neon", () => {
+    const { show, beams, environment, finishes } = ambiance()
+    const plain = { show, beams, environment, finishes }
+    const parsed = ambianceSchema.parse(plain)
+    expect(parsed.intro).toBe("flight")
+    const neon = ambianceSchema.parse({ ...plain, intro: "neon" })
+    expect(neon).toMatchObject({ intro: "neon" })
   })
 })
 

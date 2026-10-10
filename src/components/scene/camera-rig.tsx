@@ -36,10 +36,13 @@ function easeInOut(t: number) {
  */
 export function CameraRig({
   layout,
+  introStyle = "flight",
   reducedMotion = false,
   onIntroSkipped,
 }: {
   layout: VenueLayout
+  /** `neon`: no fly-through, the camera holds the overview while the club draws itself. */
+  introStyle?: "flight" | "neon"
   /** Cut between viewpoints and skip the fly-through. */
   reducedMotion?: boolean
   onIntroSkipped?: (atMs: number) => void
@@ -206,16 +209,24 @@ export function CameraRig({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [panel, size.width, size.height])
 
-  // initial placement (before the scene is ready): start of the intro path
+  // initial placement (before the scene is ready): start of the intro path, or the overview
+  // the neon intro draws the club in
   useEffect(() => {
     const c = controls.current
     if (!c) return
     configureOrbit(c)
-    const p = introPath.pos.getPoint(0)
-    const t = introPath.tgt.getPoint(0)
-    void c.setLookAt(p.x, p.y, p.z, t.x, t.y, t.z, false)
-    fovTarget.current = 42
-    camera.fov = 42
+    if (introStyle === "neon") {
+      const pose = overviewPose(layout, aspect)
+      void c.setLookAt(...pose.position, ...pose.target, false)
+      fovTarget.current = pose.fov
+      camera.fov = pose.fov
+    } else {
+      const p = introPath.pos.getPoint(0)
+      const t = introPath.tgt.getPoint(0)
+      void c.setLookAt(p.x, p.y, p.z, t.x, t.y, t.z, false)
+      fovTarget.current = 42
+      camera.fov = 42
+    }
     camera.updateProjectionMatrix()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -228,8 +239,19 @@ export function CameraRig({
     }
     if (sceneReady && view === "intro" && !intro.current.playing) {
       intro.current = { playing: true, start: performance.now() }
-      if (controls.current) controls.current.enabled = false
+      const c = controls.current
+      if (c) c.enabled = false
+      if (c && introStyle === "neon") {
+        // framed for the screen as it is now (the canvas had no size yet at mount)
+        const pose = overviewPose(layout, aspect)
+        void c.setLookAt(...pose.position, ...pose.target, false)
+        fovTarget.current = pose.fov
+        camera.fov = pose.fov
+        camera.updateProjectionMatrix()
+      }
     }
+    // the neon intro ends it (NeonIntro); the camera stays on the overview meanwhile
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sceneReady, view, reducedMotion, finishIntro])
 
   // any user gesture during the intro skips it (listeners armed only once it plays)
@@ -255,6 +277,7 @@ export function CameraRig({
   useEffect(() => {
     const c = controls.current
     if (!c || view === "intro") return
+    intro.current.playing = false
     c.enabled = true
     if (view === "seat" && selectedTableId) {
       configureSeat(c)
@@ -286,7 +309,7 @@ export function CameraRig({
   useFrame((_, delta) => {
     const c = controls.current
     if (!c) return
-    if (intro.current.playing) {
+    if (intro.current.playing && introStyle === "flight") {
       const k = Math.min(1, (performance.now() - intro.current.start) / (INTRO_SECONDS * 1000))
       const e = easeInOut(k)
       const p = introPath.pos.getPoint(e)
