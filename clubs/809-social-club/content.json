@@ -18,6 +18,11 @@
     "slug": "rudboy",
     "name": "Rudboy",
     "subtitle": "DJ guest",
+    "music": {
+      "src": "audio/nokia-guisdx-remix.mp3",
+      "title": "NOKIA (Guisdx Remix)",
+      "artist": "Drake"
+    },
     "date": "2026-10-10",
     "doors": "23:30",
     "offersValidatedAt": null
