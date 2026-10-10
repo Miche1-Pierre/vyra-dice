@@ -1,7 +1,6 @@
 "use client"
 
-import { motion } from "motion/react"
-import { useId } from "react"
+import { useId, type CSSProperties } from "react"
 
 import type { ClubBrand } from "@/lib/clubs/brand"
 import { cn } from "@/lib/utils"
@@ -12,7 +11,24 @@ import { cn } from "@/lib/utils"
  * in spaced capitals. Marks are filled with the club's foil (`--foil-*`).
  */
 
-const EASE_OUT = [0.16, 1, 0.3, 1] as const
+/**
+ * Loading-screen reveals as CSS animations (globals.css): they run on the browser's own clock,
+ * not on the main thread's JavaScript, so they stay smooth while the venue loads.
+ */
+function drawStyle(delay: number, duration: number): CSSProperties {
+  return {
+    strokeDasharray: 1,
+    strokeDashoffset: 1,
+    opacity: 0,
+    animation: `vyra-draw ${duration}s cubic-bezier(0.65, 0, 0.35, 1) ${delay}s forwards`,
+  }
+}
+
+const RISE: CSSProperties = {
+  opacity: 0,
+  transformBox: "fill-box",
+  animation: "vyra-rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards",
+}
 
 function FoilGradient({ id }: { id: string }) {
   return (
@@ -50,36 +66,18 @@ export function Emblem({
       </defs>
       {emblem.shapes.map(({ d, stroke }) => {
         if (stroke === undefined) {
-          return (
-            <motion.path
-              key={d}
-              d={d}
-              fill={fill}
-              {...(draw
-                ? {
-                    initial: { opacity: 0, y: 3 },
-                    animate: { opacity: 1, y: 0 },
-                    transition: { duration: 0.9, ease: EASE_OUT },
-                  }
-                : {})}
-            />
-          )
+          return <path key={d} d={d} fill={fill} style={draw ? RISE : undefined} />
         }
         const order = strokes++
         return (
-          <motion.path
+          <path
             key={d}
             d={d}
             stroke={fill}
             strokeWidth={stroke}
             strokeLinecap="round"
-            {...(draw
-              ? {
-                  initial: { pathLength: 0, opacity: 0 },
-                  animate: { pathLength: 1, opacity: 1 },
-                  transition: { delay: 0.35 + order * 0.07, duration: 0.6, ease: EASE_OUT },
-                }
-              : {})}
+            pathLength={draw ? 1 : undefined}
+            style={draw ? drawStyle(0.25 + order * 0.07, 0.6) : undefined}
           />
         )
       })}
@@ -124,24 +122,15 @@ export function Wordmark({
         </defs>
       ) : null}
       {wordmark.strokes.map((d, i) => (
-        <motion.path
+        <path
           key={d}
           d={d}
           stroke={foil ? `url(#${id})` : "currentColor"}
           strokeWidth={wordmark.strokeWidth}
           strokeLinecap="round"
           strokeLinejoin="round"
-          {...(draw
-            ? {
-                initial: { pathLength: 0, opacity: 0 },
-                animate: { pathLength: 1, opacity: 1 },
-                transition: {
-                  delay: 0.5 + i * 0.16,
-                  duration: 0.9,
-                  ease: [0.65, 0, 0.35, 1] as const,
-                },
-              }
-            : {})}
+          pathLength={draw ? 1 : undefined}
+          style={draw ? drawStyle(0.3 + i * 0.16, 0.9) : undefined}
         />
       ))}
     </svg>

@@ -1,9 +1,10 @@
 "use client"
 
 import { useGLTF } from "@react-three/drei"
-import { useFrame, useLoader } from "@react-three/fiber"
-import { useEffect, useMemo, useRef } from "react"
+import { useFrame, useLoader, useThree } from "@react-three/fiber"
+import { useEffect, useMemo, useRef, useState } from "react"
 import * as THREE from "three"
+import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module.js"
 
 import type { Quality } from "@/components/scene/effects"
 import { finishFor, isMetal } from "@/components/scene/fx/finishes"
@@ -18,6 +19,26 @@ import {
 import { finishOf, type ClubAmbiance } from "@/lib/clubs/ambiance"
 import { assetUrl, modelUrl, type AssetManifest } from "@/lib/clubs/assets"
 import { useExperience } from "@/lib/store"
+
+// the geometry decodes in two workers: the loading screen keeps its pace while the GLB arrives
+// (meshoptimizer's API, not a React hook)
+const decodeInWorkers = MeshoptDecoder.useWorkers
+if (typeof window !== "undefined") decodeInWorkers(2)
+const withMeshopt = (loader: { setMeshoptDecoder: (decoder: unknown) => unknown }) =>
+  loader.setMeshoptDecoder(MeshoptDecoder)
+
+/**
+ * Lightmaps decode off the main thread when the browser can (ImageBitmap), as plain images
+ * otherwise. glTF UVs are not flipped: the bitmaps are not either.
+ */
+class LightmapLoader extends THREE.ImageBitmapLoader {
+  constructor(manager?: THREE.LoadingManager) {
+    super(manager)
+    this.setOptions({ imageOrientation: "from-image", premultiplyAlpha: "none" })
+  }
+}
+const LIGHTMAP_LOADER =
+  typeof createImageBitmap === "function" ? LightmapLoader : THREE.TextureLoader
 
 /** Global brightness of the baked lighting (artistic exposure, 1 = as baked). */
 const LIGHTMAP_EXPOSURE = 1.15
@@ -207,15 +228,16 @@ export function VenueModel({
   )
   const glbUrl = modelUrl(club, manifest)
   // start every download now: the GLB and the lightmaps load in parallel, not in a waterfall
-  useGLTF.preload(glbUrl, false, true)
-  useLoader.preload(THREE.TextureLoader, urls)
-  const gltf = useGLTF(glbUrl, false, true)
-  const textures = useLoader(THREE.TextureLoader, urls)
+  useGLTF.preload(glbUrl, false, false, withMeshopt)
+  useLoader.preload(LIGHTMAP_LOADER, urls)
+  const gltf = useGLTF(glbUrl, false, false, withMeshopt)
+  const images = useLoader(LIGHTMAP_LOADER, urls) as (THREE.Texture | ImageBitmap)[]
 
-  const prepared = useMemo(() => {
+  const { prepared, lightmaps } = useMemo(() => {
     const byName: Record<string, THREE.Texture> = {}
     names.forEach((n, i) => {
-      const tex = textures[i]
+      const image = images[i]
+      const tex = image instanceof THREE.Texture ? image : new THREE.Texture(image)
       tex.flipY = false
       tex.channel = 1
       tex.colorSpace = THREE.SRGBColorSpace
@@ -225,17 +247,45 @@ export function VenueModel({
       tex.needsUpdate = true
       byName[n] = tex
     })
-    return prepareVenue(gltf.scene, manifest, ambiance, byName, quality)
-  }, [gltf.scene, manifest, ambiance, names, textures, quality])
+    return {
+      prepared: prepareVenue(gltf.scene, manifest, ambiance, byName, quality),
+      lightmaps: Object.values(byName),
+    }
+  }, [gltf.scene, manifest, ambiance, names, images, quality])
+
+  // before the club is shown: one lightmap to the GPU per frame, then the shaders compiled in
+  // parallel (KHR_parallel_shader_compile). No long frame freezes the loading screen.
+  const gl = useThree((s) => s.gl)
+  const camera = useThree((s) => s.camera)
+  const scene = useThree((s) => s.scene)
+  const [uploaded, setUploaded] = useState<PreparedVenue | null>(null)
+  useEffect(() => {
+    let cancelled = false
+    const nextFrame = () => new Promise((resolve) => requestAnimationFrame(resolve))
+    void (async () => {
+      for (const tex of lightmaps) {
+        if (cancelled) return
+        gl.initTexture(tex)
+        await nextFrame()
+      }
+      await gl.compileAsync(prepared.root, camera, scene).catch(() => undefined)
+      if (!cancelled) setUploaded(prepared)
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [gl, camera, scene, prepared, lightmaps])
+  const shown = uploaded === prepared
 
   const setSceneReady = useExperience((s) => s.setSceneReady)
   useEffect(() => {
-    // one frame later the textures are uploaded: reveal the scene
+    if (!shown) return
+    // everything is on the GPU: one frame of the club, then reveal it
     if (process.env.NODE_ENV !== "production")
       (window as unknown as { __venue?: PreparedVenue }).__venue = prepared
     const id = requestAnimationFrame(() => setSceneReady())
     return () => cancelAnimationFrame(id)
-  }, [prepared, setSceneReady])
+  }, [shown, prepared, setSceneReady])
 
   const upperOpacity = useRef(1)
   const toCamera = useMemo(() => new THREE.Vector3(), [])
@@ -262,7 +312,7 @@ export function VenueModel({
 
   return (
     <>
-      <primitive object={prepared.root} dispose={null} />
+      <primitive object={prepared.root} visible={shown} dispose={null} />
       <GlobeGlow
         globes={prepared.globes}
         show={ambiance.show}
