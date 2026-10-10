@@ -39,6 +39,11 @@ function isUnderSlab(layout: VenueLayout, x: number, y: number): boolean {
   return layout.mezzanine.some((r) => r.x[0] < x && x < r.x[1] && r.y[0] < y && y < r.y[1])
 }
 
+/** Highest a camera may go under the mezzanine: just below the slab's underside. */
+function underSlabCeiling(layout: VenueLayout): number {
+  return layout.heights.mezzanine - layout.heights.slab - 0.05
+}
+
 /** Spherical offset: azimuth 0 = camera south of the target (three +Z), polar from the zenith. */
 function orbit(target: Vec3, distance: number, azimuthDeg: number, polarDeg: number): Vec3 {
   const az = (azimuthDeg * Math.PI) / 180
@@ -127,7 +132,8 @@ export function zonePose(layout: VenueLayout, zoneId: string, aspect: number): C
   const place = (dir: Vec3): Vec3 => {
     if (elevation === null) {
       const dist = along ? Math.min(w, d) * 2.4 + 6 : span * (portrait ? 1.15 : 0.8) + 6
-      return add(add(target, scale(dir, dist)), [0, 2.7 - (floor + 0.6), 0])
+      const height = Math.min(2.7, underSlabCeiling(layout))
+      return add(add(target, scale(dir, dist)), [0, height - (floor + 0.6), 0])
     }
     const dist = along ? span * 0.6 + 6 : span * (portrait ? 1.0 : 0.62) + 7
     const e = (elevation * Math.PI) / 180
@@ -161,7 +167,8 @@ export function tablePose(layout: VenueLayout, tableId: string, aspect: number):
   let position: Vec3
   if (elevation === null) {
     const dist = width * (portrait ? 1.9 : 1.35) + 2.4
-    position = add(add(target, scale(dir, dist)), [0, 2.6 - base[1], 0])
+    const height = Math.min(3.15, underSlabCeiling(layout))
+    position = add(add(target, scale(dir, dist)), [0, height - target[1], 0])
   } else {
     const dist = portrait ? width * 2.2 + 5.5 : width * 1.45 + 4
     const e = (elevation * Math.PI) / 180
