@@ -6,6 +6,7 @@ import { useMemo, useRef, type Ref } from "react"
 import * as THREE from "three"
 
 import { cn } from "@/lib/utils"
+import { pulse } from "@/lib/music"
 import { useExperience } from "@/lib/store"
 import {
   djMarkerPosition,
@@ -103,6 +104,8 @@ export function Markers({
   //    Sober tone: no card ever moves up or down. A zone card that would cover a nearer card
   //    (or the DJ) slides sideways while its stem still meets it, else only its pin stays.
   const stack = tone !== "sober"
+  const dj = useRef<HTMLDivElement>(null)
+  const djScale = useRef(1)
   const cards = useRef(new Map<string, HTMLElement>())
   const camera = useThree((s) => s.camera)
   const size = useThree((s) => s.size)
@@ -206,6 +209,12 @@ export function Markers({
         it.el.style.pointerEvents = it.hidden ? "none" : ""
       }
     }
+    // the DJ's badge beats with the night's music
+    const scale = Math.round((1 + 0.3 * pulse.beat) * 100) / 100
+    if (dj.current && scale !== djScale.current) {
+      djScale.current = scale
+      dj.current.style.transform = `scale(${scale})`
+    }
   })
   const register = (key: string) => (el: HTMLElement | null) => {
     if (el) cards.current.set(key, el)
@@ -256,7 +265,7 @@ export function Markers({
         )
       })}
       <Html position={djPosition} zIndexRange={[30, 10]} style={wrapper(view !== "intro")}>
-        <DjBadge />
+        <DjBadge badgeRef={dj} />
       </Html>
       {tickets.map((t) => {
         const shown = view === "overview" && levelVisible(t.level)
@@ -443,10 +452,11 @@ function PinnedZoneCard({
 }
 
 /** Where the DJ plays: a round badge over the booth, in every view. */
-function DjBadge() {
+function DjBadge({ badgeRef }: { badgeRef: Ref<HTMLDivElement> }) {
   return (
     <div className="pointer-events-none -translate-x-1/2 -translate-y-1/2">
       <div
+        ref={badgeRef}
         role="img"
         aria-label="Cabine du DJ"
         className="grid size-8 place-items-center rounded-full bg-(--brand) text-[10px] font-bold tracking-[0.06em] text-(--brand-on) shadow-[0_0_0_2px_rgb(0_0_0/0.45),0_0_20px_color-mix(in_srgb,var(--brand)_65%,transparent)]"

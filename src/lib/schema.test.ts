@@ -251,6 +251,16 @@ describe("venueContentSchema", () => {
     expect(contentIssuePaths(content)).toEqual(["event.subtitle"])
   })
 
+  it("takes the night's music as an audio file of the club's bundle", () => {
+    const content = venueContent()
+    content.event.music = { src: "audio/night.mp3", title: "Mix de la soirée", artist: "Rudboy" }
+    expect(venueContentSchema.safeParse(content).success).toBe(true)
+    content.event.music = { src: "../naho/audio/night.mp3", title: "Mix" }
+    expect(contentIssuePaths(content)).toEqual(["event.music.src"])
+    content.event.music = { src: "audio/cover.png", title: "Mix" }
+    expect(contentIssuePaths(content)).toEqual(["event.music.src"])
+  })
+
   it("accepts a WhatsApp number in international format", () => {
     const content = venueContent()
     content.club.contact = { whatsapp: "+33 6 12 34 56 78" }

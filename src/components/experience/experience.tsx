@@ -20,8 +20,8 @@ import {
 import {
   BrandBar,
   EventHeadline,
+  Immersion,
   LevelSwitch,
-  NightToggle,
   SearchButton,
   SeatOverlay,
   StatusLegend,
@@ -37,6 +37,7 @@ import { useShortcuts } from "@/components/experience/use-shortcuts"
 import { buildViewModel, zonePriceLabel, type ViewModel } from "@/components/experience/view-model"
 import { track } from "@/lib/analytics/client"
 import { contactMessage, instagramUrl, whatsappUrl } from "@/lib/contact"
+import { assetUrl } from "@/lib/clubs/assets"
 import type { ClubBrand } from "@/lib/clubs/brand"
 import type { ClubDefinition } from "@/lib/clubs/club"
 import { formatDateFr, formatEuro } from "@/lib/format"
@@ -316,6 +317,11 @@ export function Experience({ club }: { club: ClubDefinition }) {
 
   const dateLabel = formatDateFr(content.event.date)
   const eventLine = `${content.event.name} · ${dateLabel} · ${content.event.doors.replace(":", "h")}`
+  // the night's music, for the immersion (a file of the club's bundle)
+  const music = useMemo(() => {
+    const m = content.event.music
+    return m ? { url: assetUrl(club.slug, m.src), title: m.title, artist: m.artist } : null
+  }, [club.slug, content.event.music])
   const table = selectedTableId ? vm.tables[selectedTableId] : null
   const tableIcon = table ? (vm.zones.find((z) => z.id === table.zoneId)?.icon ?? "sofa") : "sofa"
   const ticket = focusedTicketId ? (vm.tickets.find((t) => t.id === focusedTicketId) ?? null) : null
@@ -402,7 +408,7 @@ export function Experience({ club }: { club: ClubDefinition }) {
               </div>
               <div className="pointer-events-auto flex shrink-0 items-center gap-2">
                 {club.ambiance.night && !textOnly && view !== "seat" ? (
-                  <NightToggle isDesktop={isDesktop} />
+                  <Immersion isDesktop={isDesktop} music={music} />
                 ) : null}
                 {isDesktop && !panelOpen && view !== "seat" ? <StatusLegend /> : null}
                 {!isDesktop ? (

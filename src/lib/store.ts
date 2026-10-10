@@ -68,9 +68,12 @@ interface ExperienceState {
   resetNonce: number
   /** Night mode (clubs whose ambiance offers it): dark room, one light colour, smoke. */
   night: boolean
+  /** The night's music plays: immersion with sound, on the visitor's explicit choice. */
+  sound: boolean
 
   setSceneReady: () => void
   setNight: (on: boolean) => void
+  setSound: (on: boolean) => void
   setFallback2d: () => void
   setListMode: (on: boolean) => void
   finishIntro: () => void
@@ -118,9 +121,12 @@ export const useExperience = create<ExperienceState>()((set, get) => ({
   notice: null,
   resetNonce: 0,
   night: false,
+  sound: false,
 
   setSceneReady: () => set({ sceneReady: true }),
-  setNight: (night) => set({ night }),
+  // leaving the night stops its music
+  setNight: (night) => set(night ? { night } : { night, sound: false }),
+  setSound: (sound) => set({ sound }),
   setFallback2d: () => set({ fallback2d: true, view: "overview" }),
   setListMode: (listMode) =>
     set((s) => ({

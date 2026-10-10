@@ -6,6 +6,7 @@ import * as THREE from "three"
 
 import { createBeamMaterial } from "@/components/scene/fx/materials"
 import type { ClubAmbiance } from "@/lib/clubs/ambiance"
+import { pulse } from "@/lib/music"
 import { toThree, type VenueLayout } from "@/lib/venue/layout"
 
 const LENGTH = 9.5
@@ -44,16 +45,20 @@ export function Beams({
   const materials = useMemo(() => heads.map(() => createBeamMaterial("#ffffff")), [heads])
   const groups = useRef<(THREE.Group | null)[]>([])
   const tmp = useMemo(() => new THREE.Color(), [])
+  // the night's music speeds the sweeps up with the bass and fires the beams on its beat
+  const drive = useRef(0)
 
-  useFrame((state) => {
+  useFrame((state, delta) => {
     const t = state.clock.elapsedTime
+    drive.current += Math.min(delta, 0.1) * pulse.level * 2.5
+    const swing = t + drive.current
     const palette = palettes[Math.floor(t / PALETTE_SECONDS) % palettes.length]
     heads.forEach((h, i) => {
       const g = groups.current[i]
       if (!g) return
-      const sweep = Math.sin(t * 0.42 + h.seed) * 0.85
+      const sweep = Math.sin(swing * 0.42 + h.seed) * 0.85
       g.rotation.set(
-        0.22 + 0.3 * (0.5 + 0.5 * Math.sin(t * 0.57 + h.seed * 2.1)),
+        0.22 + 0.3 * (0.5 + 0.5 * Math.sin(swing * 0.57 + h.seed * 2.1)),
         h.yaw + sweep,
         0,
         "YXZ",
@@ -61,7 +66,8 @@ export function Beams({
       const m = materials[i]
       tmp.set(palette[i % 2])
       m.uniforms.uColor.value.lerp(tmp, 0.04)
-      m.uniforms.uOpacity.value = 0.42 * intensity * (0.75 + 0.25 * Math.sin(t * 2.2 + h.seed))
+      m.uniforms.uOpacity.value =
+        0.42 * intensity * (0.75 + 0.25 * Math.sin(t * 2.2 + h.seed)) * (1 + 1.3 * pulse.beat)
     })
   })
 

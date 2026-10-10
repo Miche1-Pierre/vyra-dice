@@ -172,6 +172,20 @@ export const eventSchema = z.object({
    * name in large letters on the loading screen, the overview and the home page.
    */
   subtitle: z.string().min(1).max(40).optional(),
+  /**
+   * The night's music for the immersion (night mode with sound): a file of the club's bundle
+   * (`clubs/<slug>/public/<src>`), played only when the visitor asks for it. Without the file, the
+   * immersion stays silent.
+   */
+  music: z
+    .object({
+      src: z
+        .string()
+        .regex(/^(?!.*\.\.)[\w./-]+\.(mp3|m4a|ogg)$/, { error: "Expected an audio file path" }),
+      title: z.string().min(1).max(80),
+      artist: z.string().min(1).max(60).optional(),
+    })
+    .optional(),
   /** Calendar date of the night (yyyy-mm-dd), even when it ends after midnight. */
   date: z.iso.date(),
   /** Opening time, "HH:MM". */

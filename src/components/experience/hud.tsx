@@ -1,16 +1,19 @@
 "use client"
 
 import {
+  AudioLines,
   ChevronLeft,
   Mail,
   MessageCircle,
-  Moon,
   Phone,
   ScanEye,
   Search,
   Ticket,
+  Volume2,
+  VolumeX,
 } from "lucide-react"
 import { AnimatePresence, motion } from "motion/react"
+import { useEffect, useRef, useState } from "react"
 
 import { Emblem, Wordmark } from "@/components/experience/brand"
 import {
@@ -26,6 +29,7 @@ import {
 import type { TableView, TicketView, ZoneView } from "@/components/experience/view-model"
 import { track } from "@/lib/analytics/client"
 import { contactMessage, instagramUrl, phoneUrl, whatsappUrl } from "@/lib/contact"
+import { pauseMusic, playMusic } from "@/lib/music"
 import type { ClubBrand } from "@/lib/clubs/brand"
 import type { VenueContent } from "@/lib/schema"
 import { useExperience, type LevelFilter } from "@/lib/store"
@@ -306,23 +310,167 @@ export function SearchButton({ isDesktop }: { isDesktop: boolean }) {
 }
 
 /** Night mode switch, for clubs whose ambiance offers it: dark room, one light colour, smoke. */
-export function NightToggle({ isDesktop }: { isDesktop: boolean }) {
-  const night = useExperience((s) => s.night)
-  const setNight = useExperience((s) => s.setNight)
+/** The night's music, as the immersion plays it. */
+export interface NightMusic {
+  url: string
+  title: string
+  artist?: string
+}
+
+/** Three bars that dance while the music plays (still when motion is reduced). */
+function Equalizer({ className }: { className?: string }) {
   return (
-    <RoundBtn
-      label={night ? "Revenir à l’ambiance normale" : "Ambiance de nuit"}
-      side="bottom"
-      size={isDesktop ? "md" : "sm"}
-      active={night}
-      className={cn(isDesktop ? "" : "size-9", night && "text-brand")}
-      onClick={() => {
-        setNight(!night)
-        track("night_mode_toggled", { on: !night })
-      }}
-    >
-      <Moon />
-    </RoundBtn>
+    <span aria-hidden className={cn("flex h-3.5 items-end gap-[2px]", className)}>
+      {[0, 0.18, 0.36].map((delay) => (
+        <span
+          key={delay}
+          className="h-full w-[3px] origin-bottom rounded-[1px] bg-current"
+          style={{ animation: `vyra-eq 0.9s ease-in-out ${delay}s infinite` }}
+        />
+      ))}
+    </span>
+  )
+}
+
+/**
+ * Immersion, for clubs whose ambiance offers the night mode: the room falls dark in the night's
+ * colour, smoke drifts over the floor and, when the visitor accepts it, the night's music plays
+ * and the lights beat with it. The sound is asked for, never imposed.
+ */
+export function Immersion({ isDesktop, music }: { isDesktop: boolean; music: NightMusic | null }) {
+  const night = useExperience((s) => s.night)
+  const sound = useExperience((s) => s.sound)
+  const setNight = useExperience((s) => s.setNight)
+  const setSound = useExperience((s) => s.setSound)
+  const notify = useExperience((s) => s.notify)
+  const [asking, setAsking] = useState(false)
+  // the music is offered only when its file is there: a demo may ship without it
+  const [available, setAvailable] = useState(false)
+  useEffect(() => {
+    if (!music) return
+    let live = true
+    fetch(music.url, { method: "HEAD" })
+      .then((res) => live && setAvailable(res.ok))
+      .catch(() => undefined)
+    return () => {
+      live = false
+    }
+  }, [music])
+  // leaving the visit stops the music
+  useEffect(() => () => pauseMusic(), [])
+  const box = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    if (!asking) return
+    const close = (e: Event) => {
+      if (
+        e instanceof KeyboardEvent ? e.key === "Escape" : !box.current?.contains(e.target as Node)
+      )
+        setAsking(false)
+    }
+    window.addEventListener("keydown", close)
+    window.addEventListener("pointerdown", close)
+    return () => {
+      window.removeEventListener("keydown", close)
+      window.removeEventListener("pointerdown", close)
+    }
+  }, [asking])
+
+  const offered = music && available ? music : null
+  const credit = offered ? `${offered.title}${offered.artist ? ` — ${offered.artist}` : ""}` : null
+
+  // started inside the click: the browser plays sound only after a gesture
+  const start = (withSound: boolean) => {
+    setAsking(false)
+    setNight(true)
+    const playing = withSound && offered ? playMusic(offered.url) : Promise.resolve(false)
+    void playing.then((on) => {
+      setSound(on)
+      track("night_mode_toggled", { on: true, sound: on })
+      notify(
+        on
+          ? { tone: "brand", title: "Immersion", detail: credit ?? undefined }
+          : { tone: "neutral", title: "Immersion", detail: "Mode nuit, sans le son" },
+      )
+    })
+  }
+  const stop = () => {
+    pauseMusic()
+    setNight(false)
+    track("night_mode_toggled", { on: false, sound: false })
+  }
+  const toggleSound = () => {
+    if (!offered) return
+    if (sound) {
+      pauseMusic()
+      setSound(false)
+      track("music_toggled", { on: false })
+      return
+    }
+    void playMusic(offered.url).then((on) => {
+      setSound(on)
+      track("music_toggled", { on })
+    })
+  }
+
+  return (
+    <div ref={box} className="relative flex items-center gap-2">
+      {night && offered ? (
+        <RoundBtn
+          label={sound ? "Couper le son" : "Mettre le son"}
+          side="bottom"
+          size={isDesktop ? "md" : "sm"}
+          className={isDesktop ? "" : "size-9"}
+          onClick={toggleSound}
+        >
+          {sound ? <Volume2 /> : <VolumeX />}
+        </RoundBtn>
+      ) : null}
+      <button
+        type="button"
+        aria-pressed={night}
+        aria-expanded={asking}
+        aria-label={night ? "Quitter l’immersion" : "Immersion : la salle en mode nuit"}
+        onClick={() => (night ? stop() : offered ? setAsking((open) => !open) : start(false))}
+        className={cn(
+          "sober:rounded-[11px] focus-visible:ring-brand/70 relative flex shrink-0 items-center gap-2 rounded-full font-medium transition-[background-color,box-shadow,transform] duration-200 outline-none focus-visible:ring-2 active:scale-[0.97] [&_svg]:size-4",
+          isDesktop ? "h-10 px-4 text-[13px]" : "size-9 justify-center",
+          night
+            ? "brand-pill"
+            : "glass glass-rim text-label shadow-[0_0_0_1px_color-mix(in_srgb,var(--brand)_55%,transparent),0_0_18px_color-mix(in_srgb,var(--brand)_35%,transparent)] hover:bg-white/[0.12]",
+        )}
+      >
+        {night && sound ? <Equalizer /> : <AudioLines className={night ? "" : "text-brand"} />}
+        {isDesktop ? <span>Immersion</span> : null}
+      </button>
+      <AnimatePresence>
+        {asking && offered ? (
+          <motion.div
+            role="dialog"
+            aria-label="Immersion"
+            initial={{ opacity: 0, y: -6, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -6, scale: 0.97 }}
+            transition={{ duration: 0.18 }}
+            className="glass-thick glass-rim sober:rounded-[14px] absolute top-[calc(100%+10px)] right-0 z-50 w-[min(300px,calc(100vw-1.5rem))] origin-top-right rounded-[22px] p-4"
+          >
+            <p className="text-label text-[15px] font-semibold">Immersion</p>
+            <p className="text-footnote text-label-2 mt-1">
+              La salle passe en mode nuit, au son de la soirée
+              {credit ? <span className="text-label">{`\u00a0: ${credit}`}</span> : null}.
+            </p>
+            <div className="mt-3.5 flex gap-2">
+              <Btn variant="brand" size="sm" autoFocus onClick={() => start(true)}>
+                <Volume2 />
+                Avec le son
+              </Btn>
+              <Btn size="sm" onClick={() => start(false)}>
+                Sans le son
+              </Btn>
+            </div>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
+    </div>
   )
 }
 

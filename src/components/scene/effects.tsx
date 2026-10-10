@@ -2,11 +2,12 @@
 
 import { useFrame } from "@react-three/fiber"
 import { Bloom, EffectComposer, SMAA, ToneMapping, Vignette } from "@react-three/postprocessing"
-import { ToneMappingMode } from "postprocessing"
-import { useEffect, useMemo } from "react"
+import { ToneMappingMode, type BloomEffect } from "postprocessing"
+import { useEffect, useMemo, useRef } from "react"
 import * as THREE from "three"
 
 import { NightGradeEffect } from "@/components/scene/fx/night-grade"
+import { pulse } from "@/lib/music"
 
 export type Quality = "low" | "high"
 
@@ -31,7 +32,13 @@ export function Effects({
     if (night) grade.setColor(night)
   }, [grade, night])
   useEffect(() => () => grade.dispose(), [grade])
+  const bloom = useRef<BloomEffect>(null)
+  const bloomIntensity = high ? 1.15 : 0.95
   useFrame((_, delta) => {
+    // the night's music: the lights and their halos beat with the bass
+    const beat = night ? pulse.beat : 0
+    grade.pulse = night ? beat * 0.6 + pulse.level * 0.25 : 0
+    if (bloom.current) bloom.current.intensity = bloomIntensity * (1 + beat * 0.9)
     const wanted = night ? 1 : 0
     if (grade.amount === wanted) return
     const next = THREE.MathUtils.damp(grade.amount, wanted, 2.6, delta)
@@ -43,8 +50,9 @@ export function Effects({
     chain.push(
       <Bloom
         key="bloom"
+        ref={bloom}
         mipmapBlur
-        intensity={high ? 1.15 : 0.95}
+        intensity={bloomIntensity}
         luminanceThreshold={0.82}
         luminanceSmoothing={0.28}
         radius={0.78}
