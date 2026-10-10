@@ -12,10 +12,13 @@ export function LoadingScreen({
   name,
   brand,
   eventLine,
+  headliner,
 }: {
   name: string
   brand: ClubBrand
   eventLine: string
+  /** A billed night (`event.subtitle`): its name in large capitals, like its poster. */
+  headliner?: { name: string; subtitle: string; when: string }
 }) {
   const { progress } = useProgress()
   const ready = useExperience((s) => s.sceneReady)
@@ -54,14 +57,27 @@ export function LoadingScreen({
               className="text-label mt-5 h-9"
             />
             <Tagline text={brand.tagline} className="text-brand/80 mt-3 pl-[0.62em]" />
-            <motion.p
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.1, duration: 0.6 }}
-              className="text-footnote text-label-3 mt-9"
-            >
-              {eventLine}
-            </motion.p>
+            {headliner ? (
+              <div
+                className="mt-10 flex flex-col items-center text-center"
+                style={{ animation: "vyra-rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both" }}
+              >
+                <p className="text-label text-[52px] leading-none font-semibold tracking-[0.06em] uppercase sm:text-[72px]">
+                  {headliner.name}
+                </p>
+                <p className="eyebrow text-brand mt-3">{headliner.subtitle}</p>
+                <p className="text-footnote text-label-3 mt-4">{headliner.when}</p>
+              </div>
+            ) : (
+              <motion.p
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.1, duration: 0.6 }}
+                className="text-footnote text-label-3 mt-9"
+              >
+                {eventLine}
+              </motion.p>
+            )}
             <div className="mt-6 h-[2px] w-40 overflow-hidden rounded-full bg-white/[0.08]">
               {/* a transform transition: the compositor slides it even while the venue is parsed */}
               <div

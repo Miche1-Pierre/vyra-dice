@@ -19,6 +19,7 @@ import {
 } from "@/components/experience/hooks"
 import {
   BrandBar,
+  EventHeadline,
   LevelSwitch,
   NightToggle,
   SearchButton,
@@ -487,7 +488,21 @@ export function Experience({ club }: { club: ClubDefinition }) {
               ) : null}
             </Panel>
 
-            <LoadingScreen name={content.club.name} brand={club.brand} eventLine={eventLine} />
+            <LoadingScreen
+              name={content.club.name}
+              brand={club.brand}
+              eventLine={eventLine}
+              headliner={
+                content.event.subtitle
+                  ? {
+                      name: content.event.name,
+                      subtitle: content.event.subtitle,
+                      when: `${dateLabel} · ${content.event.doors.replace(":", "h")}`,
+                    }
+                  : undefined
+              }
+            />
+            <EventHeadline content={content} dateLabel={dateLabel} isDesktop={isDesktop} />
             <IntroSkip isDesktop={isDesktop} />
             <Island />
             <SelectionAnnouncer vm={vm} />

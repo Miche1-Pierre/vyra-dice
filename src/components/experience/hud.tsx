@@ -113,6 +113,18 @@ function Context({
               </span>
             ) : null}
           </>
+        ) : content.event.subtitle ? (
+          // a billed night (DJ, artist): its name first, in capitals
+          <>
+            <span className="text-label truncate text-[14px] leading-none font-semibold tracking-[0.08em] uppercase">
+              {content.event.name}
+            </span>
+            {!compact ? (
+              <span className="num text-label-3">
+                {content.event.subtitle} · {shortDate(dateLabel)}
+              </span>
+            ) : null}
+          </>
         ) : (
           <>
             <span className="text-label-2 truncate">{content.event.name}</span>
@@ -124,6 +136,57 @@ function Context({
           </>
         )}
       </motion.span>
+    </AnimatePresence>
+  )
+}
+
+/**
+ * The night's poster line on the overview, when the night is billed (`event.subtitle`): its name
+ * in large capitals under the top bar, gone as soon as the buyer looks at a space or a table.
+ */
+export function EventHeadline({
+  content,
+  dateLabel,
+  isDesktop,
+}: {
+  content: VenueContent
+  dateLabel: string
+  isDesktop: boolean
+}) {
+  const view = useExperience((s) => s.view)
+  const panel = useExperience((s) => s.panel)
+  const { subtitle } = content.event
+  if (!subtitle) return null
+  const shown = view === "overview" && (isDesktop || panel === null)
+  return (
+    <AnimatePresence>
+      {shown ? (
+        <motion.div
+          key="headline"
+          initial={{ opacity: 0, y: -6 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -6 }}
+          transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+          className={cn(
+            "pointer-events-none absolute z-20 [text-shadow:0_2px_18px_rgb(0_0_0/0.85)]",
+            isDesktop
+              ? "top-[76px] left-5"
+              : "top-[calc(max(0.75rem,env(safe-area-inset-top))+96px)] left-4",
+          )}
+        >
+          <p
+            className={cn(
+              "text-label leading-[0.95] font-semibold tracking-[0.06em] uppercase",
+              isDesktop ? "text-[46px]" : "text-[30px]",
+            )}
+          >
+            {content.event.name}
+          </p>
+          <p className="eyebrow text-brand mt-2">
+            {subtitle} · {dateLabel} · {content.event.doors.replace(":", "h")}
+          </p>
+        </motion.div>
+      ) : null}
     </AnimatePresence>
   )
 }
