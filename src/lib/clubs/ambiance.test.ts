@@ -65,6 +65,11 @@ describe("ambianceSchema", () => {
     const neon = ambianceSchema.parse({ ...plain, intro: "neon", night: { color: "#ff1a2a" } })
     expect(neon).toMatchObject({ intro: "neon", night: { color: "#ff1a2a" } })
     expect(ambianceSchema.safeParse({ ...plain, night: { color: "red" } }).success).toBe(false)
+    const screens = { ...plain, night: { color: "#ff1a2a", screens: ["club_screen"] } }
+    expect(ambianceSchema.parse(screens).night?.screens).toEqual(["club_screen"])
+    expect(
+      ambianceSchema.safeParse({ ...plain, night: { color: "#ff1a2a", screens: [] } }).success,
+    ).toBe(false)
   })
 })
 

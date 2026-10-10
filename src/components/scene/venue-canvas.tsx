@@ -68,6 +68,8 @@ export interface VenueCanvasProps {
   tiers: ClubBrand["tiers"]
   /** The club's interface tone: sober clubs pin their zones as Artefact does. */
   tone?: ClubBrand["ui"]["tone"]
+  /** URLs of the night's loops for the club's screens (night mode). */
+  screenVideos?: readonly string[]
   layout: VenueLayout
   zoneMarkers: ZoneMarkerData[]
   tableMarkers: TableMarkerData[]
@@ -84,6 +86,7 @@ export default function VenueCanvas({
   ambiance,
   tiers,
   tone = "vivid",
+  screenVideos,
   layout,
   zoneMarkers,
   tableMarkers,
@@ -139,6 +142,11 @@ export default function VenueCanvas({
             ambiance={ambiance}
             quality={quality}
             composited={effects || night !== null}
+            screens={
+              ambiance.night?.screens && screenVideos?.length
+                ? { materials: ambiance.night.screens, videos: screenVideos }
+                : undefined
+            }
             neon={neon ? (ambiance.night?.color ?? NEON) : undefined}
           />
           {/* hidden, not unmounted, under the neon intro: their shaders compile with the club's */}

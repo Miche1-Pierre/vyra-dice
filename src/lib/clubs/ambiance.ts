@@ -102,7 +102,16 @@ export const ambianceSchema = z.object({
    * Night mode, offered when present: the room falls dark, every light turns to `color`, haze
    * and smoke drift over the dance floor. `color` also draws the neon intro.
    */
-  night: z.object({ color: hexColorSchema }).optional(),
+  night: z
+    .object({
+      color: hexColorSchema,
+      /**
+       * Blender materials of the club's screens: while the night mode is on, they play the
+       * night's loops (`event.screens`) and the text standing on them hides.
+       */
+      screens: z.array(z.string().min(1)).min(1).optional(),
+    })
+    .optional(),
 })
 export type ClubAmbiance = z.infer<typeof ambianceSchema>
 

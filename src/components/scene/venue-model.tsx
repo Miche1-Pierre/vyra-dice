@@ -19,6 +19,7 @@ import {
   type TimedMaterial,
 } from "@/components/scene/fx/materials"
 import { surfacesReady } from "@/components/scene/fx/surfaces"
+import { NightScreens, prepareScreens } from "@/components/scene/night-screens"
 import { finishOf, type ClubAmbiance } from "@/lib/clubs/ambiance"
 import { assetUrl, modelUrl, type AssetManifest } from "@/lib/clubs/assets"
 import { useExperience } from "@/lib/store"
@@ -271,6 +272,7 @@ export function VenueModel({
   ambiance,
   quality,
   composited = true,
+  screens: screenSpec,
   neon,
 }: {
   club: string
@@ -279,6 +281,8 @@ export function VenueModel({
   quality: Quality
   /** Drawn through the effect composer (into its render target), not straight to the canvas. */
   composited?: boolean
+  /** The club's screens (materials) and the night's loops they play in night mode. */
+  screens?: { materials: readonly string[]; videos: readonly string[] }
   /** Colour of the neon intro, when the club opens with it. */
   neon?: string
 }) {
@@ -349,6 +353,17 @@ export function VenueModel({
   const height = useMemo(() => new THREE.Box3().setFromObject(prepared.root).max.y, [prepared])
 
   const opening = useExperience((s) => Boolean(neon) && s.view === "intro")
+  // the screens and the text standing on them, for the night's loops
+  const screenMaterials = screenSpec?.materials
+  const screens = useMemo(
+    () => (screenMaterials ? prepareScreens(prepared.root, screenMaterials) : null),
+    [prepared, screenMaterials],
+  )
+  const screenHide = useMemo(
+    () => (screens ? [...screens.screens, ...screens.texts] : []),
+    [screens],
+  )
+  const night = useExperience((s) => s.night)
   const setSceneReady = useExperience((s) => s.setSceneReady)
   useEffect(() => {
     if (!shown) return
@@ -398,6 +413,14 @@ export function VenueModel({
           intensity={quality === "high" ? 1 : 0.85}
         />
       </group>
+      {screens && screenSpec ? (
+        <NightScreens
+          pieces={screens.pieces}
+          hide={screenHide}
+          videos={screenSpec.videos}
+          on={night}
+        />
+      ) : null}
       {neon ? (
         <NeonIntro
           edges={edges?.venue === prepared ? edges.edges : null}

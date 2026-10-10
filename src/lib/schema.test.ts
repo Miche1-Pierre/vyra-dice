@@ -261,6 +261,14 @@ describe("venueContentSchema", () => {
     expect(contentIssuePaths(content)).toEqual(["event.music.src"])
   })
 
+  it("takes the night's loops for the screens as video files of the club's bundle", () => {
+    const content = venueContent()
+    content.event.screens = ["screens/loop-16x9.mp4", "screens/loop-ribbon.webm"]
+    expect(venueContentSchema.safeParse(content).success).toBe(true)
+    content.event.screens = ["screens/poster.jpg"]
+    expect(contentIssuePaths(content)).toEqual(["event.screens.0"])
+  })
+
   it("accepts a WhatsApp number in international format", () => {
     const content = venueContent()
     content.club.contact = { whatsapp: "+33 6 12 34 56 78" }

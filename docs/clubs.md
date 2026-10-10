@@ -106,6 +106,12 @@ visiteur choisit « Avec le son ». Les lumières battent alors sur ses basses. 
 git : un morceau sous droits reste sur le poste et ne part ni sur GitHub (public) ni en production, où l'immersion
 reste muette tant qu'aucun morceau libre de droits n'est commité.
 
+Les boucles de la soirée, `event.screens` (vidéos MP4 ou WebM du bundle, muettes), passent sur les écrans du club en
+mode nuit, quand son ambiance les déclare (`night.screens`). Chaque écran joue la boucle dont la forme est la plus
+proche de la sienne (écran 16:9, ruban, écran vertical), recadrée pour le remplir, et le texte posé sur l'écran se
+masque le temps de la lecture. Les boucles se fabriquent avec le studio de motion design (une composition par forme
+d'écran) puis passent au format web BT.709.
+
 ## Référence — espaces debout et billets
 
 Un club qui vend des entrées par zone (fosse, front row…) les montre dans la visite sans les vendre : chaque espace
@@ -156,6 +162,7 @@ l'interface ne lit que ces jetons. Ajouter une police : la charger dans `src/app
 | `finishes`                  | finition par nom de matière Blender : un préréglage, ou `{ "preset", "tint", "roughness", "metalness", "envMapIntensity" }` |
 | `intro` (facultatif)        | ouverture : `flight` (défaut, vol de caméra sur `cameras.intro`) ou `neon` (le club se dessine en néon, puis se construit)  |
 | `night` (facultatif)        | `{ "color" }` : propose l'ambiance de nuit (salle sombre, toutes les lumières dans cette couleur, fumée) ; colore le néon   |
+|                             | `screens` (facultatif) : matières Blender des écrans, qui jouent alors les boucles de la soirée (`event.screens`)           |
 
 Les panneaux de reflets sont en espace three.js (mètres, y vers le haut) et regardent `target` (l'origine par défaut).
 Ils ne servent qu'aux reflets et au brillant ; la lumière diffuse vient du bake.

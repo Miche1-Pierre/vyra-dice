@@ -77,6 +77,7 @@ et te renvoie les erreurs : corrige ce qu'il signale, rien de plus.
 - `ledRain` / `screen` : obligatoires si la scène contient une pluie de LED / un écran.
 - `intro` : `neon` si le brief demande que le club se dessine à l'ouverture, sinon omets-le (vol de caméra).
   `night` : `{ "color": "#rrggbb" }` pour proposer l'ambiance de nuit (salle sombre, une seule couleur, fumée).
+  Ajoute `"screens": ["<matière des écrans>", …]` si la scène a des écrans : ils joueront les boucles de la soirée.
 - `environment.lightformers` : panneaux placés comme les sources du club (espace three.js : y vers le haut ; un point
   `(x, y, z)` du plan devient `(x, z, -y)`), chacun regarde `target` (l'origine par défaut).
 - `finishes` : pour chaque matière Blender qui le mérite (nom = `materials.*.name` de `scene.json`), un préréglage :

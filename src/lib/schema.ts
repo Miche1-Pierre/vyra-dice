@@ -186,6 +186,17 @@ export const eventSchema = z.object({
       artist: z.string().min(1).max(60).optional(),
     })
     .optional(),
+  /**
+   * The night's loops for the club's screens in night mode (`ambiance.night.screens`): videos of
+   * the club's bundle, muted. Each screen plays the one closest to its shape, cropped to fill it.
+   */
+  screens: z
+    .array(
+      z.string().regex(/^(?!.*\.\.)[\w./-]+\.(mp4|webm)$/, { error: "Expected a video file path" }),
+    )
+    .min(1)
+    .max(8)
+    .optional(),
   /** Calendar date of the night (yyyy-mm-dd), even when it ends after midnight. */
   date: z.iso.date(),
   /** Opening time, "HH:MM". */
