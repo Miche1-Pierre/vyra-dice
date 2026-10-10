@@ -1008,7 +1008,7 @@ def clean_default_scene(root: str, blend_path: str) -> None:
 # --------------------------------------------------------------------------- report & previews
 
 
-def build_report(slug: str, colls: dict, seconds: float) -> dict:
+def build_report(slug: str, colls: dict, seconds: float, scene: dict) -> dict:
     """Objects, triangles and lightmaps of the scene, with the automatic checks."""
     meshes = {}
     for coll in colls.values():
@@ -1020,7 +1020,9 @@ def build_report(slug: str, colls: dict, seconds: float) -> dict:
                     "lightmap": obj.get("vyra_lm"),
                 }
     tris = sum(m["triangles"] for m in meshes.values())
-    expected = ["ground_floor", "fx_spheres", "fx_led_strips", "fx_signs", "furniture"]
+    # hanging globes are optional: a club without them has no `globes` element, hence no fx_spheres
+    globes = any(el["type"] == "globes" for el in scene["elements"])
+    expected = ["ground_floor", *(["fx_spheres"] if globes else []), "fx_led_strips", "fx_signs", "furniture"]
     checks = [
         {"name": "triangles", "ok": tris <= BUDGET["triangles"], "value": tris, "max": BUDGET["triangles"]},
         {"name": "objects", "ok": len(meshes) <= BUDGET["objects"], "value": len(meshes), "max": BUDGET["objects"]},
@@ -1125,7 +1127,7 @@ def build(slug: str, save: bool = True, previews: bool = False) -> dict:
     setup_preview_camera(c)
     colls["LIGHTS_BAKE"].hide_viewport = False
 
-    report = build_report(slug, colls, time.time() - t0)
+    report = build_report(slug, colls, time.time() - t0, scene)
     if previews:
         report["previews"] = [os.path.relpath(p, club_dir) for p in render_previews(c, os.path.join(build_dir, "previews"))]
     if save:
