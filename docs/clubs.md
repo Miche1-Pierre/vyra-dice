@@ -100,6 +100,12 @@ l'acompte ; la demande enregistre les montants affichés. Une demande ne déclen
 Une soirée à l'affiche (un DJ, un artiste) prend un sous-titre, `event.subtitle` (« DJ guest », 40 caractères au plus) :
 son nom (`event.name`) passe alors en grandes capitales à l'ouverture, sur la vue d'ensemble et sur la page d'accueil.
 
+La musique de la soirée, `event.music` (`src`, `title`, `artist` facultatif), accompagne l'immersion des clubs qui
+proposent l'ambiance de nuit : un fichier audio du bundle du club (`clubs/<slug>/public/<src>`), joué seulement si le
+visiteur choisit « Avec le son ». Les lumières battent alors sur ses basses. Le dossier `public/audio/` est ignoré par
+git : un morceau sous droits reste sur le poste et ne part ni sur GitHub (public) ni en production, où l'immersion
+reste muette tant qu'aucun morceau libre de droits n'est commité.
+
 ## Référence — espaces debout et billets
 
 Un club qui vend des entrées par zone (fosse, front row…) les montre dans la visite sans les vendre : chaque espace

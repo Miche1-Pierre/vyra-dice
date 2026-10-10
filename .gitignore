@@ -45,6 +45,8 @@ next-env.d.ts
 
 # Club sources that are not ours (photos, captures: no reuse licence) — keep them local only
 /clubs/*/private/
+# A night's music (immersion): kept on this machine until its rights are cleared (public repo)
+/clubs/*/public/audio/
 # Club 3D assets copied from clubs/<slug>/public at dev/build time (scripts/sync-club-assets.mjs)
 /public/clubs/
 # Blender scene, generated textures and raw export of each club (rebuilt by clubs/<slug>/blender/build.py
