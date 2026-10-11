@@ -10,6 +10,7 @@ import { ClubMark } from "@/components/experience/brand"
 import { CompareView, TableList } from "@/components/experience/browse"
 import { ClubUiProvider } from "@/components/experience/club-ui"
 import { CommandMenu } from "@/components/experience/command-menu"
+import { DebugPanel } from "@/components/experience/debug-panel"
 import { Dock, type DockEntry } from "@/components/experience/dock"
 import {
   usePrefersReducedMotion,
@@ -575,6 +576,7 @@ export function Experience({ club }: { club: ClubDefinition }) {
             />
             <EventHeadline content={content} dateLabel={dateLabel} isDesktop={isDesktop} />
             <IntroSkip isDesktop={isDesktop} />
+            <DebugPanel />
             <Island />
             <SelectionAnnouncer vm={vm} />
 
