@@ -28,6 +28,10 @@
       "screens/rudboy-ruban.mp4",
       "screens/rudboy-pilier.mp4"
     ],
+    "loader": {
+      "video": "loader/rudboy.mp4",
+      "poster": "loader/rudboy.jpg"
+    },
     "date": "2026-10-10",
     "doors": "23:30",
     "offersValidatedAt": null
