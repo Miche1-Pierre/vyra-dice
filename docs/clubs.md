@@ -122,6 +122,14 @@ masque le temps de la lecture. Les boucles se fabriquent avec le studio de motio
 d'écran) puis passent au format web BT.709. Elles se montent à 120 BPM (un temps toutes les 0,5 s, 8 s = 16 temps) :
 avec la musique, elles passent au tempo du morceau et calent leur premier temps sur le début d'une phrase.
 
+La boucle de chargement de la soirée, `event.loader` (`video` : MP4 ou WebM carrée et muette, `poster` : son image
+fixe), remplace le logo dessiné de l'écran de chargement. Une vidéo se décode et s'affiche hors du fil principal : elle
+garde son rythme pendant que la salle 3D se construit, là où un logo dessiné saccade. Elle se pose sur le fond de
+l'écran (`--ink`, #060408) et ses bords s'y fondent ; elle apparaît dans un flash et passe la main à la salle dans un
+autre. Un visiteur qui a demandé moins d'animations voit l'image fixe, sans flash. Elle se fabrique avec le studio de
+motion design, à partir des éléments des écrans de la soirée : une composition carrée de quelques secondes en boucle,
+légère (quelques centaines de Ko au plus), pour démarrer avant la salle.
+
 ## Référence — espaces debout et billets
 
 Un club qui vend des entrées par zone (fosse, front row…) les montre dans la visite sans les vendre : chaque espace
