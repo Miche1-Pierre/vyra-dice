@@ -1,7 +1,7 @@
 "use client"
 
 import { useFrame } from "@react-three/fiber"
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import * as THREE from "three"
 
 import {
@@ -11,6 +11,13 @@ import {
   trianglesOnScreens,
   type ScreenPiece,
 } from "@/components/scene/fx/screens"
+import { show } from "@/lib/music"
+
+/**
+ * Tempo the night's loops are cut at (motion design: 8 s loops, a beat every 0.5 s). With the
+ * night's music, they play at the track's tempo, their first beat on the first beat of a phrase.
+ */
+const LOOP_BPM = 120
 
 /** The chosen triangles of a geometry, in a new one (float attributes, no index). */
 function pickTriangles(geometry: THREE.BufferGeometry, keep: (t: number) => boolean) {
@@ -79,7 +86,8 @@ export function prepareScreens(root: THREE.Object3D, materials: readonly string[
 /**
  * While the night mode is on, the club's screens play the night's loops (muted, in a loop): each
  * piece takes the video closest to its shape, cropped to fill it. The videos load the first time
- * the night comes; until they can play, the screens keep their usual look.
+ * the night comes; until they can play, the screens keep their usual look. With the night's
+ * music, the loops keep time with it.
  */
 export function NightScreens({
   pieces,
@@ -195,6 +203,42 @@ export function NightScreens({
       for (const object of hide) object.visible = true
     }
   }, [playing, media, hide])
+
+  useEffect(() => {
+    // for checks in a browser, outside production
+    if (process.env.NODE_ENV !== "production" && media)
+      (window as unknown as { __videos?: HTMLVideoElement[] }).__videos = media.elements
+  }, [media])
+
+  // in time with the music: at its tempo, nudged towards their place in the phrase, put back
+  // there when far off (a seek costs a stall: once in a while at most)
+  const lastSeek = useRef(new Map<HTMLVideoElement, number>())
+  useFrame(() => {
+    if (!playing || !media) return
+    const now = performance.now()
+    for (const video of media.elements) {
+      let rate = 1
+      if (show.on && show.bpm > 0 && video.duration > 0) {
+        // a slow or fast track: the loops take twice or half its beats, never far from their pace
+        let speed = show.bpm / LOOP_BPM
+        let perBeat = 1
+        while (speed < 0.75) [speed, perBeat] = [speed * 2, perBeat * 2]
+        while (speed >= 1.5) [speed, perBeat] = [speed / 2, perBeat / 2]
+        const beat = 60 / LOOP_BPM
+        const loopBeats = Math.max(1, Math.round(video.duration / beat))
+        const at = show.phraseBeat * perBeat
+        const wanted = ((((at % loopBeats) + loopBeats) % loopBeats) * beat) % video.duration
+        let off = video.currentTime - wanted
+        off -= video.duration * Math.round(off / video.duration)
+        if (Math.abs(off) > 0.25 && now - (lastSeek.current.get(video) ?? 0) > 1500) {
+          lastSeek.current.set(video, now)
+          video.currentTime = wanted
+        }
+        rate = speed * (1 - THREE.MathUtils.clamp(off, -0.12, 0.12))
+      }
+      if (Math.abs(video.playbackRate - rate) > 0.002) video.playbackRate = rate
+    }
+  })
 
   // a screen of the mezzanine fades with its level, as its own face does
   useFrame(() => {
