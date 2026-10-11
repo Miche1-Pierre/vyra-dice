@@ -37,6 +37,7 @@ import { useShortcuts } from "@/components/experience/use-shortcuts"
 import { buildViewModel, zonePriceLabel, type ViewModel } from "@/components/experience/view-model"
 import { track } from "@/lib/analytics/client"
 import { contactMessage, instagramUrl, whatsappUrl } from "@/lib/contact"
+import { debugLog, debugRequested, startDebug } from "@/lib/debug"
 import { pauseMusic } from "@/lib/music"
 import { assetUrl } from "@/lib/clubs/assets"
 import type { ClubBrand } from "@/lib/clubs/brand"
@@ -319,6 +320,23 @@ export function Experience({ club }: { club: ClubDefinition }) {
     setNight(false)
   }, [textOnly, setNight])
   useEffect(() => () => pauseMusic(), [])
+  // on-device diagnostics, when the address asks for them (`debug`): what the visit goes through
+  useEffect(() => {
+    if (!debugRequested()) return
+    startDebug()
+    return useExperience.subscribe((s, prev) => {
+      for (const key of [
+        "view",
+        "panel",
+        "selectedTableId",
+        "night",
+        "sound",
+        "fallback2d",
+      ] as const) {
+        if (s[key] !== prev[key]) debugLog("state", { [key]: s[key] })
+      }
+    })
+  }, [])
 
   useEffect(() => {
     if (webgl === false) setFallback2d()

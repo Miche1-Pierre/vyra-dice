@@ -10,6 +10,7 @@
  * lights follow its bass through an analyser as it plays.
  */
 
+import { debugLog } from "@/lib/debug"
 import { emptyShow, showAt, type MusicMap } from "@/lib/music-map"
 
 /** 0–1: the bass level, smoothed; a beat that jumps to 1 on each kick and decays. */
@@ -180,8 +181,9 @@ let armed = false
  * page is in view (three times in ten seconds at most), and at the visitor's next touch or key in
  * any case: a gesture the browser always accepts.
  */
-function interrupted() {
+function interrupted(reason: string) {
   if (!wanted) return
+  debugLog("music_interrupted", { reason, context: context?.state, paused: audio?.paused })
   const now = performance.now()
   while (retries.length && now - retries[0] > 10_000) retries.shift()
   if (document.visibilityState === "visible" && retries.length < 3) {
@@ -194,11 +196,14 @@ function interrupted() {
     armed = false
     window.removeEventListener("pointerdown", again, true)
     window.removeEventListener("keydown", again, true)
+    debugLog("music_resume_gesture")
     resumeMusic()
   }
   window.addEventListener("pointerdown", again, true)
   window.addEventListener("keydown", again, true)
 }
+
+const AUDIO_EVENTS = ["play", "playing", "pause", "waiting", "stalled", "ended", "error"] as const
 
 function graph(src: string): HTMLAudioElement {
   if (audio && audio.dataset.src === src) return audio
@@ -208,13 +213,22 @@ function graph(src: string): HTMLAudioElement {
   audio.loop = true
   audio.preload = "auto"
   const element = audio
+  for (const type of AUDIO_EVENTS) {
+    element.addEventListener(type, () =>
+      debugLog(`audio_${type}`, {
+        time: +element.currentTime.toFixed(2),
+        ready: element.readyState,
+      }),
+    )
+  }
   element.addEventListener("pause", () => {
-    if (element === audio) interrupted()
+    if (element === audio) interrupted("paused")
   })
   if (!context) {
     const created = new AudioContext()
     created.addEventListener("statechange", () => {
-      if (created.state !== "running") interrupted()
+      debugLog("audio_context", { state: created.state })
+      if (created.state !== "running") interrupted(`context ${created.state}`)
     })
     context = created
   }
@@ -253,9 +267,11 @@ export async function playMusic(src: string): Promise<boolean> {
     gain!.gain.setValueAtTime(gain!.gain.value, now)
     gain!.gain.linearRampToValueAtTime(1, now + FADE_S)
     wanted = true
+    debugLog("music_play", { src: src.slice(0, 40) })
     followSystemControls(src)
     return true
-  } catch {
+  } catch (error) {
+    debugLog("music_play_failed", { error: String(error).slice(0, 200) })
     return false
   }
 }
@@ -269,10 +285,12 @@ function followSystemControls(src: string) {
   if (!session) return
   try {
     session.setActionHandler("pause", () => {
+      debugLog("system_pause")
       pauseMusic()
       for (const listener of changeListeners) listener(false)
     })
     session.setActionHandler("play", () => {
+      debugLog("system_play")
       void playMusic(src).then((on) => {
         for (const listener of changeListeners) listener(on)
       })
@@ -285,6 +303,7 @@ function followSystemControls(src: string) {
 /** Fades the track out, then pauses it (it resumes where it was). */
 export function pauseMusic() {
   wanted = false
+  debugLog("music_pause")
   if (!audio || !context || !gain || audio.paused) return
   const now = context.currentTime
   gain.gain.cancelScheduledValues(now)
@@ -330,6 +349,9 @@ function followTrack(delta: number) {
   heard = Math.abs(error) > 0.25 ? position - latency : heard + error * 0.3
 }
 
+/** Seconds until the next snapshot for the on-device diagnostics. */
+let snapshotIn = 0
+
 function restShow(dt: number) {
   show.on = false
   const fade = Math.exp(-dt * 7)
@@ -354,6 +376,17 @@ export function stillShow() {
 export function sampleMusic(delta: number) {
   const dt = Math.min(delta, 0.1)
   const playing = musicPlaying()
+  snapshotIn -= delta
+  if (snapshotIn <= 0) {
+    snapshotIn = 1
+    debugLog("tick", {
+      context: context?.state ?? null,
+      paused: audio?.paused ?? null,
+      time: audio ? +audio.currentTime.toFixed(2) : null,
+      show: show.on,
+      wanted,
+    })
+  }
   if (playing) followTrack(delta)
   const map = playing && mapped && audio?.dataset.src === mapped.src ? mapped.map : null
   if (map) {

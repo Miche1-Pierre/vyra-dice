@@ -24,6 +24,7 @@ import { ZoneOverlays } from "@/components/scene/zone-overlays"
 import type { ClubAmbiance } from "@/lib/clubs/ambiance"
 import type { AssetManifest } from "@/lib/clubs/assets"
 import type { ClubBrand } from "@/lib/clubs/brand"
+import { debugLog } from "@/lib/debug"
 import { sampleMusic, stillShow } from "@/lib/music"
 import { useExperience } from "@/lib/store"
 import { venueCenter } from "@/lib/venue/camera"
@@ -118,7 +119,13 @@ export default function VenueCanvas({
         dpr={dpr}
         gl={{ antialias: false, powerPreference: "high-performance", stencil: false }}
         camera={{ fov: 42, near: 0.1, far: 400, position: [60, 60, 90] }}
-        onCreated={({ gl }) => gl.setClearColor("#060408")}
+        onCreated={({ gl }) => {
+          gl.setClearColor("#060408")
+          gl.domElement.addEventListener("webglcontextlost", () => debugLog("webgl_context_lost"))
+          gl.domElement.addEventListener("webglcontextrestored", () =>
+            debugLog("webgl_context_restored"),
+          )
+        }}
         className="touch-none"
       >
         <color attach="background" args={["#060408"]} />
