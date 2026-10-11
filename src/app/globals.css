@@ -246,6 +246,16 @@
   }
 }
 
+/* loading screen: the night's loop comes in with a flash (opacity only: the compositor runs it) */
+@keyframes vyra-flash {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
 @keyframes vyra-rise {
   from {
     opacity: 0;

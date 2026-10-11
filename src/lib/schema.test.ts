@@ -272,6 +272,14 @@ describe("venueContentSchema", () => {
     expect(contentIssuePaths(content)).toEqual(["event.screens.0"])
   })
 
+  it("takes the night's loading loop as a video and its still, files of the club's bundle", () => {
+    const content = venueContent()
+    content.event.loader = { video: "loader/night.mp4", poster: "loader/night.jpg" }
+    expect(venueContentSchema.safeParse(content).success).toBe(true)
+    content.event.loader = { video: "../night.mp4", poster: "loader/night.mp4" }
+    expect(contentIssuePaths(content)).toEqual(["event.loader.video", "event.loader.poster"])
+  })
+
   it("accepts a WhatsApp number in international format", () => {
     const content = venueContent()
     content.club.contact = { whatsapp: "+33 6 12 34 56 78" }

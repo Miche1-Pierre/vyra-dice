@@ -199,6 +199,21 @@ export const eventSchema = z.object({
     .min(1)
     .max(8)
     .optional(),
+  /**
+   * The night's loop for the loading screen, in place of the club's drawn logo: a short muted
+   * video of the club's bundle, square, on the loading screen's own background (`--ink`), and the
+   * still shown before its first frame and to visitors who asked for less motion.
+   */
+  loader: z
+    .object({
+      video: z
+        .string()
+        .regex(/^(?!.*\.\.)[\w./-]+\.(mp4|webm)$/, { error: "Expected a video file path" }),
+      poster: z
+        .string()
+        .regex(/^(?!.*\.\.)[\w./-]+\.(jpg|webp|png)$/, { error: "Expected an image file path" }),
+    })
+    .optional(),
   /** Calendar date of the night (yyyy-mm-dd), even when it ends after midnight. */
   date: z.iso.date(),
   /** Opening time, "HH:MM". */

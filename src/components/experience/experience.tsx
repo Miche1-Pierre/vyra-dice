@@ -350,6 +350,13 @@ export function Experience({ club }: { club: ClubDefinition }) {
     () => content.event.screens?.map((src) => assetUrl(club.slug, src)),
     [club.slug, content.event.screens],
   )
+  // the night's loop on the loading screen, from its motion design
+  const loaderLoop = useMemo(() => {
+    const l = content.event.loader
+    return l
+      ? { video: assetUrl(club.slug, l.video), poster: assetUrl(club.slug, l.poster) }
+      : undefined
+  }, [club.slug, content.event.loader])
   const table = selectedTableId ? vm.tables[selectedTableId] : null
   const tableIcon = table ? (vm.zones.find((z) => z.id === table.zoneId)?.icon ?? "sofa") : "sofa"
   const ticket = focusedTicketId ? (vm.tickets.find((t) => t.id === focusedTicketId) ?? null) : null
@@ -545,6 +552,8 @@ export function Experience({ club }: { club: ClubDefinition }) {
                     }
                   : undefined
               }
+              loop={loaderLoop}
+              still={reducedMotion}
             />
             <EventHeadline content={content} dateLabel={dateLabel} isDesktop={isDesktop} />
             <IntroSkip isDesktop={isDesktop} />
