@@ -37,6 +37,7 @@ import { useShortcuts } from "@/components/experience/use-shortcuts"
 import { buildViewModel, zonePriceLabel, type ViewModel } from "@/components/experience/view-model"
 import { track } from "@/lib/analytics/client"
 import { contactMessage, instagramUrl, whatsappUrl } from "@/lib/contact"
+import { pauseMusic } from "@/lib/music"
 import { assetUrl } from "@/lib/clubs/assets"
 import type { ClubBrand } from "@/lib/clubs/brand"
 import type { ClubDefinition } from "@/lib/clubs/club"
@@ -280,6 +281,12 @@ function useDockEntries(
   ])
 }
 
+/** How far the top bar's right end steps left for a card open at the side (sheet.tsx). */
+const PANEL_SIDE = {
+  wide: 16 + 400 + 12 - 16, // the card's inset and width, a gap, less the bar's own padding
+  compact: 8 + 340 + 8 - 12,
+}
+
 export function Experience({ club }: { club: ClubDefinition }) {
   const { content, layout } = club
   const vm = useMemo(() => buildViewModel(content, layout), [content, layout])
@@ -302,6 +309,16 @@ export function Experience({ club }: { club: ClubDefinition }) {
   const closePanel = useExperience((s) => s.closePanel)
   const openPanel = useExperience((s) => s.openPanel)
   const compareCount = useExperience((s) => s.compareIds.length)
+  const setNight = useExperience((s) => s.setNight)
+
+  // the immersion lasts as long as the 3D: picking a table or taking a seat keeps its music and
+  // its lights; the list (no 3D) ends it, and leaving the visit stops the music
+  useEffect(() => {
+    if (!textOnly) return
+    pauseMusic()
+    setNight(false)
+  }, [textOnly, setNight])
+  useEffect(() => () => pauseMusic(), [])
 
   useEffect(() => {
     if (webgl === false) setFallback2d()
@@ -418,8 +435,16 @@ export function Experience({ club }: { club: ClubDefinition }) {
                   <LevelSwitch size={isDesktop ? "md" : "sm"} />
                 ) : null}
               </div>
-              <div className="pointer-events-auto flex shrink-0 items-center gap-2">
-                {club.ambiance.night && !textOnly && view !== "seat" ? (
+              <div
+                className="pointer-events-auto flex shrink-0 items-center gap-2 transition-[translate] duration-300 ease-out"
+                // an open card at the side would cover the immersion: its buttons step to its left
+                style={
+                  panelOpen && sidePanel
+                    ? { translate: `-${shortLandscape ? PANEL_SIDE.compact : PANEL_SIDE.wide}px 0` }
+                    : undefined
+                }
+              >
+                {club.ambiance.night && !textOnly ? (
                   <Immersion isDesktop={isDesktop} music={music} />
                 ) : null}
                 {isDesktop && !panelOpen && view !== "seat" ? <StatusLegend /> : null}

@@ -52,12 +52,27 @@ export async function unseal(data: Uint8Array<ArrayBuffer>, key: string): Promis
   )
 }
 
-/** A sealed track, fetched and opened with the private link's key, as a URL the audio can play. */
-export async function unsealMusic(url: string, key: string): Promise<string> {
-  const res = await fetch(url)
-  if (!res.ok) throw new Error(`${res.status} ${url}`)
-  const plain = await unseal(new Uint8Array(await res.arrayBuffer()), key)
-  return URL.createObjectURL(new Blob([plain], { type: "audio/mpeg" }))
+const unsealed = new Map<string, Promise<string>>()
+
+/**
+ * A sealed track, fetched and opened with the private link's key, as a URL the audio can play.
+ * Opened once per visit: the same URL to every caller, so that the track playing stays the one
+ * offered (a failure is forgotten, to be tried again).
+ */
+export function unsealMusic(url: string, key: string): Promise<string> {
+  const id = `${url}#${key}`
+  let opened = unsealed.get(id)
+  if (!opened) {
+    opened = (async () => {
+      const res = await fetch(url)
+      if (!res.ok) throw new Error(`${res.status} ${url}`)
+      const plain = await unseal(new Uint8Array(await res.arrayBuffer()), key)
+      return URL.createObjectURL(new Blob([plain], { type: "audio/mpeg" }))
+    })()
+    unsealed.set(id, opened)
+    opened.catch(() => unsealed.delete(id))
+  }
+  return opened
 }
 
 /* The track's map -------------------------------------------------------------------------- */

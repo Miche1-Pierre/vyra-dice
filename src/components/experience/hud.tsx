@@ -398,8 +398,6 @@ export function Immersion({ isDesktop, music }: { isDesktop: boolean; music: Nig
   useEffect(() => {
     if (playable && opened && music?.sealed) void prepareShow(playable)
   }, [playable, opened, music?.sealed])
-  // leaving the visit stops the music
-  useEffect(() => () => pauseMusic(), [])
   const box = useRef<HTMLDivElement>(null)
   useEffect(() => {
     if (!asking) return
@@ -657,7 +655,8 @@ export function SeatOverlay({
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
         >
-          <div className="pointer-events-none absolute inset-x-0 top-[max(4.25rem,calc(env(safe-area-inset-top)+3.5rem))] z-30 flex justify-center px-3 lg:top-4">
+          {/* under the top bar, on every screen: the immersion's buttons stay at hand */}
+          <div className="pointer-events-none absolute inset-x-0 top-[max(4.25rem,calc(env(safe-area-inset-top)+3.5rem))] z-30 flex justify-center px-3">
             <motion.div
               initial={{ y: -12, scale: 0.96 }}
               animate={{ y: 0, scale: 1 }}
