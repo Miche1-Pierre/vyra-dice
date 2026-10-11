@@ -110,7 +110,11 @@ export function NightScreens({
     let live = true
     const elements = videos.map((src) => {
       const video = document.createElement("video")
+      // muted by its attribute too: iPhones decide from it whether a video may take the sound
       video.muted = true
+      video.defaultMuted = true
+      video.setAttribute("muted", "")
+      video.setAttribute("playsinline", "")
       video.loop = true
       video.playsInline = true
       video.crossOrigin = "anonymous"
