@@ -119,7 +119,8 @@ Les boucles de la soirée, `event.screens` (vidéos MP4 ou WebM du bundle, muett
 mode nuit, quand son ambiance les déclare (`night.screens`). Chaque écran joue la boucle dont la forme est la plus
 proche de la sienne (écran 16:9, ruban, écran vertical), recadrée pour le remplir, et le texte posé sur l'écran se
 masque le temps de la lecture. Les boucles se fabriquent avec le studio de motion design (une composition par forme
-d'écran) puis passent au format web BT.709.
+d'écran) puis passent au format web BT.709. Elles se montent à 120 BPM (un temps toutes les 0,5 s, 8 s = 16 temps) :
+avec la musique, elles passent au tempo du morceau et calent leur premier temps sur le début d'une phrase.
 
 ## Référence — espaces debout et billets
 
