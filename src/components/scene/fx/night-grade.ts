@@ -4,19 +4,22 @@ import * as THREE from "three"
 /*
  * Night mode grade, after the bloom: the room falls dark, the light sources keep their glow,
  * and everything takes the club's night colour. `uAmount` fades it in and out; `uPulse` (the
- * night's music, 0–1) lifts the lights on each beat.
+ * night's music) lifts the lights on each beat, or takes them down (-1: dark); `uFlash` lights
+ * the room white for an instant, on a drop.
  */
 const fragmentShader = /* glsl */ `
   uniform float uAmount;
   uniform float uPulse;
+  uniform float uFlash;
   uniform vec3 uTint;
 
   void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor) {
     vec3 c = inputColor.rgb;
     float l = dot(c, vec3(0.2126, 0.7152, 0.0722));
     // a toe sinks the lit room into the dark (still readable); LEDs, beams and their bloom stay bright
-    float k = l * l / (l + 0.2) * 2.2 * (1.0 + uPulse);
-    outputColor = vec4(mix(c, uTint * k, uAmount), inputColor.a);
+    float k = l * l / (l + 0.2) * 2.2 * max(0.05, 1.0 + uPulse);
+    vec3 lit = mix(uTint * k, vec3(1.0, 0.95, 0.9) * (l * 1.7 + 0.05), uFlash);
+    outputColor = vec4(mix(c, lit, uAmount), inputColor.a);
   }
 `
 
@@ -27,6 +30,7 @@ export class NightGradeEffect extends Effect {
       uniforms: new Map<string, THREE.Uniform>([
         ["uAmount", new THREE.Uniform(0)],
         ["uPulse", new THREE.Uniform(0)],
+        ["uFlash", new THREE.Uniform(0)],
         ["uTint", new THREE.Uniform(new THREE.Vector3(1, 0.05, 0.07))],
       ]),
     })
@@ -44,9 +48,14 @@ export class NightGradeEffect extends Effect {
       .addScalar(0.1)
   }
 
-  /** 0–1: how much the lights rise on the music's beat. */
+  /** How much the lights rise on the music's beat (0–2), or fall before a drop (down to -1). */
   set pulse(value: number) {
     this.uniforms.get("uPulse")!.value = value
+  }
+
+  /** 0–1: the room lit white, on a drop. */
+  set flash(value: number) {
+    this.uniforms.get("uFlash")!.value = value
   }
 
   get amount(): number {

@@ -6,7 +6,7 @@ import * as THREE from "three"
 
 import { createBeamMaterial } from "@/components/scene/fx/materials"
 import type { ClubAmbiance } from "@/lib/clubs/ambiance"
-import { pulse } from "@/lib/music"
+import { pulse, show } from "@/lib/music"
 import { toThree, type VenueLayout } from "@/lib/venue/layout"
 
 const LENGTH = 9.5
@@ -45,29 +45,75 @@ export function Beams({
   const materials = useMemo(() => heads.map(() => createBeamMaterial("#ffffff")), [heads])
   const groups = useRef<(THREE.Group | null)[]>([])
   const tmp = useMemo(() => new THREE.Color(), [])
-  // the night's music speeds the sweeps up with the bass and fires the beams on its beat
+  const white = useMemo(() => new THREE.Color("#ffffff"), [])
+  // phases of the sweeps (radians): on the scene's clock (frozen in captures), sped up by the
+  // bass; on the beats when the music's map drives the show; never jumping from one to the other
+  const pan = useRef(0)
+  const tilt = useRef(0)
   const drive = useRef(0)
+  const offset = useRef({ pan: 0, tilt: 0 })
+  const lastBeat = useRef<number | null>(null)
+  /** Sweeps per bar, eased from one section to the next. */
+  const pace = useRef(0.5)
+  /** 0–1: the heads move in mirrored pairs (the show), or each on its own. */
+  const mirror = useRef(0)
 
   useFrame((state, delta) => {
     const t = state.clock.elapsedTime
-    drive.current += Math.min(delta, 0.1) * pulse.level * 2.5
-    const swing = t + drive.current
-    const palette = palettes[Math.floor(t / PALETTE_SECONDS) % palettes.length]
+    const dt = Math.min(delta, 0.1)
+    if (show.on) {
+      const beats = lastBeat.current === null ? 0 : show.beat - lastBeat.current
+      lastBeat.current = show.beat
+      // a sweep every two bars in the groove, slower in a break, every bar after a drop, and
+      // faster and faster as the next one nears
+      const wanted = (show.energy < 0.4 ? 0.25 : 0.5) * (1 + show.drop) * (1 + 2 * show.build)
+      pace.current = THREE.MathUtils.damp(pace.current, wanted, 3, dt)
+      const turn = beats > 0 && beats < 2 ? (beats / 4) * pace.current * 2 * Math.PI : 0
+      pan.current += turn
+      tilt.current += turn * 0.5
+    } else {
+      if (lastBeat.current !== null) {
+        // back on the clock, from where the show left the heads
+        offset.current = {
+          pan: pan.current - 0.42 * (t + drive.current),
+          tilt: tilt.current - 0.57 * (t + drive.current),
+        }
+        lastBeat.current = null
+      }
+      drive.current += dt * pulse.level * 2.5
+      pan.current = 0.42 * (t + drive.current) + offset.current.pan
+      tilt.current = 0.57 * (t + drive.current) + offset.current.tilt
+    }
+    mirror.current = THREE.MathUtils.damp(mirror.current, show.on ? 1 : 0, 2, dt)
+    const phrase = show.on ? show.phrase : Math.floor(t / PALETTE_SECONDS)
+    const palette = palettes[((phrase % palettes.length) + palettes.length) % palettes.length]
+    // the beams close in on the floor before a drop, open wide when the music is full
+    const spread = show.on ? (0.55 + 0.45 * show.energy) * (1 - 0.65 * show.build) : 1
     heads.forEach((h, i) => {
       const g = groups.current[i]
       if (!g) return
-      const sweep = Math.sin(swing * 0.42 + h.seed) * 0.85
+      const side = THREE.MathUtils.lerp(1, i % 2 ? -1 : 1, mirror.current)
+      const sweep = Math.sin(pan.current + h.seed * (1 - 0.6 * mirror.current)) * 0.85 * spread
       g.rotation.set(
-        0.22 + 0.3 * (0.5 + 0.5 * Math.sin(swing * 0.57 + h.seed * 2.1)),
-        h.yaw + sweep,
+        0.22 +
+          0.3 * (0.5 + 0.5 * Math.sin(tilt.current + h.seed * 2.1)) -
+          (show.on ? 0.06 * show.kick : 0), // a nod on each beat
+        h.yaw + sweep * side,
         0,
         "YXZ",
       )
       const m = materials[i]
-      tmp.set(palette[i % 2])
-      m.uniforms.uColor.value.lerp(tmp, 0.04)
+      // the colours change with the phrases, at once, and turn white on a drop
+      tmp.set(palette[i % 2]).lerp(white, show.flash)
+      m.uniforms.uColor.value.lerp(tmp, 1 - Math.exp(-dt * (show.on ? 14 : 2.4)))
       m.uniforms.uOpacity.value =
-        0.42 * intensity * (0.75 + 0.25 * Math.sin(t * 2.2 + h.seed)) * (1 + 1.3 * pulse.beat)
+        0.42 *
+        intensity *
+        (show.on
+          ? (0.4 + 0.6 * show.energy) *
+            (1 + 1.3 * show.kick + 0.6 * show.drop) *
+            (1 - show.blackout)
+          : (0.75 + 0.25 * Math.sin(t * 2.2 + h.seed)) * (1 + 1.3 * pulse.beat))
     })
   })
 

@@ -102,7 +102,14 @@ son nom (`event.name`) passe alors en grandes capitales à l'ouverture, sur la v
 
 La musique de la soirée, `event.music` (`src`, `title`, `artist` facultatif), accompagne l'immersion des clubs qui
 proposent l'ambiance de nuit : un fichier audio du bundle du club (`clubs/<slug>/public/<src>`), joué seulement si le
-visiteur choisit « Avec le son ». Les lumières battent alors sur ses basses. Le dossier `public/audio/` est ignoré par
+visiteur choisit « Avec le son ». Le navigateur lit le morceau en entier avant (`src/lib/music-map.ts`, dans un
+worker) : son tempo, la grille de ses temps, ses mesures et ses phrases de 4 mesures, ses coupures de basse et ses
+drops. Le show suit alors ce qu'on entend, sans retard : la lumière frappe chaque temps (plus fort le premier de la
+mesure), la salle s'assombrit dans une coupure, monte avant un drop, passe au noir le dernier demi-temps et s'éclaire
+en blanc sur le drop ; les lyres balaient en paires miroir au rythme des mesures et changent de couleur à chaque phrase ;
+la fumée gonfle sur les drops. Jamais plus d'un éclat par temps (moins de trois par seconde), et rien ne bouge si le
+visiteur a demandé moins d'animations. Un morceau sans tempo régulier n'a pas de grille : les lumières suivent alors
+ses basses en direct. Le dossier `public/audio/` est ignoré par
 git : un morceau sous droits reste sur le poste et ne part ni sur GitHub (public) ni en production. Pour le montrer à
 l'artiste ou au club sans le diffuser, on le scelle (`node scripts/seal-audio.mjs <morceau> <club>/public/audio/<nom>.mp3.enc
 <club>/private/<clé>.txt`) : seul le fichier chiffré `.enc` est commité, et il ne se joue que depuis un lien privé qui
