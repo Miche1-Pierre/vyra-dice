@@ -24,7 +24,7 @@ import { ZoneOverlays } from "@/components/scene/zone-overlays"
 import type { ClubAmbiance } from "@/lib/clubs/ambiance"
 import type { AssetManifest } from "@/lib/clubs/assets"
 import type { ClubBrand } from "@/lib/clubs/brand"
-import { pulse, sampleMusic } from "@/lib/music"
+import { sampleMusic, stillShow } from "@/lib/music"
 import { useExperience } from "@/lib/store"
 import { venueCenter } from "@/lib/venue/camera"
 import type { VenueLayout } from "@/lib/venue/layout"
@@ -51,12 +51,15 @@ const STILL_AT = 12
 /** Neon of the intro when the club gives no night colour. */
 const NEON = "#ff2a3a"
 
-/** Reads the night's music once per frame for the light show (silent when motion is reduced). */
+/**
+ * Reads the night's music once per frame for the light show, before the scene's own frame
+ * callbacks read it (still when motion is reduced).
+ */
 function MusicPulse({ still }: { still: boolean }) {
   useFrame((_, delta) => {
-    if (still) pulse.level = pulse.beat = 0
+    if (still) stillShow()
     else sampleMusic(delta)
-  })
+  }, -100)
   return null
 }
 

@@ -29,7 +29,7 @@ import {
 import type { TableView, TicketView, ZoneView } from "@/components/experience/view-model"
 import { track } from "@/lib/analytics/client"
 import { contactMessage, instagramUrl, phoneUrl, whatsappUrl } from "@/lib/contact"
-import { musicKey, pauseMusic, playMusic, unsealMusic } from "@/lib/music"
+import { musicKey, pauseMusic, playMusic, prepareShow, pulse, show, unsealMusic } from "@/lib/music"
 import type { ClubBrand } from "@/lib/clubs/brand"
 import type { VenueContent } from "@/lib/schema"
 import { useExperience, type LevelFilter } from "@/lib/store"
@@ -325,15 +325,37 @@ function onHashChange(changed: () => void) {
   return () => window.removeEventListener("hashchange", changed)
 }
 
-/** Three bars that dance while the music plays (still when motion is reduced). */
+/**
+ * Three bars that dance on the music's beats, one after the other within each beat, as tall as
+ * the music is full (still when motion is reduced).
+ */
 function Equalizer({ className }: { className?: string }) {
+  const bars = useRef<(HTMLSpanElement | null)[]>([])
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
+    let frame = 0
+    const draw = () => {
+      bars.current.forEach((bar, i) => {
+        if (!bar) return
+        const hit = show.on ? Math.exp(-((show.phase + 1 - i * 0.22) % 1) * 4) : pulse.beat
+        const full = show.on ? show.energy : pulse.level
+        bar.style.transform = `scaleY(${(0.3 + 0.7 * Math.min(1, hit * (0.55 + 0.45 * full))).toFixed(2)})`
+      })
+      frame = requestAnimationFrame(draw)
+    }
+    frame = requestAnimationFrame(draw)
+    return () => cancelAnimationFrame(frame)
+  }, [])
   return (
     <span aria-hidden className={cn("flex h-3.5 items-end gap-[2px]", className)}>
-      {[0, 0.18, 0.36].map((delay) => (
+      {[0.55, 0.85, 0.4].map((still, i) => (
         <span
-          key={delay}
+          key={i}
+          ref={(el) => {
+            bars.current[i] = el
+          }}
           className="h-full w-[3px] origin-bottom rounded-[1px] bg-current"
-          style={{ animation: `vyra-eq 0.9s ease-in-out ${delay}s infinite` }}
+          style={{ transform: `scaleY(${still})` }}
         />
       ))}
     </span>
@@ -369,6 +391,13 @@ export function Immersion({ isDesktop, music }: { isDesktop: boolean; music: Nig
       live = false
     }
   }, [music, linkKey])
+  // a sealed track is already here: the show reads it once the club has opened (not while it
+  // builds up), so that its lights keep time from the first beat; a plain one is read when the
+  // visitor asks for it
+  const opened = useExperience((s) => s.sceneReady && s.view !== "intro")
+  useEffect(() => {
+    if (playable && opened && music?.sealed) void prepareShow(playable)
+  }, [playable, opened, music?.sealed])
   // leaving the visit stops the music
   useEffect(() => () => pauseMusic(), [])
   const box = useRef<HTMLDivElement>(null)
@@ -396,6 +425,7 @@ export function Immersion({ isDesktop, music }: { isDesktop: boolean; music: Nig
     setAsking(false)
     setNight(true)
     const playing = withSound && offered ? playMusic(offered.url) : Promise.resolve(false)
+    if (withSound && offered) void prepareShow(offered.url)
     void playing.then((on) => {
       setSound(on)
       track("night_mode_toggled", { on: true, sound: on })
@@ -423,6 +453,7 @@ export function Immersion({ isDesktop, music }: { isDesktop: boolean; music: Nig
       setSound(on)
       track("music_toggled", { on })
     })
+    void prepareShow(offered.url)
   }
 
   return (

@@ -7,7 +7,7 @@ import { useEffect, useMemo, useRef } from "react"
 import * as THREE from "three"
 
 import { NightGradeEffect } from "@/components/scene/fx/night-grade"
-import { pulse } from "@/lib/music"
+import { pulse, show } from "@/lib/music"
 
 export type Quality = "low" | "high"
 
@@ -35,10 +35,25 @@ export function Effects({
   const bloom = useRef<BloomEffect>(null)
   const bloomIntensity = high ? 1.15 : 0.95
   useFrame((_, delta) => {
-    // the night's music: the lights and their halos beat with the bass
+    // the night's music, read ahead: the lights hit on its beats, a break dims the room, they
+    // swell before a drop, go dark just before it and flash white on it
     const beat = night ? pulse.beat : 0
-    grade.pulse = night ? beat * 0.6 + pulse.level * 0.25 : 0
-    if (bloom.current) bloom.current.intensity = bloomIntensity * (1 + beat * 0.9)
+    if (night && show.on) {
+      // one hit per beat at most: well under three flashes a second
+      const lift =
+        show.kick * (0.4 + 0.5 * show.energy) +
+        0.5 * show.build +
+        0.35 * show.drop -
+        0.3 * (1 - show.energy)
+      grade.pulse = lift * (1 - show.blackout) - 0.92 * show.blackout
+      grade.flash = 0.55 * show.flash
+    } else {
+      // heard live, without a map: the lights beat with the bass
+      grade.pulse = night ? beat * 0.6 + pulse.level * 0.25 : 0
+      grade.flash = 0
+    }
+    const hit = night && show.on ? 0.6 * show.drop + 0.8 * show.flash : 0
+    if (bloom.current) bloom.current.intensity = bloomIntensity * (1 + beat * 0.9 + hit)
     const wanted = night ? 1 : 0
     if (grade.amount === wanted) return
     const next = THREE.MathUtils.damp(grade.amount, wanted, 2.6, delta)

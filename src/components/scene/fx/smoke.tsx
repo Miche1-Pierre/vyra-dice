@@ -4,11 +4,13 @@ import { useFrame } from "@react-three/fiber"
 import { useEffect, useMemo, useRef } from "react"
 import * as THREE from "three"
 
+import { show } from "@/lib/music"
 import { toThree, type VenueLayout } from "@/lib/venue/layout"
 
 /*
  * Night mode haze: soft puffs of smoke drifting over the floor (camera-facing quads, procedural
  * noise, one draw call), and a denser fog. They are grey: the night grade gives them its colour.
+ * With the night's music, the puffs thin out in a break and billow on a drop.
  */
 
 const vertexShader = /* glsl */ `
@@ -125,7 +127,7 @@ export function Smoke({ layout, on, count }: { layout: VenueLayout; on: boolean;
   useFrame((state, delta) => {
     const u = material.uniforms
     u.uTime.value = state.clock.elapsedTime
-    const wanted = on ? SMOKE : 0
+    const wanted = on ? SMOKE * (show.on ? 0.75 + 0.25 * show.energy + 0.5 * show.drop : 1) : 0
     if (u.uOpacity.value !== wanted) {
       const next = THREE.MathUtils.damp(u.uOpacity.value, wanted, 2.4, delta)
       u.uOpacity.value = Math.abs(next - wanted) < 0.002 ? wanted : next
@@ -135,7 +137,11 @@ export function Smoke({ layout, on, count }: { layout: VenueLayout; on: boolean;
     const fog = state.scene.fog as THREE.FogExp2 | null
     if (fog && "density" in fog) {
       baseFog.current ??= fog.density
-      fog.density = THREE.MathUtils.lerp(baseFog.current, NIGHT_FOG, u.uOpacity.value / SMOKE)
+      fog.density = THREE.MathUtils.lerp(
+        baseFog.current,
+        NIGHT_FOG,
+        Math.min(1, u.uOpacity.value / SMOKE),
+      )
     }
   })
 

@@ -3,13 +3,20 @@
  *
  * One audio element for the visit, started only on the visitor's explicit choice (browsers refuse
  * sound without a gesture anyway); a sealed track opens only with the key of a private demo link.
- * Its signal goes through an analyser: once per frame, `sampleMusic` turns the bass into a level
- * and beats, written into `pulse`, a plain object the scene reads in useFrame (no React state, no
- * re-render).
+ * The whole track is read once beforehand (`prepareShow`, music-map.ts): its beat grid, its bars,
+ * its breaks and drops. Once per frame, `sampleMusic` follows the position heard in the track and
+ * writes where the show stands into `show` and `pulse`, plain objects the scene reads in useFrame
+ * (no React state, no re-render). Until the track is read, or when it has no steady beat, the
+ * lights follow its bass through an analyser as it plays.
  */
+
+import { emptyShow, showAt, type MusicMap } from "@/lib/music-map"
 
 /** 0–1: the bass level, smoothed; a beat that jumps to 1 on each kick and decays. */
 export const pulse = { level: 0, beat: 0 }
+
+/** Where the light show stands in the track's map, in step with what is heard. */
+export const show = emptyShow()
 
 let audio: HTMLAudioElement | null = null
 let context: AudioContext | null = null
@@ -21,6 +28,10 @@ let sinceBeat = 1
 let stopTimer: number | null = null
 
 const FADE_S = 0.6
+/** Sample rate the track is read at: plenty for a beat, a quarter of the work of 44.1 kHz. */
+const ANALYSIS_RATE = 22050
+/** About how long a frame takes to reach the screen: the show runs that much ahead. */
+const DISPLAY_LEAD = 0.02
 
 /** The key of a private demo link (`#son=<key>`, never sent to the server), if any. */
 export function musicKey(): string | null {
@@ -48,6 +59,79 @@ export async function unsealMusic(url: string, key: string): Promise<string> {
   const plain = await unseal(new Uint8Array(await res.arrayBuffer()), key)
   return URL.createObjectURL(new Blob([plain], { type: "audio/mpeg" }))
 }
+
+/* The track's map -------------------------------------------------------------------------- */
+
+let mapped: { src: string; map: MusicMap } | null = null
+const reading = new Map<string, Promise<boolean>>()
+
+/**
+ * Reads the whole track once, ahead of the show: decoded here, analysed in a worker. Resolves to
+ * false when it cannot be read or has no steady beat (the lights then follow its bass live).
+ */
+export function prepareShow(src: string): Promise<boolean> {
+  if (mapped?.src === src) return Promise.resolve(true)
+  let pending = reading.get(src)
+  if (!pending) {
+    pending = readTrack(src).then(
+      (map) => {
+        if (map) mapped = { src, map }
+        return map !== null
+      },
+      () => false,
+    )
+    reading.set(src, pending)
+  }
+  return pending
+}
+
+async function readTrack(src: string): Promise<MusicMap | null> {
+  const res = await fetch(src)
+  if (!res.ok) return null
+  const { samples, sampleRate } = await decodeMono(await res.arrayBuffer())
+  return analyseInWorker(samples, sampleRate)
+}
+
+/** The track as mono samples, resampled for the analysis by the browser's own decoder. */
+async function decodeMono(
+  data: ArrayBuffer,
+): Promise<{ samples: Float32Array; sampleRate: number }> {
+  let offline: OfflineAudioContext
+  try {
+    offline = new OfflineAudioContext(1, 1, ANALYSIS_RATE)
+  } catch {
+    offline = new OfflineAudioContext(1, 1, 44100) // a browser that will not resample that low
+  }
+  const buffer = await offline.decodeAudioData(data)
+  const samples = new Float32Array(buffer.length)
+  const channels = buffer.numberOfChannels
+  for (let c = 0; c < channels; c++) {
+    const channel = buffer.getChannelData(c)
+    for (let i = 0; i < samples.length; i++) samples[i] += channel[i] / channels
+  }
+  return { samples, sampleRate: buffer.sampleRate }
+}
+
+function analyseInWorker(samples: Float32Array, sampleRate: number): Promise<MusicMap | null> {
+  return new Promise((resolve) => {
+    let worker: Worker
+    try {
+      worker = new Worker(new URL("./music-map.worker.ts", import.meta.url), { type: "module" })
+    } catch {
+      resolve(null)
+      return
+    }
+    const done = (map: MusicMap | null) => {
+      worker.terminate()
+      resolve(map)
+    }
+    worker.onmessage = (event: MessageEvent<MusicMap | null>) => done(event.data)
+    worker.onerror = () => done(null)
+    worker.postMessage({ samples, sampleRate }, [samples.buffer])
+  })
+}
+
+/* Playback --------------------------------------------------------------------------------- */
 
 function graph(src: string): HTMLAudioElement {
   if (audio && audio.dataset.src === src) return audio
@@ -77,6 +161,9 @@ function graph(src: string): HTMLAudioElement {
  */
 export async function playMusic(src: string): Promise<boolean> {
   try {
+    // iPhone: Web Audio follows the ring switch unless the page plays as a music player does
+    const session = (navigator as Navigator & { audioSession?: { type: string } }).audioSession
+    if (session) session.type = "playback"
     const element = graph(src)
     if (stopTimer !== null) window.clearTimeout(stopTimer)
     stopTimer = null
@@ -110,13 +197,71 @@ export function musicPlaying(): boolean {
   return !!audio && !audio.paused && stopTimer === null
 }
 
+/* Once per frame --------------------------------------------------------------------------- */
+
+/** Seconds into the track as heard: the element's position, smoothed, minus the output delay. */
+let heard = 0
+let lastPosition = -1
+
+// for checks in a browser, outside production: the show, the map, the audio and its clock
+if (process.env.NODE_ENV !== "production" && typeof window !== "undefined") {
+  ;(window as unknown as { __music?: object }).__music = {
+    show,
+    pulse,
+    map: () => mapped?.map ?? null,
+    audio: () => audio,
+    context: () => context,
+    gain: () => gain,
+    heard: () => heard,
+  }
+}
+
+function followTrack(delta: number) {
+  if (!audio || !context) return
+  heard += delta
+  const position = audio.currentTime
+  if (position === lastPosition) return
+  lastPosition = position
+  const latency = (context.outputLatency || 0) + (context.baseLatency || 0)
+  const error = position - latency - heard
+  // a loop or a seek jumps there; otherwise ease towards the element's coarser clock
+  heard = Math.abs(error) > 0.25 ? position - latency : heard + error * 0.3
+}
+
+function restShow(dt: number) {
+  show.on = false
+  const fade = Math.exp(-dt * 7)
+  show.kick *= fade
+  show.drop *= fade
+  show.flash *= fade
+  show.build *= fade
+  show.blackout = 0
+}
+
+/** The show holds still (the visitor asked for less motion): no beat, no flash. */
+export function stillShow() {
+  restShow(1)
+  pulse.level = pulse.beat = 0
+}
+
 /**
- * Once per frame: the level of the kick and the bass line (43–150 Hz) and the beats, detected
- * when the bass jumps above its recent average.
+ * Once per frame: where the show stands in the track's map, at the instant being heard. Without
+ * a map, the level of the kick and the bass line (43–150 Hz) and the beats, detected when the
+ * bass jumps above its recent average.
  */
 export function sampleMusic(delta: number) {
   const dt = Math.min(delta, 0.1)
-  if (!analyser || !bins || !context || !musicPlaying()) {
+  const playing = musicPlaying()
+  if (playing) followTrack(delta)
+  const map = playing && mapped && audio?.dataset.src === mapped.src ? mapped.map : null
+  if (map) {
+    showAt(map, heard + DISPLAY_LEAD, show)
+    pulse.beat = show.kick
+    pulse.level = show.energy
+    return
+  }
+  restShow(dt)
+  if (!analyser || !bins || !context || !playing) {
     pulse.level *= Math.exp(-dt * 6)
     pulse.beat *= Math.exp(-dt * 7)
     return
