@@ -11,6 +11,7 @@ import {
   trianglesOnScreens,
   type ScreenPiece,
 } from "@/components/scene/fx/screens"
+import { debugLog } from "@/lib/debug"
 import { show } from "@/lib/music"
 
 /**
@@ -236,6 +237,7 @@ export function NightScreens({
         off -= video.duration * Math.round(off / video.duration)
         if (Math.abs(off) > 0.25 && now - (lastSeek.current.get(video) ?? 0) > 1500) {
           lastSeek.current.set(video, now)
+          debugLog("screen_seek", { off: +off.toFixed(2) })
           video.currentTime = wanted
         }
         rate = speed * (1 - THREE.MathUtils.clamp(off, -0.12, 0.12))
