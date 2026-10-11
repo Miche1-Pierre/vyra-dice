@@ -225,7 +225,8 @@ export function BrandBar({
   const canGoBack = view === "zone" || view === "table" || view === "seat" || view === "ticket"
 
   return (
-    <div className="flex min-w-0 items-center gap-2">
+    // never wider than its column: next to the buttons on the right, the context shortens
+    <div className="flex max-w-full min-w-0 items-center gap-2">
       <AnimatePresence initial={false}>
         {canGoBack ? (
           <motion.div
