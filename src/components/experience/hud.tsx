@@ -29,7 +29,16 @@ import {
 import type { TableView, TicketView, ZoneView } from "@/components/experience/view-model"
 import { track } from "@/lib/analytics/client"
 import { contactMessage, instagramUrl, phoneUrl, whatsappUrl } from "@/lib/contact"
-import { musicKey, pauseMusic, playMusic, prepareShow, pulse, show, unsealMusic } from "@/lib/music"
+import {
+  musicKey,
+  onMusicChange,
+  pauseMusic,
+  playMusic,
+  prepareShow,
+  pulse,
+  show,
+  unsealMusic,
+} from "@/lib/music"
 import type { ClubBrand } from "@/lib/clubs/brand"
 import type { VenueContent } from "@/lib/schema"
 import { useExperience, type LevelFilter } from "@/lib/store"
@@ -395,6 +404,8 @@ export function Immersion({ isDesktop, music }: { isDesktop: boolean; music: Nig
   // a sealed track is already here: the show reads it once the club has opened (not while it
   // builds up), so that its lights keep time from the first beat; a plain one is read when the
   // visitor asks for it
+  // the phone's own play/pause (lock screen, control centre) shows here too
+  useEffect(() => onMusicChange(setSound), [setSound])
   const opened = useExperience((s) => s.sceneReady && s.view !== "intro")
   useEffect(() => {
     if (playable && opened && music?.sealed) void prepareShow(playable)

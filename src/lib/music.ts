@@ -148,6 +148,58 @@ function analyseInWorker(samples: Float32Array, sampleRate: number): Promise<Mus
 
 /* Playback --------------------------------------------------------------------------------- */
 
+/** The visitor wants the music on: set when it starts, cleared when they cut it or leave. */
+let wanted = false
+const changeListeners = new Set<(on: boolean) => void>()
+
+/**
+ * Calls `listener` when the music starts or stops from outside the page's buttons (the phone's
+ * own controls), so that the interface shows what plays.
+ */
+export function onMusicChange(listener: (on: boolean) => void): () => void {
+  changeListeners.add(listener)
+  return () => {
+    changeListeners.delete(listener)
+  }
+}
+
+/** Plays again what the browser stopped on its own (no-op once the visitor has cut the sound). */
+function resumeMusic() {
+  if (!audio || !wanted) return
+  void context?.resume()
+  if (audio.paused) void audio.play().catch(() => undefined)
+}
+
+/** When the music was last played again on its own: a phone that keeps pausing it is not fought. */
+const retries: number[] = []
+let armed = false
+
+/**
+ * The browser paused the music, or suspended its audio, without the visitor asking (iPhones do,
+ * when something else on the page or the phone takes the sound). It plays again at once when the
+ * page is in view (three times in ten seconds at most), and at the visitor's next touch or key in
+ * any case: a gesture the browser always accepts.
+ */
+function interrupted() {
+  if (!wanted) return
+  const now = performance.now()
+  while (retries.length && now - retries[0] > 10_000) retries.shift()
+  if (document.visibilityState === "visible" && retries.length < 3) {
+    retries.push(now)
+    resumeMusic()
+  }
+  if (armed) return
+  armed = true
+  const again = () => {
+    armed = false
+    window.removeEventListener("pointerdown", again, true)
+    window.removeEventListener("keydown", again, true)
+    resumeMusic()
+  }
+  window.addEventListener("pointerdown", again, true)
+  window.addEventListener("keydown", again, true)
+}
+
 function graph(src: string): HTMLAudioElement {
   if (audio && audio.dataset.src === src) return audio
   audio?.pause()
@@ -155,7 +207,17 @@ function graph(src: string): HTMLAudioElement {
   audio.dataset.src = src
   audio.loop = true
   audio.preload = "auto"
-  context ??= new AudioContext()
+  const element = audio
+  element.addEventListener("pause", () => {
+    if (element === audio) interrupted()
+  })
+  if (!context) {
+    const created = new AudioContext()
+    created.addEventListener("statechange", () => {
+      if (created.state !== "running") interrupted()
+    })
+    context = created
+  }
   // element → analyser → volume → speakers: the analyser hears the track, not the fades
   const source = context.createMediaElementSource(audio)
   analyser = context.createAnalyser()
@@ -190,14 +252,39 @@ export async function playMusic(src: string): Promise<boolean> {
     gain!.gain.cancelScheduledValues(now)
     gain!.gain.setValueAtTime(gain!.gain.value, now)
     gain!.gain.linearRampToValueAtTime(1, now + FADE_S)
+    wanted = true
+    followSystemControls(src)
     return true
   } catch {
     return false
   }
 }
 
+/**
+ * The phone's own play/pause (lock screen, control centre, headphones) goes through the page: a
+ * pause asked for there is the visitor's, not an interruption to undo.
+ */
+function followSystemControls(src: string) {
+  const session = typeof navigator === "undefined" ? undefined : navigator.mediaSession
+  if (!session) return
+  try {
+    session.setActionHandler("pause", () => {
+      pauseMusic()
+      for (const listener of changeListeners) listener(false)
+    })
+    session.setActionHandler("play", () => {
+      void playMusic(src).then((on) => {
+        for (const listener of changeListeners) listener(on)
+      })
+    })
+  } catch {
+    // an action this browser does not know: it keeps its own handling
+  }
+}
+
 /** Fades the track out, then pauses it (it resumes where it was). */
 export function pauseMusic() {
+  wanted = false
   if (!audio || !context || !gain || audio.paused) return
   const now = context.currentTime
   gain.gain.cancelScheduledValues(now)
