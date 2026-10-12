@@ -485,7 +485,12 @@ function RequestForm({
           party_size: values.partySize,
           demo: res.demo,
         })
-        requestSent({ requestId: res.requestId, tableId: table.id, demo: res.demo })
+        requestSent({
+          requestId: res.requestId,
+          tableId: table.id,
+          demo: res.demo,
+          transmitted: res.transmitted,
+        })
         return
       }
       for (const [name, message] of Object.entries(res.fieldErrors ?? {})) {
@@ -715,6 +720,13 @@ function RequestForm({
             <SwitchTrack />
           </label>
         </Group>
+        <p className="text-caption text-label-3 -mt-4 px-1">
+          Vos coordonnées ne servent qu’à cette demande.{" "}
+          {content.club.demo
+            ? "En démo, VYRA les envoie à son équipe, pas au club,"
+            : `VYRA les transmet à ${content.club.name}`}{" "}
+          par e-mail (Resend) et WhatsApp (Meta).
+        </p>
 
         {serverError ? (
           <div
@@ -837,8 +849,10 @@ function RequestSuccess({
         </p>
         {last.demo ? (
           <p className="text-caption text-label-3 mt-3 flex items-center gap-2">
-            <span className="bg-brand size-1.5 rounded-full" /> Mode démo — aucune demande n’a été
-            envoyée au club.
+            <span className="bg-brand size-1.5 shrink-0 rounded-full" />
+            {last.transmitted
+              ? "Mode démo — la demande est envoyée à l’équipe VYRA, pas au club."
+              : "Mode démo — aucune demande n’a été envoyée au club."}
           </p>
         ) : null}
       </div>

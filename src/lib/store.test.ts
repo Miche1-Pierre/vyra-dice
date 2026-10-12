@@ -72,7 +72,7 @@ describe("request form", () => {
     store().openDialog(null)
     expect(store().draft).toMatchObject({ firstName: "Camille" })
 
-    store().requestSent({ requestId: "DEM-AAAAA", tableId: "l1", demo: true })
+    store().requestSent({ requestId: "DEM-AAAAA", tableId: "l1", demo: true, transmitted: false })
     expect(store()).toMatchObject({ draft: null, dialog: "ack" })
   })
 

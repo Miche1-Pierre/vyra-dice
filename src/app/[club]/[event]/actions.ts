@@ -2,19 +2,29 @@
 
 import { headers } from "next/headers"
 
-import { getVenueContent } from "@/lib/clubs/registry"
+import { getClub, getVenueContent } from "@/lib/clubs/registry"
 import { createRequestId } from "@/lib/request-id"
-import { bookingRequestInputSchema, toFieldErrors, type SubmitResult } from "@/lib/schema"
+import {
+  bookingRequestInputSchema,
+  toFieldErrors,
+  type SubmitResult,
+  type TableContent,
+  type VenueContent,
+} from "@/lib/schema"
 import { quoteFor } from "@/lib/venue/offers"
+import { readNotifyConfig } from "@/server/notify/config"
+import type { RequestDetails } from "@/server/notify/messages"
+import { canNotify, notifyManager } from "@/server/notify/notify"
 import { demoSink } from "@/server/requests/demo-sink"
 import { createRateLimiter } from "@/server/requests/rate-limit"
+import type { BookingRequestRecord } from "@/server/requests/sink"
 
 /** 5 requests per 10 minutes per client IP and club, per server instance. */
 const rateLimiter = createRateLimiter()
 
 /**
- * Receives a table request from the venue page. A request is never a confirmed booking; in demo
- * mode it is acknowledged but transmitted nowhere.
+ * Receives a table request from the venue page. A request is never a confirmed booking. A demo
+ * club's requests go to the team, by e-mail and WhatsApp when they are set up, never to the club.
  */
 export async function submitBookingRequest(input: unknown): Promise<SubmitResult> {
   try {
@@ -53,19 +63,80 @@ export async function submitBookingRequest(input: unknown): Promise<SubmitResult
     if (!allowed) return { ok: false, error: "rate_limited" }
 
     const quote = quoteFor(table, request.partySize)
-    const { requestId, duplicate } = await demoSink.save({
+    const config = readNotifyConfig()
+    // a demo club's requests go to the team: never to the club before its written agreement
+    const recipients = config.team
+    const transmits = canNotify(config, recipients)
+    const record: BookingRequestRecord = {
       ...request,
       requestId: createRequestId(content.club.requestPrefix),
       createdAt: new Date().toISOString(),
       status: "received",
-      transmission: "not_sent_demo",
+      transmission: transmits ? "pending" : "not_sent_demo",
       quote: { minimumSpend: quote.minimumSpend, deposit: quote.deposit },
-    })
-    return { ok: true, requestId, demo: content.club.demo, duplicate }
+    }
+    const { requestId, duplicate } = await demoSink.save(record)
+    const accepted = {
+      ok: true as const,
+      requestId,
+      demo: content.club.demo,
+      duplicate,
+      transmitted: transmits,
+    }
+    // a duplicate was sent with the first request
+    if (duplicate || !transmits) return accepted
+
+    const report = await notifyManager(
+      requestDetails(content, table, { ...record, requestId }),
+      config,
+      recipients,
+    )
+    if (!report.transmitted) {
+      // forgotten, so that the buyer's retry is sent again instead of taken for a duplicate
+      await demoSink.release(request.idempotencyKey)
+      console.error(
+        "[submitBookingRequest] not transmitted",
+        requestId,
+        `e-mail: ${report.email}, WhatsApp: ${report.whatsapp}`,
+      )
+      return { ok: false, error: "server" }
+    }
+    return accepted
   } catch (error) {
     // Never log the request: it holds the buyer's name, phone and email.
     console.error("[submitBookingRequest] failed", describeError(error))
     return { ok: false, error: "server" }
+  }
+}
+
+/** What the messages about a request say: the night, the table, the figures, the buyer. */
+function requestDetails(
+  content: VenueContent,
+  table: TableContent,
+  record: BookingRequestRecord,
+): RequestDetails {
+  const accent = getClub(content.club.slug)?.brand.accent
+  const zone = content.zones.find((candidate) => candidate.id === table.zoneId)
+  return {
+    requestId: record.requestId,
+    idempotencyKey: record.idempotencyKey,
+    createdAt: record.createdAt,
+    demo: content.club.demo,
+    club: { slug: content.club.slug, name: content.club.name, contact: content.club.contact },
+    accent: { color: accent?.color ?? "#18181b", on: accent?.on ?? "#ffffff" },
+    event: { name: content.event.name, date: content.event.date },
+    table: { label: table.label, zoneName: zone?.name ?? table.zoneId },
+    partySize: record.partySize,
+    arrivalTime: record.arrivalTime,
+    buyer: {
+      firstName: record.firstName,
+      lastName: record.lastName,
+      phone: record.phone,
+      email: record.email,
+      message: record.message,
+    },
+    quote: record.quote,
+    attribution: record.attribution,
   }
 }
 

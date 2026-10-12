@@ -374,7 +374,17 @@ export type BookingRequestFormValues = z.input<typeof bookingRequestInputSchema>
 export type SubmitError = "validation" | "rate_limited" | "unknown_table" | "unavailable" | "server"
 
 export type SubmitResult =
-  | { ok: true; requestId: string; demo: boolean; duplicate: boolean }
+  | {
+      ok: true
+      requestId: string
+      demo: boolean
+      duplicate: boolean
+      /**
+       * The request reached its recipients: the club's manager, or the team for a demo club.
+       * `false` when nothing is set up to send it (a demo without notifications).
+       */
+      transmitted: boolean
+    }
   | { ok: false; error: SubmitError; fieldErrors?: Record<string, string> }
 
 /** First message per field, keyed by dotted path (`partySize`); issues on the root go to `form`. */

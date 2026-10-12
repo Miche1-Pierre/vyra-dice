@@ -38,6 +38,8 @@ export interface LastRequest {
   requestId: string
   tableId: string
   demo: boolean
+  /** The request reached its recipients (the team, for a demo club). */
+  transmitted: boolean
 }
 
 interface ExperienceState {

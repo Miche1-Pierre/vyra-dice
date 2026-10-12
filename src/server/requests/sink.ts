@@ -23,4 +23,9 @@ export interface RequestSink {
    * returns the first request's id with `duplicate: true`. Implementations keep `requestId` unique.
    */
   save(record: BookingRequestRecord): Promise<{ requestId: string; duplicate: boolean }>
+  /**
+   * Forgets a request that could not be transmitted: the buyer's retry, with the same key, is
+   * then sent again instead of being acknowledged as a duplicate.
+   */
+  release(idempotencyKey: string): Promise<void>
 }

@@ -1,4 +1,5 @@
 import { venueContentSchema, type VenueContent, type VenueContentInput } from "@/lib/schema"
+import type { RequestDetails } from "@/server/notify/messages"
 
 /**
  * A fictional venue night for unit tests, independent of the registered clubs: two zones and
@@ -88,3 +89,29 @@ export function demoVenueInput(): VenueContentInput {
 }
 
 export const demoVenue: VenueContent = venueContentSchema.parse(demoVenueInput())
+
+/** A request for table L1 of the fictional venue, as the messages about it see it. */
+export function requestDetails(overrides: Partial<RequestDetails> = {}): RequestDetails {
+  return {
+    requestId: "DEM-7K2QF",
+    idempotencyKey: "0b8c2c6e-3f1a-4d7e-9f2a-6f1c2d3e4a5b",
+    createdAt: "2026-10-10T21:42:00.000Z",
+    demo: true,
+    club: { slug: "demo", name: "Club Démo", contact: { instagram: "club.demo" } },
+    accent: { color: "#dc1414", on: "#fff4ee" },
+    event: { name: "Samedi", date: "2026-10-10" },
+    table: { label: "L1", zoneName: "Lounge" },
+    partySize: 5,
+    arrivalTime: "00:30",
+    buyer: {
+      firstName: "Camille",
+      lastName: "Martin",
+      phone: "06 12 34 56 78",
+      email: "camille@example.com",
+      message: "Anniversaire\nDeux bouteilles",
+    },
+    quote: { minimumSpend: 350, deposit: 70 },
+    attribution: { utm_source: "instagram", ref: "story" },
+    ...overrides,
+  }
+}

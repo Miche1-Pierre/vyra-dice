@@ -46,6 +46,16 @@ describe("createDemoSink", () => {
     })
   })
 
+  it("takes a released key as new again", async () => {
+    const sink = createDemoSink()
+    await sink.save(record("key-1", "DEM-AAAAA"))
+    await sink.release("key-1")
+    expect(await sink.save(record("key-1", "DEM-BBBBB"))).toEqual({
+      requestId: "DEM-BBBBB",
+      duplicate: false,
+    })
+  })
+
   it("does not share state between sinks", async () => {
     await createDemoSink().save(record("key-1", "DEM-AAAAA"))
     expect((await createDemoSink().save(record("key-1", "DEM-BBBBB"))).duplicate).toBe(false)

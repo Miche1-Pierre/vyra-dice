@@ -1,7 +1,8 @@
 import type { RequestSink } from "@/server/requests/sink"
 
 /**
- * In-memory sink for demo venues: requests are acknowledged but transmitted nowhere.
+ * In-memory sink for demo venues: it stores no request (the team receives them by e-mail and
+ * WhatsApp when notifications are set up, `src/server/notify/`), only what spots a duplicate.
  *
  * Only the idempotency key → request id mapping is kept (no personal data), capped at
  * `maxEntries` with the oldest entries dropped first.
@@ -20,6 +21,9 @@ export function createDemoSink({ maxEntries = 1000 }: { maxEntries?: number } = 
         if (oldest !== undefined) requestIds.delete(oldest)
       }
       return { requestId: record.requestId, duplicate: false }
+    },
+    async release(idempotencyKey) {
+      requestIds.delete(idempotencyKey)
     },
   }
 }
