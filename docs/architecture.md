@@ -72,7 +72,7 @@ Content (content.json) club { slug, name, address, requestPrefix, contact, demo,
                       zones { id, tier, name, shortName, description, perks[] }
                       tables { id, label, zoneId, capacity {min,max}, minimumSpend | null,
                                status: available|on_request|sold, perks[], view }
-BookingRequest        { clubSlug, eventSlug, tableId, fullName, phone, email?, partySize,
+BookingRequest        { clubSlug, eventSlug, tableId, firstName, lastName, phone, email, partySize,
                         arrivalTime, message?, consent, idempotencyKey, attribution? }
                       → requestId lisible (ex. NHO-7K2QX pour le Naho), statut "received", transmission "not_sent_demo"
 ```

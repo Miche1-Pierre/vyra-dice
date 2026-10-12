@@ -25,7 +25,8 @@ export interface Notice {
 export interface RequestDraft {
   tableId: string
   idempotencyKey: string
-  fullName?: string
+  firstName?: string
+  lastName?: string
   phone?: string
   email?: string
   message?: string

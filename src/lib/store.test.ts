@@ -68,9 +68,9 @@ describe("list without the 3D", () => {
 
 describe("request form", () => {
   it("keeps the typing until the request is sent", () => {
-    store().saveDraft({ tableId: "l1", idempotencyKey: "key", fullName: "Camille" })
+    store().saveDraft({ tableId: "l1", idempotencyKey: "key", firstName: "Camille" })
     store().openDialog(null)
-    expect(store().draft).toMatchObject({ fullName: "Camille" })
+    expect(store().draft).toMatchObject({ firstName: "Camille" })
 
     store().requestSent({ requestId: "DEM-AAAAA", tableId: "l1", demo: true })
     expect(store()).toMatchObject({ draft: null, dialog: "ack" })

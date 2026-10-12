@@ -319,33 +319,30 @@ export type Attribution = z.infer<typeof attributionSchema>
 const referenceSchema = (message: string) =>
   z.string({ error: message }).max(64, { error: message }).regex(SLUG_PATTERN, { error: message })
 
+/** A first or last name: required, 50 characters at most. */
+const nameSchema = (missing: string, tooLong: string) =>
+  z.string({ error: missing }).trim().min(1, { error: missing }).max(50, { error: tooLong })
+
 export const bookingRequestInputSchema = z.object(
   {
     clubSlug: referenceSchema("Club inconnu"),
     eventSlug: referenceSchema("Soirée inconnue"),
     tableId: referenceSchema("Table inconnue"),
-    fullName: z
-      .string({ error: "Indiquez votre nom" })
-      .trim()
-      .min(2, { error: "Indiquez votre nom (2 caractères minimum)" })
-      .max(80, { error: "Nom trop long (80 caractères maximum)" }),
+    firstName: nameSchema("Indiquez votre prénom", "Prénom trop long (50 caractères maximum)"),
+    lastName: nameSchema("Indiquez votre nom", "Nom trop long (50 caractères maximum)"),
     phone: z
       .string({ error: "Indiquez votre numéro de téléphone" })
       .trim()
       .min(1, { error: "Indiquez votre numéro de téléphone", abort: true })
       .regex(PHONE_PATTERN, { error: "Numéro invalide (ex. 06 12 34 56 78)" })
       .transform((phone) => phone.replace(/\s+/g, " ")),
+    /** Required: the buyer receives a summary of the request there. */
     email: z
-      .string({ error: "Adresse e-mail invalide" })
+      .string({ error: "Indiquez votre adresse e-mail" })
       .trim()
-      .max(254, { error: "Adresse e-mail trop longue" })
-      .pipe(
-        z.union([z.literal(""), z.email({ error: "Adresse e-mail invalide" })], {
-          error: "Adresse e-mail invalide",
-        }),
-      )
-      .transform((email) => email || undefined)
-      .optional(),
+      .min(1, { error: "Indiquez votre adresse e-mail", abort: true })
+      .max(254, { error: "Adresse e-mail trop longue", abort: true })
+      .pipe(z.email({ error: "Adresse e-mail invalide" })),
     partySize: z.coerce
       .number({ error: "Indiquez le nombre de personnes" })
       .int({ error: "Indiquez un nombre entier de personnes" })

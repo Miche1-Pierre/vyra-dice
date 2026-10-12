@@ -12,9 +12,10 @@ function requestInput(overrides: Record<string, unknown> = {}) {
     clubSlug: "demo",
     eventSlug: "samedi",
     tableId: "v1",
-    fullName: "  Camille Martin ",
+    firstName: "  Camille ",
+    lastName: " Martin",
     phone: "06 12 34 56 78",
-    email: "",
+    email: " camille@example.com ",
     partySize: "6",
     arrivalTime: "00:00",
     message: "",
@@ -38,14 +39,15 @@ describe("bookingRequestInputSchema", () => {
     expect(result.success).toBe(true)
     if (!result.success) return
     expect(result.data).toMatchObject({
-      fullName: "Camille Martin",
+      firstName: "Camille",
+      lastName: "Martin",
       phone: "06 12 34 56 78",
+      email: "camille@example.com",
       partySize: 6,
       arrivalTime: "00:00",
       consent: true,
       attribution: { utm_source: "instagram", ref: "story" },
     })
-    expect(result.data.email).toBeUndefined()
     expect(result.data.message).toBeUndefined()
   })
 
@@ -70,18 +72,21 @@ describe("bookingRequestInputSchema", () => {
 
   it("accepts omitted optional fields", () => {
     const input: Record<string, unknown> = requestInput()
-    delete input.email
     delete input.message
     delete input.attribution
     const parsed = bookingRequestInputSchema.parse(input)
-    expect(parsed).not.toHaveProperty("email")
     expect(parsed).not.toHaveProperty("message")
     expect(parsed.attribution).toBeUndefined()
   })
 
-  it("keeps a valid optional email", () => {
-    const parsed = bookingRequestInputSchema.parse(requestInput({ email: " camille@example.com " }))
-    expect(parsed.email).toBe("camille@example.com")
+  it("requires the e-mail address the summary goes to", () => {
+    for (const email of ["", "   ", undefined]) {
+      const result = bookingRequestInputSchema.safeParse(requestInput({ email }))
+      expect(
+        result.error?.issues.map((issue) => issue.message),
+        String(email),
+      ).toEqual(["Indiquez votre adresse e-mail"])
+    }
   })
 
   it("re-validates its own output (the form sends parsed values to the action)", () => {
@@ -122,9 +127,12 @@ describe("bookingRequestInputSchema", () => {
     expect(failingPaths(requestInput({ arrivalTime: "22:00" }))).toEqual(["arrivalTime"])
   })
 
-  it("rejects names that are too short or too long", () => {
-    expect(failingPaths(requestInput({ fullName: " A " }))).toEqual(["fullName"])
-    expect(failingPaths(requestInput({ fullName: "A".repeat(81) }))).toEqual(["fullName"])
+  it("requires a first and a last name, 50 characters at most", () => {
+    expect(failingPaths(requestInput({ firstName: "  " }))).toEqual(["firstName"])
+    expect(failingPaths(requestInput({ lastName: undefined }))).toEqual(["lastName"])
+    expect(failingPaths(requestInput({ firstName: "A".repeat(51) }))).toEqual(["firstName"])
+    expect(failingPaths(requestInput({ lastName: "A".repeat(51) }))).toEqual(["lastName"])
+    expect(bookingRequestInputSchema.parse(requestInput({ firstName: "Al" })).firstName).toBe("Al")
   })
 
   it("rejects malformed references and idempotency keys", () => {
@@ -146,11 +154,18 @@ describe("bookingRequestInputSchema", () => {
 describe("toFieldErrors", () => {
   it("maps the first issue of each field to its French message", () => {
     const result = bookingRequestInputSchema.safeParse(
-      requestInput({ phone: "", email: "nope", partySize: 0, consent: false }),
+      requestInput({ firstName: "", phone: "", email: "nope", partySize: 0, consent: false }),
     )
     if (result.success) throw new Error("expected failure")
     const fieldErrors = toFieldErrors(result.error)
-    expect(Object.keys(fieldErrors).sort()).toEqual(["consent", "email", "partySize", "phone"])
+    expect(Object.keys(fieldErrors).sort()).toEqual([
+      "consent",
+      "email",
+      "firstName",
+      "partySize",
+      "phone",
+    ])
+    expect(fieldErrors.firstName).toBe("Indiquez votre prénom")
     expect(fieldErrors.phone).toBe("Indiquez votre numéro de téléphone")
     expect(fieldErrors.email).toBe("Adresse e-mail invalide")
     expect(fieldErrors.partySize).toBe("Au moins 1 personne")

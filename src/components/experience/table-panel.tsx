@@ -440,7 +440,8 @@ function RequestForm({
       clubSlug,
       eventSlug,
       tableId: table.id,
-      fullName: draft?.fullName ?? "",
+      firstName: draft?.firstName ?? "",
+      lastName: draft?.lastName ?? "",
       phone: draft?.phone ?? "",
       email: draft?.email ?? "",
       partySize: guests,
@@ -460,7 +461,8 @@ function RequestForm({
     saveDraft({
       tableId: table.id,
       idempotencyKey,
-      fullName: typed.fullName,
+      firstName: typed.firstName,
+      lastName: typed.lastName,
       phone: typed.phone,
       email: typed.email,
       message: typed.message,
@@ -620,15 +622,26 @@ function RequestForm({
         </Group>
 
         <Group title="Vos coordonnées">
-          <Row id="fullName" label="Nom" error={errors.fullName?.message}>
+          <Row id="firstName" label="Prénom" error={errors.firstName?.message}>
             <input
-              id="fullName"
-              autoComplete="name"
-              placeholder="Prénom Nom"
+              id="firstName"
+              autoComplete="given-name"
+              placeholder="Camille"
               className={input}
-              aria-invalid={Boolean(errors.fullName)}
-              aria-describedby={errors.fullName ? "fullName-error" : undefined}
-              {...register("fullName")}
+              aria-invalid={Boolean(errors.firstName)}
+              aria-describedby={errors.firstName ? "firstName-error" : undefined}
+              {...register("firstName")}
+            />
+          </Row>
+          <Row id="lastName" label="Nom" error={errors.lastName?.message}>
+            <input
+              id="lastName"
+              autoComplete="family-name"
+              placeholder="Martin"
+              className={input}
+              aria-invalid={Boolean(errors.lastName)}
+              aria-describedby={errors.lastName ? "lastName-error" : undefined}
+              {...register("lastName")}
             />
           </Row>
           <Row id="phone" label="Téléphone" error={errors.phone?.message}>
@@ -648,8 +661,9 @@ function RequestForm({
             <input
               id="email"
               type="email"
+              inputMode="email"
               autoComplete="email"
-              placeholder="facultatif"
+              placeholder="vous@exemple.fr"
               className={input}
               aria-invalid={Boolean(errors.email)}
               aria-describedby={errors.email ? "email-error" : undefined}
