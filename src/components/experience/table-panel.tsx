@@ -490,6 +490,7 @@ function RequestForm({
           tableId: table.id,
           demo: res.demo,
           transmitted: res.transmitted,
+          acknowledgedTo: res.acknowledged ? values.email : undefined,
         })
         return
       }
@@ -847,6 +848,11 @@ function RequestSuccess({
           Ce n’est pas encore une réservation : l’équipe de {content.club.name} vous recontacte pour
           confirmer la table, le minimum et les modalités.
         </p>
+        {last.acknowledgedTo ? (
+          <p className="text-footnote text-label-3 mt-2 max-w-sm break-words">
+            Un récapitulatif part à <span className="text-label-2">{last.acknowledgedTo}</span>.
+          </p>
+        ) : null}
         {last.demo ? (
           <p className="text-caption text-label-3 mt-3 flex items-center gap-2">
             <span className="bg-brand size-1.5 shrink-0 rounded-full" />

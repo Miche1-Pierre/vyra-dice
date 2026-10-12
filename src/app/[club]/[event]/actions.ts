@@ -1,6 +1,7 @@
 "use server"
 
 import { headers } from "next/headers"
+import { after } from "next/server"
 
 import { getClub, getVenueContent } from "@/lib/clubs/registry"
 import { createRequestId } from "@/lib/request-id"
@@ -14,13 +15,15 @@ import {
 import { quoteFor } from "@/lib/venue/offers"
 import { readNotifyConfig } from "@/server/notify/config"
 import type { RequestDetails } from "@/server/notify/messages"
-import { canNotify, notifyManager } from "@/server/notify/notify"
+import { acknowledgeBuyer, canNotify, notifyManager } from "@/server/notify/notify"
 import { demoSink } from "@/server/requests/demo-sink"
 import { createRateLimiter } from "@/server/requests/rate-limit"
 import type { BookingRequestRecord } from "@/server/requests/sink"
 
 /** 5 requests per 10 minutes per client IP and club, per server instance. */
 const rateLimiter = createRateLimiter()
+/** One summary per buyer address every 10 minutes: the form must not flood anyone's inbox. */
+const summaryLimiter = createRateLimiter({ limit: 1, windowMs: 10 * 60 * 1000 })
 
 /**
  * Receives a table request from the venue page. A request is never a confirmed booking. A demo
@@ -82,15 +85,13 @@ export async function submitBookingRequest(input: unknown): Promise<SubmitResult
       demo: content.club.demo,
       duplicate,
       transmitted: transmits,
+      acknowledged: false,
     }
-    // a duplicate was sent with the first request
+    // a duplicate was sent, and acknowledged, with the first request
     if (duplicate || !transmits) return accepted
 
-    const report = await notifyManager(
-      requestDetails(content, table, { ...record, requestId }),
-      config,
-      recipients,
-    )
+    const details = requestDetails(content, table, { ...record, requestId })
+    const report = await notifyManager(details, config, recipients)
     if (!report.transmitted) {
       // forgotten, so that the buyer's retry is sent again instead of taken for a duplicate
       await demoSink.release(request.idempotencyKey)
@@ -101,7 +102,19 @@ export async function submitBookingRequest(input: unknown): Promise<SubmitResult
       )
       return { ok: false, error: "server" }
     }
-    return accepted
+
+    // the summary leaves after the response: it never delays the request, nor fails it
+    const acknowledged =
+      config.resend !== null && summaryLimiter.check(request.email.toLowerCase()).allowed
+    if (acknowledged) {
+      after(async () => {
+        const outcome = await acknowledgeBuyer(details, config, recipients.emails)
+        if (outcome === "failed") {
+          console.error("[submitBookingRequest] summary not sent", requestId)
+        }
+      })
+    }
+    return { ...accepted, acknowledged }
   } catch (error) {
     // Never log the request: it holds the buyer's name, phone and email.
     console.error("[submitBookingRequest] failed", describeError(error))

@@ -40,6 +40,8 @@ export interface LastRequest {
   demo: boolean
   /** The request reached its recipients (the team, for a demo club). */
   transmitted: boolean
+  /** Address the summary of the request goes to, when one is sent. */
+  acknowledgedTo?: string
 }
 
 interface ExperienceState {

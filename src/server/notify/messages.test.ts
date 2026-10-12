@@ -1,11 +1,88 @@
 import { describe, expect, it } from "vitest"
 
 import {
+  buyerEmail,
+  greetingName,
   managerEmail,
   managerWhatsAppParameters,
   templateParameter,
 } from "@/server/notify/messages"
 import { requestDetails } from "@/test/fixtures"
+
+describe("buyerEmail", () => {
+  it("thanks the buyer in the club's name and says it is not a booking yet", () => {
+    const { subject, text } = buyerEmail(requestDetails({ demo: false }))
+    expect(subject).toBe("Club Démo · Demande reçue · DEM-7K2QF")
+    expect(text).toContain("Bonjour Camille,")
+    expect(text).toContain(
+      "Merci d’avoir choisi Club Démo ! Nous traitons votre demande et notre manager revient vers vous au plus vite.",
+    )
+    expect(text).toContain("Ce n’est pas encore une réservation")
+    expect(text).toContain("Aucun paiement n’a été effectué.")
+    expect(text).toContain("Table : L1 · Lounge")
+    expect(text).toContain("Référence de votre demande : DEM-7K2QF")
+    expect(text).not.toContain("Démo VYRA")
+  })
+
+  it("says up front that a demo request did not reach the club", () => {
+    const { subject, html, text } = buyerEmail(requestDetails())
+    expect(subject).toBe("[Démo] Club Démo · Demande reçue · DEM-7K2QF")
+    expect(text.split("\n")[0]).toBe(
+      "Démo VYRA : votre demande n’a pas été transmise au club. Cet e-mail montre ce que recevra un client.",
+    )
+    expect(html.indexOf("Démo VYRA")).toBeLessThan(html.indexOf("Demande reçue</h1>"))
+  })
+
+  it("never quotes the message, nor more of the name than its letters", () => {
+    const { html, text } = buyerEmail(
+      requestDetails({
+        buyer: {
+          ...requestDetails().buyer,
+          firstName: "Gagnez 1000€ sur https://spam.example",
+          lastName: "<b>Martin</b>",
+          message: "Cliquez ici : https://spam.example",
+        },
+      }),
+    )
+    for (const sent of [html, text]) {
+      expect(sent).not.toContain("spam.example")
+      expect(sent).not.toContain("Cliquez")
+      expect(sent).not.toContain("Martin")
+    }
+    expect(text).toContain("Bonjour Gagnez sur httpsspamexample,")
+  })
+
+  it("gives the club's channels in its colours", () => {
+    const { html, text } = buyerEmail(
+      requestDetails({
+        club: {
+          slug: "demo",
+          name: "Club Démo",
+          contact: {
+            whatsapp: "+33 6 00 00 00 00",
+            instagram: "club.demo",
+            phone: "04 94 00 00 00",
+          },
+        },
+      }),
+    )
+    expect(html).toContain('href="https://wa.me/33600000000?text=')
+    expect(html).toContain('href="https://ig.me/m/club.demo"')
+    expect(html).toContain('href="tel:0494000000"')
+    expect(html).toContain("background:#dc1414;color:#fff4ee;")
+    expect(text).toContain("Instagram : https://ig.me/m/club.demo")
+  })
+})
+
+describe("greetingName", () => {
+  it("keeps letters, spaces, hyphens and apostrophes, 40 at most", () => {
+    expect(greetingName("  Jean-Éloïse ")).toBe("Jean-Éloïse")
+    expect(greetingName("D'Artagnan")).toBe("D'Artagnan")
+    expect(greetingName("Zoë <3 www.x.fr")).toBe("Zoë wwwxfr")
+    expect(greetingName("A".repeat(60))).toHaveLength(40)
+    expect(greetingName("123 !!")).toBeNull()
+  })
+})
 
 describe("managerEmail", () => {
   it("names the request, the table and the buyer in the subject and the text", () => {

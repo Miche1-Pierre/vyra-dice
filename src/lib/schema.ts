@@ -384,6 +384,8 @@ export type SubmitResult =
        * `false` when nothing is set up to send it (a demo without notifications).
        */
       transmitted: boolean
+      /** A summary of the request goes to the buyer's e-mail address. */
+      acknowledged: boolean
     }
   | { ok: false; error: SubmitError; fieldErrors?: Record<string, string> }
 

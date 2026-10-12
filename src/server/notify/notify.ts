@@ -1,5 +1,6 @@
 import type { NotifyConfig } from "@/server/notify/config"
 import {
+  buyerEmail,
   managerEmail,
   managerWhatsAppParameters,
   type RequestDetails,
@@ -78,4 +79,29 @@ export async function notifyManager(
     email: emailOutcome,
     whatsapp: whatsappOutcome,
   }
+}
+
+/**
+ * Sends the buyer the summary of their request: from « <club> via VYRA », or from VYRA for a
+ * demo club, which never writes in a club's name before its written agreement. « Répondre »
+ * writes to `replyTo`: the manager, or the team for a demo. Never throws.
+ */
+export async function acknowledgeBuyer(
+  d: RequestDetails,
+  config: NotifyConfig,
+  replyTo: string[],
+  { fetch: fetchImpl }: { fetch?: typeof fetch } = {},
+): Promise<ChannelOutcome> {
+  if (!config.resend) return "off"
+  return sendEmail(
+    config.resend,
+    {
+      fromName: d.demo ? "VYRA (démo)" : `${d.club.name} via VYRA`,
+      to: [d.buyer.email],
+      replyTo,
+      ...buyerEmail(d),
+      tags: { kind: "summary", club: d.club.slug },
+    },
+    { idempotencyKey: `request/${d.idempotencyKey}/summary`, fetch: fetchImpl },
+  )
 }

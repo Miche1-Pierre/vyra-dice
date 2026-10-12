@@ -10,6 +10,19 @@ vi.mock("next/headers", () => ({
   headers: async () => new Headers({ "x-forwarded-for": `${client.ip}, 10.0.0.1` }),
 }))
 
+// what the action leaves for after its response, run by the tests when they want it
+const deferred = vi.hoisted(() => ({ tasks: [] as (() => unknown)[] }))
+vi.mock("next/server", () => ({
+  after: (task: () => unknown) => {
+    deferred.tasks.push(task)
+  },
+}))
+
+/** Runs what the action left for after its response: the buyer's summary. */
+async function afterResponse() {
+  for (const task of deferred.tasks.splice(0)) await task()
+}
+
 // a fictional club: the action must not depend on the clubs actually registered
 vi.mock("@/lib/clubs/registry", async () => {
   const { demoVenue } = await import("@/test/fixtures")
@@ -72,6 +85,7 @@ beforeEach(() => {
   network.mockReset()
   network.mockImplementation(answer(200))
   vi.stubGlobal("fetch", network)
+  deferred.tasks.length = 0
 })
 
 afterEach(() => {
@@ -225,6 +239,78 @@ describe("submitBookingRequest", () => {
     expect(log).toHaveBeenCalled()
     const logged = JSON.stringify(log.mock.calls)
     for (const secret of ["Camille", "06 12 34 56 78", "camille@example.com"]) {
+      expect(logged).not.toContain(secret)
+    }
+  })
+
+  it("sends the buyer a summary after the response, answered by the team", async () => {
+    notificationsOn()
+    const result = await submitBookingRequest(request({ email: "summary@example.com" }))
+    expect(result).toMatchObject({ ok: true, transmitted: true, acknowledged: true })
+    expect(sentTo("resend")).toHaveLength(1)
+
+    await afterResponse()
+    const summaries = sentTo("resend").slice(1)
+    expect(summaries).toHaveLength(1)
+    expect(JSON.parse(String(summaries[0][1]?.body))).toMatchObject({
+      from: '"VYRA (démo)" <demandes@notifications.example.com>',
+      to: ["summary@example.com"],
+      reply_to: ["equipe@example.com"],
+      subject: expect.stringMatching(/^\[Démo\] Club Démo · Demande reçue · DEM-/),
+    })
+  })
+
+  it("sends no summary for a duplicate, and one per address every 10 minutes", async () => {
+    notificationsOn()
+    const input = request({ email: "twice@example.com" })
+    expect(await submitBookingRequest(input)).toMatchObject({ acknowledged: true })
+    expect(await submitBookingRequest(input)).toMatchObject({
+      duplicate: true,
+      acknowledged: false,
+    })
+    // another request, the same address in other letters
+    expect(await submitBookingRequest(request({ email: "TWICE@example.com" }))).toMatchObject({
+      ok: true,
+      transmitted: true,
+      acknowledged: false,
+    })
+    expect(deferred.tasks).toHaveLength(1)
+  })
+
+  it("sends no summary without Resend, nor for a request that reached nobody", async () => {
+    notificationsOn()
+    vi.stubEnv("RESEND_API_KEY", "")
+    expect(await submitBookingRequest(request({ email: "nokey@example.com" }))).toMatchObject({
+      ok: true,
+      transmitted: true,
+      acknowledged: false,
+    })
+
+    vi.stubEnv("RESEND_API_KEY", "re_test")
+    vi.spyOn(console, "error").mockImplementation(() => {})
+    network.mockImplementation(answer(500))
+    expect(await submitBookingRequest(request({ email: "nobody@example.com" }))).toEqual({
+      ok: false,
+      error: "server",
+    })
+    expect(deferred.tasks).toHaveLength(0)
+  })
+
+  it("keeps the request when its summary fails, and logs no personal data", async () => {
+    notificationsOn()
+    const log = vi.spyOn(console, "error").mockImplementation(() => {})
+    let resendCalls = 0
+    network.mockImplementation(async (url) => {
+      const summary = String(url).includes("resend") && ++resendCalls > 1
+      return new Response("{}", { status: summary ? 500 : 200 })
+    })
+    const result = await submitBookingRequest(request({ email: "failing@example.com" }))
+    expect(result).toMatchObject({ ok: true, acknowledged: true })
+
+    await afterResponse()
+    const logged = JSON.stringify(log.mock.calls)
+    expect(logged).toContain("summary not sent")
+    for (const secret of ["Camille", "06 12 34 56 78", "failing@example.com"]) {
       expect(logged).not.toContain(secret)
     }
   })

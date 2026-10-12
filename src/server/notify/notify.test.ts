@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
 
 import type { NotifyConfig } from "@/server/notify/config"
-import { canNotify, notifyManager } from "@/server/notify/notify"
+import { acknowledgeBuyer, canNotify, notifyManager } from "@/server/notify/notify"
 import { requestDetails } from "@/test/fixtures"
 
 const config: NotifyConfig = {
@@ -97,5 +97,48 @@ describe("notifyManager", () => {
     )
     expect(report).toEqual({ transmitted: true, email: "sent", whatsapp: "off" })
     expect(fetchImpl).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe("acknowledgeBuyer", () => {
+  it("sends the summary to the buyer from VYRA for a demo, answered by the team", async () => {
+    const fetchImpl = services({})
+    expect(
+      await acknowledgeBuyer(requestDetails(), config, ["equipe@example.com"], {
+        fetch: fetchImpl,
+      }),
+    ).toBe("sent")
+    const [url, init] = fetchImpl.mock.calls[0]
+    expect(String(url)).toBe("https://api.resend.com/emails")
+    expect(JSON.parse(String(init?.body))).toMatchObject({
+      from: '"VYRA (démo)" <demandes@notifications.example.com>',
+      to: ["camille@example.com"],
+      reply_to: ["equipe@example.com"],
+      subject: "[Démo] Club Démo · Demande reçue · DEM-7K2QF",
+    })
+    expect((init?.headers as Record<string, string>)["Idempotency-Key"]).toBe(
+      "request/0b8c2c6e-3f1a-4d7e-9f2a-6f1c2d3e4a5b/summary",
+    )
+  })
+
+  it("writes in the club's name through VYRA once the club is live", async () => {
+    const fetchImpl = services({})
+    await acknowledgeBuyer(requestDetails({ demo: false }), config, ["manager@club.example"], {
+      fetch: fetchImpl,
+    })
+    expect(JSON.parse(String(fetchImpl.mock.calls[0][1]?.body))).toMatchObject({
+      from: '"Club Démo via VYRA" <demandes@notifications.example.com>',
+      reply_to: ["manager@club.example"],
+    })
+  })
+
+  it("sends nothing without Resend", async () => {
+    const fetchImpl = services({})
+    expect(
+      await acknowledgeBuyer(requestDetails(), { ...config, resend: null }, [], {
+        fetch: fetchImpl,
+      }),
+    ).toBe("off")
+    expect(fetchImpl).not.toHaveBeenCalled()
   })
 })

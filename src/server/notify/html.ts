@@ -107,8 +107,9 @@ export function link(href: string, label: string): string {
   return `<a href="${escapeHtml(href)}" style="color:${INK};">${escapeHtml(label)}</a>`
 }
 
-/** A framed note: the demo warning, the « not a booking » reminder. */
-export function note(html: string, { strong = false } = {}): string {
+/** A framed note: the demo warning (`first`: at the top of the e-mail), the « not a booking » reminder. */
+export function note(html: string, { strong = false, first = false } = {}): string {
   const weight = strong ? "font-weight:600;" : ""
-  return `<p style="margin:20px 0 0;padding:12px 14px;border-radius:8px;background:${PAGE};font-size:14px;${weight}">${html}</p>`
+  const margin = first ? "0 0 20px" : "20px 0 0"
+  return `<p style="margin:${margin};padding:12px 14px;border-radius:8px;background:${PAGE};font-size:14px;${weight}">${html}</p>`
 }

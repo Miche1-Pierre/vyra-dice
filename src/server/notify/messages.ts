@@ -1,4 +1,10 @@
-import { internationalPhone, phoneUrl, whatsappUrl } from "@/lib/contact"
+import {
+  contactMessage,
+  instagramUrl,
+  internationalPhone,
+  phoneUrl,
+  whatsappUrl,
+} from "@/lib/contact"
 import { formatDateFr, formatEuro } from "@/lib/format"
 import type { Attribution, Club } from "@/lib/schema"
 import {
@@ -64,7 +70,10 @@ function minimum(d: RequestDetails): string {
     : "sur demande"
 }
 
-/** Rows of the request itself: night, table, group, arrival and the figures shown. */
+/**
+ * Rows of the request itself (night, table, group, arrival, figures shown), shared by the
+ * manager's e-mail and the buyer's summary.
+ */
 function requestRows(d: RequestDetails): [string, string][] {
   const rows: [string, string][] = [
     ["Soirée", escapeHtml(night(d))],
@@ -211,4 +220,109 @@ export function managerWhatsAppParameters(d: RequestDetails): string[] {
     // the message's lines, kept apart on its one line
     buyer.message?.replace(/\s*\n\s*/g, " / ") ?? "aucun",
   ].map((value, index) => templateParameter(value, index === 5 ? 300 : 160))
+}
+
+/**
+ * The first name the summary greets: letters, spaces, hyphens and apostrophes only, 40 at most.
+ * The summary goes to whatever address was typed in the form: nothing the sender typed may turn
+ * it into a message of theirs (a link, a sentence), so it never quotes the message either.
+ */
+export function greetingName(firstName: string): string | null {
+  const name = firstName
+    .normalize("NFC")
+    .replace(/[^\p{L}\p{M}' -]/gu, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 40)
+    .trim()
+  return name.length > 0 ? name : null
+}
+
+const NOT_YET_A_BOOKING =
+  "Ce n’est pas encore une réservation : le club vous confirme la table, le minimum et les modalités. Aucun paiement n’a été effectué."
+
+/**
+ * The buyer's summary, in the club's colours: thanks, the request as sent, the reminder that it
+ * is not a booking yet, and the club's channels. « Répondre » writes to the manager.
+ */
+export function buyerEmail(d: RequestDetails): EmailContent {
+  const name = greetingName(d.buyer.firstName)
+  const hello = name ? `Bonjour ${name},` : "Bonjour,"
+  const thanks = `Merci d’avoir choisi ${d.club.name} ! Nous traitons votre demande et notre manager revient vers vous au plus vite.`
+  const demo = d.demo
+    ? "Démo VYRA : votre demande n’a pas été transmise au club. Cet e-mail montre ce que recevra un client."
+    : null
+  const why = `Vous recevez cet e-mail parce qu’une demande de table a été envoyée avec cette adresse depuis la visite de ${d.club.name}. VYRA ne vous écrira pas d’autre message.`
+  const { whatsapp, instagram, phone } = d.club.contact
+  const channels: [label: string, href: string][] = []
+  if (whatsapp) {
+    const first = contactMessage({
+      clubName: d.club.name,
+      eventName: d.event.name,
+      tableLabel: d.table.label,
+    })
+    channels.push(["WhatsApp", whatsappUrl(whatsapp, first)])
+  }
+  if (instagram) channels.push(["Instagram", instagramUrl(instagram)])
+  if (phone) channels.push(["Téléphone", phoneUrl(phone)])
+
+  const subject = oneLine(
+    `${d.demo ? "[Démo] " : ""}${d.club.name} · Demande reçue · ${d.requestId}`,
+  )
+  const body = [
+    demo ? note(escapeHtml(demo), { strong: true, first: true }) : "",
+    eyebrow(escapeHtml(d.club.name), d.accent.color),
+    title("Demande reçue"),
+    paragraph(escapeHtml(hello)),
+    paragraph(escapeHtml(thanks)),
+    heading("Votre demande"),
+    details(requestRows(d)),
+    note(escapeHtml(NOT_YET_A_BOOKING), { strong: true }),
+    channels.length > 0
+      ? paragraph("Une question ? Répondez à cet e-mail ou écrivez au club :") +
+        channels.map(([label, href]) => button(href, label, d.accent.color, d.accent.on)).join("")
+      : paragraph("Une question ? Répondez à cet e-mail."),
+    paragraph(escapeHtml(`Référence de votre demande : ${d.requestId}`), { muted: true }),
+    paragraph(escapeHtml(why), { muted: true, small: true }),
+  ].join("\n")
+
+  const text = [
+    ...(demo ? [demo, ""] : []),
+    d.club.name,
+    "",
+    hello,
+    thanks,
+    "",
+    `Soirée : ${night(d)}`,
+    `Table : ${d.table.label} · ${d.table.zoneName}`,
+    `Personnes : ${d.partySize}`,
+    `Arrivée : ${arrival(d.arrivalTime)}`,
+    `Minimum : ${minimum(d)}`,
+    ...(d.quote.deposit !== null
+      ? [`Acompte : ${formatEuro(d.quote.deposit)} si le club confirme`]
+      : []),
+    "",
+    NOT_YET_A_BOOKING,
+    "",
+    ...(channels.length > 0
+      ? [
+          "Une question ? Répondez à cet e-mail ou écrivez au club :",
+          ...channels.map(([label, href]) => `${label} : ${href}`),
+        ]
+      : ["Une question ? Répondez à cet e-mail."]),
+    "",
+    `Référence de votre demande : ${d.requestId}`,
+    why,
+  ].join("\n")
+
+  return {
+    subject,
+    html: emailDocument({
+      title: subject,
+      preheader: `Table ${d.table.label} · ${night(d)}. ${NOT_YET_A_BOOKING}`,
+      accent: d.accent.color,
+      body,
+    }),
+    text,
+  }
 }
