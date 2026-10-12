@@ -358,6 +358,11 @@ export const bookingRequestInputSchema = z.object(
     consent: z.literal(true, { error: "Merci d'accepter d'être recontacté par le club" }),
     idempotencyKey: z.uuid({ error: "Formulaire expiré, rechargez la page" }),
     attribution: attributionSchema.optional().catch(undefined),
+    /**
+     * A field hidden from people that robots fill in (honeypot): the Server Action drops a
+     * request that has it, and sends nothing.
+     */
+    leaveBlank: z.string().optional(),
   },
   { error: "Demande invalide" },
 )

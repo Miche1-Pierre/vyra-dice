@@ -76,7 +76,14 @@ describe("bookingRequestInputSchema", () => {
     delete input.attribution
     const parsed = bookingRequestInputSchema.parse(input)
     expect(parsed).not.toHaveProperty("message")
+    expect(parsed).not.toHaveProperty("leaveBlank")
     expect(parsed.attribution).toBeUndefined()
+  })
+
+  it("keeps the hidden field robots fill in, for the action to drop the request", () => {
+    const filled = requestInput({ leaveBlank: "https://spam.example" })
+    expect(bookingRequestInputSchema.parse(filled).leaveBlank).toBe("https://spam.example")
+    expect(bookingRequestInputSchema.parse(requestInput({ leaveBlank: "" })).leaveBlank).toBe("")
   })
 
   it("requires the e-mail address the summary goes to", () => {

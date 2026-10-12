@@ -22,7 +22,12 @@ export async function submitBookingRequest(input: unknown): Promise<SubmitResult
     if (!parsed.success) {
       return { ok: false, error: "validation", fieldErrors: toFieldErrors(parsed.error) }
     }
-    const request = parsed.data
+    const { leaveBlank, ...request } = parsed.data
+    // a field people never see: only a robot fills it in, and nothing is sent for it
+    if (leaveBlank) {
+      console.error("[submitBookingRequest] dropped: the hidden field was filled in")
+      return { ok: false, error: "server" }
+    }
 
     const content = getVenueContent(request.clubSlug, request.eventSlug)
     const table = content?.tables.find((candidate) => candidate.id === request.tableId)

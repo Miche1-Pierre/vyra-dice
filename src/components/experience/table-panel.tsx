@@ -450,6 +450,7 @@ function RequestForm({
       consent: (draft?.consent ?? undefined) as true | undefined,
       idempotencyKey,
       attribution: getAttribution(),
+      leaveBlank: "",
     },
   })
   const errors = formState.errors
@@ -671,6 +672,17 @@ function RequestForm({
             />
           </Row>
         </Group>
+        {/* hidden from people and screen readers: only robots fill it in (honeypot) */}
+        <div aria-hidden className="absolute -left-[9999px] size-px overflow-hidden">
+          <label htmlFor="leaveBlank">Laissez ce champ vide</label>
+          <input
+            id="leaveBlank"
+            type="text"
+            tabIndex={-1}
+            autoComplete="off"
+            {...register("leaveBlank")}
+          />
+        </div>
 
         <Group title="Message">
           <textarea

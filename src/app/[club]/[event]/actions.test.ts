@@ -141,6 +141,18 @@ describe("submitBookingRequest", () => {
     }
   })
 
+  it("drops a request whose hidden field was filled in, as robots do", async () => {
+    const save = vi.spyOn(demoSink, "save")
+    const log = vi.spyOn(console, "error").mockImplementation(() => {})
+    expect(await submitBookingRequest(request({ leaveBlank: "https://spam.example" }))).toEqual({
+      ok: false,
+      error: "server",
+    })
+    expect(save).not.toHaveBeenCalled()
+    expect(log).toHaveBeenCalled()
+    expect(await submitBookingRequest(request({ leaveBlank: "" }))).toMatchObject({ ok: true })
+  })
+
   it("does not acknowledge requests for a live club without a sink", async () => {
     vi.resetModules()
     vi.doMock("@/lib/clubs/registry", async () => {
