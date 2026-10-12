@@ -9,6 +9,7 @@ Visite 3D mobile d'un club → comparaison des tables → demande transmise au c
 - `docs/clubs.md` — **un dossier par club** (`clubs/<slug>/`), ajout d'un club, `brand.json` / `ambiance.json`
 - `docs/3d-pipeline.md` — Blender → GLB, **contrat de nommage** des objets (`table_<id>`, `cam_<id>`…)
 - `docs/analytics.md` — taxonomie d'événements PostHog ↔ H1–H5
+- `docs/notifications.md` — envoi des demandes (e-mail Resend, WhatsApp Meta), variables, mise en place
 - `docs/github.md` — branches, commits, PR
 
 ## Règles

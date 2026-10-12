@@ -191,9 +191,10 @@ flowchart TB
 | Production 3D | Blender 5.1 piloté par scripts Python, lumière précalculée Cycles, gltf-transform |
 | Motion design | Remotion (studio de motion design de l'équipe)                                    |
 | Mesure        | PostHog, région UE                                                                |
+| Envoi         | Resend (e-mails), API Cloud de WhatsApp (Meta), appelés par la Server Action      |
 | Hébergement   | Vercel (production et preview par pull request)                                   |
 | Qualité       | ESLint, Prettier, Vitest, GitHub Actions                                          |
-| À venir (G1)  | Supabase (demandes et statuts, région UE), Resend (notifications au club)         |
+| À venir (G1)  | Supabase (demandes et statuts, région UE)                                         |
 
 ### Points d'architecture
 
@@ -214,8 +215,9 @@ flowchart TB
   coupures, drops) et le show suit la position réellement entendue, latence de sortie déduite. Un morceau non libre de
   droits peut être scellé (AES-GCM) pour ne se jouer que depuis un lien privé de démonstration.
 - **Les demandes.** Server Action, même schéma zod qu'au navigateur, limitation de débit, identifiant lisible propre
-  au club (`NHO-7K2QX`), accusé honnête. En démo, rien n'est transmis ; la base de données et les notifications au
-  club arrivent avec le premier pilote.
+  au club (`NHO-7K2QX`), accusé honnête. La demande part par e-mail (Resend) et WhatsApp (Meta), et l'acheteur reçoit
+  un récapitulatif aux couleurs du club ; en démo, tout part vers l'équipe, jamais vers le club
+  (`docs/notifications.md`). La base de données arrive avec le premier pilote.
 - **La mesure.** Taxonomie d'événements alignée sur H1 à H5, consentement d'abord, aucune donnée personnelle (nom,
   téléphone) dans les événements.
 - **VYRA Studio** (`studio/`). L'application locale de l'équipe : un agent (Claude Code) lit les sources d'un club,

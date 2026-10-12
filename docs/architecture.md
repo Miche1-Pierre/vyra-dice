@@ -27,7 +27,7 @@ Règles non négociables (issues du cadrage) :
 | État client             | zustand                                                  | Partage scène 3D ↔ UI sans re-render React à chaque frame        |
 | Formulaires             | react-hook-form + zod                                    | Même schéma validé côté client et serveur                        |
 | Données (à brancher G1) | Supabase (Postgres, région EU)                           | Demandes + statuts + RLS multi-clubs ; dashboard club plus tard  |
-| Notifications (G1)      | Email transactionnel (Resend) + lien WhatsApp pré-rempli | Réception fiable côté club sans intégration profonde             |
+| Envoi des demandes      | E-mail (Resend) + WhatsApp (API Cloud de Meta)           | Réception fiable côté club sans intégration profonde             |
 | Analytics               | PostHog (EU cloud)                                       | Funnels, replays, feature flags — rien à coder from scratch      |
 | Hébergement             | Vercel                                                   | Previews par PR, edge cache des GLB                              |
 
@@ -60,6 +60,7 @@ src/
     venue/                           # layout.ts (géométrie typée), camera.ts (cadrages), offers.ts, tiers.ts
     analytics/                       # client PostHog typé + taxonomie d'événements
   server/requests/                   # puits de demandes (démo en mémoire), rate limit
+  server/notify/                     # envoi des demandes : e-mails (Resend), WhatsApp (Meta) — notifications.md
 ```
 
 ## Modèle de données (POC)
@@ -74,7 +75,8 @@ Content (content.json) club { slug, name, address, requestPrefix, contact, demo,
                                status: available|on_request|sold, perks[], view }
 BookingRequest        { clubSlug, eventSlug, tableId, firstName, lastName, phone, email, partySize,
                         arrivalTime, message?, consent, idempotencyKey, attribution? }
-                      → requestId lisible (ex. NHO-7K2QX pour le Naho), statut "received", transmission "not_sent_demo"
+                      → requestId lisible (ex. NHO-7K2QX pour le Naho), statut "received", transmission
+                        "pending" (envoyée à l'équipe ou au club) ou "not_sent_demo" (aucun canal configuré)
 ```
 
 `status` des tables = déclaratif (saisi par le club), jamais un stock temps réel. `offersValidatedAt: null`
@@ -85,10 +87,13 @@ contrat tournent sur chaque club enregistré. Le code commun ne nomme aucun club
 
 ## Flux d'une demande
 
-1. Client : validation zod → Server Action `submitRequest`.
-2. Serveur : re-validation, rate-limit, insertion `booking_requests`, génération de l'ID.
-3. Notification au responsable nommé du club (email + récap WhatsApp-ready).
-4. Réponse : écran d'accusé honnête (« Demande reçue, le club vous recontacte sous X h. Ce n'est pas une confirmation. ») + bouton contact de secours.
+1. Client : validation zod → Server Action `submitBookingRequest`.
+2. Serveur : re-validation, champ piège anti-robot, rate-limit, génération de l'ID, enregistrement (démo : en
+   mémoire ; G1 : `booking_requests`).
+3. Envoi au manager, en même temps par e-mail (Resend) et WhatsApp (API Cloud de Meta). Club de démo : à l'équipe,
+   jamais au club. Si aucun canal n'aboutit : échec honnête et contact de secours (`docs/notifications.md`).
+4. Réponse : écran d'accusé honnête (« Ce n'est pas encore une réservation ») + bouton contact de secours ; puis, après
+   la réponse, e-mail récapitulatif à l'acheteur, aux couleurs du club.
 5. Suivi statuts : mis à jour par nous/le club (G1 : manuellement ; plus tard mini back-office).
 
 ## Expérience 3D (principes)
