@@ -20,7 +20,7 @@
     "check": "pnpm lint && pnpm typecheck && pnpm studio:typecheck && pnpm test"
   },
   "dependencies": {
-    "@base-ui/react": "^1.8.0",
+    "@base-ui/react": "^1.9.0",
     "@hookform/resolvers": "^5.9.1",
     "@react-three/drei": "^10.7.9",
     "@react-three/fiber": "^9.8.1",
